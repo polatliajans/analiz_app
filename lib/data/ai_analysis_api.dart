@@ -28,13 +28,16 @@ class AiAnalysisApi {
             headers: {'Authorization': 'Bearer $token'},
             body: {'timeframe': timeframe},
           )
-          .timeout(const Duration(seconds: 15));
+          .timeout(const Duration(seconds: 50));
     } catch (e) {
       throw AiAnalysisException('Analiz isteği gönderilemedi: $e');
     }
 
     if (response.statusCode == 402) {
       throw AiAnalysisException('Yetersiz kredi.');
+    }
+    if (response.statusCode == 502) {
+      throw AiAnalysisException('Analiz şu anda kullanılamıyor.');
     }
     if (response.statusCode != 200) {
       throw AiAnalysisException('Sunucu hatası: ${response.statusCode}');
