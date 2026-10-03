@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "514019641839",
+    "project_id": "kripto-analiz-affb8",
+    "storage_bucket": "kripto-analiz-affb8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:514019641839:android:df7a96d1bef786f6210e1a",
+        "android_client_info": {
+          "package_name": "com.polatliajans.kriptoanaliz"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYpn9Sm66PJAFu6NS4Ujhv9HKRYJB14sg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
