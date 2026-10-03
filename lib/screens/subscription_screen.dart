@@ -5,6 +5,7 @@ import 'package:in_app_purchase/in_app_purchase.dart';
 
 import '../models/subscription_plan.dart';
 import '../providers/auth_provider.dart';
+import '../providers/store_price_provider.dart';
 import '../providers/subscription_provider.dart';
 
 class SubscriptionScreen extends ConsumerStatefulWidget {
@@ -28,7 +29,10 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
   @override
   void initState() {
     super.initState();
-    _subscription = _iap.purchaseStream.listen(_onPurchaseUpdate, onError: (_) {});
+    _subscription = _iap.purchaseStream.listen(
+      _onPurchaseUpdate,
+      onError: (_) {},
+    );
   }
 
   @override
@@ -68,7 +72,8 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         continue;
       }
 
-      if (purchase.status == PurchaseStatus.purchased || purchase.status == PurchaseStatus.restored) {
+      if (purchase.status == PurchaseStatus.purchased ||
+          purchase.status == PurchaseStatus.restored) {
         setState(() => _pendingProductIds.remove(purchase.productID));
 
         // Identify which plan this purchase belongs to strictly from the
@@ -87,7 +92,9 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('Satın alma doğrulanamadı, abonelik planı bilgisi bulunamadı. Uygulamayı yeniden açtığınızda tekrar denenecek.'),
+                content: Text(
+                  'Satın alma doğrulanamadı, abonelik planı bilgisi bulunamadı. Uygulamayı yeniden açtığınızda tekrar denenecek.',
+                ),
               ),
             );
           }
@@ -95,7 +102,9 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         }
 
         try {
-          await ref.read(subscriptionPurchaseApiProvider).verifySubscriptionPurchase(
+          await ref
+              .read(subscriptionPurchaseApiProvider)
+              .verifySubscriptionPurchase(
                 token: auth.token!,
                 subscriptionPlanId: plan.id,
                 purchaseToken: purchase.verificationData.serverVerificationData,
@@ -111,7 +120,9 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
 
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Pro aboneliğiniz aktifleştirildi.')),
+              const SnackBar(
+                content: Text('Pro aboneliğiniz aktifleştirildi.'),
+              ),
             );
           }
         } catch (e) {
@@ -158,7 +169,9 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         return;
       }
 
-      final param = PurchaseParam(productDetails: response.productDetails.first);
+      final param = PurchaseParam(
+        productDetails: response.productDetails.first,
+      );
       final started = await _iap.buyNonConsumable(purchaseParam: param);
       if (!started) {
         // Request was not even submitted to Play Billing; no stream event
@@ -172,9 +185,9 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       // app session.
       setState(() => _pendingProductIds.remove(productId));
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Satın alma başlatılamadı: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Satın alma başlatılamadı: $e')));
     }
   }
 
@@ -187,24 +200,51 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       body: plansAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => Center(child: Text('Bir hata oluştu: $error')),
-        data: (plans) => ListView.builder(
-          itemCount: plans.length,
-          itemBuilder: (context, index) {
-            final plan = plans[index];
-            final productId = plan.storeProductIdAndroid;
-            final isBusy = productId != null && _pendingProductIds.contains(productId);
-            return ListTile(
-              title: Text(plan.name),
-              subtitle: Text('${plan.durationDays} gün'),
-              trailing: isBusy
-                  ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                  : ElevatedButton(
-                      onPressed: productId == null ? null : () => _buy(plan.id, productId),
-                      child: Text('${plan.price} ₺'),
+        data: (plans) {
+          final storePrices =
+              ref
+                  .watch(
+                    storePricesProvider(
+                      plans
+                          .map((p) => p.storeProductIdAndroid)
+                          .whereType<String>()
+                          .join(','),
                     ),
-            );
-          },
-        ),
+                  )
+                  .value ??
+              const <String, String>{};
+
+          return ListView.builder(
+            itemCount: plans.length,
+            itemBuilder: (context, index) {
+              final plan = plans[index];
+              final productId = plan.storeProductIdAndroid;
+              final isBusy =
+                  productId != null && _pendingProductIds.contains(productId);
+              return ListTile(
+                title: Text(plan.name),
+                subtitle: Text('${plan.durationDays} gün'),
+                trailing: isBusy
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : ElevatedButton(
+                        onPressed: productId == null
+                            ? null
+                            : () => _buy(plan.id, productId),
+                        child: Text(
+                          storePrices[productId] ??
+                              ((double.tryParse(plan.price) ?? 0) > 0
+                                  ? '${plan.price} ₺'
+                                  : 'Satın Al'),
+                        ),
+                      ),
+              );
+            },
+          );
+        },
       ),
     );
   }

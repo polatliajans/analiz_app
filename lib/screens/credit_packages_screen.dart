@@ -6,12 +6,14 @@ import 'package:in_app_purchase/in_app_purchase.dart';
 import '../models/credit_package.dart';
 import '../providers/auth_provider.dart';
 import '../providers/credit_package_provider.dart';
+import '../providers/store_price_provider.dart';
 
 class CreditPackagesScreen extends ConsumerStatefulWidget {
   const CreditPackagesScreen({super.key});
 
   @override
-  ConsumerState<CreditPackagesScreen> createState() => _CreditPackagesScreenState();
+  ConsumerState<CreditPackagesScreen> createState() =>
+      _CreditPackagesScreenState();
 }
 
 class _CreditPackagesScreenState extends ConsumerState<CreditPackagesScreen> {
@@ -28,7 +30,10 @@ class _CreditPackagesScreenState extends ConsumerState<CreditPackagesScreen> {
   @override
   void initState() {
     super.initState();
-    _subscription = _iap.purchaseStream.listen(_onPurchaseUpdate, onError: (_) {});
+    _subscription = _iap.purchaseStream.listen(
+      _onPurchaseUpdate,
+      onError: (_) {},
+    );
   }
 
   @override
@@ -68,7 +73,8 @@ class _CreditPackagesScreenState extends ConsumerState<CreditPackagesScreen> {
         continue;
       }
 
-      if (purchase.status == PurchaseStatus.purchased || purchase.status == PurchaseStatus.restored) {
+      if (purchase.status == PurchaseStatus.purchased ||
+          purchase.status == PurchaseStatus.restored) {
         setState(() => _pendingProductIds.remove(purchase.productID));
 
         // Identify which package this purchase belongs to strictly from the
@@ -87,7 +93,9 @@ class _CreditPackagesScreenState extends ConsumerState<CreditPackagesScreen> {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('Satın alma doğrulanamadı, paket bilgisi bulunamadı. Uygulamayı yeniden açtığınızda tekrar denenecek.'),
+                content: Text(
+                  'Satın alma doğrulanamadı, paket bilgisi bulunamadı. Uygulamayı yeniden açtığınızda tekrar denenecek.',
+                ),
               ),
             );
           }
@@ -95,7 +103,9 @@ class _CreditPackagesScreenState extends ConsumerState<CreditPackagesScreen> {
         }
 
         try {
-          await ref.read(purchaseApiProvider).verifyCreditPackagePurchase(
+          await ref
+              .read(purchaseApiProvider)
+              .verifyCreditPackagePurchase(
                 token: auth.token!,
                 creditPackageId: package.id,
                 purchaseToken: purchase.verificationData.serverVerificationData,
@@ -158,7 +168,9 @@ class _CreditPackagesScreenState extends ConsumerState<CreditPackagesScreen> {
         return;
       }
 
-      final param = PurchaseParam(productDetails: response.productDetails.first);
+      final param = PurchaseParam(
+        productDetails: response.productDetails.first,
+      );
       final started = await _iap.buyConsumable(purchaseParam: param);
       if (!started) {
         // Request was not even submitted to Play Billing; no stream event
@@ -172,9 +184,9 @@ class _CreditPackagesScreenState extends ConsumerState<CreditPackagesScreen> {
       // app session.
       setState(() => _pendingProductIds.remove(productId));
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Satın alma başlatılamadı: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Satın alma başlatılamadı: $e')));
     }
   }
 
@@ -187,24 +199,48 @@ class _CreditPackagesScreenState extends ConsumerState<CreditPackagesScreen> {
       body: packagesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => Center(child: Text('Bir hata oluştu: $error')),
-        data: (packages) => ListView.builder(
-          itemCount: packages.length,
-          itemBuilder: (context, index) {
-            final package = packages[index];
-            final productId = package.storeProductIdAndroid;
-            final isBusy = productId != null && _pendingProductIds.contains(productId);
-            return ListTile(
-              title: Text(package.name),
-              subtitle: Text('${package.creditAmount} kredi'),
-              trailing: isBusy
-                  ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                  : ElevatedButton(
-                      onPressed: productId == null ? null : () => _buy(package.id, productId),
-                      child: Text('${package.price} ₺'),
+        data: (packages) {
+          final storePrices =
+              ref
+                  .watch(
+                    storePricesProvider(
+                      packages
+                          .map((p) => p.storeProductIdAndroid)
+                          .whereType<String>()
+                          .join(','),
                     ),
-            );
-          },
-        ),
+                  )
+                  .value ??
+              const <String, String>{};
+
+          return ListView.builder(
+            itemCount: packages.length,
+            itemBuilder: (context, index) {
+              final package = packages[index];
+              final productId = package.storeProductIdAndroid;
+              final isBusy =
+                  productId != null && _pendingProductIds.contains(productId);
+              return ListTile(
+                title: Text(package.name),
+                subtitle: Text('${package.creditAmount} kredi'),
+                trailing: isBusy
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : ElevatedButton(
+                        onPressed: productId == null
+                            ? null
+                            : () => _buy(package.id, productId),
+                        child: Text(
+                          storePrices[productId] ?? '${package.price} ₺',
+                        ),
+                      ),
+              );
+            },
+          );
+        },
       ),
     );
   }
