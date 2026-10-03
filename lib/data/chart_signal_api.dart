@@ -6,9 +6,13 @@ import '../models/chart_signal.dart';
 import 'binance_klines_api.dart';
 
 class ChartSignalApi {
-  Future<List<ChartSignal>> fetchSignals({required int coinId, required String timeframe}) async {
-    final uri = Uri.parse('${ApiConfig.baseUrl}/coins/$coinId/chart-signals')
-        .replace(queryParameters: {'timeframe': timeframe});
+  Future<List<ChartSignal>> fetchSignals({
+    required int coinId,
+    required String timeframe,
+  }) async {
+    final uri = Uri.parse(
+      '${ApiConfig.baseUrl}/coins/$coinId/chart-signals',
+    ).replace(queryParameters: {'timeframe': timeframe});
 
     final http.Response response;
     try {
@@ -22,6 +26,8 @@ class ChartSignalApi {
     }
 
     final List<dynamic> data = jsonDecode(response.body) as List<dynamic>;
-    return data.map((json) => ChartSignal.fromJson(json as Map<String, dynamic>)).toList();
+    return data
+        .map((json) => ChartSignal.fromJson(json as Map<String, dynamic>))
+        .toList();
   }
 }

@@ -21,16 +21,25 @@ class ChartDataParams {
 
   @override
   bool operator ==(Object other) =>
-      other is ChartDataParams && other.coin.id == coin.id && other.timeframe == timeframe;
+      other is ChartDataParams &&
+      other.coin.id == coin.id &&
+      other.timeframe == timeframe;
 
   @override
   int get hashCode => Object.hash(coin.id, timeframe);
 }
 
-final binanceKlinesApiProvider = Provider<BinanceKlinesApi>((ref) => BinanceKlinesApi());
-final chartSignalApiProvider = Provider<ChartSignalApi>((ref) => ChartSignalApi());
+final binanceKlinesApiProvider = Provider<BinanceKlinesApi>(
+  (ref) => BinanceKlinesApi(),
+);
+final chartSignalApiProvider = Provider<ChartSignalApi>(
+  (ref) => ChartSignalApi(),
+);
 
-final chartDataProvider = FutureProvider.family<ChartData, ChartDataParams>((ref, params) async {
+final chartDataProvider = FutureProvider.family<ChartData, ChartDataParams>((
+  ref,
+  params,
+) async {
   final klinesApi = ref.watch(binanceKlinesApiProvider);
   final signalApi = ref.watch(chartSignalApiProvider);
 
@@ -43,5 +52,8 @@ final chartDataProvider = FutureProvider.family<ChartData, ChartDataParams>((ref
     signalApi.fetchSignals(coinId: params.coin.id, timeframe: params.timeframe),
   ]);
 
-  return ChartData(candles: results[0] as List<Candle>, signals: results[1] as List<ChartSignal>);
+  return ChartData(
+    candles: results[0] as List<Candle>,
+    signals: results[1] as List<ChartSignal>,
+  );
 });

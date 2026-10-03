@@ -43,6 +43,8 @@ class DeepAnalysisApi {
       throw DeepAnalysisException('Sunucu hatası: ${response.statusCode}');
     }
 
-    return AiAnalysisResult.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+    return AiAnalysisResult.fromJson(
+      jsonDecode(response.body) as Map<String, dynamic>,
+    );
   }
 }

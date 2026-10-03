@@ -22,11 +22,13 @@ class BinanceKlinesApi {
         ? 'https://fapi.binance.com/fapi/v1/klines'
         : 'https://api.binance.com/api/v3/klines';
 
-    final uri = Uri.parse(host).replace(queryParameters: {
-      'symbol': symbol,
-      'interval': timeframe,
-      'limit': '$limit',
-    });
+    final uri = Uri.parse(host).replace(
+      queryParameters: {
+        'symbol': symbol,
+        'interval': timeframe,
+        'limit': '$limit',
+      },
+    );
 
     final http.Response response;
     try {

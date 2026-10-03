@@ -223,7 +223,11 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                   productId != null && _pendingProductIds.contains(productId);
               return ListTile(
                 title: Text(plan.name),
-                subtitle: Text('${plan.durationDays} gün'),
+                subtitle: Text(
+                  plan.monthlyCredit > 0
+                      ? '${plan.durationDays} gün · her ay ${plan.monthlyCredit} kredi'
+                      : '${plan.durationDays} gün',
+                ),
                 trailing: isBusy
                     ? const SizedBox(
                         width: 20,

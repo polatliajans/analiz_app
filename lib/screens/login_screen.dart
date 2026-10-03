@@ -26,7 +26,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Future<void> _submit() async {
     setState(() => _isSubmitting = true);
     try {
-      await ref.read(authProvider.notifier).login(
+      await ref
+          .read(authProvider.notifier)
+          .login(
             email: _emailController.text.trim(),
             password: _passwordController.text,
           );
@@ -71,9 +73,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   : const Text('Giriş Yap'),
             ),
             TextButton(
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const RegisterScreen()),
-              ),
+              onPressed: () => Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => const RegisterScreen())),
               child: const Text('Hesabın yok mu? Kayıt ol'),
             ),
           ],

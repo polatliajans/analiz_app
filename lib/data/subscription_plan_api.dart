@@ -24,10 +24,14 @@ class SubscriptionPlanApi {
     }
 
     if (response.statusCode != 200) {
-      throw SubscriptionPlanException('Abonelik planları alınamadı: ${response.statusCode}');
+      throw SubscriptionPlanException(
+        'Abonelik planları alınamadı: ${response.statusCode}',
+      );
     }
 
     final list = jsonDecode(response.body) as List<dynamic>;
-    return list.map((e) => SubscriptionPlan.fromJson(e as Map<String, dynamic>)).toList();
+    return list
+        .map((e) => SubscriptionPlan.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 }

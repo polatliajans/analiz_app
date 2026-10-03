@@ -20,7 +20,8 @@ class PushNotificationService {
       return;
     }
 
-    _tokenRefreshSubscription = FirebaseMessaging.instance.onTokenRefresh.listen(_registerToken);
+    _tokenRefreshSubscription = FirebaseMessaging.instance.onTokenRefresh
+        .listen(_registerToken);
 
     if (_authToken != null) {
       await _syncCurrentToken();
@@ -52,7 +53,11 @@ class PushNotificationService {
     if (authToken == null) return;
 
     try {
-      await DeviceTokenApi().register(token: authToken, fcmToken: fcmToken, platform: 'android');
+      await DeviceTokenApi().register(
+        token: authToken,
+        fcmToken: fcmToken,
+        platform: 'android',
+      );
     } catch (e) {
       // Ücretsiz üye için 403 beklenir; ağ hataları da kritik değil, sessizce yoksayılır.
       debugPrint('PushNotificationService: $e');

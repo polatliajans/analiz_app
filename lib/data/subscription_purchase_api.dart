@@ -7,7 +7,10 @@ class SubscriptionPurchaseResult {
   final String role;
   final bool alreadyProcessed;
 
-  const SubscriptionPurchaseResult({required this.role, required this.alreadyProcessed});
+  const SubscriptionPurchaseResult({
+    required this.role,
+    required this.alreadyProcessed,
+  });
 
   factory SubscriptionPurchaseResult.fromJson(Map<String, dynamic> json) {
     return SubscriptionPurchaseResult(
@@ -31,7 +34,9 @@ class SubscriptionPurchaseApi {
     required int subscriptionPlanId,
     required String purchaseToken,
   }) async {
-    final uri = Uri.parse('${ApiConfig.baseUrl}/purchases/subscriptions/$subscriptionPlanId');
+    final uri = Uri.parse(
+      '${ApiConfig.baseUrl}/purchases/subscriptions/$subscriptionPlanId',
+    );
 
     final http.Response response;
     try {
@@ -50,12 +55,18 @@ class SubscriptionPurchaseApi {
       throw SubscriptionPurchaseException('Abonelik geçerli değil.');
     }
     if (response.statusCode == 502) {
-      throw SubscriptionPurchaseException('Google Play doğrulama servisine ulaşılamadı.');
+      throw SubscriptionPurchaseException(
+        'Google Play doğrulama servisine ulaşılamadı.',
+      );
     }
     if (response.statusCode != 200) {
-      throw SubscriptionPurchaseException('Sunucu hatası: ${response.statusCode}');
+      throw SubscriptionPurchaseException(
+        'Sunucu hatası: ${response.statusCode}',
+      );
     }
 
-    return SubscriptionPurchaseResult.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+    return SubscriptionPurchaseResult.fromJson(
+      jsonDecode(response.body) as Map<String, dynamic>,
+    );
   }
 }

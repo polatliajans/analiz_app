@@ -25,7 +25,9 @@ class AuthState {
 }
 
 final authApiProvider = Provider<AuthApi>((ref) => AuthApi());
-final secureStorageProvider = Provider<FlutterSecureStorage>((ref) => const FlutterSecureStorage());
+final secureStorageProvider = Provider<FlutterSecureStorage>(
+  (ref) => const FlutterSecureStorage(),
+);
 
 class AuthNotifier extends Notifier<AuthState> {
   @override
@@ -49,11 +51,19 @@ class AuthNotifier extends Notifier<AuthState> {
     }
   }
 
-  Future<void> register({String? name, required String email, required String password}) async {
+  Future<void> register({
+    String? name,
+    required String email,
+    required String password,
+  }) async {
     state = state.copyWith(isLoading: true);
     try {
-      final result = await ref.read(authApiProvider).register(name: name, email: email, password: password);
-      await ref.read(secureStorageProvider).write(key: _tokenStorageKey, value: result.token);
+      final result = await ref
+          .read(authApiProvider)
+          .register(name: name, email: email, password: password);
+      await ref
+          .read(secureStorageProvider)
+          .write(key: _tokenStorageKey, value: result.token);
       state = AuthState(member: result.member, token: result.token);
     } catch (e) {
       state = state.copyWith(isLoading: false);
@@ -64,8 +74,12 @@ class AuthNotifier extends Notifier<AuthState> {
   Future<void> login({required String email, required String password}) async {
     state = state.copyWith(isLoading: true);
     try {
-      final result = await ref.read(authApiProvider).login(email: email, password: password);
-      await ref.read(secureStorageProvider).write(key: _tokenStorageKey, value: result.token);
+      final result = await ref
+          .read(authApiProvider)
+          .login(email: email, password: password);
+      await ref
+          .read(secureStorageProvider)
+          .write(key: _tokenStorageKey, value: result.token);
       state = AuthState(member: result.member, token: result.token);
     } catch (e) {
       state = state.copyWith(isLoading: false);
@@ -94,4 +108,6 @@ class AuthNotifier extends Notifier<AuthState> {
   }
 }
 
-final authProvider = NotifierProvider<AuthNotifier, AuthState>(AuthNotifier.new);
+final authProvider = NotifierProvider<AuthNotifier, AuthState>(
+  AuthNotifier.new,
+);

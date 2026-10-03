@@ -35,9 +35,9 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
   Future<void> _requestAnalysis() async {
     final auth = ref.read(authProvider);
     if (!auth.isLoggedIn) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Giriş yapmalısın')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Giriş yapmalısın')));
       return;
     }
 
@@ -70,9 +70,9 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Analiz alınamadı: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Analiz alınamadı: $e')));
     } finally {
       if (mounted) setState(() => _isRequestingAnalysis = false);
     }
@@ -81,9 +81,9 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
   Future<void> _requestDeepAnalysis() async {
     final auth = ref.read(authProvider);
     if (!auth.isLoggedIn) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Giriş yapmalısın')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Giriş yapmalısın')));
       return;
     }
 
@@ -116,9 +116,9 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Derin analiz alınamadı: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Derin analiz alınamadı: $e')));
     } finally {
       if (mounted) setState(() => _isRequestingDeepAnalysis = false);
     }
@@ -126,7 +126,10 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final params = ChartDataParams(coin: widget.coin, timeframe: _selectedTimeframe);
+    final params = ChartDataParams(
+      coin: widget.coin,
+      timeframe: _selectedTimeframe,
+    );
     final chartDataAsync = ref.watch(chartDataProvider(params));
 
     return Scaffold(
@@ -158,10 +161,14 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text('Bir hata oluştu: $error', textAlign: TextAlign.center),
+                    Text(
+                      'Bir hata oluştu: $error',
+                      textAlign: TextAlign.center,
+                    ),
                     const SizedBox(height: 12),
                     ElevatedButton(
-                      onPressed: () => ref.invalidate(chartDataProvider(params)),
+                      onPressed: () =>
+                          ref.invalidate(chartDataProvider(params)),
                       child: const Text('Tekrar Dene'),
                     ),
                   ],
@@ -193,7 +200,9 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: _isRequestingDeepAnalysis ? null : _requestDeepAnalysis,
+                    onPressed: _isRequestingDeepAnalysis
+                        ? null
+                        : _requestDeepAnalysis,
                     child: _isRequestingDeepAnalysis
                         ? const SizedBox(
                             width: 20,
@@ -223,21 +232,27 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
       icon: Icon(isFollowed ? Icons.star : Icons.star_border),
       onPressed: () async {
         if (!auth.isLoggedIn) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Giriş yapmalısın')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Giriş yapmalısın')));
           return;
         }
         try {
           if (isFollowed) {
-            await ref.read(watchlistApiProvider).unfollow(auth.token!, widget.coin.id);
+            await ref
+                .read(watchlistApiProvider)
+                .unfollow(auth.token!, widget.coin.id);
           } else {
-            await ref.read(watchlistApiProvider).follow(auth.token!, widget.coin.id);
+            await ref
+                .read(watchlistApiProvider)
+                .follow(auth.token!, widget.coin.id);
           }
           ref.invalidate(watchlistProvider);
         } catch (e) {
           if (!context.mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('$e')));
         }
       },
     );

@@ -30,6 +30,8 @@ class CoinApi {
     }
 
     final List<dynamic> data = jsonDecode(response.body) as List<dynamic>;
-    return data.map((json) => Coin.fromJson(json as Map<String, dynamic>)).toList();
+    return data
+        .map((json) => Coin.fromJson(json as Map<String, dynamic>))
+        .toList();
   }
 }

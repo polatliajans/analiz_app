@@ -4,6 +4,7 @@ class SubscriptionPlan {
   final String price;
   final int durationDays;
   final String? storeProductIdAndroid;
+  final int monthlyCredit;
 
   const SubscriptionPlan({
     required this.id,
@@ -11,6 +12,7 @@ class SubscriptionPlan {
     required this.price,
     required this.durationDays,
     this.storeProductIdAndroid,
+    this.monthlyCredit = 0,
   });
 
   factory SubscriptionPlan.fromJson(Map<String, dynamic> json) {
@@ -20,6 +22,7 @@ class SubscriptionPlan {
       price: json['price'].toString(),
       durationDays: json['duration_days'] as int,
       storeProductIdAndroid: json['store_product_id_android'] as String?,
+      monthlyCredit: (json['monthly_credit'] as num?)?.toInt() ?? 0,
     );
   }
 }

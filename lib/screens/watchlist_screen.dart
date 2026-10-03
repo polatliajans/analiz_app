@@ -31,7 +31,9 @@ class WatchlistScreen extends ConsumerWidget {
         ),
         data: (coins) {
           if (coins.isEmpty) {
-            return const Center(child: Text('Henüz takip ettiğin bir coin yok'));
+            return const Center(
+              child: Text('Henüz takip ettiğin bir coin yok'),
+            );
           }
           return ListView.separated(
             itemCount: coins.length,

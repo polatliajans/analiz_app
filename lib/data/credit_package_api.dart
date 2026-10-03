@@ -24,10 +24,14 @@ class CreditPackageApi {
     }
 
     if (response.statusCode != 200) {
-      throw CreditPackageException('Kredi paketleri alınamadı: ${response.statusCode}');
+      throw CreditPackageException(
+        'Kredi paketleri alınamadı: ${response.statusCode}',
+      );
     }
 
     final list = jsonDecode(response.body) as List<dynamic>;
-    return list.map((e) => CreditPackage.fromJson(e as Map<String, dynamic>)).toList();
+    return list
+        .map((e) => CreditPackage.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 }

@@ -24,7 +24,9 @@ class Coin {
       name: json['name'] as String,
       marketType: json['market_type'] as String,
       lastPrice: _parseNullableDouble(json['last_price']),
-      priceChangePercent24h: _parseNullableDouble(json['price_change_percent_24h']),
+      priceChangePercent24h: _parseNullableDouble(
+        json['price_change_percent_24h'],
+      ),
       volume24h: _parseNullableDouble(json['volume_24h']),
     );
   }

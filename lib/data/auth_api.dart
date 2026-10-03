@@ -20,7 +20,11 @@ class AuthResult {
 }
 
 class AuthApi {
-  Future<AuthResult> register({String? name, required String email, required String password}) async {
+  Future<AuthResult> register({
+    String? name,
+    required String email,
+    required String password,
+  }) async {
     final body = {'email': email, 'password': password};
     if (name != null) body['name'] = name;
 
@@ -28,16 +32,24 @@ class AuthApi {
     return _parseAuthResult(response);
   }
 
-  Future<AuthResult> login({required String email, required String password}) async {
-    final response = await _post('/auth/login', {'email': email, 'password': password});
+  Future<AuthResult> login({
+    required String email,
+    required String password,
+  }) async {
+    final response = await _post('/auth/login', {
+      'email': email,
+      'password': password,
+    });
     return _parseAuthResult(response);
   }
 
   Future<void> logout(String token) async {
-    await http.post(
-      Uri.parse('${ApiConfig.baseUrl}/auth/logout'),
-      headers: {'Authorization': 'Bearer $token'},
-    ).timeout(const Duration(seconds: 10));
+    await http
+        .post(
+          Uri.parse('${ApiConfig.baseUrl}/auth/logout'),
+          headers: {'Authorization': 'Bearer $token'},
+        )
+        .timeout(const Duration(seconds: 10));
   }
 
   Future<Member> me(String token) async {

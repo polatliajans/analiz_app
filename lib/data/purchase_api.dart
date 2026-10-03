@@ -7,7 +7,10 @@ class PurchaseResult {
   final int creditBalance;
   final bool alreadyProcessed;
 
-  const PurchaseResult({required this.creditBalance, required this.alreadyProcessed});
+  const PurchaseResult({
+    required this.creditBalance,
+    required this.alreadyProcessed,
+  });
 
   factory PurchaseResult.fromJson(Map<String, dynamic> json) {
     return PurchaseResult(
@@ -31,7 +34,9 @@ class PurchaseApi {
     required int creditPackageId,
     required String purchaseToken,
   }) async {
-    final uri = Uri.parse('${ApiConfig.baseUrl}/purchases/credit-packages/$creditPackageId');
+    final uri = Uri.parse(
+      '${ApiConfig.baseUrl}/purchases/credit-packages/$creditPackageId',
+    );
 
     final http.Response response;
     try {
@@ -56,6 +61,8 @@ class PurchaseApi {
       throw PurchaseException('Sunucu hatası: ${response.statusCode}');
     }
 
-    return PurchaseResult.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+    return PurchaseResult.fromJson(
+      jsonDecode(response.body) as Map<String, dynamic>,
+    );
   }
 }

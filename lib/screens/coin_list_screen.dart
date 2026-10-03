@@ -5,6 +5,7 @@ import '../providers/coin_list_provider.dart';
 import '../widgets/coin_list_item.dart';
 import 'account_screen.dart';
 import 'chart_screen.dart';
+import 'radar_screen.dart';
 
 class CoinListScreen extends ConsumerStatefulWidget {
   const CoinListScreen({super.key});
@@ -39,15 +40,25 @@ class _CoinListScreenState extends ConsumerState<CoinListScreen>
         title: const Text('Coinler'),
         actions: [
           IconButton(
+            icon: const Icon(Icons.radar),
+            tooltip: 'Radar',
+            onPressed: () => Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => const RadarScreen())),
+          ),
+          IconButton(
             icon: const Icon(Icons.person),
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const AccountScreen()),
-            ),
+            onPressed: () => Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => const AccountScreen())),
           ),
         ],
         bottom: TabBar(
           controller: _tabController,
-          tabs: const [Tab(text: 'Spot'), Tab(text: 'Futures')],
+          tabs: const [
+            Tab(text: 'Spot'),
+            Tab(text: 'Futures'),
+          ],
         ),
       ),
       body: Column(
@@ -60,14 +71,20 @@ class _CoinListScreenState extends ConsumerState<CoinListScreen>
                 prefixIcon: Icon(Icons.search),
                 border: OutlineInputBorder(),
               ),
-              onChanged: (value) => setState(() => _searchQuery = value.toUpperCase()),
+              onChanged: (value) =>
+                  setState(() => _searchQuery = value.toUpperCase()),
             ),
           ),
           Expanded(
             child: TabBarView(
               controller: _tabController,
               children: _marketTypes
-                  .map((marketType) => _CoinList(marketType: marketType, searchQuery: _searchQuery))
+                  .map(
+                    (marketType) => _CoinList(
+                      marketType: marketType,
+                      searchQuery: _searchQuery,
+                    ),
+                  )
                   .toList(),
             ),
           ),

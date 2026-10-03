@@ -27,8 +27,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   Future<void> _submit() async {
     setState(() => _isSubmitting = true);
     try {
-      await ref.read(authProvider.notifier).register(
-            name: _nameController.text.trim().isEmpty ? null : _nameController.text.trim(),
+      await ref
+          .read(authProvider.notifier)
+          .register(
+            name: _nameController.text.trim().isEmpty
+                ? null
+                : _nameController.text.trim(),
             email: _emailController.text.trim(),
             password: _passwordController.text,
           );
@@ -63,7 +67,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             const SizedBox(height: 12),
             TextField(
               controller: _passwordController,
-              decoration: const InputDecoration(labelText: 'Şifre (en az 8 karakter)'),
+              decoration: const InputDecoration(
+                labelText: 'Şifre (en az 8 karakter)',
+              ),
               obscureText: true,
             ),
             const SizedBox(height: 20),

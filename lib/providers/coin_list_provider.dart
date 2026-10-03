@@ -5,7 +5,10 @@ import '../models/coin.dart';
 
 final coinApiProvider = Provider<CoinApi>((ref) => CoinApi());
 
-final coinListProvider = FutureProvider.family<List<Coin>, String>((ref, marketType) async {
+final coinListProvider = FutureProvider.family<List<Coin>, String>((
+  ref,
+  marketType,
+) async {
   final api = ref.watch(coinApiProvider);
   return api.fetchCoins(marketType: marketType);
 });

@@ -23,19 +23,25 @@ class AccountScreen extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('E-posta: ${authState.member!.email}'),
-                  Text('Rol: ${authState.member!.role == 'pro' ? 'Pro' : 'Ücretsiz'}'),
+                  Text(
+                    'Rol: ${authState.member!.role == 'pro' ? 'Pro' : 'Ücretsiz'}',
+                  ),
                   Text('Kredi Bakiyesi: ${authState.member!.creditBalance}'),
                   const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const WatchlistScreen()),
+                      MaterialPageRoute(
+                        builder: (_) => const WatchlistScreen(),
+                      ),
                     ),
                     child: const Text('Takip Listem'),
                   ),
                   const SizedBox(height: 12),
                   ElevatedButton(
                     onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const CreditPackagesScreen()),
+                      MaterialPageRoute(
+                        builder: (_) => const CreditPackagesScreen(),
+                      ),
                     ),
                     child: const Text('Kredi Satın Al'),
                   ),
@@ -43,7 +49,9 @@ class AccountScreen extends ConsumerWidget {
                     const SizedBox(height: 12),
                     ElevatedButton(
                       onPressed: () => Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const SubscriptionScreen()),
+                        MaterialPageRoute(
+                          builder: (_) => const SubscriptionScreen(),
+                        ),
                       ),
                       child: const Text("Pro'ya Yükselt"),
                     ),
