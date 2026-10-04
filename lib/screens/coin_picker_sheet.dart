@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../l10n/app_localizations.dart';
+import '../models/coin.dart';
+import '../providers/auth_provider.dart';
 import '../providers/coin_list_provider.dart';
 import '../providers/selected_coin_provider.dart';
+import '../providers/watchlist_provider.dart';
 import '../utils/stable_pairs.dart';
 import '../widgets/coin_list_item.dart';
+import 'auth_screen.dart';
 
 /// Opens the near-full-screen coin picker. Picking a coin updates
 /// [selectedCoinProvider] and closes the sheet.
@@ -32,7 +36,7 @@ class _CoinPickerState extends ConsumerState<_CoinPicker>
   late final TabController _tabController;
   String _searchQuery = '';
 
-  static const _marketTypes = ['spot', 'futures'];
+  static const _marketTypes = ['spot', 'futures', 'favorites'];
 
   @override
   void initState() {
@@ -54,38 +58,44 @@ class _CoinPickerState extends ConsumerState<_CoinPicker>
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Column(
-      children: [
-        TabBar(
-          controller: _tabController,
-          tabs: const [
-            Tab(text: 'Spot'),
-            Tab(text: 'Futures'),
-          ],
-        ),
-        Padding(
-          padding: const EdgeInsets.all(12),
-          child: TextField(
-            decoration: InputDecoration(
-              hintText: l10n.searchSymbol,
-              prefixIcon: const Icon(Icons.search),
-              border: const OutlineInputBorder(),
-            ),
-            onChanged: (value) =>
-                setState(() => _searchQuery = value.toUpperCase()),
-          ),
-        ),
-        Expanded(
-          child: TabBarView(
+    return Padding(
+      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+      child: Column(
+        children: [
+          TabBar(
             controller: _tabController,
-            children: _marketTypes
-                .map(
-                  (m) => _CoinList(marketType: m, searchQuery: _searchQuery),
-                )
-                .toList(),
+            tabs: [
+              const Tab(text: 'Spot'),
+              const Tab(text: 'Futures'),
+              Tab(text: l10n.favoritesTab),
+            ],
           ),
-        ),
-      ],
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: l10n.searchSymbol,
+                prefixIcon: const Icon(Icons.search),
+                border: const OutlineInputBorder(),
+              ),
+              onChanged: (value) =>
+                  setState(() => _searchQuery = value.toUpperCase()),
+            ),
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: _marketTypes
+                  .map(
+                    (m) => m == 'favorites'
+                        ? _FavoritesList(searchQuery: _searchQuery)
+                        : _CoinList(marketType: m, searchQuery: _searchQuery),
+                  )
+                  .toList(),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -134,20 +144,98 @@ class _CoinList extends ConsumerWidget {
           return Center(child: Text(l10n.noCoinsFound));
         }
 
-        return ListView.separated(
-          itemCount: filtered.length,
-          separatorBuilder: (_, _) => const Divider(height: 1),
-          itemBuilder: (context, index) {
-            final coin = filtered[index];
-            return CoinListItem(
-              coin: coin,
-              onTap: () {
-                ref.read(selectedCoinProvider.notifier).select(coin);
-                Navigator.of(context).pop();
-              },
-            );
+        return _CoinListView(coins: filtered);
+      },
+    );
+  }
+}
+
+class _CoinListView extends ConsumerWidget {
+  final List<Coin> coins;
+
+  const _CoinListView({required this.coins});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ListView.separated(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.viewPaddingOf(context).bottom,
+      ),
+      itemCount: coins.length,
+      separatorBuilder: (_, _) => const Divider(height: 1),
+      itemBuilder: (context, index) {
+        final coin = coins[index];
+        return CoinListItem(
+          coin: coin,
+          onTap: () {
+            ref.read(selectedCoinProvider.notifier).select(coin);
+            Navigator.of(context).pop();
           },
         );
+      },
+    );
+  }
+}
+
+/// Watchlist coins (spot and futures together); search and the stable-pair
+/// filter apply here as well.
+class _FavoritesList extends ConsumerWidget {
+  final String searchQuery;
+
+  const _FavoritesList({required this.searchQuery});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final auth = ref.watch(authProvider);
+
+    if (!auth.isLoggedIn) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(l10n.favoritesLoginHint, textAlign: TextAlign.center),
+              const SizedBox(height: 12),
+              ElevatedButton(
+                onPressed: () => openAuthScreen(context),
+                child: Text(l10n.logIn),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final async = ref.watch(watchlistProvider);
+    return async.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, _) => Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(l10n.errorOccurred('$error'), textAlign: TextAlign.center),
+            const SizedBox(height: 12),
+            ElevatedButton(
+              onPressed: () => ref.invalidate(watchlistProvider),
+              child: Text(l10n.retry),
+            ),
+          ],
+        ),
+      ),
+      data: (coins) {
+        if (coins.isEmpty) {
+          return Center(child: Text(l10n.favoritesEmpty));
+        }
+        final filtered = coins
+            .where((c) => !isStablePair(c.symbol))
+            .where((c) => searchQuery.isEmpty || c.symbol.contains(searchQuery))
+            .toList();
+        if (filtered.isEmpty) {
+          return Center(child: Text(l10n.noCoinsFound));
+        }
+        return _CoinListView(coins: filtered);
       },
     );
   }

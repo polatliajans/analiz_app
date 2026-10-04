@@ -885,6 +885,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Profile'**
   String get tabProfile;
+
+  /// No description provided for @analysisInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Analysis in progress'**
+  String get analysisInProgress;
+
+  /// No description provided for @analysisMayTakeTime.
+  ///
+  /// In en, this message translates to:
+  /// **'This may take 20-30 seconds'**
+  String get analysisMayTakeTime;
+
+  /// No description provided for @analysisHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My Analyses'**
+  String get analysisHistoryTitle;
+
+  /// No description provided for @analysisHistorySection.
+  ///
+  /// In en, this message translates to:
+  /// **'Past analyses'**
+  String get analysisHistorySection;
+
+  /// No description provided for @analysisHistoryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No analyses yet'**
+  String get analysisHistoryEmpty;
+
+  /// No description provided for @analysisHistoryLoginHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Log in to see your past analyses'**
+  String get analysisHistoryLoginHint;
+
+  /// No description provided for @analysisTypeQuick.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick'**
+  String get analysisTypeQuick;
+
+  /// No description provided for @analysisTypeDeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Deep'**
+  String get analysisTypeDeep;
+
+  /// No description provided for @favoritesTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get favoritesTab;
+
+  /// No description provided for @favoritesLoginHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Log in to see your favorite coins'**
+  String get favoritesLoginHint;
+
+  /// No description provided for @favoritesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No favorites yet'**
+  String get favoritesEmpty;
 }
 
 class _AppLocalizationsDelegate

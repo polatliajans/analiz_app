@@ -520,4 +520,39 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get tabProfile => 'Perfil';
+
+  @override
+  String get analysisInProgress => 'Análisis en curso';
+
+  @override
+  String get analysisMayTakeTime => 'Puede tardar de 20 a 30 segundos';
+
+  @override
+  String get analysisHistoryTitle => 'Mis análisis';
+
+  @override
+  String get analysisHistorySection => 'Análisis anteriores';
+
+  @override
+  String get analysisHistoryEmpty => 'Aún no hay análisis';
+
+  @override
+  String get analysisHistoryLoginHint =>
+      'Inicia sesión para ver tus análisis anteriores';
+
+  @override
+  String get analysisTypeQuick => 'Rápido';
+
+  @override
+  String get analysisTypeDeep => 'Profundo';
+
+  @override
+  String get favoritesTab => 'Favoritos';
+
+  @override
+  String get favoritesLoginHint =>
+      'Inicia sesión para ver tus monedas favoritas';
+
+  @override
+  String get favoritesEmpty => 'Aún no hay favoritos';
 }

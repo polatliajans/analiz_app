@@ -235,6 +235,9 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               const <String, String>{};
 
           return ListView.builder(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.paddingOf(context).bottom,
+            ),
             itemCount: plans.length,
             itemBuilder: (context, index) {
               final plan = plans[index];

@@ -5,6 +5,7 @@ import '../l10n/app_localizations.dart';
 import '../models/member.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/email_verification_banner.dart';
+import 'analysis_history_screen.dart';
 import 'auth_screen.dart';
 import 'credit_packages_screen.dart';
 import 'settings_screen.dart';
@@ -57,6 +58,14 @@ class AccountScreen extends ConsumerWidget {
                           title: Text(l10n.myWatchlist),
                           trailing: const Icon(Icons.chevron_right),
                           onTap: () => _push(context, const WatchlistScreen()),
+                        ),
+                        const Divider(height: 1),
+                        ListTile(
+                          leading: const Icon(Icons.history),
+                          title: Text(l10n.analysisHistoryTitle),
+                          trailing: const Icon(Icons.chevron_right),
+                          onTap: () =>
+                              _push(context, const AnalysisHistoryScreen()),
                         ),
                         const Divider(height: 1),
                       ],

@@ -5,21 +5,18 @@ import '../data/ai_analysis_api.dart';
 import '../data/deep_analysis_api.dart';
 import '../l10n/app_localizations.dart';
 import '../models/coin.dart';
+import '../providers/analysis_history_provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/chart_data_provider.dart';
 import '../providers/selected_coin_provider.dart';
 import '../providers/watchlist_provider.dart';
+import '../utils/timeframes.dart';
+import '../widgets/analysis_card.dart';
+import '../widgets/analysis_progress_overlay.dart';
 import '../widgets/candlestick_chart.dart';
 import '../widgets/email_verification_banner.dart';
 import 'auth_screen.dart';
 import 'coin_picker_sheet.dart';
-
-const _timeframeMs = {
-  '15m': 15 * 60 * 1000,
-  '1h': 60 * 60 * 1000,
-  '4h': 4 * 60 * 60 * 1000,
-  '1d': 24 * 60 * 60 * 1000,
-};
 
 /// Home chart tab: shows the coin held by [selectedCoinProvider].
 class ChartScreen extends ConsumerStatefulWidget {
@@ -30,10 +27,16 @@ class ChartScreen extends ConsumerStatefulWidget {
 }
 
 class _ChartScreenState extends ConsumerState<ChartScreen> {
-  bool _isRequestingAnalysis = false;
-  bool _isRequestingDeepAnalysis = false;
-
-  Future<void> _requestAnalysis(Coin coin) async {
+  Future<void> _runAnalysis(
+    Coin coin, {
+    required Future<({String result, int creditCost})> Function(
+      String token,
+      String timeframe,
+    )
+    request,
+    required String Function(AppLocalizations l10n, String details)
+    failureMessage,
+  }) async {
     final l10n = AppLocalizations.of(context)!;
     final auth = ref.read(authProvider);
     if (!auth.isLoggedIn) {
@@ -41,87 +44,49 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
       return;
     }
 
-    setState(() => _isRequestingAnalysis = true);
+    final timeframe = ref.read(timeframeProvider);
     try {
-      final result = await AiAnalysisApi().requestAnalysis(
-        token: auth.token!,
-        coinId: coin.id,
-        timeframe: ref.read(timeframeProvider),
+      final r = await runWithAnalysisOverlay(
+        context,
+        () => request(auth.token!, timeframe),
       );
       await ref.read(authProvider.notifier).refreshMember();
+      ref.invalidate(analysisHistoryProvider);
       if (!mounted) return;
-      showModalBottomSheet(
-        context: context,
-        builder: (_) => Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(result.result),
-              const SizedBox(height: 8),
-              Text(
-                l10n.creditsSpent(result.creditCost),
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-            ],
-          ),
-        ),
-      );
+      showAnalysisSheet(context, result: r.result, creditCost: r.creditCost);
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text(l10n.analysisFailed('$e'))));
-    } finally {
-      if (mounted) setState(() => _isRequestingAnalysis = false);
+      ).showSnackBar(SnackBar(content: Text(failureMessage(l10n, '$e'))));
     }
   }
 
-  Future<void> _requestDeepAnalysis(Coin coin) async {
-    final l10n = AppLocalizations.of(context)!;
-    final auth = ref.read(authProvider);
-    if (!auth.isLoggedIn) {
-      showLoginRequiredSnackBar(context);
-      return;
-    }
-
-    setState(() => _isRequestingDeepAnalysis = true);
-    try {
-      final result = await DeepAnalysisApi().requestAnalysis(
-        token: auth.token!,
+  Future<void> _requestAnalysis(Coin coin) => _runAnalysis(
+    coin,
+    request: (token, timeframe) async {
+      final r = await AiAnalysisApi().requestAnalysis(
+        token: token,
         coinId: coin.id,
-        timeframe: ref.read(timeframeProvider),
+        timeframe: timeframe,
       );
-      await ref.read(authProvider.notifier).refreshMember();
-      if (!mounted) return;
-      showModalBottomSheet(
-        context: context,
-        builder: (_) => Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(result.result),
-              const SizedBox(height: 8),
-              Text(
-                l10n.creditsSpent(result.creditCost),
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-            ],
-          ),
-        ),
+      return (result: r.result, creditCost: r.creditCost);
+    },
+    failureMessage: (l10n, d) => l10n.analysisFailed(d),
+  );
+
+  Future<void> _requestDeepAnalysis(Coin coin) => _runAnalysis(
+    coin,
+    request: (token, timeframe) async {
+      final r = await DeepAnalysisApi().requestAnalysis(
+        token: token,
+        coinId: coin.id,
+        timeframe: timeframe,
       );
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(l10n.deepAnalysisFailed('$e'))));
-    } finally {
-      if (mounted) setState(() => _isRequestingDeepAnalysis = false);
-    }
-  }
+      return (result: r.result, creditCost: r.creditCost);
+    },
+    failureMessage: (l10n, d) => l10n.deepAnalysisFailed(d),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -227,24 +192,30 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Wrap(
-                spacing: 8,
-                children: chartTimeframes.map((tf) {
-                  return ChoiceChip(
-                    label: Text(tf),
-                    selected: tf == timeframe,
-                    onSelected: (_) =>
-                        ref.read(timeframeProvider.notifier).select(tf),
-                  );
-                }).toList(),
-              ),
+          SizedBox(
+            height: 36,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              itemCount: chartTimeframes.length,
+              separatorBuilder: (_, _) => const SizedBox(width: 6),
+              itemBuilder: (_, i) {
+                final tf = chartTimeframes[i];
+                return ChoiceChip(
+                  label: Text(tf),
+                  labelStyle: textTheme.labelMedium,
+                  visualDensity: VisualDensity.compact,
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                  selected: tf == timeframe,
+                  onSelected: (_) =>
+                      ref.read(timeframeProvider.notifier).select(tf),
+                );
+              },
             ),
           ),
           Expanded(
+            flex: 5,
             child: chartDataAsync.when(
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (error, _) => Center(
@@ -267,43 +238,36 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
               data: (chartData) => CandlestickChart(
                 candles: chartData.candles,
                 signals: chartData.signals,
-                timeframeMs: _timeframeMs[timeframe]!,
+                timeframeMs: timeframeMs[timeframe]!,
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
+          Expanded(
+            flex: 4,
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
               children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: _isRequestingAnalysis
-                        ? null
-                        : () => _requestAnalysis(coin),
-                    child: _isRequestingAnalysis
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : Text(l10n.quickAnalysisButton),
-                  ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () => _requestAnalysis(coin),
+                        child: Text(l10n.quickAnalysisButton),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () => _requestDeepAnalysis(coin),
+                        child: Text(l10n.deepAnalysisButton),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: _isRequestingDeepAnalysis
-                        ? null
-                        : () => _requestDeepAnalysis(coin),
-                    child: _isRequestingDeepAnalysis
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : Text(l10n.deepAnalysisButton),
-                  ),
-                ),
+                const SizedBox(height: 16),
+                Text(l10n.analysisHistorySection, style: textTheme.titleSmall),
+                const SizedBox(height: 4),
+                ..._historyItems(context, l10n, coin),
               ],
             ),
           ),
@@ -312,11 +276,36 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
     );
   }
 
-  Widget _buildWatchlistButton(
+  List<Widget> _historyItems(
     BuildContext context,
-    WidgetRef ref,
+    AppLocalizations l10n,
     Coin coin,
   ) {
+    final auth = ref.watch(authProvider);
+    final muted = Theme.of(context).colorScheme.onSurfaceVariant;
+    Widget hint(String text) => Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Text(text, style: TextStyle(color: muted)),
+    );
+
+    if (!auth.isLoggedIn) return [hint(l10n.analysisHistoryLoginHint)];
+
+    final async = ref.watch(analysisHistoryProvider(coin.id));
+    return async.when(
+      loading: () => const [
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 16),
+          child: Center(child: CircularProgressIndicator()),
+        ),
+      ],
+      error: (e, _) => [hint(l10n.errorOccurred('$e'))],
+      data: (records) => records.isEmpty
+          ? [hint(l10n.analysisHistoryEmpty)]
+          : [for (final r in records) AnalysisCard(record: r)],
+    );
+  }
+
+  Widget _buildWatchlistButton(BuildContext context, WidgetRef ref, Coin coin) {
     final auth = ref.watch(authProvider);
     final watchlistAsync = ref.watch(watchlistProvider);
     final isFollowed = watchlistAsync.maybeWhen(

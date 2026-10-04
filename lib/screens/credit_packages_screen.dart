@@ -236,6 +236,9 @@ class _CreditPackagesScreenState extends ConsumerState<CreditPackagesScreen> {
               const <String, String>{};
 
           return ListView.builder(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.paddingOf(context).bottom,
+            ),
             itemCount: packages.length,
             itemBuilder: (context, index) {
               final package = packages[index];

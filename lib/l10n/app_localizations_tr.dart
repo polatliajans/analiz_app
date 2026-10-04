@@ -480,4 +480,38 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get tabProfile => 'Profil';
+
+  @override
+  String get analysisInProgress => 'Analiz yapılıyor';
+
+  @override
+  String get analysisMayTakeTime => '20-30 saniye sürebilir';
+
+  @override
+  String get analysisHistoryTitle => 'Analizlerim';
+
+  @override
+  String get analysisHistorySection => 'Geçmiş analizler';
+
+  @override
+  String get analysisHistoryEmpty => 'Henüz analiz yok';
+
+  @override
+  String get analysisHistoryLoginHint =>
+      'Geçmiş analizlerini görmek için giriş yap';
+
+  @override
+  String get analysisTypeQuick => 'Hızlı';
+
+  @override
+  String get analysisTypeDeep => 'Derin';
+
+  @override
+  String get favoritesTab => 'Favoriler';
+
+  @override
+  String get favoritesLoginHint => 'Favori coinlerini görmek için giriş yap';
+
+  @override
+  String get favoritesEmpty => 'Henüz favori yok';
 }

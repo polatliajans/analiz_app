@@ -512,4 +512,37 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tabProfile => 'Profile';
+
+  @override
+  String get analysisInProgress => 'Analysis in progress';
+
+  @override
+  String get analysisMayTakeTime => 'This may take 20-30 seconds';
+
+  @override
+  String get analysisHistoryTitle => 'My Analyses';
+
+  @override
+  String get analysisHistorySection => 'Past analyses';
+
+  @override
+  String get analysisHistoryEmpty => 'No analyses yet';
+
+  @override
+  String get analysisHistoryLoginHint => 'Log in to see your past analyses';
+
+  @override
+  String get analysisTypeQuick => 'Quick';
+
+  @override
+  String get analysisTypeDeep => 'Deep';
+
+  @override
+  String get favoritesTab => 'Favorites';
+
+  @override
+  String get favoritesLoginHint => 'Log in to see your favorite coins';
+
+  @override
+  String get favoritesEmpty => 'No favorites yet';
 }

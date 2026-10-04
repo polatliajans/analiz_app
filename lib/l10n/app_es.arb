@@ -130,5 +130,16 @@
   "guestProfileHint": "Inicia sesión o regístrate para usar tu lista de seguimiento, comprar créditos y sincronizar tu cuenta.",
   "tabChart": "Gráfico",
   "tabWatchlist": "Seguimiento",
-  "tabProfile": "Perfil"
+  "tabProfile": "Perfil",
+  "analysisInProgress": "Análisis en curso",
+  "analysisMayTakeTime": "Puede tardar de 20 a 30 segundos",
+  "analysisHistoryTitle": "Mis análisis",
+  "analysisHistorySection": "Análisis anteriores",
+  "analysisHistoryEmpty": "Aún no hay análisis",
+  "analysisHistoryLoginHint": "Inicia sesión para ver tus análisis anteriores",
+  "analysisTypeQuick": "Rápido",
+  "analysisTypeDeep": "Profundo",
+  "favoritesTab": "Favoritos",
+  "favoritesLoginHint": "Inicia sesión para ver tus monedas favoritas",
+  "favoritesEmpty": "Aún no hay favoritos"
 }

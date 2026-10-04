@@ -347,5 +347,16 @@
   "guestProfileHint": "Log in or sign up to track your watchlist, buy credits and sync your account.",
   "tabChart": "Chart",
   "tabWatchlist": "Watchlist",
-  "tabProfile": "Profile"
+  "tabProfile": "Profile",
+  "analysisInProgress": "Analysis in progress",
+  "analysisMayTakeTime": "This may take 20-30 seconds",
+  "analysisHistoryTitle": "My Analyses",
+  "analysisHistorySection": "Past analyses",
+  "analysisHistoryEmpty": "No analyses yet",
+  "analysisHistoryLoginHint": "Log in to see your past analyses",
+  "analysisTypeQuick": "Quick",
+  "analysisTypeDeep": "Deep",
+  "favoritesTab": "Favorites",
+  "favoritesLoginHint": "Log in to see your favorite coins",
+  "favoritesEmpty": "No favorites yet"
 }

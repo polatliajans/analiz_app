@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/coin.dart';
+import '../utils/timeframes.dart';
 import 'coin_list_provider.dart';
 import 'locale_provider.dart';
 
@@ -10,7 +11,6 @@ const lastTimeframeKey = 'last_timeframe';
 
 const defaultSymbol = 'BTCUSDT';
 const defaultMarketType = 'spot';
-const chartTimeframes = ['15m', '1h', '4h', '1d'];
 const defaultTimeframe = '1h';
 
 /// The coin shown on the chart tab. Restored from the last session; falls

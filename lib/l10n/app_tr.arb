@@ -130,5 +130,16 @@
   "guestProfileHint": "Takip listeni, kredilerini ve hesabını kullanmak için giriş yap veya kayıt ol.",
   "tabChart": "Grafik",
   "tabWatchlist": "Takip Listesi",
-  "tabProfile": "Profil"
+  "tabProfile": "Profil",
+  "analysisInProgress": "Analiz yapılıyor",
+  "analysisMayTakeTime": "20-30 saniye sürebilir",
+  "analysisHistoryTitle": "Analizlerim",
+  "analysisHistorySection": "Geçmiş analizler",
+  "analysisHistoryEmpty": "Henüz analiz yok",
+  "analysisHistoryLoginHint": "Geçmiş analizlerini görmek için giriş yap",
+  "analysisTypeQuick": "Hızlı",
+  "analysisTypeDeep": "Derin",
+  "favoritesTab": "Favoriler",
+  "favoritesLoginHint": "Favori coinlerini görmek için giriş yap",
+  "favoritesEmpty": "Henüz favori yok"
 }

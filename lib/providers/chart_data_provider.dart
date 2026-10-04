@@ -5,6 +5,7 @@ import '../data/chart_signal_api.dart';
 import '../models/candle.dart';
 import '../models/chart_signal.dart';
 import '../models/coin.dart';
+import '../utils/timeframes.dart';
 
 class ChartData {
   final List<Candle> candles;
@@ -49,7 +50,13 @@ final chartDataProvider = FutureProvider.family<ChartData, ChartDataParams>((
       marketType: params.coin.marketType,
       timeframe: params.timeframe,
     ),
-    signalApi.fetchSignals(coinId: params.coin.id, timeframe: params.timeframe),
+    if (supportsSignals(params.timeframe))
+      signalApi.fetchSignals(
+        coinId: params.coin.id,
+        timeframe: params.timeframe,
+      )
+    else
+      Future.value(<ChartSignal>[]),
   ]);
 
   return ChartData(
