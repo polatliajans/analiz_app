@@ -9,7 +9,7 @@ import 'providers/auth_provider.dart';
 import 'providers/locale_provider.dart';
 import 'providers/onboarding_provider.dart';
 import 'screens/auth_screen.dart';
-import 'screens/coin_list_screen.dart';
+import 'screens/home_shell.dart';
 import 'screens/language_selection_screen.dart';
 import 'screens/onboarding_screen.dart';
 import 'services/push_notification_service.dart';
@@ -79,9 +79,9 @@ class _KriptoAnalizAppState extends ConsumerState<KriptoAnalizApp> {
                     body: Center(child: CircularProgressIndicator()),
                   )
                 : auth.isLoggedIn
-                ? const CoinListScreen()
+                ? const HomeShell()
                 : const AuthScreen(showGuest: true))
-          : const CoinListScreen(),
+          : const HomeShell(),
     );
   }
 }

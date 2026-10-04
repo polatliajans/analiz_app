@@ -849,6 +849,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Email not verified'**
   String get accountEmailNotVerified;
+
+  /// No description provided for @confirmPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm password'**
+  String get confirmPassword;
+
+  /// No description provided for @passwordsDoNotMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get passwordsDoNotMatch;
+
+  /// No description provided for @guestProfileHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Log in or sign up to track your watchlist, buy credits and sync your account.'**
+  String get guestProfileHint;
+
+  /// No description provided for @tabChart.
+  ///
+  /// In en, this message translates to:
+  /// **'Chart'**
+  String get tabChart;
+
+  /// No description provided for @tabWatchlist.
+  ///
+  /// In en, this message translates to:
+  /// **'Watchlist'**
+  String get tabWatchlist;
+
+  /// No description provided for @tabProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get tabProfile;
 }
 
 class _AppLocalizationsDelegate

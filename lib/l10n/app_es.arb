@@ -124,5 +124,11 @@
   "resendEmail": "Reenviar",
   "emailNotVerifiedYet": "Tu correo electrónico aún no está verificado.",
   "accountEmailVerified": "Correo electrónico verificado",
-  "accountEmailNotVerified": "Correo electrónico sin verificar"
+  "accountEmailNotVerified": "Correo electrónico sin verificar",
+  "confirmPassword": "Confirmar contraseña",
+  "passwordsDoNotMatch": "Las contraseñas no coinciden",
+  "guestProfileHint": "Inicia sesión o regístrate para usar tu lista de seguimiento, comprar créditos y sincronizar tu cuenta.",
+  "tabChart": "Gráfico",
+  "tabWatchlist": "Seguimiento",
+  "tabProfile": "Perfil"
 }

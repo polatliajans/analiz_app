@@ -461,4 +461,23 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get accountEmailNotVerified => 'E-posta doğrulanmadı';
+
+  @override
+  String get confirmPassword => 'Şifre tekrar';
+
+  @override
+  String get passwordsDoNotMatch => 'Şifreler eşleşmiyor';
+
+  @override
+  String get guestProfileHint =>
+      'Takip listeni, kredilerini ve hesabını kullanmak için giriş yap veya kayıt ol.';
+
+  @override
+  String get tabChart => 'Grafik';
+
+  @override
+  String get tabWatchlist => 'Takip Listesi';
+
+  @override
+  String get tabProfile => 'Profil';
 }

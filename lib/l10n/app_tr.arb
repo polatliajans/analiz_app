@@ -124,5 +124,11 @@
   "resendEmail": "Tekrar gönder",
   "emailNotVerifiedYet": "E-postan henüz doğrulanmadı.",
   "accountEmailVerified": "E-posta doğrulandı",
-  "accountEmailNotVerified": "E-posta doğrulanmadı"
+  "accountEmailNotVerified": "E-posta doğrulanmadı",
+  "confirmPassword": "Şifre tekrar",
+  "passwordsDoNotMatch": "Şifreler eşleşmiyor",
+  "guestProfileHint": "Takip listeni, kredilerini ve hesabını kullanmak için giriş yap veya kayıt ol.",
+  "tabChart": "Grafik",
+  "tabWatchlist": "Takip Listesi",
+  "tabProfile": "Profil"
 }

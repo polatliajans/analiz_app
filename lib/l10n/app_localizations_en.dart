@@ -493,4 +493,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get accountEmailNotVerified => 'Email not verified';
+
+  @override
+  String get confirmPassword => 'Confirm password';
+
+  @override
+  String get passwordsDoNotMatch => 'Passwords do not match';
+
+  @override
+  String get guestProfileHint =>
+      'Log in or sign up to track your watchlist, buy credits and sync your account.';
+
+  @override
+  String get tabChart => 'Chart';
+
+  @override
+  String get tabWatchlist => 'Watchlist';
+
+  @override
+  String get tabProfile => 'Profile';
 }

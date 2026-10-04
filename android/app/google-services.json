@@ -12,7 +12,20 @@
           "package_name": "com.polatliajans.kriptoanaliz"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "514019641839-manrmsqm3ghf9pml2kbck7rjgbuaqanh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.polatliajans.kriptoanaliz",
+            "certificate_hash": "2fb42dc0fad77f124dfc743ba4858718840e3174"
+          }
+        },
+        {
+          "client_id": "514019641839-k1e6beepliengt42bk2akv6davun8cu4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAYpn9Sm66PJAFu6NS4Ujhv9HKRYJB14sg"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "514019641839-k1e6beepliengt42bk2akv6davun8cu4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

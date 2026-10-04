@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/auth_provider.dart';
 import '../services/auth_failure.dart';
+import '../utils/signup_validation.dart';
 
 /// Email + password log in / sign up. Pops with `true` on success.
 class EmailAuthScreen extends ConsumerStatefulWidget {
@@ -18,6 +19,7 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen>
   late final TabController _tabController;
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmController = TextEditingController();
   bool _busy = false;
 
   bool get _isSignUp => _tabController.index == 1;
@@ -34,6 +36,7 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen>
     _tabController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmController.dispose();
     super.dispose();
   }
 
@@ -51,9 +54,16 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen>
       _toast(authErrorMessage(l10n, AuthErrorKind.invalidEmail));
       return;
     }
-    if (_isSignUp && password.length < 8) {
-      _toast(l10n.passwordTooShort);
-      return;
+    if (_isSignUp) {
+      final error = validateSignUpPasswords(password, _confirmController.text);
+      if (error == SignUpPasswordError.tooShort) {
+        _toast(l10n.passwordTooShort);
+        return;
+      }
+      if (error == SignUpPasswordError.mismatch) {
+        _toast(l10n.passwordsDoNotMatch);
+        return;
+      }
     }
 
     final auth = ref.read(authProvider.notifier);
@@ -131,6 +141,15 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen>
               obscureText: true,
               autofillHints: const [AutofillHints.password],
             ),
+            if (_isSignUp) ...[
+              const SizedBox(height: 12),
+              TextField(
+                controller: _confirmController,
+                decoration: InputDecoration(labelText: l10n.confirmPassword),
+                obscureText: true,
+                autofillHints: const [AutofillHints.newPassword],
+              ),
+            ],
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _busy ? null : _submit,

@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../l10n/app_localizations.dart';
+import '../providers/home_tab_provider.dart';
+import '../providers/selected_coin_provider.dart';
 import '../providers/watchlist_provider.dart';
 import '../widgets/coin_list_item.dart';
-import 'chart_screen.dart';
 
 class WatchlistScreen extends ConsumerWidget {
   const WatchlistScreen({super.key});
@@ -42,9 +43,12 @@ class WatchlistScreen extends ConsumerWidget {
               final coin = coins[index];
               return CoinListItem(
                 coin: coin,
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => ChartScreen(coin: coin)),
-                ),
+                onTap: () {
+                  ref.read(selectedCoinProvider.notifier).select(coin);
+                  ref.read(homeTabProvider.notifier).select(chartTabIndex);
+                  // When opened from the profile page, return to the shell.
+                  Navigator.of(context).popUntil((r) => r.isFirst);
+                },
               );
             },
           );

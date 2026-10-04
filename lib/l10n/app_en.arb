@@ -341,5 +341,11 @@
   "resendEmail": "Resend",
   "emailNotVerifiedYet": "Your email is not verified yet.",
   "accountEmailVerified": "Email verified",
-  "accountEmailNotVerified": "Email not verified"
+  "accountEmailNotVerified": "Email not verified",
+  "confirmPassword": "Confirm password",
+  "passwordsDoNotMatch": "Passwords do not match",
+  "guestProfileHint": "Log in or sign up to track your watchlist, buy credits and sync your account.",
+  "tabChart": "Chart",
+  "tabWatchlist": "Watchlist",
+  "tabProfile": "Profile"
 }

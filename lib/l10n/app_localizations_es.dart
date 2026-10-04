@@ -501,4 +501,23 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get accountEmailNotVerified => 'Correo electrónico sin verificar';
+
+  @override
+  String get confirmPassword => 'Confirmar contraseña';
+
+  @override
+  String get passwordsDoNotMatch => 'Las contraseñas no coinciden';
+
+  @override
+  String get guestProfileHint =>
+      'Inicia sesión o regístrate para usar tu lista de seguimiento, comprar créditos y sincronizar tu cuenta.';
+
+  @override
+  String get tabChart => 'Gráfico';
+
+  @override
+  String get tabWatchlist => 'Seguimiento';
+
+  @override
+  String get tabProfile => 'Perfil';
 }

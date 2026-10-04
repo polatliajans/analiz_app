@@ -3,8 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../l10n/app_localizations.dart';
 import '../models/radar_item.dart';
+import '../providers/home_tab_provider.dart';
 import '../providers/radar_provider.dart';
-import 'chart_screen.dart';
+import '../providers/selected_coin_provider.dart';
 
 class RadarScreen extends ConsumerStatefulWidget {
   const RadarScreen({super.key});
@@ -127,9 +128,10 @@ class _RadarScreenState extends ConsumerState<RadarScreen> {
         '${_termLabel(l10n, item.term)} (${item.timeframe})  ·  RSI ${item.rsi?.toStringAsFixed(1) ?? '-'}  ·  ${_ago(l10n, item.detectedAt)}',
       ),
       trailing: Chip(label: Text('${item.technicalScore}')),
-      onTap: () => Navigator.of(
-        context,
-      ).push(MaterialPageRoute(builder: (_) => ChartScreen(coin: item.coin))),
+      onTap: () {
+        ref.read(selectedCoinProvider.notifier).select(item.coin);
+        ref.read(homeTabProvider.notifier).select(chartTabIndex);
+      },
     );
   }
 }
