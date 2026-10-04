@@ -2,13 +2,25 @@ import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import '../data/device_token_api.dart';
 
 class PushNotificationService {
   StreamSubscription<String>? _tokenRefreshSubscription;
   String? _authToken;
+  StreamSubscription<RemoteMessage>? _foregroundSubscription;
+  final FlutterLocalNotificationsPlugin _localNotifications =
+      FlutterLocalNotificationsPlugin();
   bool _firebaseReady = false;
+  bool _localReady = false;
+
+  static const AndroidNotificationChannel _channel = AndroidNotificationChannel(
+    'signals',
+    'Signals',
+    description: 'Trading signal notifications',
+    importance: Importance.high,
+  );
 
   Future<void> initialize() async {
     try {
@@ -23,8 +35,58 @@ class PushNotificationService {
     _tokenRefreshSubscription = FirebaseMessaging.instance.onTokenRefresh
         .listen(_registerToken);
 
+    await _setupForegroundNotifications();
+
     if (_authToken != null) {
       await _syncCurrentToken();
+    }
+  }
+
+  /// FCM does not display notifications while the app is in the foreground
+  /// on Android, so show them locally. Background/terminated delivery is still
+  /// handled by the system, so no duplicate is produced.
+  Future<void> _setupForegroundNotifications() async {
+    try {
+      await _localNotifications.initialize(
+        settings: const InitializationSettings(
+          android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+        ),
+      );
+      await _localNotifications
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >()
+          ?.createNotificationChannel(_channel);
+      _localReady = true;
+      _foregroundSubscription = FirebaseMessaging.onMessage.listen(
+        _showForegroundNotification,
+      );
+    } catch (e) {
+      debugPrint('PushNotificationService: $e');
+    }
+  }
+
+  Future<void> _showForegroundNotification(RemoteMessage message) async {
+    final notification = message.notification;
+    if (!_localReady || notification == null) return;
+    try {
+      await _localNotifications.show(
+        id: message.hashCode,
+        title: notification.title,
+        body: notification.body,
+        notificationDetails: NotificationDetails(
+          android: AndroidNotificationDetails(
+            _channel.id,
+            _channel.name,
+            channelDescription: _channel.description,
+            importance: Importance.high,
+            priority: Priority.high,
+            icon: '@mipmap/ic_launcher',
+          ),
+        ),
+      );
+    } catch (e) {
+      debugPrint('PushNotificationService: $e');
     }
   }
 
@@ -66,5 +128,6 @@ class PushNotificationService {
 
   void dispose() {
     _tokenRefreshSubscription?.cancel();
+    _foregroundSubscription?.cancel();
   }
 }
