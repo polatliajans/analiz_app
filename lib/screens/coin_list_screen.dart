@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/coin_list_provider.dart';
 import '../widgets/coin_list_item.dart';
+import '../widgets/email_verification_banner.dart';
 import 'account_screen.dart';
 import 'chart_screen.dart';
 import 'radar_screen.dart';
@@ -73,6 +74,7 @@ class _CoinListScreenState extends ConsumerState<CoinListScreen>
       ),
       body: Column(
         children: [
+          const EmailVerificationBanner(),
           Padding(
             padding: const EdgeInsets.all(12),
             child: TextField(

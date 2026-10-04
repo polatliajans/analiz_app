@@ -1,11 +1,14 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'l10n/app_localizations.dart';
+import 'providers/auth_prompt_provider.dart';
 import 'providers/auth_provider.dart';
 import 'providers/locale_provider.dart';
 import 'providers/onboarding_provider.dart';
+import 'screens/auth_screen.dart';
 import 'screens/coin_list_screen.dart';
 import 'screens/language_selection_screen.dart';
 import 'screens/onboarding_screen.dart';
@@ -13,6 +16,11 @@ import 'services/push_notification_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await Firebase.initializeApp();
+  } catch (_) {
+    // Firebase is not configured yet; the app still starts (auth/push disabled).
+  }
   final prefs = await SharedPreferences.getInstance();
   runApp(
     ProviderScope(
@@ -52,6 +60,8 @@ class _KriptoAnalizAppState extends ConsumerState<KriptoAnalizApp> {
 
     final localeState = ref.watch(localeProvider);
     final onboardingDone = ref.watch(onboardingDoneProvider);
+    final authPromptDone = ref.watch(authPromptDoneProvider);
+    final auth = ref.watch(authProvider);
 
     return MaterialApp(
       onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
@@ -63,6 +73,14 @@ class _KriptoAnalizAppState extends ConsumerState<KriptoAnalizApp> {
           ? const LanguageSelectionScreen()
           : !onboardingDone
           ? const OnboardingScreen()
+          : !authPromptDone
+          ? (auth.isRestoring
+                ? const Scaffold(
+                    body: Center(child: CircularProgressIndicator()),
+                  )
+                : auth.isLoggedIn
+                ? const CoinListScreen()
+                : const AuthScreen(showGuest: true))
           : const CoinListScreen(),
     );
   }

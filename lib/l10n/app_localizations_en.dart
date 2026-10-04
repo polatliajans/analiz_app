@@ -98,15 +98,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get logInOrSignUp => 'Log in / Sign up';
 
   @override
-  String get noAccountSignUp => 'Don\'t have an account? Sign up';
-
-  @override
-  String get nameOptional => 'Name (optional)';
-
-  @override
-  String get passwordMinChars => 'Password (at least 8 characters)';
-
-  @override
   String get coins => 'Coins';
 
   @override
@@ -422,4 +413,84 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get onboardingDefault3Body =>
       'Run a quick or deep AI analysis using credits, and add coins to My Watchlist to get notified when something happens.';
+
+  @override
+  String get authErrorInvalidEmail => 'That email address is not valid.';
+
+  @override
+  String get authErrorWrongCredentials => 'Incorrect email or password.';
+
+  @override
+  String get authErrorEmailInUse =>
+      'An account with this email already exists.';
+
+  @override
+  String get authErrorWeakPassword =>
+      'The password is too weak. Use at least 8 characters.';
+
+  @override
+  String get authErrorNetwork =>
+      'Network error. Check your connection and try again.';
+
+  @override
+  String get authErrorTooManyRequests =>
+      'Too many attempts. Please try again later.';
+
+  @override
+  String get authErrorCancelled => 'Sign-in was cancelled.';
+
+  @override
+  String get authErrorEmailUnverifiedConflict =>
+      'An account with this email already exists. Verify your email first.';
+
+  @override
+  String get authErrorUnknown => 'Something went wrong. Please try again.';
+
+  @override
+  String get authWelcomeTitle => 'Welcome';
+
+  @override
+  String get authWelcomeSubtitle =>
+      'Log in to run AI analyses, follow coins and get notified. You can also browse as a guest.';
+
+  @override
+  String get continueWithGoogle => 'Continue with Google';
+
+  @override
+  String get continueWithEmail => 'Continue with email';
+
+  @override
+  String get continueAsGuest => 'Continue as guest';
+
+  @override
+  String get passwordTooShort => 'Password must be at least 8 characters';
+
+  @override
+  String get forgotPassword => 'Forgot password?';
+
+  @override
+  String get resetEmailSent => 'Password reset email sent. Check your inbox.';
+
+  @override
+  String get verificationEmailSent =>
+      'Verification email sent. Check your inbox.';
+
+  @override
+  String get verifyEmailBannerText =>
+      'Verify your email to receive your welcome credit.';
+
+  @override
+  String get iHaveVerified => 'I verified';
+
+  @override
+  String get resendEmail => 'Resend';
+
+  @override
+  String get emailNotVerifiedYet => 'Your email is not verified yet.';
+
+  @override
+  String get accountEmailVerified => 'Email verified';
+
+  @override
+  String get accountEmailNotVerified => 'Email not verified';
 }

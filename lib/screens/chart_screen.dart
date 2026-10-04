@@ -9,6 +9,7 @@ import '../providers/auth_provider.dart';
 import '../providers/chart_data_provider.dart';
 import '../providers/watchlist_provider.dart';
 import '../widgets/candlestick_chart.dart';
+import 'auth_screen.dart';
 
 const _timeframes = ['15m', '1h', '4h', '1d'];
 
@@ -37,9 +38,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
     final l10n = AppLocalizations.of(context)!;
     final auth = ref.read(authProvider);
     if (!auth.isLoggedIn) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(l10n.mustLogIn)));
+      showLoginRequiredSnackBar(context);
       return;
     }
 
@@ -84,9 +83,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
     final l10n = AppLocalizations.of(context)!;
     final auth = ref.read(authProvider);
     if (!auth.isLoggedIn) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(l10n.mustLogIn)));
+      showLoginRequiredSnackBar(context);
       return;
     }
 
@@ -225,7 +222,6 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
   }
 
   Widget _buildWatchlistButton(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
     final auth = ref.watch(authProvider);
     final watchlistAsync = ref.watch(watchlistProvider);
     final isFollowed = watchlistAsync.maybeWhen(
@@ -237,9 +233,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
       icon: Icon(isFollowed ? Icons.star : Icons.star_border),
       onPressed: () async {
         if (!auth.isLoggedIn) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(l10n.mustLogIn)));
+          showLoginRequiredSnackBar(context);
           return;
         }
         try {

@@ -98,15 +98,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get logInOrSignUp => 'Iniciar sesión / Registrarse';
 
   @override
-  String get noAccountSignUp => '¿No tienes cuenta? Regístrate';
-
-  @override
-  String get nameOptional => 'Nombre (opcional)';
-
-  @override
-  String get passwordMinChars => 'Contraseña (mínimo 8 caracteres)';
-
-  @override
   String get coins => 'Monedas';
 
   @override
@@ -425,4 +416,89 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get onboardingDefault3Body =>
       'Haz un análisis rápido o un Análisis profundo con créditos y añade monedas a Mi lista de seguimiento para recibir avisos cuando algo suceda.';
+
+  @override
+  String get authErrorInvalidEmail =>
+      'La dirección de correo electrónico no es válida.';
+
+  @override
+  String get authErrorWrongCredentials =>
+      'Correo electrónico o contraseña incorrectos.';
+
+  @override
+  String get authErrorEmailInUse =>
+      'Ya existe una cuenta con este correo electrónico.';
+
+  @override
+  String get authErrorWeakPassword =>
+      'La contraseña es demasiado débil. Usa al menos 8 caracteres.';
+
+  @override
+  String get authErrorNetwork =>
+      'Error de red. Revisa tu conexión e inténtalo de nuevo.';
+
+  @override
+  String get authErrorTooManyRequests =>
+      'Demasiados intentos. Inténtalo de nuevo más tarde.';
+
+  @override
+  String get authErrorCancelled => 'Se canceló el inicio de sesión.';
+
+  @override
+  String get authErrorEmailUnverifiedConflict =>
+      'Ya existe una cuenta con este correo. Verifica tu correo electrónico primero.';
+
+  @override
+  String get authErrorUnknown => 'Algo salió mal. Inténtalo de nuevo.';
+
+  @override
+  String get authWelcomeTitle => 'Bienvenido';
+
+  @override
+  String get authWelcomeSubtitle =>
+      'Inicia sesión para ejecutar análisis con IA, seguir monedas y recibir notificaciones. También puedes explorar como invitado.';
+
+  @override
+  String get continueWithGoogle => 'Continuar con Google';
+
+  @override
+  String get continueWithEmail => 'Continuar con correo electrónico';
+
+  @override
+  String get continueAsGuest => 'Continuar como invitado';
+
+  @override
+  String get passwordTooShort =>
+      'La contraseña debe tener al menos 8 caracteres';
+
+  @override
+  String get forgotPassword => '¿Olvidaste tu contraseña?';
+
+  @override
+  String get resetEmailSent =>
+      'Correo para restablecer la contraseña enviado. Revisa tu bandeja de entrada.';
+
+  @override
+  String get verificationEmailSent =>
+      'Correo de verificación enviado. Revisa tu bandeja de entrada.';
+
+  @override
+  String get verifyEmailBannerText =>
+      'Verifica tu correo electrónico para recibir tu crédito de bienvenida.';
+
+  @override
+  String get iHaveVerified => 'Ya verifiqué';
+
+  @override
+  String get resendEmail => 'Reenviar';
+
+  @override
+  String get emailNotVerifiedYet =>
+      'Tu correo electrónico aún no está verificado.';
+
+  @override
+  String get accountEmailVerified => 'Correo electrónico verificado';
+
+  @override
+  String get accountEmailNotVerified => 'Correo electrónico sin verificar';
 }

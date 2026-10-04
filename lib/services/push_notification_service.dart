@@ -12,7 +12,7 @@ class PushNotificationService {
 
   Future<void> initialize() async {
     try {
-      await Firebase.initializeApp();
+      if (Firebase.apps.isEmpty) await Firebase.initializeApp();
       _firebaseReady = true;
     } catch (_) {
       // Firebase is not configured yet (google-services.json is missing).

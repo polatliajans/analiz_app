@@ -262,24 +262,6 @@ abstract class AppLocalizations {
   /// **'Log in / Sign up'**
   String get logInOrSignUp;
 
-  /// No description provided for @noAccountSignUp.
-  ///
-  /// In en, this message translates to:
-  /// **'Don\'t have an account? Sign up'**
-  String get noAccountSignUp;
-
-  /// No description provided for @nameOptional.
-  ///
-  /// In en, this message translates to:
-  /// **'Name (optional)'**
-  String get nameOptional;
-
-  /// No description provided for @passwordMinChars.
-  ///
-  /// In en, this message translates to:
-  /// **'Password (at least 8 characters)'**
-  String get passwordMinChars;
-
   /// No description provided for @coins.
   ///
   /// In en, this message translates to:
@@ -723,6 +705,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Run a quick or deep AI analysis using credits, and add coins to My Watchlist to get notified when something happens.'**
   String get onboardingDefault3Body;
+
+  /// No description provided for @authErrorInvalidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'That email address is not valid.'**
+  String get authErrorInvalidEmail;
+
+  /// No description provided for @authErrorWrongCredentials.
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect email or password.'**
+  String get authErrorWrongCredentials;
+
+  /// No description provided for @authErrorEmailInUse.
+  ///
+  /// In en, this message translates to:
+  /// **'An account with this email already exists.'**
+  String get authErrorEmailInUse;
+
+  /// No description provided for @authErrorWeakPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'The password is too weak. Use at least 8 characters.'**
+  String get authErrorWeakPassword;
+
+  /// No description provided for @authErrorNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'Network error. Check your connection and try again.'**
+  String get authErrorNetwork;
+
+  /// No description provided for @authErrorTooManyRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many attempts. Please try again later.'**
+  String get authErrorTooManyRequests;
+
+  /// No description provided for @authErrorCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign-in was cancelled.'**
+  String get authErrorCancelled;
+
+  /// No description provided for @authErrorEmailUnverifiedConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'An account with this email already exists. Verify your email first.'**
+  String get authErrorEmailUnverifiedConflict;
+
+  /// No description provided for @authErrorUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get authErrorUnknown;
+
+  /// No description provided for @authWelcomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome'**
+  String get authWelcomeTitle;
+
+  /// No description provided for @authWelcomeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Log in to run AI analyses, follow coins and get notified. You can also browse as a guest.'**
+  String get authWelcomeSubtitle;
+
+  /// No description provided for @continueWithGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Google'**
+  String get continueWithGoogle;
+
+  /// No description provided for @continueWithEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with email'**
+  String get continueWithEmail;
+
+  /// No description provided for @continueAsGuest.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue as guest'**
+  String get continueAsGuest;
+
+  /// No description provided for @passwordTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 8 characters'**
+  String get passwordTooShort;
+
+  /// No description provided for @forgotPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot password?'**
+  String get forgotPassword;
+
+  /// No description provided for @resetEmailSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Password reset email sent. Check your inbox.'**
+  String get resetEmailSent;
+
+  /// No description provided for @verificationEmailSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification email sent. Check your inbox.'**
+  String get verificationEmailSent;
+
+  /// No description provided for @verifyEmailBannerText.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify your email to receive your welcome credit.'**
+  String get verifyEmailBannerText;
+
+  /// No description provided for @iHaveVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'I verified'**
+  String get iHaveVerified;
+
+  /// No description provided for @resendEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend'**
+  String get resendEmail;
+
+  /// No description provided for @emailNotVerifiedYet.
+  ///
+  /// In en, this message translates to:
+  /// **'Your email is not verified yet.'**
+  String get emailNotVerifiedYet;
+
+  /// No description provided for @accountEmailVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Email verified'**
+  String get accountEmailVerified;
+
+  /// No description provided for @accountEmailNotVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Email not verified'**
+  String get accountEmailNotVerified;
 }
 
 class _AppLocalizationsDelegate

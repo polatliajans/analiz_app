@@ -45,6 +45,8 @@ dependencies:
     sdk: flutter
   shared_preferences: ^2.5.0
   intl: ^0.20.2
+  firebase_auth: ^5.7.0
+  google_sign_in: ^7.2.0
 
 dependency_overrides:
   k_chart:

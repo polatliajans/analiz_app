@@ -5,6 +5,7 @@ import 'api_http.dart';
 import '../config/api_config.dart';
 import '../l10n/app_l10n.dart';
 import '../models/member.dart';
+import '../services/auth_failure.dart';
 
 class AuthException implements Exception {
   final String message;
@@ -22,26 +23,27 @@ class AuthResult {
 }
 
 class AuthApi {
-  Future<AuthResult> register({
-    String? name,
-    required String email,
-    required String password,
-  }) async {
-    final body = {'email': email, 'password': password};
-    if (name != null) body['name'] = name;
+  /// Exchanges a Firebase ID token for a Sanctum session.
+  Future<AuthResult> exchangeFirebaseToken(String idToken) async {
+    final http.Response response;
+    try {
+      response = await ApiHttp.post(
+        Uri.parse('${ApiConfig.baseUrl}/auth/firebase'),
+        body: {'id_token': idToken},
+      ).timeout(const Duration(seconds: 10));
+    } catch (e) {
+      throw AuthException(AppL10n.current.errorRequestFailed('$e'));
+    }
 
-    final response = await _post('/auth/register', body);
-    return _parseAuthResult(response);
-  }
-
-  Future<AuthResult> login({
-    required String email,
-    required String password,
-  }) async {
-    final response = await _post('/auth/login', {
-      'email': email,
-      'password': password,
-    });
+    if (response.statusCode == 403) {
+      throw const AuthFailure(AuthErrorKind.emailUnverifiedConflict);
+    }
+    if (response.statusCode == 401 || response.statusCode == 422) {
+      throw AuthException(_serverMessage(response));
+    }
+    if (response.statusCode != 200) {
+      throw AuthException(AppL10n.current.errorServer(response.statusCode));
+    }
     return _parseAuthResult(response);
   }
 
@@ -75,25 +77,13 @@ class AuthApi {
     return Member.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
   }
 
-  Future<http.Response> _post(String path, Map<String, String> body) async {
-    final http.Response response;
+  String _serverMessage(http.Response response) {
     try {
-      response = await ApiHttp.post(
-        Uri.parse('${ApiConfig.baseUrl}$path'),
-        body: body,
-      ).timeout(const Duration(seconds: 10));
-    } catch (e) {
-      throw AuthException(AppL10n.current.errorRequestFailed('$e'));
-    }
-
-    if (response.statusCode == 422) {
-      throw AuthException(AppL10n.current.errorInvalidCredentialsOrEmailTaken);
-    }
-    if (response.statusCode != 200 && response.statusCode != 201) {
-      throw AuthException(AppL10n.current.errorServer(response.statusCode));
-    }
-
-    return response;
+      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      final message = json['message'];
+      if (message is String && message.isNotEmpty) return message;
+    } catch (_) {}
+    return AppL10n.current.errorServer(response.statusCode);
   }
 
   AuthResult _parseAuthResult(http.Response response) {

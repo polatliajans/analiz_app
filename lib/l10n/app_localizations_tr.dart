@@ -98,15 +98,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get logInOrSignUp => 'Giriş Yap / Kayıt Ol';
 
   @override
-  String get noAccountSignUp => 'Hesabın yok mu? Kayıt ol';
-
-  @override
-  String get nameOptional => 'İsim (opsiyonel)';
-
-  @override
-  String get passwordMinChars => 'Şifre (en az 8 karakter)';
-
-  @override
   String get coins => 'Coinler';
 
   @override
@@ -390,4 +381,84 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get onboardingDefault3Body =>
       'Kredi kullanarak hızlı veya Derin Analiz yaptır, coinleri Takip Listem\'e ekle ve bir gelişme olduğunda bildirim al.';
+
+  @override
+  String get authErrorInvalidEmail => 'Geçersiz e-posta adresi.';
+
+  @override
+  String get authErrorWrongCredentials => 'E-posta veya şifre hatalı.';
+
+  @override
+  String get authErrorEmailInUse => 'Bu e-postayla bir hesap zaten var.';
+
+  @override
+  String get authErrorWeakPassword =>
+      'Şifre çok zayıf. En az 8 karakter kullan.';
+
+  @override
+  String get authErrorNetwork =>
+      'Ağ hatası. Bağlantını kontrol edip tekrar dene.';
+
+  @override
+  String get authErrorTooManyRequests =>
+      'Çok fazla deneme yapıldı. Lütfen daha sonra tekrar dene.';
+
+  @override
+  String get authErrorCancelled => 'Giriş iptal edildi.';
+
+  @override
+  String get authErrorEmailUnverifiedConflict =>
+      'Bu e-postayla bir hesap zaten var. Önce e-postanı doğrula.';
+
+  @override
+  String get authErrorUnknown => 'Bir şeyler ters gitti. Lütfen tekrar dene.';
+
+  @override
+  String get authWelcomeTitle => 'Hoş geldin';
+
+  @override
+  String get authWelcomeSubtitle =>
+      'AI analizi yapmak, coin takip etmek ve bildirim almak için giriş yap. Misafir olarak da göz atabilirsin.';
+
+  @override
+  String get continueWithGoogle => 'Google ile devam et';
+
+  @override
+  String get continueWithEmail => 'E-posta ile devam et';
+
+  @override
+  String get continueAsGuest => 'Misafir olarak devam et';
+
+  @override
+  String get passwordTooShort => 'Şifre en az 8 karakter olmalı';
+
+  @override
+  String get forgotPassword => 'Şifremi unuttum';
+
+  @override
+  String get resetEmailSent =>
+      'Şifre sıfırlama e-postası gönderildi. Gelen kutunu kontrol et.';
+
+  @override
+  String get verificationEmailSent =>
+      'Doğrulama e-postası gönderildi. Gelen kutunu kontrol et.';
+
+  @override
+  String get verifyEmailBannerText =>
+      'Hoş geldin kredini almak için e-postanı doğrula.';
+
+  @override
+  String get iHaveVerified => 'Doğruladım';
+
+  @override
+  String get resendEmail => 'Tekrar gönder';
+
+  @override
+  String get emailNotVerifiedYet => 'E-postan henüz doğrulanmadı.';
+
+  @override
+  String get accountEmailVerified => 'E-posta doğrulandı';
+
+  @override
+  String get accountEmailNotVerified => 'E-posta doğrulanmadı';
 }

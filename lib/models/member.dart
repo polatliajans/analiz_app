@@ -4,6 +4,8 @@ class Member {
   final String email;
   final String role;
   final int creditBalance;
+  final bool emailVerified;
+  final String? locale;
 
   const Member({
     required this.id,
@@ -11,6 +13,8 @@ class Member {
     required this.email,
     required this.role,
     required this.creditBalance,
+    this.emailVerified = true,
+    this.locale,
   });
 
   factory Member.fromJson(Map<String, dynamic> json) {
@@ -20,6 +24,8 @@ class Member {
       email: json['email'] as String,
       role: json['role'] as String,
       creditBalance: json['credit_balance'] as int,
+      emailVerified: json['email_verified'] as bool? ?? true,
+      locale: json['locale'] as String?,
     );
   }
 }
