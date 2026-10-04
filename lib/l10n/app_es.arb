@@ -93,5 +93,15 @@
   "errorFollowFailed": "No se pudo seguir esta moneda.",
   "errorUnfollowFailed": "No se pudo quitar de tu lista de seguimiento.",
   "errorCandlesFailed": "No se pudieron obtener los datos de velas: {details}",
-  "errorBinance": "Error de Binance: {status}"
+  "errorBinance": "Error de Binance: {status}",
+  "onboardingSkip": "Omitir",
+  "onboardingNext": "Siguiente",
+  "onboardingStart": "Empezar",
+  "replayIntro": "Ver la introducción otra vez",
+  "onboardingDefault1Title": "Radar: las mejores oportunidades",
+  "onboardingDefault1Body": "Radar analiza el mercado y destaca las monedas con las oportunidades técnicas más fuertes, para que no tengas que buscarlas.",
+  "onboardingDefault2Title": "Gráficos con señales",
+  "onboardingDefault2Body": "Lee el movimiento del precio de un vistazo. Las flechas de compra y venta en el gráfico marcan las señales a medida que aparecen.",
+  "onboardingDefault3Title": "Análisis con IA y alertas",
+  "onboardingDefault3Body": "Haz un análisis rápido o un Análisis profundo con créditos y añade monedas a Mi lista de seguimiento para recibir avisos cuando algo suceda."
 }

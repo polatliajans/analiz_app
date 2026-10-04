@@ -93,5 +93,15 @@
   "errorFollowFailed": "Takip edilemedi.",
   "errorUnfollowFailed": "Takipten çıkarılamadı.",
   "errorCandlesFailed": "Mum verisi alınamadı: {details}",
-  "errorBinance": "Binance hatası: {status}"
+  "errorBinance": "Binance hatası: {status}",
+  "onboardingSkip": "Atla",
+  "onboardingNext": "İleri",
+  "onboardingStart": "Başla",
+  "replayIntro": "Tanıtımı tekrar izle",
+  "onboardingDefault1Title": "Radar: en iyi fırsatlar",
+  "onboardingDefault1Body": "Radar piyasayı tarar ve en güçlü teknik fırsatları sunan coinleri öne çıkarır; aramakla uğraşmazsın.",
+  "onboardingDefault2Title": "Sinyalli grafikler",
+  "onboardingDefault2Body": "Fiyat hareketini tek bakışta oku. Grafikteki alış ve satış okları sinyalleri oluştukları anda gösterir.",
+  "onboardingDefault3Title": "Yapay zeka analizi ve bildirimler",
+  "onboardingDefault3Body": "Kredi kullanarak hızlı veya Derin Analiz yaptır, coinleri Takip Listem'e ekle ve bir gelişme olduğunda bildirim al."
 }

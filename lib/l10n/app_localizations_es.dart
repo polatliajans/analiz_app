@@ -392,4 +392,37 @@ class AppLocalizationsEs extends AppLocalizations {
   String errorBinance(int status) {
     return 'Error de Binance: $status';
   }
+
+  @override
+  String get onboardingSkip => 'Omitir';
+
+  @override
+  String get onboardingNext => 'Siguiente';
+
+  @override
+  String get onboardingStart => 'Empezar';
+
+  @override
+  String get replayIntro => 'Ver la introducción otra vez';
+
+  @override
+  String get onboardingDefault1Title => 'Radar: las mejores oportunidades';
+
+  @override
+  String get onboardingDefault1Body =>
+      'Radar analiza el mercado y destaca las monedas con las oportunidades técnicas más fuertes, para que no tengas que buscarlas.';
+
+  @override
+  String get onboardingDefault2Title => 'Gráficos con señales';
+
+  @override
+  String get onboardingDefault2Body =>
+      'Lee el movimiento del precio de un vistazo. Las flechas de compra y venta en el gráfico marcan las señales a medida que aparecen.';
+
+  @override
+  String get onboardingDefault3Title => 'Análisis con IA y alertas';
+
+  @override
+  String get onboardingDefault3Body =>
+      'Haz un análisis rápido o un Análisis profundo con créditos y añade monedas a Mi lista de seguimiento para recibir avisos cuando algo suceda.';
 }

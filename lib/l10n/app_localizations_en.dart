@@ -389,4 +389,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String errorBinance(int status) {
     return 'Binance error: $status';
   }
+
+  @override
+  String get onboardingSkip => 'Skip';
+
+  @override
+  String get onboardingNext => 'Next';
+
+  @override
+  String get onboardingStart => 'Get started';
+
+  @override
+  String get replayIntro => 'Replay intro';
+
+  @override
+  String get onboardingDefault1Title => 'Radar: the best setups';
+
+  @override
+  String get onboardingDefault1Body =>
+      'Radar scans the market and surfaces the coins with the strongest technical opportunities, so you do not have to hunt for them.';
+
+  @override
+  String get onboardingDefault2Title => 'Charts with signals';
+
+  @override
+  String get onboardingDefault2Body =>
+      'Read the price action at a glance. Buy and sell arrows on the chart mark the signals as they appear.';
+
+  @override
+  String get onboardingDefault3Title => 'AI analysis and alerts';
+
+  @override
+  String get onboardingDefault3Body =>
+      'Run a quick or deep AI analysis using credits, and add coins to My Watchlist to get notified when something happens.';
 }

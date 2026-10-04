@@ -663,6 +663,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Binance error: {status}'**
   String errorBinance(int status);
+
+  /// No description provided for @onboardingSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get onboardingSkip;
+
+  /// No description provided for @onboardingNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get onboardingNext;
+
+  /// No description provided for @onboardingStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Get started'**
+  String get onboardingStart;
+
+  /// No description provided for @replayIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Replay intro'**
+  String get replayIntro;
+
+  /// No description provided for @onboardingDefault1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Radar: the best setups'**
+  String get onboardingDefault1Title;
+
+  /// No description provided for @onboardingDefault1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Radar scans the market and surfaces the coins with the strongest technical opportunities, so you do not have to hunt for them.'**
+  String get onboardingDefault1Body;
+
+  /// No description provided for @onboardingDefault2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Charts with signals'**
+  String get onboardingDefault2Title;
+
+  /// No description provided for @onboardingDefault2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Read the price action at a glance. Buy and sell arrows on the chart mark the signals as they appear.'**
+  String get onboardingDefault2Body;
+
+  /// No description provided for @onboardingDefault3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'AI analysis and alerts'**
+  String get onboardingDefault3Title;
+
+  /// No description provided for @onboardingDefault3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Run a quick or deep AI analysis using credits, and add coins to My Watchlist to get notified when something happens.'**
+  String get onboardingDefault3Body;
 }
 
 class _AppLocalizationsDelegate

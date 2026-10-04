@@ -5,6 +5,7 @@ import '../data/auth_api.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/auth_provider.dart';
 import '../providers/locale_provider.dart';
+import 'onboarding_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -52,6 +53,16 @@ class SettingsScreen extends ConsumerWidget {
                 for (final (locale, name) in options)
                   RadioListTile<Locale>(value: locale, title: Text(name)),
               ],
+            ),
+          ),
+          const Divider(),
+          ListTile(
+            title: Text(l10n.replayIntro),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => const OnboardingScreen(replay: true),
+              ),
             ),
           ),
         ],

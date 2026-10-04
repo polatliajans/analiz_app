@@ -357,4 +357,37 @@ class AppLocalizationsTr extends AppLocalizations {
   String errorBinance(int status) {
     return 'Binance hatası: $status';
   }
+
+  @override
+  String get onboardingSkip => 'Atla';
+
+  @override
+  String get onboardingNext => 'İleri';
+
+  @override
+  String get onboardingStart => 'Başla';
+
+  @override
+  String get replayIntro => 'Tanıtımı tekrar izle';
+
+  @override
+  String get onboardingDefault1Title => 'Radar: en iyi fırsatlar';
+
+  @override
+  String get onboardingDefault1Body =>
+      'Radar piyasayı tarar ve en güçlü teknik fırsatları sunan coinleri öne çıkarır; aramakla uğraşmazsın.';
+
+  @override
+  String get onboardingDefault2Title => 'Sinyalli grafikler';
+
+  @override
+  String get onboardingDefault2Body =>
+      'Fiyat hareketini tek bakışta oku. Grafikteki alış ve satış okları sinyalleri oluştukları anda gösterir.';
+
+  @override
+  String get onboardingDefault3Title => 'Yapay zeka analizi ve bildirimler';
+
+  @override
+  String get onboardingDefault3Body =>
+      'Kredi kullanarak hızlı veya Derin Analiz yaptır, coinleri Takip Listem\'e ekle ve bir gelişme olduğunda bildirim al.';
 }

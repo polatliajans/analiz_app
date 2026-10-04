@@ -5,8 +5,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'l10n/app_localizations.dart';
 import 'providers/auth_provider.dart';
 import 'providers/locale_provider.dart';
+import 'providers/onboarding_provider.dart';
 import 'screens/coin_list_screen.dart';
 import 'screens/language_selection_screen.dart';
+import 'screens/onboarding_screen.dart';
 import 'services/push_notification_service.dart';
 
 Future<void> main() async {
@@ -49,6 +51,7 @@ class _KriptoAnalizAppState extends ConsumerState<KriptoAnalizApp> {
     });
 
     final localeState = ref.watch(localeProvider);
+    final onboardingDone = ref.watch(onboardingDoneProvider);
 
     return MaterialApp(
       onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
@@ -56,9 +59,11 @@ class _KriptoAnalizAppState extends ConsumerState<KriptoAnalizApp> {
       locale: localeState.locale,
       supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
-      home: localeState.hasChosen
-          ? const CoinListScreen()
-          : const LanguageSelectionScreen(),
+      home: !localeState.hasChosen
+          ? const LanguageSelectionScreen()
+          : !onboardingDone
+          ? const OnboardingScreen()
+          : const CoinListScreen(),
     );
   }
 }
