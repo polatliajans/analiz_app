@@ -190,6 +190,42 @@ abstract class AppLocalizations {
   /// **'Log out'**
   String get logOut;
 
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @deleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get deleteAccount;
+
+  /// No description provided for @deleteAccountConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete your account?'**
+  String get deleteAccountConfirmTitle;
+
+  /// No description provided for @deleteAccountConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This permanently deletes your account and all your data: watchlist, analysis history, credits, notifications and linked sign-in methods. This cannot be undone.'**
+  String get deleteAccountConfirmBody;
+
+  /// No description provided for @deleteAccountProNote.
+  ///
+  /// In en, this message translates to:
+  /// **'If you have an active Pro subscription, deleting your account does not cancel it. Please cancel it separately in Google Play, otherwise you may keep being charged.'**
+  String get deleteAccountProNote;
+
+  /// No description provided for @deleteAccountConfirmAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get deleteAccountConfirmAction;
+
   /// No description provided for @myAccount.
   ///
   /// In en, this message translates to:

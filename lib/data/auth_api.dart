@@ -54,6 +54,23 @@ class AuthApi {
     ).timeout(const Duration(seconds: 10));
   }
 
+  /// Permanently deletes the member's account and data on the server.
+  /// Throws [AuthException] unless the server confirms with 200.
+  Future<void> deleteAccount(String token) async {
+    final http.Response response;
+    try {
+      response = await ApiHttp.delete(
+        Uri.parse('${ApiConfig.baseUrl}/auth/account'),
+        headers: {'Authorization': 'Bearer $token'},
+      ).timeout(const Duration(seconds: 15));
+    } catch (e) {
+      throw AuthException(AppL10n.current.errorRequestFailed('$e'));
+    }
+    if (response.statusCode != 200) {
+      throw AuthException(AppL10n.current.errorServer(response.statusCode));
+    }
+  }
+
   /// Tells the server which language the member picked (used for push
   /// notifications). Callers treat failures as non-fatal.
   Future<void> updateLocale(String token, String locale) async {

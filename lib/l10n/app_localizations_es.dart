@@ -56,6 +56,26 @@ class AppLocalizationsEs extends AppLocalizations {
   String get logOut => 'Cerrar sesión';
 
   @override
+  String get cancel => 'Cancelar';
+
+  @override
+  String get deleteAccount => 'Eliminar cuenta';
+
+  @override
+  String get deleteAccountConfirmTitle => '¿Eliminar tu cuenta?';
+
+  @override
+  String get deleteAccountConfirmBody =>
+      'Se eliminarán de forma permanente tu cuenta y todos tus datos: lista de seguimiento, historial de análisis, créditos, notificaciones y métodos de inicio de sesión vinculados. Esta acción no se puede deshacer.';
+
+  @override
+  String get deleteAccountProNote =>
+      'Si tienes una suscripción Pro activa, eliminar tu cuenta no la cancela. Cancélala por separado en Google Play; de lo contrario podrían seguir cobrándote.';
+
+  @override
+  String get deleteAccountConfirmAction => 'Eliminar';
+
+  @override
   String get myAccount => 'Mi cuenta';
 
   @override

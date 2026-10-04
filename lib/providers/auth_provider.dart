@@ -144,6 +144,17 @@ class AuthNotifier extends Notifier<AuthState> {
     await ref.read(secureStorageProvider).delete(key: _tokenStorageKey);
     state = const AuthState();
   }
+
+  /// Deletes the account on the server, then clears the local session. If the
+  /// server call fails the exception propagates and the session is untouched.
+  Future<void> deleteAccount() async {
+    final token = state.token;
+    if (token == null) return;
+    await ref.read(authApiProvider).deleteAccount(token);
+    await ref.read(firebaseAuthServiceProvider).signOut();
+    await ref.read(secureStorageProvider).delete(key: _tokenStorageKey);
+    state = const AuthState();
+  }
 }
 
 final authProvider = NotifierProvider<AuthNotifier, AuthState>(

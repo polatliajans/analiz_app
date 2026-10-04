@@ -56,6 +56,26 @@ class AppLocalizationsTr extends AppLocalizations {
   String get logOut => 'Çıkış Yap';
 
   @override
+  String get cancel => 'İptal';
+
+  @override
+  String get deleteAccount => 'Hesabı sil';
+
+  @override
+  String get deleteAccountConfirmTitle => 'Hesabın silinsin mi?';
+
+  @override
+  String get deleteAccountConfirmBody =>
+      'Hesabın ve tüm verilerin kalıcı olarak silinir: takip listesi, analiz geçmişi, krediler, bildirimler ve bağlı giriş yöntemleri. Bu işlem geri alınamaz.';
+
+  @override
+  String get deleteAccountProNote =>
+      'Aktif bir Pro aboneliğin varsa, hesabı silmek aboneliği iptal etmez. Ücretlendirilmeye devam etmemek için aboneliği Google Play\'den ayrıca iptal etmelisin.';
+
+  @override
+  String get deleteAccountConfirmAction => 'Sil';
+
+  @override
   String get myAccount => 'Hesabım';
 
   @override

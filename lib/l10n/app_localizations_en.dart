@@ -56,6 +56,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get logOut => 'Log out';
 
   @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get deleteAccount => 'Delete account';
+
+  @override
+  String get deleteAccountConfirmTitle => 'Delete your account?';
+
+  @override
+  String get deleteAccountConfirmBody =>
+      'This permanently deletes your account and all your data: watchlist, analysis history, credits, notifications and linked sign-in methods. This cannot be undone.';
+
+  @override
+  String get deleteAccountProNote =>
+      'If you have an active Pro subscription, deleting your account does not cancel it. Please cancel it separately in Google Play, otherwise you may keep being charged.';
+
+  @override
+  String get deleteAccountConfirmAction => 'Delete';
+
+  @override
   String get myAccount => 'My Account';
 
   @override

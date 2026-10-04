@@ -15,6 +15,12 @@ class AuthPromptDoneNotifier extends Notifier<bool> {
     state = true;
     await ref.read(sharedPreferencesProvider).setBool(authPromptDoneKey, true);
   }
+
+  /// Shows the first-run sign-in screen again (used after account deletion).
+  Future<void> reset() async {
+    state = false;
+    await ref.read(sharedPreferencesProvider).setBool(authPromptDoneKey, false);
+  }
 }
 
 final authPromptDoneProvider = NotifierProvider<AuthPromptDoneNotifier, bool>(

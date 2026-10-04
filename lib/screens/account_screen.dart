@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../l10n/app_localizations.dart';
 import '../models/member.dart';
+import '../providers/auth_prompt_provider.dart';
 import '../providers/auth_provider.dart';
+import '../services/auth_failure.dart';
 import '../widgets/email_verification_banner.dart';
 import 'analysis_history_screen.dart';
 import 'auth_screen.dart';
@@ -18,6 +20,54 @@ class AccountScreen extends ConsumerWidget {
 
   void _push(BuildContext context, Widget page) {
     Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
+  }
+
+  Future<void> _confirmDelete(
+    BuildContext context,
+    WidgetRef ref,
+    Member member,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+    final auth = ref.read(authProvider.notifier);
+    final promptDone = ref.read(authPromptDoneProvider.notifier);
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.deleteAccountConfirmTitle),
+        content: Text(
+          member.role == 'pro'
+              ? '${l10n.deleteAccountConfirmBody}\n\n${l10n.deleteAccountProNote}'
+              : l10n.deleteAccountConfirmBody,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(ctx).colorScheme.error,
+            ),
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(l10n.deleteAccountConfirmAction),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+
+    try {
+      await auth.deleteAccount();
+    } catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text(authErrorText(l10n, e))));
+      return;
+    }
+    // Back to the root, then re-open the first-run sign-in screen.
+    navigator.popUntil((route) => route.isFirst);
+    await promptDone.reset();
   }
 
   @override
@@ -84,6 +134,18 @@ class AccountScreen extends ConsumerWidget {
                             style: TextStyle(color: scheme.error),
                           ),
                           onTap: () => ref.read(authProvider.notifier).logout(),
+                        ),
+                        const Divider(height: 1),
+                        ListTile(
+                          leading: Icon(
+                            Icons.delete_forever_outlined,
+                            color: scheme.error,
+                          ),
+                          title: Text(
+                            l10n.deleteAccount,
+                            style: TextStyle(color: scheme.error),
+                          ),
+                          onTap: () => _confirmDelete(context, ref, member),
                         ),
                       ],
                     ],
