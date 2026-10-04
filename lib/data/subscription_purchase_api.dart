@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'api_http.dart';
 
 import '../config/api_config.dart';
+import '../l10n/app_l10n.dart';
 
 class SubscriptionPurchaseResult {
   final String role;
@@ -40,28 +42,30 @@ class SubscriptionPurchaseApi {
 
     final http.Response response;
     try {
-      response = await http
-          .post(
-            uri,
-            headers: {'Authorization': 'Bearer $token'},
-            body: {'purchase_token': purchaseToken},
-          )
-          .timeout(const Duration(seconds: 15));
+      response = await ApiHttp.post(
+        uri,
+        headers: {'Authorization': 'Bearer $token'},
+        body: {'purchase_token': purchaseToken},
+      ).timeout(const Duration(seconds: 15));
     } catch (e) {
-      throw SubscriptionPurchaseException('Abonelik doğrulanamadı: $e');
+      throw SubscriptionPurchaseException(
+        AppL10n.current.errorSubscriptionVerifyFailed('$e'),
+      );
     }
 
     if (response.statusCode == 422) {
-      throw SubscriptionPurchaseException('Abonelik geçerli değil.');
+      throw SubscriptionPurchaseException(
+        AppL10n.current.errorSubscriptionInvalid,
+      );
     }
     if (response.statusCode == 502) {
       throw SubscriptionPurchaseException(
-        'Google Play doğrulama servisine ulaşılamadı.',
+        AppL10n.current.errorPlayVerificationUnreachable,
       );
     }
     if (response.statusCode != 200) {
       throw SubscriptionPurchaseException(
-        'Sunucu hatası: ${response.statusCode}',
+        AppL10n.current.errorServer(response.statusCode),
       );
     }
 

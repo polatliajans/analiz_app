@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'api_http.dart';
 
 import '../config/api_config.dart';
+import '../l10n/app_l10n.dart';
 import '../models/member.dart';
 
 class AuthException implements Exception {
@@ -44,24 +46,30 @@ class AuthApi {
   }
 
   Future<void> logout(String token) async {
-    await http
-        .post(
-          Uri.parse('${ApiConfig.baseUrl}/auth/logout'),
-          headers: {'Authorization': 'Bearer $token'},
-        )
-        .timeout(const Duration(seconds: 10));
+    await ApiHttp.post(
+      Uri.parse('${ApiConfig.baseUrl}/auth/logout'),
+      headers: {'Authorization': 'Bearer $token'},
+    ).timeout(const Duration(seconds: 10));
+  }
+
+  /// Tells the server which language the member picked (used for push
+  /// notifications). Callers treat failures as non-fatal.
+  Future<void> updateLocale(String token, String locale) async {
+    await ApiHttp.put(
+      Uri.parse('${ApiConfig.baseUrl}/auth/locale'),
+      headers: {'Authorization': 'Bearer $token'},
+      body: {'locale': locale},
+    ).timeout(const Duration(seconds: 10));
   }
 
   Future<Member> me(String token) async {
-    final response = await http
-        .get(
-          Uri.parse('${ApiConfig.baseUrl}/auth/me'),
-          headers: {'Authorization': 'Bearer $token'},
-        )
-        .timeout(const Duration(seconds: 10));
+    final response = await ApiHttp.get(
+      Uri.parse('${ApiConfig.baseUrl}/auth/me'),
+      headers: {'Authorization': 'Bearer $token'},
+    ).timeout(const Duration(seconds: 10));
 
     if (response.statusCode != 200) {
-      throw AuthException('Oturum doğrulanamadı.');
+      throw AuthException(AppL10n.current.errorSessionInvalid);
     }
 
     return Member.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
@@ -70,18 +78,19 @@ class AuthApi {
   Future<http.Response> _post(String path, Map<String, String> body) async {
     final http.Response response;
     try {
-      response = await http
-          .post(Uri.parse('${ApiConfig.baseUrl}$path'), body: body)
-          .timeout(const Duration(seconds: 10));
+      response = await ApiHttp.post(
+        Uri.parse('${ApiConfig.baseUrl}$path'),
+        body: body,
+      ).timeout(const Duration(seconds: 10));
     } catch (e) {
-      throw AuthException('İstek gönderilemedi: $e');
+      throw AuthException(AppL10n.current.errorRequestFailed('$e'));
     }
 
     if (response.statusCode == 422) {
-      throw AuthException('Bilgiler hatalı veya bu e-posta zaten kayıtlı.');
+      throw AuthException(AppL10n.current.errorInvalidCredentialsOrEmailTaken);
     }
     if (response.statusCode != 200 && response.statusCode != 201) {
-      throw AuthException('Sunucu hatası: ${response.statusCode}');
+      throw AuthException(AppL10n.current.errorServer(response.statusCode));
     }
 
     return response;

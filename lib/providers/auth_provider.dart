@@ -94,7 +94,7 @@ class AuthNotifier extends Notifier<AuthState> {
       final member = await ref.read(authApiProvider).me(token);
       state = state.copyWith(member: member);
     } catch (_) {
-      // Sessizce yoksay — bakiye tazeleme kritik değil, mevcut oturumu bozmasın.
+      // Ignore silently: refreshing the balance is not critical and must not break the current session.
     }
   }
 

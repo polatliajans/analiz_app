@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:k_chart/flutter_k_chart.dart';
 
+import '../l10n/app_localizations.dart';
 import '../models/candle.dart';
 import '../models/chart_signal.dart';
 
@@ -63,7 +64,7 @@ class CandlestickChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (candles.isEmpty) {
-      return const Center(child: Text('Mum verisi yok'));
+      return Center(child: Text(AppLocalizations.of(context)!.noCandleData));
     }
 
     final chartColors = ChartColors()

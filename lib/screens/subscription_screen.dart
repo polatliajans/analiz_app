@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
+import '../l10n/app_localizations.dart';
 import '../models/subscription_plan.dart';
 import '../providers/auth_provider.dart';
 import '../providers/store_price_provider.dart';
@@ -67,7 +68,11 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         }
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Satın alma başarısız: ${purchase.error}')),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.purchaseFailed('${purchase.error}'),
+            ),
+          ),
         );
         continue;
       }
@@ -91,10 +96,8 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           // instead of silently losing the paid subscription.
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                  'Satın alma doğrulanamadı, abonelik planı bilgisi bulunamadı. Uygulamayı yeniden açtığınızda tekrar denenecek.',
-                ),
+              SnackBar(
+                content: Text(AppLocalizations.of(context)!.purchaseNoPlan),
               ),
             );
           }
@@ -120,8 +123,8 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
 
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Pro aboneliğiniz aktifleştirildi.'),
+              SnackBar(
+                content: Text(AppLocalizations.of(context)!.proActivated),
               ),
             );
           }
@@ -132,7 +135,11 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           // purchase for another verification attempt instead of losing it.
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('$e Satın alma tekrar denenecek.')),
+              SnackBar(
+                content: Text(
+                  AppLocalizations.of(context)!.purchaseWillRetry('$e'),
+                ),
+              ),
             );
           }
         }
@@ -154,7 +161,11 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         setState(() => _pendingProductIds.remove(productId));
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Satın alma servisi kullanılamıyor.')),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.purchaseServiceUnavailable,
+            ),
+          ),
         );
         return;
       }
@@ -164,7 +175,9 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         setState(() => _pendingProductIds.remove(productId));
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Ürün mağazada bulunamadı.')),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.productNotFound),
+          ),
         );
         return;
       }
@@ -185,21 +198,28 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       // app session.
       setState(() => _pendingProductIds.remove(productId));
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Satın alma başlatılamadı: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.purchaseStartFailed('$e'),
+          ),
+        ),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final plansAsync = ref.watch(subscriptionPlanListProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Pro Abonelik')),
+      appBar: AppBar(title: Text(l10n.proSubscription)),
       body: plansAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text('Bir hata oluştu: $error')),
+        error: (error, _) => Center(
+          child: Text(AppLocalizations.of(context)!.errorOccurred('$error')),
+        ),
         data: (plans) {
           final storePrices =
               ref
@@ -225,8 +245,8 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 title: Text(plan.name),
                 subtitle: Text(
                   plan.monthlyCredit > 0
-                      ? '${plan.durationDays} gün · her ay ${plan.monthlyCredit} kredi'
-                      : '${plan.durationDays} gün',
+                      ? '${l10n.durationDays(plan.durationDays)} · ${l10n.monthlyCredits(plan.monthlyCredit)}'
+                      : l10n.durationDays(plan.durationDays),
                 ),
                 trailing: isBusy
                     ? const SizedBox(
@@ -242,7 +262,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                           storePrices[productId] ??
                               ((double.tryParse(plan.price) ?? 0) > 0
                                   ? '${plan.price} ₺'
-                                  : 'Satın Al'),
+                                  : l10n.buy),
                         ),
                       ),
               );

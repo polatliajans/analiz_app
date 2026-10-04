@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import '../l10n/app_l10n.dart';
 import '../models/candle.dart';
 
 class ChartDataException implements Exception {
@@ -34,11 +35,13 @@ class BinanceKlinesApi {
     try {
       response = await http.get(uri).timeout(const Duration(seconds: 10));
     } catch (e) {
-      throw ChartDataException('Mum verisi alınamadı: $e');
+      throw ChartDataException(AppL10n.current.errorCandlesFailed('$e'));
     }
 
     if (response.statusCode != 200) {
-      throw ChartDataException('Binance hatası: ${response.statusCode}');
+      throw ChartDataException(
+        AppL10n.current.errorBinance(response.statusCode),
+      );
     }
 
     final List<dynamic> data = jsonDecode(response.body) as List<dynamic>;

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../l10n/app_localizations.dart';
 import '../providers/coin_list_provider.dart';
 import '../widgets/coin_list_item.dart';
 import 'account_screen.dart';
 import 'chart_screen.dart';
 import 'radar_screen.dart';
+import 'settings_screen.dart';
 
 class CoinListScreen extends ConsumerStatefulWidget {
   const CoinListScreen({super.key});
@@ -35,13 +37,14 @@ class _CoinListScreenState extends ConsumerState<CoinListScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Coinler'),
+        title: Text(l10n.coins),
         actions: [
           IconButton(
             icon: const Icon(Icons.radar),
-            tooltip: 'Radar',
+            tooltip: l10n.radar,
             onPressed: () => Navigator.of(
               context,
             ).push(MaterialPageRoute(builder: (_) => const RadarScreen())),
@@ -51,6 +54,13 @@ class _CoinListScreenState extends ConsumerState<CoinListScreen>
             onPressed: () => Navigator.of(
               context,
             ).push(MaterialPageRoute(builder: (_) => const AccountScreen())),
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings),
+            tooltip: l10n.settings,
+            onPressed: () => Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => const SettingsScreen())),
           ),
         ],
         bottom: TabBar(
@@ -66,10 +76,10 @@ class _CoinListScreenState extends ConsumerState<CoinListScreen>
           Padding(
             padding: const EdgeInsets.all(12),
             child: TextField(
-              decoration: const InputDecoration(
-                hintText: 'Sembol ara...',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                hintText: l10n.searchSymbol,
+                prefixIcon: const Icon(Icons.search),
+                border: const OutlineInputBorder(),
               ),
               onChanged: (value) =>
                   setState(() => _searchQuery = value.toUpperCase()),
@@ -103,6 +113,7 @@ class _CoinList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final coinsAsync = ref.watch(coinListProvider(marketType));
+    final l10n = AppLocalizations.of(context)!;
 
     return coinsAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
@@ -110,11 +121,11 @@ class _CoinList extends ConsumerWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Bir hata oluştu: $error', textAlign: TextAlign.center),
+            Text(l10n.errorOccurred('$error'), textAlign: TextAlign.center),
             const SizedBox(height: 12),
             ElevatedButton(
               onPressed: () => ref.invalidate(coinListProvider(marketType)),
-              child: const Text('Tekrar Dene'),
+              child: Text(l10n.retry),
             ),
           ],
         ),
@@ -134,7 +145,7 @@ class _CoinList extends ConsumerWidget {
         });
 
         if (filtered.isEmpty) {
-          return const Center(child: Text('Coin bulunamadı'));
+          return Center(child: Text(l10n.noCoinsFound));
         }
 
         return ListView.separated(

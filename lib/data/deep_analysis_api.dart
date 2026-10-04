@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'api_http.dart';
 
 import '../config/api_config.dart';
+import '../l10n/app_l10n.dart';
 import '../models/ai_analysis_result.dart';
 
 class DeepAnalysisException implements Exception {
@@ -22,25 +24,27 @@ class DeepAnalysisApi {
 
     final http.Response response;
     try {
-      response = await http
-          .post(
-            uri,
-            headers: {'Authorization': 'Bearer $token'},
-            body: {'timeframe': timeframe},
-          )
-          .timeout(const Duration(seconds: 70));
+      response = await ApiHttp.post(
+        uri,
+        headers: {'Authorization': 'Bearer $token'},
+        body: {'timeframe': timeframe},
+      ).timeout(const Duration(seconds: 70));
     } catch (e) {
-      throw DeepAnalysisException('Derin analiz isteği gönderilemedi: $e');
+      throw DeepAnalysisException(
+        AppL10n.current.errorDeepAnalysisRequestFailed('$e'),
+      );
     }
 
     if (response.statusCode == 402) {
-      throw DeepAnalysisException('Yetersiz kredi.');
+      throw DeepAnalysisException(AppL10n.current.errorInsufficientCredit);
     }
     if (response.statusCode == 502) {
-      throw DeepAnalysisException('Derin analiz şu anda kullanılamıyor.');
+      throw DeepAnalysisException(AppL10n.current.errorDeepAnalysisUnavailable);
     }
     if (response.statusCode != 200) {
-      throw DeepAnalysisException('Sunucu hatası: ${response.statusCode}');
+      throw DeepAnalysisException(
+        AppL10n.current.errorServer(response.statusCode),
+      );
     }
 
     return AiAnalysisResult.fromJson(

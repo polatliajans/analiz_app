@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'api_http.dart';
 
 import '../config/api_config.dart';
+import '../l10n/app_l10n.dart';
 
 class PurchaseResult {
   final int creditBalance;
@@ -40,25 +42,23 @@ class PurchaseApi {
 
     final http.Response response;
     try {
-      response = await http
-          .post(
-            uri,
-            headers: {'Authorization': 'Bearer $token'},
-            body: {'purchase_token': purchaseToken},
-          )
-          .timeout(const Duration(seconds: 15));
+      response = await ApiHttp.post(
+        uri,
+        headers: {'Authorization': 'Bearer $token'},
+        body: {'purchase_token': purchaseToken},
+      ).timeout(const Duration(seconds: 15));
     } catch (e) {
-      throw PurchaseException('Satın alma doğrulanamadı: $e');
+      throw PurchaseException(AppL10n.current.errorPurchaseVerifyFailed('$e'));
     }
 
     if (response.statusCode == 422) {
-      throw PurchaseException('Satın alma geçerli değil.');
+      throw PurchaseException(AppL10n.current.errorPurchaseInvalid);
     }
     if (response.statusCode == 502) {
-      throw PurchaseException('Google Play doğrulama servisine ulaşılamadı.');
+      throw PurchaseException(AppL10n.current.errorPlayVerificationUnreachable);
     }
     if (response.statusCode != 200) {
-      throw PurchaseException('Sunucu hatası: ${response.statusCode}');
+      throw PurchaseException(AppL10n.current.errorServer(response.statusCode));
     }
 
     return PurchaseResult.fromJson(

@@ -1,8 +1,10 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'api_http.dart';
 
 import '../config/api_config.dart';
+import '../l10n/app_l10n.dart';
 import '../models/radar_item.dart';
 
 class RadarException implements Exception {
@@ -21,13 +23,15 @@ class RadarApi {
 
     final http.Response response;
     try {
-      response = await http.get(uri).timeout(const Duration(seconds: 15));
+      response = await ApiHttp.get(uri).timeout(const Duration(seconds: 15));
     } catch (e) {
-      throw RadarException('Radar alınamadı: $e');
+      throw RadarException(AppL10n.current.errorRadarFailed('$e'));
     }
 
     if (response.statusCode != 200) {
-      throw RadarException('Radar alınamadı: ${response.statusCode}');
+      throw RadarException(
+        AppL10n.current.errorRadarFailed('${response.statusCode}'),
+      );
     }
 
     try {
@@ -36,7 +40,7 @@ class RadarApi {
           .map((json) => RadarItem.fromJson(json as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      throw RadarException('Radar alınamadı: $e');
+      throw RadarException(AppL10n.current.errorRadarFailed('$e'));
     }
   }
 }

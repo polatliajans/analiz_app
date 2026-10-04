@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/ai_analysis_api.dart';
 import '../data/deep_analysis_api.dart';
+import '../l10n/app_localizations.dart';
 import '../models/coin.dart';
 import '../providers/auth_provider.dart';
 import '../providers/chart_data_provider.dart';
@@ -33,11 +34,12 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
   bool _isRequestingDeepAnalysis = false;
 
   Future<void> _requestAnalysis() async {
+    final l10n = AppLocalizations.of(context)!;
     final auth = ref.read(authProvider);
     if (!auth.isLoggedIn) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Giriş yapmalısın')));
+      ).showSnackBar(SnackBar(content: Text(l10n.mustLogIn)));
       return;
     }
 
@@ -61,7 +63,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
               Text(result.result),
               const SizedBox(height: 8),
               Text(
-                '${result.creditCost} kredi harcandı',
+                l10n.creditsSpent(result.creditCost),
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ],
@@ -72,18 +74,19 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Analiz alınamadı: $e')));
+      ).showSnackBar(SnackBar(content: Text(l10n.analysisFailed('$e'))));
     } finally {
       if (mounted) setState(() => _isRequestingAnalysis = false);
     }
   }
 
   Future<void> _requestDeepAnalysis() async {
+    final l10n = AppLocalizations.of(context)!;
     final auth = ref.read(authProvider);
     if (!auth.isLoggedIn) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Giriş yapmalısın')));
+      ).showSnackBar(SnackBar(content: Text(l10n.mustLogIn)));
       return;
     }
 
@@ -107,7 +110,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
               Text(result.result),
               const SizedBox(height: 8),
               Text(
-                '${result.creditCost} kredi harcandı',
+                l10n.creditsSpent(result.creditCost),
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ],
@@ -118,7 +121,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Derin analiz alınamadı: $e')));
+      ).showSnackBar(SnackBar(content: Text(l10n.deepAnalysisFailed('$e'))));
     } finally {
       if (mounted) setState(() => _isRequestingDeepAnalysis = false);
     }
@@ -131,6 +134,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
       timeframe: _selectedTimeframe,
     );
     final chartDataAsync = ref.watch(chartDataProvider(params));
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
@@ -162,14 +166,14 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'Bir hata oluştu: $error',
+                      l10n.errorOccurred('$error'),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 12),
                     ElevatedButton(
                       onPressed: () =>
                           ref.invalidate(chartDataProvider(params)),
-                      child: const Text('Tekrar Dene'),
+                      child: Text(l10n.retry),
                     ),
                   ],
                 ),
@@ -194,7 +198,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
                             height: 20,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : const Text('Analiz Yaptır'),
+                        : Text(l10n.quickAnalysisButton),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -209,7 +213,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
                             height: 20,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : const Text('Derin Analiz'),
+                        : Text(l10n.deepAnalysisButton),
                   ),
                 ),
               ],
@@ -221,6 +225,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
   }
 
   Widget _buildWatchlistButton(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final auth = ref.watch(authProvider);
     final watchlistAsync = ref.watch(watchlistProvider);
     final isFollowed = watchlistAsync.maybeWhen(
@@ -234,7 +239,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
         if (!auth.isLoggedIn) {
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(const SnackBar(content: Text('Giriş yapmalısın')));
+          ).showSnackBar(SnackBar(content: Text(l10n.mustLogIn)));
           return;
         }
         try {

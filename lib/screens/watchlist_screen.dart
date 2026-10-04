@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../l10n/app_localizations.dart';
 import '../providers/watchlist_provider.dart';
 import '../widgets/coin_list_item.dart';
 import 'chart_screen.dart';
@@ -11,29 +12,28 @@ class WatchlistScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final watchlistAsync = ref.watch(watchlistProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Takip Listem')),
+      appBar: AppBar(title: Text(l10n.myWatchlist)),
       body: watchlistAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Bir hata oluştu: $error', textAlign: TextAlign.center),
+              Text(l10n.errorOccurred('$error'), textAlign: TextAlign.center),
               const SizedBox(height: 12),
               ElevatedButton(
                 onPressed: () => ref.invalidate(watchlistProvider),
-                child: const Text('Tekrar Dene'),
+                child: Text(l10n.retry),
               ),
             ],
           ),
         ),
         data: (coins) {
           if (coins.isEmpty) {
-            return const Center(
-              child: Text('Henüz takip ettiğin bir coin yok'),
-            );
+            return Center(child: Text(l10n.watchlistEmpty));
           }
           return ListView.separated(
             itemCount: coins.length,

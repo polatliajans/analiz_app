@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'api_http.dart';
 
 import '../config/api_config.dart';
+import '../l10n/app_l10n.dart';
 import '../models/chart_signal.dart';
 import 'binance_klines_api.dart';
 
@@ -16,13 +18,15 @@ class ChartSignalApi {
 
     final http.Response response;
     try {
-      response = await http.get(uri).timeout(const Duration(seconds: 10));
+      response = await ApiHttp.get(uri).timeout(const Duration(seconds: 10));
     } catch (e) {
-      throw ChartDataException('Sinyal verisi alınamadı: $e');
+      throw ChartDataException(AppL10n.current.errorSignalsFailed('$e'));
     }
 
     if (response.statusCode != 200) {
-      throw ChartDataException('Sunucu hatası: ${response.statusCode}');
+      throw ChartDataException(
+        AppL10n.current.errorServer(response.statusCode),
+      );
     }
 
     final List<dynamic> data = jsonDecode(response.body) as List<dynamic>;

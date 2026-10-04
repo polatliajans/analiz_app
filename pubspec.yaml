@@ -41,6 +41,10 @@ dependencies:
   firebase_messaging: ^15.2.10
   k_chart: ^0.7.1
   flutter_secure_storage: ^11.0.0
+  flutter_localizations:
+    sdk: flutter
+  shared_preferences: ^2.5.0
+  intl: ^0.20.2
 
 dependency_overrides:
   k_chart:
@@ -62,6 +66,7 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  generate: true
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

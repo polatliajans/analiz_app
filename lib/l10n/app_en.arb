@@ -1,0 +1,314 @@
+{
+  "@@locale": "en",
+  "appTitle": "Crypto Analysis",
+  "chooseLanguage": "Choose your language",
+  "continueButton": "Continue",
+  "settings": "Settings",
+  "language": "Language",
+  "languageNameEn": "English",
+  "languageNameTr": "Türkçe",
+  "languageNameEs": "Español",
+  "retry": "Try again",
+  "errorOccurred": "An error occurred: {details}",
+  "@errorOccurred": {
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "email": "Email",
+  "password": "Password",
+  "logIn": "Log in",
+  "signUp": "Sign up",
+  "logOut": "Log out",
+  "myAccount": "My Account",
+  "myWatchlist": "My Watchlist",
+  "mustLogIn": "You need to log in",
+  "buy": "Buy",
+  "accountEmail": "Email: {email}",
+  "@accountEmail": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "accountRole": "Role: {role}",
+  "@accountRole": {
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "roleFree": "Free",
+  "rolePro": "Pro",
+  "accountCreditBalance": "Credit balance: {count}",
+  "@accountCreditBalance": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "buyCredits": "Buy Credits",
+  "upgradeToPro": "Upgrade to Pro",
+  "logInOrSignUp": "Log in / Sign up",
+  "noAccountSignUp": "Don't have an account? Sign up",
+  "nameOptional": "Name (optional)",
+  "passwordMinChars": "Password (at least 8 characters)",
+  "coins": "Coins",
+  "radar": "Radar",
+  "searchSymbol": "Search symbol...",
+  "noCoinsFound": "No coins found",
+  "volumeLabel": "Volume: {value}",
+  "@volumeLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "noCandleData": "No candle data",
+  "creditsSpent": "{count, plural, =1{1 credit spent} other{{count} credits spent}}",
+  "@creditsSpent": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "analysisFailed": "Analysis failed: {details}",
+  "@analysisFailed": {
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "deepAnalysisFailed": "Deep analysis failed: {details}",
+  "@deepAnalysisFailed": {
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "quickAnalysisButton": "Quick Analysis",
+  "deepAnalysisButton": "Deep Analysis",
+  "creditsCount": "{count, plural, =1{1 credit} other{{count} credits}}",
+  "@creditsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "proSubscription": "Pro Subscription",
+  "durationDays": "{count, plural, =1{1 day} other{{count} days}}",
+  "@durationDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "monthlyCredits": "{count, plural, =1{1 credit every month} other{{count} credits every month}}",
+  "@monthlyCredits": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "purchaseFailed": "Purchase failed: {details}",
+  "@purchaseFailed": {
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "purchaseNoPackage": "Purchase could not be verified because the package information was not found. It will be retried the next time you open the app.",
+  "purchaseNoPlan": "Purchase could not be verified because the subscription plan information was not found. It will be retried the next time you open the app.",
+  "creditsAdded": "Credits have been added to your balance.",
+  "proActivated": "Your Pro subscription has been activated.",
+  "purchaseWillRetry": "{details} The purchase will be retried.",
+  "@purchaseWillRetry": {
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "purchaseServiceUnavailable": "The purchase service is unavailable.",
+  "productNotFound": "Product not found in the store.",
+  "purchaseStartFailed": "Could not start the purchase: {details}",
+  "@purchaseStartFailed": {
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "termAll": "All",
+  "termShort": "Short",
+  "termMedium": "Medium",
+  "termLong": "Long",
+  "termShortLabel": "Short term",
+  "termMediumLabel": "Medium term",
+  "termLongLabel": "Long term",
+  "agoNow": "just now",
+  "agoMinutes": "{n} min ago",
+  "@agoMinutes": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "agoHours": "{n} h ago",
+  "@agoHours": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "agoDays": "{n, plural, =1{1 day ago} other{{n} days ago}}",
+  "@agoDays": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "radarEmpty": "No opportunities meet the technical criteria right now.",
+  "radarFooter": "Score 0-100: shows how oversold it is. Tap an opportunity for an AI-powered deep analysis.",
+  "watchlistEmpty": "You are not following any coins yet",
+  "errorServer": "Server error: {status}",
+  "@errorServer": {
+    "placeholders": {
+      "status": {
+        "type": "int"
+      }
+    }
+  },
+  "errorInsufficientCredit": "Insufficient credit.",
+  "errorAnalysisUnavailable": "Analysis is currently unavailable.",
+  "errorDeepAnalysisUnavailable": "Deep analysis is currently unavailable.",
+  "errorAnalysisRequestFailed": "Could not send the analysis request: {details}",
+  "@errorAnalysisRequestFailed": {
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "errorDeepAnalysisRequestFailed": "Could not send the deep analysis request: {details}",
+  "@errorDeepAnalysisRequestFailed": {
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "errorSessionInvalid": "Could not verify your session.",
+  "errorRequestFailed": "Could not send the request: {details}",
+  "@errorRequestFailed": {
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "errorInvalidCredentialsOrEmailTaken": "Invalid details, or this email is already registered.",
+  "errorSignalsFailed": "Could not load signal data: {details}",
+  "@errorSignalsFailed": {
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "errorServerUnreachable": "Could not connect to the server: {details}",
+  "@errorServerUnreachable": {
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "errorCreditPackagesFailed": "Could not load credit packages: {details}",
+  "@errorCreditPackagesFailed": {
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "errorDeviceTokenFailed": "Could not register the device token: {details}",
+  "@errorDeviceTokenFailed": {
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "errorProOnly": "This feature is for Pro members only.",
+  "errorPurchaseVerifyFailed": "The purchase could not be verified: {details}",
+  "@errorPurchaseVerifyFailed": {
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "errorPurchaseInvalid": "The purchase is not valid.",
+  "errorPlayVerificationUnreachable": "Could not reach the Google Play verification service.",
+  "errorRadarFailed": "Could not load Radar: {details}",
+  "@errorRadarFailed": {
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "errorPlansFailed": "Could not load subscription plans: {details}",
+  "@errorPlansFailed": {
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "errorSubscriptionVerifyFailed": "The subscription could not be verified: {details}",
+  "@errorSubscriptionVerifyFailed": {
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "errorSubscriptionInvalid": "The subscription is not valid.",
+  "errorWatchlistFailed": "Could not load your watchlist.",
+  "errorFollowFailed": "Could not follow this coin.",
+  "errorUnfollowFailed": "Could not remove it from your watchlist.",
+  "errorCandlesFailed": "Could not load candle data: {details}",
+  "@errorCandlesFailed": {
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "errorBinance": "Binance error: {status}",
+  "@errorBinance": {
+    "placeholders": {
+      "status": {
+        "type": "int"
+      }
+    }
+  }
+}

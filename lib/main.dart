@@ -1,12 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import 'l10n/app_localizations.dart';
 import 'providers/auth_provider.dart';
+import 'providers/locale_provider.dart';
 import 'screens/coin_list_screen.dart';
+import 'screens/language_selection_screen.dart';
 import 'services/push_notification_service.dart';
 
-void main() {
-  runApp(const ProviderScope(child: KriptoAnalizApp()));
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
+  runApp(
+    ProviderScope(
+      overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+      child: const KriptoAnalizApp(),
+    ),
+  );
 }
 
 class KriptoAnalizApp extends ConsumerStatefulWidget {
@@ -37,10 +48,17 @@ class _KriptoAnalizAppState extends ConsumerState<KriptoAnalizApp> {
       _pushService.updateAuth(authToken: next.token, role: next.member?.role);
     });
 
+    final localeState = ref.watch(localeProvider);
+
     return MaterialApp(
-      title: 'Kripto Analiz',
+      onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
       theme: ThemeData(colorSchemeSeed: Colors.deepPurple, useMaterial3: true),
-      home: const CoinListScreen(),
+      locale: localeState.locale,
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      home: localeState.hasChosen
+          ? const CoinListScreen()
+          : const LanguageSelectionScreen(),
     );
   }
 }

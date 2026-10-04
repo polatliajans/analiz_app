@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'api_http.dart';
 
 import '../config/api_config.dart';
+import '../l10n/app_l10n.dart';
 import '../models/credit_package.dart';
 
 class CreditPackageException implements Exception {
@@ -18,14 +20,16 @@ class CreditPackageApi {
 
     final http.Response response;
     try {
-      response = await http.get(uri).timeout(const Duration(seconds: 15));
+      response = await ApiHttp.get(uri).timeout(const Duration(seconds: 15));
     } catch (e) {
-      throw CreditPackageException('Kredi paketleri alınamadı: $e');
+      throw CreditPackageException(
+        AppL10n.current.errorCreditPackagesFailed('$e'),
+      );
     }
 
     if (response.statusCode != 200) {
       throw CreditPackageException(
-        'Kredi paketleri alınamadı: ${response.statusCode}',
+        AppL10n.current.errorCreditPackagesFailed('${response.statusCode}'),
       );
     }
 

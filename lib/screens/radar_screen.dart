@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../l10n/app_localizations.dart';
 import '../models/radar_item.dart';
 import '../providers/radar_provider.dart';
 import 'chart_screen.dart';
@@ -15,40 +16,41 @@ class RadarScreen extends ConsumerStatefulWidget {
 class _RadarScreenState extends ConsumerState<RadarScreen> {
   String? _term;
 
-  static const _terms = <(String?, String)>[
-    (null, 'Tümü'),
-    ('short', 'Kısa'),
-    ('medium', 'Orta'),
-    ('long', 'Uzun'),
+  static List<(String?, String)> _terms(AppLocalizations l10n) => [
+    (null, l10n.termAll),
+    ('short', l10n.termShort),
+    ('medium', l10n.termMedium),
+    ('long', l10n.termLong),
   ];
 
-  static String _termLabel(String term) {
+  static String _termLabel(AppLocalizations l10n, String term) {
     switch (term) {
       case 'short':
-        return 'Kısa vade';
+        return l10n.termShortLabel;
       case 'medium':
-        return 'Orta vade';
+        return l10n.termMediumLabel;
       case 'long':
-        return 'Uzun vade';
+        return l10n.termLongLabel;
       default:
         return term;
     }
   }
 
-  static String _ago(DateTime t) {
+  static String _ago(AppLocalizations l10n, DateTime t) {
     final diff = DateTime.now().difference(t.toLocal());
-    if (diff.inMinutes < 1) return 'şimdi';
-    if (diff.inMinutes < 60) return '${diff.inMinutes} dk önce';
-    if (diff.inHours < 24) return '${diff.inHours} sa önce';
-    return '${diff.inDays} gün önce';
+    if (diff.inMinutes < 1) return l10n.agoNow;
+    if (diff.inMinutes < 60) return l10n.agoMinutes(diff.inMinutes);
+    if (diff.inHours < 24) return l10n.agoHours(diff.inHours);
+    return l10n.agoDays(diff.inDays);
   }
 
   @override
   Widget build(BuildContext context) {
     final radarAsync = ref.watch(radarProvider(_term));
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Radar')),
+      appBar: AppBar(title: Text(l10n.radar)),
       body: Column(
         children: [
           Padding(
@@ -57,7 +59,7 @@ class _RadarScreenState extends ConsumerState<RadarScreen> {
               alignment: Alignment.centerLeft,
               child: Wrap(
                 spacing: 8,
-                children: _terms
+                children: _terms(l10n)
                     .map(
                       (t) => ChoiceChip(
                         label: Text(t.$2),
@@ -80,16 +82,14 @@ class _RadarScreenState extends ConsumerState<RadarScreen> {
                     const SizedBox(height: 12),
                     ElevatedButton(
                       onPressed: () => ref.invalidate(radarProvider(_term)),
-                      child: const Text('Tekrar Dene'),
+                      child: Text(l10n.retry),
                     ),
                   ],
                 ),
               ),
               data: (items) {
                 if (items.isEmpty) {
-                  return const Center(
-                    child: Text('Şu an teknik şartları sağlayan fırsat yok.'),
-                  );
+                  return Center(child: Text(l10n.radarEmpty));
                 }
                 return RefreshIndicator(
                   onRefresh: () => ref.refresh(radarProvider(_term).future),
@@ -104,11 +104,11 @@ class _RadarScreenState extends ConsumerState<RadarScreen> {
               },
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.all(12),
+          Padding(
+            padding: const EdgeInsets.all(12),
             child: Text(
-              'Skor 0-100: ne kadar aşırı satımda olduğunu gösterir. Yapay zeka destekli derin analiz için bir fırsata dokunun.',
-              style: TextStyle(fontSize: 12, color: Colors.grey),
+              l10n.radarFooter,
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
               textAlign: TextAlign.center,
             ),
           ),
@@ -118,12 +118,13 @@ class _RadarScreenState extends ConsumerState<RadarScreen> {
   }
 
   Widget _buildTile(BuildContext context, RadarItem item) {
+    final l10n = AppLocalizations.of(context)!;
     return ListTile(
       title: Text(
         '${item.coin.symbol}  ·  ${item.coin.marketType == 'futures' ? 'Futures' : 'Spot'}',
       ),
       subtitle: Text(
-        '${_termLabel(item.term)} (${item.timeframe})  ·  RSI ${item.rsi?.toStringAsFixed(1) ?? '-'}  ·  ${_ago(item.detectedAt)}',
+        '${_termLabel(l10n, item.term)} (${item.timeframe})  ·  RSI ${item.rsi?.toStringAsFixed(1) ?? '-'}  ·  ${_ago(l10n, item.detectedAt)}',
       ),
       trailing: Chip(label: Text('${item.technicalScore}')),
       onTap: () => Navigator.of(

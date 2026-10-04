@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
+import '../l10n/app_localizations.dart';
 import '../models/credit_package.dart';
 import '../providers/auth_provider.dart';
 import '../providers/credit_package_provider.dart';
@@ -68,7 +69,11 @@ class _CreditPackagesScreenState extends ConsumerState<CreditPackagesScreen> {
         }
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Satın alma başarısız: ${purchase.error}')),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.purchaseFailed('${purchase.error}'),
+            ),
+          ),
         );
         continue;
       }
@@ -92,10 +97,8 @@ class _CreditPackagesScreenState extends ConsumerState<CreditPackagesScreen> {
           // instead of silently losing the paid credit.
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                  'Satın alma doğrulanamadı, paket bilgisi bulunamadı. Uygulamayı yeniden açtığınızda tekrar denenecek.',
-                ),
+              SnackBar(
+                content: Text(AppLocalizations.of(context)!.purchaseNoPackage),
               ),
             );
           }
@@ -121,7 +124,9 @@ class _CreditPackagesScreenState extends ConsumerState<CreditPackagesScreen> {
 
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Kredi bakiyenize eklendi.')),
+              SnackBar(
+                content: Text(AppLocalizations.of(context)!.creditsAdded),
+              ),
             );
           }
         } catch (e) {
@@ -131,7 +136,11 @@ class _CreditPackagesScreenState extends ConsumerState<CreditPackagesScreen> {
           // purchase for another verification attempt instead of losing it.
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('$e Satın alma tekrar denenecek.')),
+              SnackBar(
+                content: Text(
+                  AppLocalizations.of(context)!.purchaseWillRetry('$e'),
+                ),
+              ),
             );
           }
         }
@@ -153,7 +162,11 @@ class _CreditPackagesScreenState extends ConsumerState<CreditPackagesScreen> {
         setState(() => _pendingProductIds.remove(productId));
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Satın alma servisi kullanılamıyor.')),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.purchaseServiceUnavailable,
+            ),
+          ),
         );
         return;
       }
@@ -163,7 +176,9 @@ class _CreditPackagesScreenState extends ConsumerState<CreditPackagesScreen> {
         setState(() => _pendingProductIds.remove(productId));
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Ürün mağazada bulunamadı.')),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.productNotFound),
+          ),
         );
         return;
       }
@@ -184,21 +199,28 @@ class _CreditPackagesScreenState extends ConsumerState<CreditPackagesScreen> {
       // app session.
       setState(() => _pendingProductIds.remove(productId));
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Satın alma başlatılamadı: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.purchaseStartFailed('$e'),
+          ),
+        ),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final packagesAsync = ref.watch(creditPackageListProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Kredi Satın Al')),
+      appBar: AppBar(title: Text(l10n.buyCredits)),
       body: packagesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text('Bir hata oluştu: $error')),
+        error: (error, _) => Center(
+          child: Text(AppLocalizations.of(context)!.errorOccurred('$error')),
+        ),
         data: (packages) {
           final storePrices =
               ref
@@ -222,7 +244,7 @@ class _CreditPackagesScreenState extends ConsumerState<CreditPackagesScreen> {
                   productId != null && _pendingProductIds.contains(productId);
               return ListTile(
                 title: Text(package.name),
-                subtitle: Text('${package.creditAmount} kredi'),
+                subtitle: Text(l10n.creditsCount(package.creditAmount)),
                 trailing: isBusy
                     ? const SizedBox(
                         width: 20,

@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'api_http.dart';
 
 import '../config/api_config.dart';
+import '../l10n/app_l10n.dart';
 import '../models/ai_analysis_result.dart';
 
 class AiAnalysisException implements Exception {
@@ -22,25 +24,27 @@ class AiAnalysisApi {
 
     final http.Response response;
     try {
-      response = await http
-          .post(
-            uri,
-            headers: {'Authorization': 'Bearer $token'},
-            body: {'timeframe': timeframe},
-          )
-          .timeout(const Duration(seconds: 50));
+      response = await ApiHttp.post(
+        uri,
+        headers: {'Authorization': 'Bearer $token'},
+        body: {'timeframe': timeframe},
+      ).timeout(const Duration(seconds: 50));
     } catch (e) {
-      throw AiAnalysisException('Analiz isteği gönderilemedi: $e');
+      throw AiAnalysisException(
+        AppL10n.current.errorAnalysisRequestFailed('$e'),
+      );
     }
 
     if (response.statusCode == 402) {
-      throw AiAnalysisException('Yetersiz kredi.');
+      throw AiAnalysisException(AppL10n.current.errorInsufficientCredit);
     }
     if (response.statusCode == 502) {
-      throw AiAnalysisException('Analiz şu anda kullanılamıyor.');
+      throw AiAnalysisException(AppL10n.current.errorAnalysisUnavailable);
     }
     if (response.statusCode != 200) {
-      throw AiAnalysisException('Sunucu hatası: ${response.statusCode}');
+      throw AiAnalysisException(
+        AppL10n.current.errorServer(response.statusCode),
+      );
     }
 
     return AiAnalysisResult.fromJson(

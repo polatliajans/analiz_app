@@ -15,8 +15,8 @@ class PushNotificationService {
       await Firebase.initializeApp();
       _firebaseReady = true;
     } catch (_) {
-      // Firebase henüz yapılandırılmadı (google-services.json eksik).
-      // Push özellikleri sessizce devre dışı kalır, uygulamanın geri kalanı etkilenmez.
+      // Firebase is not configured yet (google-services.json is missing).
+      // Push features are silently disabled; the rest of the app is unaffected.
       return;
     }
 
@@ -43,7 +43,7 @@ class PushNotificationService {
         await _registerToken(fcmToken);
       }
     } catch (e) {
-      // Firebase tam yapılandırılmamış veya izin reddedilmiş olabilir; yoksay.
+      // Firebase may be only partially configured or permission was denied; ignore.
       debugPrint('PushNotificationService: $e');
     }
   }
@@ -59,7 +59,7 @@ class PushNotificationService {
         platform: 'android',
       );
     } catch (e) {
-      // Ücretsiz üye için 403 beklenir; ağ hataları da kritik değil, sessizce yoksayılır.
+      // A 403 is expected for free members; network errors are not critical either and are ignored silently.
       debugPrint('PushNotificationService: $e');
     }
   }

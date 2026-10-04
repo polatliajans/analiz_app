@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'api_http.dart';
 
 import '../config/api_config.dart';
+import '../l10n/app_l10n.dart';
 import '../models/coin.dart';
 
 class CoinApiException implements Exception {
@@ -20,13 +22,13 @@ class CoinApi {
 
     final http.Response response;
     try {
-      response = await http.get(uri).timeout(const Duration(seconds: 10));
+      response = await ApiHttp.get(uri).timeout(const Duration(seconds: 10));
     } catch (e) {
-      throw CoinApiException('Sunucuya bağlanılamadı: $e');
+      throw CoinApiException(AppL10n.current.errorServerUnreachable('$e'));
     }
 
     if (response.statusCode != 200) {
-      throw CoinApiException('Sunucu hatası: ${response.statusCode}');
+      throw CoinApiException(AppL10n.current.errorServer(response.statusCode));
     }
 
     final List<dynamic> data = jsonDecode(response.body) as List<dynamic>;

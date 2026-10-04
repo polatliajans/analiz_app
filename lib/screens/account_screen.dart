@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../l10n/app_localizations.dart';
 import '../providers/auth_provider.dart';
 import 'credit_packages_screen.dart';
 import 'login_screen.dart';
@@ -13,20 +14,27 @@ class AccountScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Hesabım')),
+      appBar: AppBar(title: Text(l10n.myAccount)),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: authState.isLoggedIn
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('E-posta: ${authState.member!.email}'),
+                  Text(l10n.accountEmail(authState.member!.email)),
                   Text(
-                    'Rol: ${authState.member!.role == 'pro' ? 'Pro' : 'Ücretsiz'}',
+                    l10n.accountRole(
+                      authState.member!.role == 'pro'
+                          ? l10n.rolePro
+                          : l10n.roleFree,
+                    ),
                   ),
-                  Text('Kredi Bakiyesi: ${authState.member!.creditBalance}'),
+                  Text(
+                    l10n.accountCreditBalance(authState.member!.creditBalance),
+                  ),
                   const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () => Navigator.of(context).push(
@@ -34,7 +42,7 @@ class AccountScreen extends ConsumerWidget {
                         builder: (_) => const WatchlistScreen(),
                       ),
                     ),
-                    child: const Text('Takip Listem'),
+                    child: Text(l10n.myWatchlist),
                   ),
                   const SizedBox(height: 12),
                   ElevatedButton(
@@ -43,7 +51,7 @@ class AccountScreen extends ConsumerWidget {
                         builder: (_) => const CreditPackagesScreen(),
                       ),
                     ),
-                    child: const Text('Kredi Satın Al'),
+                    child: Text(l10n.buyCredits),
                   ),
                   if (authState.member!.role == 'free') ...[
                     const SizedBox(height: 12),
@@ -53,13 +61,13 @@ class AccountScreen extends ConsumerWidget {
                           builder: (_) => const SubscriptionScreen(),
                         ),
                       ),
-                      child: const Text("Pro'ya Yükselt"),
+                      child: Text(l10n.upgradeToPro),
                     ),
                   ],
                   const SizedBox(height: 12),
                   ElevatedButton(
                     onPressed: () => ref.read(authProvider.notifier).logout(),
-                    child: const Text('Çıkış Yap'),
+                    child: Text(l10n.logOut),
                   ),
                 ],
               )
@@ -68,7 +76,7 @@ class AccountScreen extends ConsumerWidget {
                   onPressed: () => Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => const LoginScreen()),
                   ),
-                  child: const Text('Giriş Yap / Kayıt Ol'),
+                  child: Text(l10n.logInOrSignUp),
                 ),
               ),
       ),

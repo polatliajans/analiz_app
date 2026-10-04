@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'api_http.dart';
 
 import '../config/api_config.dart';
+import '../l10n/app_l10n.dart';
 import '../models/subscription_plan.dart';
 
 class SubscriptionPlanException implements Exception {
@@ -18,14 +20,14 @@ class SubscriptionPlanApi {
 
     final http.Response response;
     try {
-      response = await http.get(uri).timeout(const Duration(seconds: 15));
+      response = await ApiHttp.get(uri).timeout(const Duration(seconds: 15));
     } catch (e) {
-      throw SubscriptionPlanException('Abonelik planları alınamadı: $e');
+      throw SubscriptionPlanException(AppL10n.current.errorPlansFailed('$e'));
     }
 
     if (response.statusCode != 200) {
       throw SubscriptionPlanException(
-        'Abonelik planları alınamadı: ${response.statusCode}',
+        AppL10n.current.errorPlansFailed('${response.statusCode}'),
       );
     }
 
