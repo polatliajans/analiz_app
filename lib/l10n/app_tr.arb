@@ -39,6 +39,8 @@
   "noCoinsFound": "Coin bulunamadı",
   "volumeLabel": "Hacim: {value}",
   "noCandleData": "Mum verisi yok",
+  "signalStrengthLabel": "Sinyal gücü",
+  "signalStrengthAll": "Tümü",
   "creditsSpent": "{count} kredi harcandı",
   "analysisFailed": "Analiz alınamadı: {details}",
   "deepAnalysisFailed": "Derin analiz alınamadı: {details}",

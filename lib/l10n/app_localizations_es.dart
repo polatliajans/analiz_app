@@ -138,6 +138,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get noCandleData => 'Sin datos de velas';
 
   @override
+  String get signalStrengthLabel => 'Fuerza de señal';
+
+  @override
+  String get signalStrengthAll => 'Todas';
+
+  @override
   String creditsSpent(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

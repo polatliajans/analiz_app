@@ -138,6 +138,12 @@ class AppLocalizationsTr extends AppLocalizations {
   String get noCandleData => 'Mum verisi yok';
 
   @override
+  String get signalStrengthLabel => 'Sinyal gücü';
+
+  @override
+  String get signalStrengthAll => 'Tümü';
+
+  @override
   String creditsSpent(int count) {
     return '$count kredi harcandı';
   }

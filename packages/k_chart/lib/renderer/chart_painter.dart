@@ -227,18 +227,24 @@ class ChartPainter extends BaseChartPainter {
       final y = marker.isBuy
           ? mMainRenderer.getY(entity.low)
           : mMainRenderer.getY(entity.high);
-      _drawMarkerArrow(canvas, x, y, marker.isBuy);
+      _drawMarkerArrow(canvas, x, y, marker.isBuy, marker.strength);
     }
   }
 
-  void _drawMarkerArrow(Canvas canvas, double x, double y, bool isBuy) {
+  void _drawMarkerArrow(
+      Canvas canvas, double x, double y, bool isBuy, int strength) {
+    final level = strength < 1 ? 1 : (strength > 3 ? 3 : strength);
+    // Strength 1: small and faint; strength 3: large and solid.
+    final double sizeFactor = const [0.8, 1.0, 1.3][level - 1];
+    final double opacity = const [0.45, 0.75, 1.0][level - 1];
+    final baseColor = isBuy ? chartColors.upColor : chartColors.dnColor;
     final paint = Paint()
       ..style = PaintingStyle.fill
       ..isAntiAlias = true
-      ..color = isBuy ? chartColors.upColor : chartColors.dnColor;
+      ..color = baseColor.withOpacity(opacity);
 
-    const double arrowHalfWidth = 4.5;
-    const double arrowLength = 8.0;
+    final double arrowHalfWidth = 4.5 * sizeFactor;
+    final double arrowLength = 8.0 * sizeFactor;
     const double gap = 6.0; // distance between wick end and arrow tip
 
     canvas.save();
@@ -266,6 +272,22 @@ class ChartPainter extends BaseChartPainter {
       path.close();
     }
     canvas.drawPath(path, paint);
+
+    // Strength digit badge beyond the arrow base (away from the candle).
+    final tp = TextPainter(
+      text: TextSpan(
+        text: '$level',
+        style: TextStyle(
+          fontSize: 9.0 + level,
+          fontWeight: FontWeight.bold,
+          color: baseColor.withOpacity(opacity),
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    final badgeOffset = gap + arrowLength + 1.0;
+    final dy = isBuy ? badgeOffset : -badgeOffset - tp.height;
+    tp.paint(canvas, Offset(-tp.width / 2, dy));
     canvas.restore();
   }
 

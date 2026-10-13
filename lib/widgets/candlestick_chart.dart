@@ -41,7 +41,13 @@ class CandlestickChart extends StatelessWidget {
     for (final signal in signals) {
       final index = _matchCandleIndex(signal);
       if (index == null) continue;
-      markers.add(ChartMarker(index: index, isBuy: signal.signalType == 'buy'));
+      markers.add(
+        ChartMarker(
+          index: index,
+          isBuy: signal.signalType == 'buy',
+          strength: signal.strength,
+        ),
+      );
     }
     return markers;
   }

@@ -334,6 +334,18 @@ abstract class AppLocalizations {
   /// **'No candle data'**
   String get noCandleData;
 
+  /// No description provided for @signalStrengthLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Signal strength'**
+  String get signalStrengthLabel;
+
+  /// No description provided for @signalStrengthAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get signalStrengthAll;
+
   /// No description provided for @creditsSpent.
   ///
   /// In en, this message translates to:

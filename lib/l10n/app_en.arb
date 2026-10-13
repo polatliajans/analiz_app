@@ -74,6 +74,8 @@
     }
   },
   "noCandleData": "No candle data",
+  "signalStrengthLabel": "Signal strength",
+  "signalStrengthAll": "All",
   "creditsSpent": "{count, plural, =1{1 credit spent} other{{count} credits spent}}",
   "@creditsSpent": {
     "placeholders": {

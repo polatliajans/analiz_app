@@ -9,7 +9,9 @@ import '../providers/analysis_history_provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/chart_data_provider.dart';
 import '../providers/selected_coin_provider.dart';
+import '../providers/signal_strength_filter_provider.dart';
 import '../providers/watchlist_provider.dart';
+import '../utils/signal_strength.dart';
 import '../utils/timeframes.dart';
 import '../widgets/analysis_card.dart';
 import '../widgets/analysis_progress_overlay.dart';
@@ -214,6 +216,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
               },
             ),
           ),
+          if (supportsSignals(timeframe)) _buildStrengthFilter(l10n, textTheme),
           Expanded(
             flex: 5,
             child: chartDataAsync.when(
@@ -237,7 +240,10 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
               ),
               data: (chartData) => CandlestickChart(
                 candles: chartData.candles,
-                signals: chartData.signals,
+                signals: filterByStrength(
+                  chartData.signals,
+                  ref.watch(signalMinStrengthProvider),
+                ),
                 timeframeMs: timeframeMs[timeframe]!,
               ),
             ),
@@ -271,6 +277,43 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStrengthFilter(AppLocalizations l10n, TextTheme textTheme) {
+    final minStrength = ref.watch(signalMinStrengthProvider);
+    final options = <(int, String)>[
+      (1, l10n.signalStrengthAll),
+      (2, '2+'),
+      (3, '3'),
+    ];
+    return SizedBox(
+      height: 30,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        children: [
+          Center(
+            child: Text(l10n.signalStrengthLabel, style: textTheme.labelSmall),
+          ),
+          for (final (value, label) in options) ...[
+            const SizedBox(width: 6),
+            Center(
+              child: ChoiceChip(
+                label: Text(label),
+                labelStyle: textTheme.labelSmall,
+                visualDensity: VisualDensity.compact,
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                padding: EdgeInsets.zero,
+                selected: minStrength == value,
+                onSelected: (_) => ref
+                    .read(signalMinStrengthProvider.notifier)
+                    .select(value),
+              ),
+            ),
+          ],
         ],
       ),
     );
