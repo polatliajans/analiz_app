@@ -31,6 +31,19 @@ class Coin {
     );
   }
 
+  Coin copyWith({double? lastPrice, double? priceChangePercent24h}) {
+    return Coin(
+      id: id,
+      symbol: symbol,
+      name: name,
+      marketType: marketType,
+      lastPrice: lastPrice ?? this.lastPrice,
+      priceChangePercent24h:
+          priceChangePercent24h ?? this.priceChangePercent24h,
+      volume24h: volume24h,
+    );
+  }
+
   static double? _parseNullableDouble(dynamic value) {
     if (value == null) return null;
     if (value is num) return value.toDouble();

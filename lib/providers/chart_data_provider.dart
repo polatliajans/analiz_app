@@ -2,17 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/binance_klines_api.dart';
 import '../data/chart_signal_api.dart';
-import '../models/candle.dart';
-import '../models/chart_signal.dart';
 import '../models/coin.dart';
-import '../utils/timeframes.dart';
-
-class ChartData {
-  final List<Candle> candles;
-  final List<ChartSignal> signals;
-
-  const ChartData({required this.candles, required this.signals});
-}
 
 class ChartDataParams {
   final Coin coin;
@@ -36,31 +26,3 @@ final binanceKlinesApiProvider = Provider<BinanceKlinesApi>(
 final chartSignalApiProvider = Provider<ChartSignalApi>(
   (ref) => ChartSignalApi(),
 );
-
-final chartDataProvider = FutureProvider.family<ChartData, ChartDataParams>((
-  ref,
-  params,
-) async {
-  final klinesApi = ref.watch(binanceKlinesApiProvider);
-  final signalApi = ref.watch(chartSignalApiProvider);
-
-  final results = await Future.wait([
-    klinesApi.fetchKlines(
-      symbol: params.coin.symbol,
-      marketType: params.coin.marketType,
-      timeframe: params.timeframe,
-    ),
-    if (supportsSignals(params.timeframe))
-      signalApi.fetchSignals(
-        coinId: params.coin.id,
-        timeframe: params.timeframe,
-      )
-    else
-      Future.value(<ChartSignal>[]),
-  ]);
-
-  return ChartData(
-    candles: results[0] as List<Candle>,
-    signals: results[1] as List<ChartSignal>,
-  );
-});

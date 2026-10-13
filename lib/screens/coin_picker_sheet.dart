@@ -1,10 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../data/ticker_api.dart';
 import '../l10n/app_localizations.dart';
 import '../models/coin.dart';
 import '../providers/auth_provider.dart';
 import '../providers/coin_list_provider.dart';
+import '../providers/live_tickers_provider.dart';
 import '../providers/selected_coin_provider.dart';
 import '../providers/watchlist_provider.dart';
 import '../utils/stable_pairs.dart';
@@ -35,6 +39,7 @@ class _CoinPickerState extends ConsumerState<_CoinPicker>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
   String _searchQuery = '';
+  Timer? _tickerTimer;
 
   static const _marketTypes = ['spot', 'futures', 'favorites'];
 
@@ -47,10 +52,28 @@ class _CoinPickerState extends ConsumerState<_CoinPicker>
       vsync: this,
       initialIndex: current == 'futures' ? 1 : 0,
     );
+    // Keep the live price state alive while the picker is open.
+    ref.listenManual(liveTickersProvider, (_, _) {});
+    _tabController.addListener(() {
+      if (!_tabController.indexIsChanging) _refreshTickers();
+    });
+    _refreshTickers();
+    _tickerTimer = Timer.periodic(
+      tickerRefreshInterval,
+      (_) => _refreshTickers(),
+    );
+  }
+
+  /// Fetches live prices for the markets visible in the current tab.
+  void _refreshTickers() {
+    final tab = _marketTypes[_tabController.index];
+    final markets = tab == 'favorites' ? const ['spot', 'futures'] : [tab];
+    ref.read(liveTickersProvider.notifier).refresh(markets);
   }
 
   @override
   void dispose() {
+    _tickerTimer?.cancel();
     _tabController.dispose();
     super.dispose();
   }
@@ -157,6 +180,7 @@ class _CoinListView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final tickers = ref.watch(liveTickersProvider);
     return ListView.separated(
       padding: EdgeInsets.only(
         bottom: MediaQuery.viewPaddingOf(context).bottom,
@@ -164,7 +188,11 @@ class _CoinListView extends ConsumerWidget {
       itemCount: coins.length,
       separatorBuilder: (_, _) => const Divider(height: 1),
       itemBuilder: (context, index) {
-        final coin = coins[index];
+        final server = coins[index];
+        final coin = applyQuote(
+          server,
+          tickers[server.marketType]?[server.symbol],
+        );
         return CoinListItem(
           coin: coin,
           onTap: () {

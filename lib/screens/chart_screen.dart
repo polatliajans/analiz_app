@@ -8,6 +8,7 @@ import '../models/coin.dart';
 import '../providers/analysis_history_provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/chart_data_provider.dart';
+import '../providers/live_chart_provider.dart';
 import '../providers/selected_coin_provider.dart';
 import '../providers/signal_strength_filter_provider.dart';
 import '../providers/watchlist_provider.dart';
@@ -124,16 +125,6 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
 
     final timeframe = ref.watch(timeframeProvider);
     final params = ChartDataParams(coin: coin, timeframe: timeframe);
-    final chartDataAsync = ref.watch(chartDataProvider(params));
-    final lastClose = chartDataAsync.maybeWhen(
-      data: (d) => d.candles.isEmpty ? null : d.candles.last.close,
-      orElse: () => null,
-    );
-    final price = lastClose ?? coin.lastPrice;
-    final change = coin.priceChangePercent24h;
-    final changeColor = change == null
-        ? null
-        : (change >= 0 ? Colors.green : Colors.red);
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
@@ -176,23 +167,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
           const EmailVerificationBanner(),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
-              children: [
-                Text(
-                  price != null ? price.toString() : '-',
-                  style: textTheme.titleLarge,
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  change != null
-                      ? '${change >= 0 ? '+' : ''}${change.toStringAsFixed(2)}%'
-                      : '-',
-                  style: textTheme.titleSmall?.copyWith(color: changeColor),
-                ),
-              ],
-            ),
+            child: _LiveHeader(params: params, coin: coin),
           ),
           SizedBox(
             height: 36,
@@ -217,37 +192,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
             ),
           ),
           if (supportsSignals(timeframe)) _buildStrengthFilter(l10n, textTheme),
-          Expanded(
-            flex: 5,
-            child: chartDataAsync.when(
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, _) => Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      l10n.errorOccurred('$error'),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 12),
-                    ElevatedButton(
-                      onPressed: () =>
-                          ref.invalidate(chartDataProvider(params)),
-                      child: Text(l10n.retry),
-                    ),
-                  ],
-                ),
-              ),
-              data: (chartData) => CandlestickChart(
-                candles: chartData.candles,
-                signals: filterByStrength(
-                  chartData.signals,
-                  ref.watch(signalMinStrengthProvider),
-                ),
-                timeframeMs: timeframeMs[timeframe]!,
-              ),
-            ),
-          ),
+          Expanded(flex: 5, child: _LiveChart(params: params)),
           Expanded(
             flex: 4,
             child: ListView(
@@ -308,9 +253,8 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 padding: EdgeInsets.zero,
                 selected: minStrength == value,
-                onSelected: (_) => ref
-                    .read(signalMinStrengthProvider.notifier)
-                    .select(value),
+                onSelected: (_) =>
+                    ref.read(signalMinStrengthProvider.notifier).select(value),
               ),
             ),
           ],
@@ -377,6 +321,94 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
           ).showSnackBar(SnackBar(content: Text('$e')));
         }
       },
+    );
+  }
+}
+
+/// Price and 24h change line; rebuilds on live updates without touching the
+/// rest of the screen.
+class _LiveHeader extends ConsumerWidget {
+  final ChartDataParams params;
+  final Coin coin;
+
+  const _LiveHeader({required this.params, required this.coin});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final live = ref.watch(liveChartProvider(params));
+    final textTheme = Theme.of(context).textTheme;
+    final price = live.price ?? coin.lastPrice;
+    final change = live.change24h ?? coin.priceChangePercent24h;
+    final changeColor = change == null
+        ? null
+        : (change >= 0 ? Colors.green : Colors.red);
+    final priceColor = live.direction > 0
+        ? Colors.green
+        : (live.direction < 0 ? Colors.red : null);
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.baseline,
+      textBaseline: TextBaseline.alphabetic,
+      children: [
+        Text(
+          price != null ? price.toString() : '-',
+          style: textTheme.titleLarge?.copyWith(color: priceColor),
+        ),
+        const SizedBox(width: 12),
+        Text(
+          change != null
+              ? '${change >= 0 ? '+' : ''}${change.toStringAsFixed(2)}%'
+              : '-',
+          style: textTheme.titleSmall?.copyWith(color: changeColor),
+        ),
+      ],
+    );
+  }
+}
+
+/// The candlestick chart fed by the live controller.
+class _LiveChart extends ConsumerWidget {
+  final ChartDataParams params;
+
+  const _LiveChart({required this.params});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final live = ref.watch(liveChartProvider(params));
+
+    if (live.candles.isEmpty) {
+      if (live.error != null) {
+        return Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                l10n.errorOccurred('${live.error}'),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              ElevatedButton(
+                onPressed: () =>
+                    ref.read(liveChartProvider(params).notifier).retry(),
+                child: Text(l10n.retry),
+              ),
+            ],
+          ),
+        );
+      }
+      if (live.loading) {
+        return const Center(child: CircularProgressIndicator());
+      }
+    }
+
+    return CandlestickChart(
+      candles: live.candles,
+      signals: filterByStrength(
+        live.signals,
+        ref.watch(signalMinStrengthProvider),
+      ),
+      timeframeMs: timeframeMs[params.timeframe]!,
     );
   }
 }
