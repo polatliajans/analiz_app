@@ -149,7 +149,7 @@ void main() {
           symbol: 'ETHUSDT',
           timeframe: '1w',
         ).toString(),
-        'wss://fstream.binance.com/stream?streams=ethusdt@kline_1w/ethusdt@miniTicker',
+        'wss://fstream.binance.com/market/stream?streams=ethusdt@kline_1w/ethusdt@miniTicker',
       );
     });
   });

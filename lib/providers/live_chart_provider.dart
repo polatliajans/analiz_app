@@ -19,6 +19,9 @@ const signalRefreshInterval = Duration(minutes: 1);
 /// REST polling period used when the WebSocket keeps failing.
 const pollingInterval = Duration(seconds: 5);
 
+/// No message for this long means the stream is stalled; treat it as lost.
+const streamSilenceTimeout = Duration(seconds: 15);
+
 /// Failed connection attempts before switching to REST polling.
 const pollingFailureThreshold = 3;
 
@@ -111,6 +114,7 @@ class LiveChartController extends Notifier<LiveChartState> {
   Timer? _pollTimer;
   Timer? _signalTimer;
   Timer? _emitTimer;
+  Timer? _watchdog;
   bool _emitDirty = false;
   bool _pollBusy = false;
 
@@ -218,6 +222,8 @@ class LiveChartController extends Notifier<LiveChartState> {
     _signalTimer = null;
     _emitTimer?.cancel();
     _emitTimer = null;
+    _watchdog?.cancel();
+    _watchdog = null;
     _emitDirty = false;
     _pollBusy = false;
     _failures = 0;
@@ -242,6 +248,7 @@ class LiveChartController extends Notifier<LiveChartState> {
       _onLost(gen);
       return;
     }
+    _armWatchdog(gen);
     _sub = stream.listen(
       (event) => _onEvent(gen, event),
       onError: (Object _) => _onLost(gen),
@@ -250,8 +257,14 @@ class LiveChartController extends Notifier<LiveChartState> {
     );
   }
 
+  void _armWatchdog(int gen) {
+    _watchdog?.cancel();
+    _watchdog = Timer(streamSilenceTimeout, () => _onLost(gen));
+  }
+
   void _onEvent(int gen, LiveEvent event) {
     if (gen != _gen) return;
+    _armWatchdog(gen);
     if (_failures > 0 || _polling) _onRecovered(gen);
 
     switch (event) {
@@ -299,6 +312,8 @@ class LiveChartController extends Notifier<LiveChartState> {
 
   void _onLost(int gen) {
     if (gen != _gen || !_running) return;
+    _watchdog?.cancel();
+    _watchdog = null;
     _sub?.cancel();
     _sub = null;
     final attempt = _failures;

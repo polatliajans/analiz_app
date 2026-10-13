@@ -145,7 +145,7 @@ Uri klineStreamUri({
   final s = symbol.toLowerCase();
   final streams = '$s@kline_$timeframe/$s@miniTicker';
   final base = marketType == 'futures'
-      ? 'wss://fstream.binance.com/stream'
+      ? 'wss://fstream.binance.com/market/stream'
       : 'wss://stream.binance.com:9443/stream';
   return Uri.parse('$base?streams=$streams');
 }
