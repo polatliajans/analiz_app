@@ -76,6 +76,26 @@ class AppLocalizationsTr extends AppLocalizations {
   String get deleteAccountConfirmAction => 'Sil';
 
   @override
+  String deleteAccountCreditsLost(int credits) {
+    return '$credits krediniz silinecek ve iade edilmeyecek.';
+  }
+
+  @override
+  String get deleteAccountManageSubscription =>
+      'Google Play\'de aboneliği yönet';
+
+  @override
+  String get deleteAccountAckCheckbox =>
+      'Kredilerimin silineceğini ve iade edilmeyeceğini anlıyorum';
+
+  @override
+  String get deleteAccountOpenFailed => 'Google Play açılamadı.';
+
+  @override
+  String get errorPurchaseAlreadyProcessed =>
+      'Bu satın alma daha önce işlendi ve tekrar kullanılamaz.';
+
+  @override
   String get myAccount => 'Hesabım';
 
   @override

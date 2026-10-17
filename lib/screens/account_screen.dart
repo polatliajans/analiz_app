@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../l10n/app_localizations.dart';
 import '../models/member.dart';
 import '../providers/auth_prompt_provider.dart';
 import '../providers/auth_provider.dart';
 import '../services/auth_failure.dart';
+import '../services/delete_account_warnings.dart';
 import '../widgets/email_verification_banner.dart';
 import 'alarms_screen.dart';
 import 'analysis_history_screen.dart';
@@ -34,29 +36,14 @@ class AccountScreen extends ConsumerWidget {
     final auth = ref.read(authProvider.notifier);
     final promptDone = ref.read(authPromptDoneProvider.notifier);
 
+    final warnings = deleteAccountWarnings(
+      role: member.role,
+      creditBalance: member.creditBalance,
+    );
+
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.deleteAccountConfirmTitle),
-        content: Text(
-          member.role == 'pro'
-              ? '${l10n.deleteAccountConfirmBody}\n\n${l10n.deleteAccountProNote}'
-              : l10n.deleteAccountConfirmBody,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(l10n.cancel),
-          ),
-          TextButton(
-            style: TextButton.styleFrom(
-              foregroundColor: Theme.of(ctx).colorScheme.error,
-            ),
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text(l10n.deleteAccountConfirmAction),
-          ),
-        ],
-      ),
+      builder: (ctx) => _DeleteAccountDialog(warnings: warnings),
     );
     if (confirmed != true) return;
 
@@ -367,6 +354,116 @@ class _GuestCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+const _playSubscriptionsUrl =
+    'https://play.google.com/store/account/subscriptions';
+
+class _DeleteAccountDialog extends StatefulWidget {
+  final DeleteAccountWarnings warnings;
+  const _DeleteAccountDialog({required this.warnings});
+
+  @override
+  State<_DeleteAccountDialog> createState() => _DeleteAccountDialogState();
+}
+
+class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
+  bool _acknowledged = false;
+
+  Future<void> _openPlay(AppLocalizations l10n) async {
+    final messenger = ScaffoldMessenger.of(context);
+    var ok = false;
+    try {
+      ok = await launchUrl(
+        Uri.parse(_playSubscriptionsUrl),
+        mode: LaunchMode.externalApplication,
+      );
+    } catch (_) {}
+    if (!ok) {
+      messenger.showSnackBar(
+        SnackBar(content: Text(l10n.deleteAccountOpenFailed)),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final scheme = Theme.of(context).colorScheme;
+    final w = widget.warnings;
+
+    return AlertDialog(
+      title: Text(l10n.deleteAccountConfirmTitle),
+      scrollable: true,
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(l10n.deleteAccountConfirmBody),
+          if (w.showCredits) ...[
+            const SizedBox(height: 12),
+            Text(
+              l10n.deleteAccountCreditsLost(w.credits),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: scheme.error,
+              ),
+            ),
+          ],
+          if (w.showProWarning) ...[
+            const SizedBox(height: 12),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: scheme.errorContainer,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: scheme.error),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.deleteAccountProNote,
+                    style: TextStyle(color: scheme.onErrorContainer),
+                  ),
+                  const SizedBox(height: 8),
+                  OutlinedButton.icon(
+                    onPressed: () => _openPlay(l10n),
+                    icon: const Icon(Icons.open_in_new, size: 18),
+                    label: Text(l10n.deleteAccountManageSubscription),
+                  ),
+                ],
+              ),
+            ),
+          ],
+          if (w.requiresAck) ...[
+            const SizedBox(height: 8),
+            CheckboxListTile(
+              contentPadding: EdgeInsets.zero,
+              controlAffinity: ListTileControlAffinity.leading,
+              value: _acknowledged,
+              onChanged: (v) => setState(() => _acknowledged = v ?? false),
+              title: Text(l10n.deleteAccountAckCheckbox),
+            ),
+          ],
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(false),
+          child: Text(l10n.cancel),
+        ),
+        TextButton(
+          style: TextButton.styleFrom(foregroundColor: scheme.error),
+          onPressed: w.canDelete(acknowledged: _acknowledged)
+              ? () => Navigator.of(context).pop(true)
+              : null,
+          child: Text(l10n.deleteAccountConfirmAction),
+        ),
+      ],
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'api_http.dart';
+import 'purchase_api.dart' show isPurchaseAlreadyProcessed;
 
 import '../config/api_config.dart';
 import '../l10n/app_l10n.dart';
@@ -53,6 +54,12 @@ class SubscriptionPurchaseApi {
       );
     }
 
+    if ((response.statusCode == 422 || response.statusCode == 409) &&
+        isPurchaseAlreadyProcessed(response.body)) {
+      throw SubscriptionPurchaseException(
+        AppL10n.current.errorPurchaseAlreadyProcessed,
+      );
+    }
     if (response.statusCode == 422) {
       throw SubscriptionPurchaseException(
         AppL10n.current.errorSubscriptionInvalid,

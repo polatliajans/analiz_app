@@ -21,6 +21,18 @@
   "deleteAccountConfirmBody": "Hesabın ve tüm verilerin kalıcı olarak silinir: takip listesi, analiz geçmişi, krediler, bildirimler ve bağlı giriş yöntemleri. Bu işlem geri alınamaz.",
   "deleteAccountProNote": "Aktif bir Pro aboneliğin varsa, hesabı silmek aboneliği iptal etmez. Ücretlendirilmeye devam etmemek için aboneliği Google Play'den ayrıca iptal etmelisin.",
   "deleteAccountConfirmAction": "Sil",
+  "deleteAccountCreditsLost": "{credits} krediniz silinecek ve iade edilmeyecek.",
+  "@deleteAccountCreditsLost": {
+    "placeholders": {
+      "credits": {
+        "type": "int"
+      }
+    }
+  },
+  "deleteAccountManageSubscription": "Google Play'de aboneliği yönet",
+  "deleteAccountAckCheckbox": "Kredilerimin silineceğini ve iade edilmeyeceğini anlıyorum",
+  "deleteAccountOpenFailed": "Google Play açılamadı.",
+  "errorPurchaseAlreadyProcessed": "Bu satın alma daha önce işlendi ve tekrar kullanılamaz.",
   "myAccount": "Hesabım",
   "myWatchlist": "Takip Listem",
   "mustLogIn": "Giriş yapmalısın",

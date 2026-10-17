@@ -28,6 +28,18 @@
   "deleteAccountConfirmBody": "This permanently deletes your account and all your data: watchlist, analysis history, credits, notifications and linked sign-in methods. This cannot be undone.",
   "deleteAccountProNote": "If you have an active Pro subscription, deleting your account does not cancel it. Please cancel it separately in Google Play, otherwise you may keep being charged.",
   "deleteAccountConfirmAction": "Delete",
+  "deleteAccountCreditsLost": "{credits} credits will be deleted and will not be refunded.",
+  "@deleteAccountCreditsLost": {
+    "placeholders": {
+      "credits": {
+        "type": "int"
+      }
+    }
+  },
+  "deleteAccountManageSubscription": "Manage subscription in Google Play",
+  "deleteAccountAckCheckbox": "I understand that my credits will be deleted and will not be refunded",
+  "deleteAccountOpenFailed": "Could not open Google Play.",
+  "errorPurchaseAlreadyProcessed": "This purchase was already processed and cannot be redeemed again.",
   "myAccount": "My Account",
   "myWatchlist": "My Watchlist",
   "mustLogIn": "You need to log in",

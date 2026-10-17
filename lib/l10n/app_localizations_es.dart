@@ -76,6 +76,26 @@ class AppLocalizationsEs extends AppLocalizations {
   String get deleteAccountConfirmAction => 'Eliminar';
 
   @override
+  String deleteAccountCreditsLost(int credits) {
+    return 'Se eliminarán $credits créditos y no se reembolsarán.';
+  }
+
+  @override
+  String get deleteAccountManageSubscription =>
+      'Gestionar suscripción en Google Play';
+
+  @override
+  String get deleteAccountAckCheckbox =>
+      'Entiendo que mis créditos se eliminarán y no se reembolsarán';
+
+  @override
+  String get deleteAccountOpenFailed => 'No se pudo abrir Google Play.';
+
+  @override
+  String get errorPurchaseAlreadyProcessed =>
+      'Esta compra ya fue procesada y no se puede canjear de nuevo.';
+
+  @override
   String get myAccount => 'Mi cuenta';
 
   @override

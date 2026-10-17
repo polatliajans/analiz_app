@@ -22,6 +22,16 @@ class PurchaseResult {
   }
 }
 
+/// True when the server rejected the token with `purchase_already_processed`.
+bool isPurchaseAlreadyProcessed(String body) {
+  try {
+    final json = jsonDecode(body);
+    return json is Map && json['code'] == 'purchase_already_processed';
+  } catch (_) {
+    return false;
+  }
+}
+
 class PurchaseException implements Exception {
   final String message;
   PurchaseException(this.message);
@@ -51,6 +61,10 @@ class PurchaseApi {
       throw PurchaseException(AppL10n.current.errorPurchaseVerifyFailed('$e'));
     }
 
+    if ((response.statusCode == 422 || response.statusCode == 409) &&
+        isPurchaseAlreadyProcessed(response.body)) {
+      throw PurchaseException(AppL10n.current.errorPurchaseAlreadyProcessed);
+    }
     if (response.statusCode == 422) {
       throw PurchaseException(AppL10n.current.errorPurchaseInvalid);
     }

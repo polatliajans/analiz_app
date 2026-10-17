@@ -21,6 +21,18 @@
   "deleteAccountConfirmBody": "Se eliminarán de forma permanente tu cuenta y todos tus datos: lista de seguimiento, historial de análisis, créditos, notificaciones y métodos de inicio de sesión vinculados. Esta acción no se puede deshacer.",
   "deleteAccountProNote": "Si tienes una suscripción Pro activa, eliminar tu cuenta no la cancela. Cancélala por separado en Google Play; de lo contrario podrían seguir cobrándote.",
   "deleteAccountConfirmAction": "Eliminar",
+  "deleteAccountCreditsLost": "Se eliminarán {credits} créditos y no se reembolsarán.",
+  "@deleteAccountCreditsLost": {
+    "placeholders": {
+      "credits": {
+        "type": "int"
+      }
+    }
+  },
+  "deleteAccountManageSubscription": "Gestionar suscripción en Google Play",
+  "deleteAccountAckCheckbox": "Entiendo que mis créditos se eliminarán y no se reembolsarán",
+  "deleteAccountOpenFailed": "No se pudo abrir Google Play.",
+  "errorPurchaseAlreadyProcessed": "Esta compra ya fue procesada y no se puede canjear de nuevo.",
   "myAccount": "Mi cuenta",
   "myWatchlist": "Mi lista de seguimiento",
   "mustLogIn": "Debes iniciar sesión",

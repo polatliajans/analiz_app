@@ -226,6 +226,36 @@ abstract class AppLocalizations {
   /// **'Delete'**
   String get deleteAccountConfirmAction;
 
+  /// No description provided for @deleteAccountCreditsLost.
+  ///
+  /// In en, this message translates to:
+  /// **'{credits} credits will be deleted and will not be refunded.'**
+  String deleteAccountCreditsLost(int credits);
+
+  /// No description provided for @deleteAccountManageSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage subscription in Google Play'**
+  String get deleteAccountManageSubscription;
+
+  /// No description provided for @deleteAccountAckCheckbox.
+  ///
+  /// In en, this message translates to:
+  /// **'I understand that my credits will be deleted and will not be refunded'**
+  String get deleteAccountAckCheckbox;
+
+  /// No description provided for @deleteAccountOpenFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open Google Play.'**
+  String get deleteAccountOpenFailed;
+
+  /// No description provided for @errorPurchaseAlreadyProcessed.
+  ///
+  /// In en, this message translates to:
+  /// **'This purchase was already processed and cannot be redeemed again.'**
+  String get errorPurchaseAlreadyProcessed;
+
   /// No description provided for @myAccount.
   ///
   /// In en, this message translates to:
