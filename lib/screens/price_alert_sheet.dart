@@ -10,37 +10,13 @@ import '../providers/chart_data_provider.dart';
 import '../providers/live_chart_provider.dart';
 import '../providers/price_alert_provider.dart';
 import '../utils/price_alert_logic.dart';
+import '../widgets/pro_upsell_sheet.dart';
 import 'auth_screen.dart';
 import 'subscription_screen.dart';
 
 /// Explains that price alerts are a Pro feature and offers the upgrade.
-Future<void> showProAlertPromo(BuildContext context) {
-  final l10n = AppLocalizations.of(context)!;
-  final navigator = Navigator.of(context);
-  return showDialog<void>(
-    context: context,
-    builder: (ctx) => AlertDialog(
-      icon: const Icon(Icons.workspace_premium_outlined, size: 36),
-      title: Text(l10n.alertProTitle, textAlign: TextAlign.center),
-      content: Text(l10n.alertProBody),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(ctx).pop(),
-          child: Text(l10n.cancel),
-        ),
-        FilledButton(
-          onPressed: () {
-            Navigator.of(ctx).pop();
-            navigator.push(
-              MaterialPageRoute(builder: (_) => const SubscriptionScreen()),
-            );
-          },
-          child: Text(l10n.upgradeToPro),
-        ),
-      ],
-    ),
-  );
-}
+Future<void> showProAlertPromo(BuildContext context) =>
+    showProUpsell(context, ProFeature.priceAlert);
 
 /// Entry point of the chart bell: guests get the login prompt, non-Pro
 /// members the Pro promo, Pro members the alert sheet.

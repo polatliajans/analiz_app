@@ -13,6 +13,12 @@ class WatchlistException implements Exception {
   String toString() => message;
 }
 
+/// 422 `watchlist_limit_reached`: a non-Pro member's watchlist is full.
+class WatchlistLimitException extends WatchlistException {
+  final int? limit;
+  WatchlistLimitException(super.message, this.limit);
+}
+
 class WatchlistApi {
   Future<List<Coin>> fetchWatchlist(String token) async {
     final response = await ApiHttp.get(
@@ -39,6 +45,12 @@ class WatchlistApi {
 
     if (response.statusCode == 422) {
       final json = jsonDecode(response.body) as Map<String, dynamic>;
+      if (json['code'] == 'watchlist_limit_reached') {
+        throw WatchlistLimitException(
+          json['message'] as String? ?? AppL10n.current.errorFollowFailed,
+          (json['limit'] as num?)?.toInt(),
+        );
+      }
       throw WatchlistException(
         json['message'] as String? ?? AppL10n.current.errorFollowFailed,
       );

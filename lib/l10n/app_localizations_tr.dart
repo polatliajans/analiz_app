@@ -712,4 +712,69 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get couldNotOpenLink => 'Bağlantı açılamadı.';
+
+  @override
+  String get proUpsellBenefitsHeading => 'Pro ile şunlara sahip olursun';
+
+  @override
+  String get proBenefitNoAds => 'Reklamsız kullanım';
+
+  @override
+  String get proBenefitDeepAnalysis => 'Derin analiz';
+
+  @override
+  String get proBenefitCredits => 'Her ay 300 kredi';
+
+  @override
+  String get proBenefitAlerts => 'Push bildirimleri ve fiyat alarmı';
+
+  @override
+  String get proBenefitTimeframes =>
+      '1m ve 5m periyotları ile güçlü (3) sinyal filtresi';
+
+  @override
+  String get proBenefitWatchlist => 'Limitsiz takip listesi';
+
+  @override
+  String get proUpsellNotNow => 'Şimdi değil';
+
+  @override
+  String get proUpsellDeepTitle => 'Derin analiz bir Pro özelliğidir';
+
+  @override
+  String get proUpsellDeepBody =>
+      'Pro üyeler, her coin için daha ayrıntılı ve çok zaman dilimli derin analiz alır.';
+
+  @override
+  String get proUpsellTimeframeTitle => '1m ve 5m Pro periyotlarıdır';
+
+  @override
+  String get proUpsellTimeframeBody =>
+      'Pro üyeler en hızlı periyotları izleyebilir ve bunlarda yapay zekâ analizi çalıştırabilir.';
+
+  @override
+  String get proUpsellStrength3Title =>
+      'Güçlü (3) sinyal filtresi bir Pro özelliğidir';
+
+  @override
+  String get proUpsellStrength3Body =>
+      'Pro üyeler grafikte yalnızca en güçlü sinyalleri gösterebilir.';
+
+  @override
+  String proUpsellWatchlistTitle(int count, int limit) {
+    return 'Takip listen dolu ($count/$limit)';
+  }
+
+  @override
+  String get proUpsellWatchlistBody =>
+      'Limitsiz takip listesi için Pro\'ya geç.';
+
+  @override
+  String get proUpsellGenericTitle => 'Bu bir Pro özelliğidir';
+
+  @override
+  String get proUpsellGenericBody => 'Açmak için Pro\'ya geç.';
+
+  @override
+  String get proBadgeTooltip => 'Pro özelliği';
 }

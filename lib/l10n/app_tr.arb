@@ -203,5 +203,34 @@
   "financialDisclaimerText": "CryptoAnaliz yatırım tavsiyesi vermez. Sinyaller ve analizler yalnızca bilgilendirme amaçlıdır, garanti içermez. Kripto varlık yatırımları yüksek risk taşır; kararlarınızdan ve olası kayıplardan siz sorumlusunuz.",
   "appVersion": "Uygulama sürümü",
   "close": "Kapat",
-  "couldNotOpenLink": "Bağlantı açılamadı."
+  "couldNotOpenLink": "Bağlantı açılamadı.",
+  "proUpsellBenefitsHeading": "Pro ile şunlara sahip olursun",
+  "proBenefitNoAds": "Reklamsız kullanım",
+  "proBenefitDeepAnalysis": "Derin analiz",
+  "proBenefitCredits": "Her ay 300 kredi",
+  "proBenefitAlerts": "Push bildirimleri ve fiyat alarmı",
+  "proBenefitTimeframes": "1m ve 5m periyotları ile güçlü (3) sinyal filtresi",
+  "proBenefitWatchlist": "Limitsiz takip listesi",
+  "proUpsellNotNow": "Şimdi değil",
+  "proUpsellDeepTitle": "Derin analiz bir Pro özelliğidir",
+  "proUpsellDeepBody": "Pro üyeler, her coin için daha ayrıntılı ve çok zaman dilimli derin analiz alır.",
+  "proUpsellTimeframeTitle": "1m ve 5m Pro periyotlarıdır",
+  "proUpsellTimeframeBody": "Pro üyeler en hızlı periyotları izleyebilir ve bunlarda yapay zekâ analizi çalıştırabilir.",
+  "proUpsellStrength3Title": "Güçlü (3) sinyal filtresi bir Pro özelliğidir",
+  "proUpsellStrength3Body": "Pro üyeler grafikte yalnızca en güçlü sinyalleri gösterebilir.",
+  "proUpsellWatchlistTitle": "Takip listen dolu ({count}/{limit})",
+  "@proUpsellWatchlistTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "proUpsellWatchlistBody": "Limitsiz takip listesi için Pro'ya geç.",
+  "proUpsellGenericTitle": "Bu bir Pro özelliğidir",
+  "proUpsellGenericBody": "Açmak için Pro'ya geç.",
+  "proBadgeTooltip": "Pro özelliği"
 }

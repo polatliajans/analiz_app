@@ -203,5 +203,34 @@
   "financialDisclaimerText": "CryptoAnaliz no ofrece asesoramiento de inversión. Las señales y los análisis son solo informativos y no ofrecen garantías. Invertir en criptoactivos conlleva un riesgo elevado; usted es responsable de sus decisiones y de las posibles pérdidas.",
   "appVersion": "Versión de la app",
   "close": "Cerrar",
-  "couldNotOpenLink": "No se pudo abrir el enlace."
+  "couldNotOpenLink": "No se pudo abrir el enlace.",
+  "proUpsellBenefitsHeading": "Con Pro obtienes",
+  "proBenefitNoAds": "Sin anuncios",
+  "proBenefitDeepAnalysis": "Análisis profundo",
+  "proBenefitCredits": "300 créditos cada mes",
+  "proBenefitAlerts": "Notificaciones push y alertas de precio",
+  "proBenefitTimeframes": "Marcos de 1m y 5m y el filtro de señales fuertes (3)",
+  "proBenefitWatchlist": "Lista de seguimiento ilimitada",
+  "proUpsellNotNow": "Ahora no",
+  "proUpsellDeepTitle": "El análisis profundo es una función Pro",
+  "proUpsellDeepBody": "Los miembros Pro reciben un análisis profundo más detallado y multi-marco de cualquier moneda.",
+  "proUpsellTimeframeTitle": "1m y 5m son marcos temporales Pro",
+  "proUpsellTimeframeBody": "Los miembros Pro pueden ver los marcos más rápidos y ejecutar análisis de IA en ellos.",
+  "proUpsellStrength3Title": "El filtro de señales fuertes (3) es una función Pro",
+  "proUpsellStrength3Body": "Los miembros Pro pueden mostrar solo las señales más fuertes en el gráfico.",
+  "proUpsellWatchlistTitle": "Tu lista de seguimiento está llena ({count}/{limit})",
+  "@proUpsellWatchlistTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "proUpsellWatchlistBody": "Mejora a Pro para tener una lista de seguimiento ilimitada.",
+  "proUpsellGenericTitle": "Esta es una función Pro",
+  "proUpsellGenericBody": "Mejora a Pro para desbloquearla.",
+  "proBadgeTooltip": "Función Pro"
 }

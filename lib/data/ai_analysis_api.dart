@@ -5,6 +5,7 @@ import 'api_http.dart';
 import '../config/api_config.dart';
 import '../l10n/app_l10n.dart';
 import '../models/ai_analysis_result.dart';
+import 'plan_errors.dart';
 
 class AiAnalysisException implements Exception {
   final String message;
@@ -35,6 +36,7 @@ class AiAnalysisApi {
       );
     }
 
+    if (isProRequired(response)) throw ProRequiredException();
     if (response.statusCode == 402) {
       throw AiAnalysisException(AppL10n.current.errorInsufficientCredit);
     }

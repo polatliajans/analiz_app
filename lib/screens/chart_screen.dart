@@ -3,9 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/ai_analysis_api.dart';
 import '../data/deep_analysis_api.dart';
+import '../data/plan_errors.dart';
+import '../data/watchlist_api.dart';
 import '../l10n/app_localizations.dart';
 import '../models/coin.dart';
 import '../providers/analysis_history_provider.dart';
+import '../providers/app_config_provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/chart_data_provider.dart';
 import '../providers/live_chart_provider.dart';
@@ -13,12 +16,14 @@ import '../providers/price_alert_provider.dart';
 import '../providers/selected_coin_provider.dart';
 import '../providers/signal_strength_filter_provider.dart';
 import '../providers/watchlist_provider.dart';
+import '../utils/feature_gate.dart';
 import '../utils/signal_strength.dart';
 import '../utils/timeframes.dart';
 import '../widgets/analysis_card.dart';
 import '../widgets/analysis_progress_overlay.dart';
 import '../widgets/candlestick_chart.dart';
 import '../widgets/email_verification_banner.dart';
+import '../widgets/pro_upsell_sheet.dart';
 import 'auth_screen.dart';
 import 'coin_picker_sheet.dart';
 import 'price_alert_sheet.dart';
@@ -41,6 +46,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
     request,
     required String Function(AppLocalizations l10n, String details)
     failureMessage,
+    required ProFeature proFeature,
   }) async {
     final l10n = AppLocalizations.of(context)!;
     final auth = ref.read(authProvider);
@@ -49,7 +55,17 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
       return;
     }
 
-    final timeframe = ref.read(timeframeProvider);
+    final gate = ref.read(featureGateProvider);
+    final timeframe = gate.effectiveTimeframe(ref.read(timeframeProvider));
+    // Locked analyses never reach the server.
+    if (proFeature == ProFeature.deepAnalysis && !gate.canUseDeepAnalysis) {
+      showProUpsell(context, ProFeature.deepAnalysis);
+      return;
+    }
+    if (gate.isTimeframeLocked(timeframe)) {
+      showProUpsell(context, ProFeature.timeframe);
+      return;
+    }
     try {
       final r = await runWithAnalysisOverlay(
         context,
@@ -61,6 +77,13 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
       showAnalysisSheet(context, result: r.result, creditCost: r.creditCost);
     } catch (e) {
       if (!mounted) return;
+      if (e is ProRequiredException) {
+        // The server's view of the plan wins: resync, then explain.
+        ref.read(authProvider.notifier).refreshMember();
+        ref.read(appConfigProvider.notifier).refresh();
+        showProUpsell(context, proFeature);
+        return;
+      }
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(failureMessage(l10n, '$e'))));
@@ -78,6 +101,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
       return (result: r.result, creditCost: r.creditCost);
     },
     failureMessage: (l10n, d) => l10n.analysisFailed(d),
+    proFeature: ProFeature.timeframe,
   );
 
   Future<void> _requestDeepAnalysis(Coin coin) => _runAnalysis(
@@ -91,6 +115,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
       return (result: r.result, creditCost: r.creditCost);
     },
     failureMessage: (l10n, d) => l10n.deepAnalysisFailed(d),
+    proFeature: ProFeature.deepAnalysis,
   );
 
   @override
@@ -125,7 +150,8 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
       );
     }
 
-    final timeframe = ref.watch(timeframeProvider);
+    final gate = ref.watch(featureGateProvider);
+    final timeframe = gate.effectiveTimeframe(ref.watch(timeframeProvider));
     final params = ChartDataParams(coin: coin, timeframe: timeframe);
     final textTheme = Theme.of(context).textTheme;
 
@@ -183,20 +209,25 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
               separatorBuilder: (_, _) => const SizedBox(width: 6),
               itemBuilder: (_, i) {
                 final tf = chartTimeframes[i];
+                final locked = gate.isTimeframeLocked(tf);
                 return ChoiceChip(
                   label: Text(tf),
+                  avatar: locked
+                      ? const Icon(Icons.lock_outline, size: 14)
+                      : null,
                   labelStyle: textTheme.labelMedium,
                   visualDensity: VisualDensity.compact,
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   padding: const EdgeInsets.symmetric(horizontal: 2),
                   selected: tf == timeframe,
-                  onSelected: (_) =>
-                      ref.read(timeframeProvider.notifier).select(tf),
+                  onSelected: (_) => locked
+                      ? showProUpsell(context, ProFeature.timeframe)
+                      : ref.read(timeframeProvider.notifier).select(tf),
                 );
               },
             ),
           ),
-          if (supportsSignals(timeframe)) _buildStrengthFilter(l10n, textTheme),
+          if (supportsSignals(timeframe)) _buildStrengthFilter(l10n, textTheme, gate),
           Expanded(flex: 5, child: _LiveChart(params: params)),
           Expanded(
             flex: 4,
@@ -215,7 +246,25 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () => _requestDeepAnalysis(coin),
-                        child: Text(l10n.deepAnalysisButton),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (!gate.canUseDeepAnalysis) ...[
+                              const Icon(Icons.lock_outline, size: 16),
+                              const SizedBox(width: 4),
+                            ],
+                            Flexible(
+                              child: Text(
+                                l10n.deepAnalysisButton,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            if (!gate.canUseDeepAnalysis) ...[
+                              const SizedBox(width: 6),
+                              const ProBadge(),
+                            ],
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -232,8 +281,14 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
     );
   }
 
-  Widget _buildStrengthFilter(AppLocalizations l10n, TextTheme textTheme) {
-    final minStrength = ref.watch(signalMinStrengthProvider);
+  Widget _buildStrengthFilter(
+    AppLocalizations l10n,
+    TextTheme textTheme,
+    FeatureGate gate,
+  ) {
+    final minStrength = gate.effectiveMinStrength(
+      ref.watch(signalMinStrengthProvider),
+    );
     final options = <(int, String)>[
       (1, l10n.signalStrengthAll),
       (2, '2+'),
@@ -253,13 +308,19 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
             Center(
               child: ChoiceChip(
                 label: Text(label),
+                avatar: value == 3 && gate.isStrength3FilterLocked
+                    ? const Icon(Icons.lock_outline, size: 12)
+                    : null,
                 labelStyle: textTheme.labelSmall,
                 visualDensity: VisualDensity.compact,
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 padding: EdgeInsets.zero,
                 selected: minStrength == value,
-                onSelected: (_) =>
-                    ref.read(signalMinStrengthProvider.notifier).select(value),
+                onSelected: (_) => value == 3 && gate.isStrength3FilterLocked
+                    ? showProUpsell(context, ProFeature.strength3)
+                    : ref
+                          .read(signalMinStrengthProvider.notifier)
+                          .select(value),
               ),
             ),
           ],
@@ -332,6 +393,17 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
           showLoginRequiredSnackBar(context);
           return;
         }
+        final gate = ref.read(featureGateProvider);
+        final count = watchlistAsync.value?.length ?? 0;
+        if (!isFollowed && gate.watchlistLimitReached(count)) {
+          showProUpsell(
+            context,
+            ProFeature.watchlistLimit,
+            count: count,
+            limit: gate.watchlistLimit,
+          );
+          return;
+        }
         try {
           if (isFollowed) {
             await ref.read(watchlistApiProvider).unfollow(auth.token!, coin.id);
@@ -339,6 +411,15 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
             await ref.read(watchlistApiProvider).follow(auth.token!, coin.id);
           }
           ref.invalidate(watchlistProvider);
+        } on WatchlistLimitException catch (e) {
+          if (!context.mounted) return;
+          ref.read(appConfigProvider.notifier).refresh();
+          showProUpsell(
+            context,
+            ProFeature.watchlistLimit,
+            count: e.limit ?? count,
+            limit: e.limit,
+          );
         } catch (e) {
           if (!context.mounted) return;
           ScaffoldMessenger.of(
@@ -431,7 +512,9 @@ class _LiveChart extends ConsumerWidget {
       candles: live.candles,
       signals: filterByStrength(
         live.signals,
-        ref.watch(signalMinStrengthProvider),
+        ref
+            .watch(featureGateProvider)
+            .effectiveMinStrength(ref.watch(signalMinStrengthProvider)),
       ),
       timeframeMs: timeframeMs[params.timeframe]!,
     );

@@ -1281,6 +1281,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not open the link.'**
   String get couldNotOpenLink;
+
+  /// No description provided for @proUpsellBenefitsHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'With Pro you get'**
+  String get proUpsellBenefitsHeading;
+
+  /// No description provided for @proBenefitNoAds.
+  ///
+  /// In en, this message translates to:
+  /// **'No ads'**
+  String get proBenefitNoAds;
+
+  /// No description provided for @proBenefitDeepAnalysis.
+  ///
+  /// In en, this message translates to:
+  /// **'Deep analysis'**
+  String get proBenefitDeepAnalysis;
+
+  /// No description provided for @proBenefitCredits.
+  ///
+  /// In en, this message translates to:
+  /// **'300 credits every month'**
+  String get proBenefitCredits;
+
+  /// No description provided for @proBenefitAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Push notifications and price alerts'**
+  String get proBenefitAlerts;
+
+  /// No description provided for @proBenefitTimeframes.
+  ///
+  /// In en, this message translates to:
+  /// **'1m and 5m timeframes and the strong (3) signal filter'**
+  String get proBenefitTimeframes;
+
+  /// No description provided for @proBenefitWatchlist.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited watchlist'**
+  String get proBenefitWatchlist;
+
+  /// No description provided for @proUpsellNotNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get proUpsellNotNow;
+
+  /// No description provided for @proUpsellDeepTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Deep analysis is a Pro feature'**
+  String get proUpsellDeepTitle;
+
+  /// No description provided for @proUpsellDeepBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Pro members get a more detailed, multi-timeframe deep analysis of any coin.'**
+  String get proUpsellDeepBody;
+
+  /// No description provided for @proUpsellTimeframeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'1m and 5m are Pro timeframes'**
+  String get proUpsellTimeframeTitle;
+
+  /// No description provided for @proUpsellTimeframeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Pro members can watch the fastest timeframes and run AI analysis on them.'**
+  String get proUpsellTimeframeBody;
+
+  /// No description provided for @proUpsellStrength3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'The strong (3) signal filter is a Pro feature'**
+  String get proUpsellStrength3Title;
+
+  /// No description provided for @proUpsellStrength3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Pro members can show only the strongest signals on the chart.'**
+  String get proUpsellStrength3Body;
+
+  /// No description provided for @proUpsellWatchlistTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your watchlist is full ({count}/{limit})'**
+  String proUpsellWatchlistTitle(int count, int limit);
+
+  /// No description provided for @proUpsellWatchlistBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to Pro for an unlimited watchlist.'**
+  String get proUpsellWatchlistBody;
+
+  /// No description provided for @proUpsellGenericTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This is a Pro feature'**
+  String get proUpsellGenericTitle;
+
+  /// No description provided for @proUpsellGenericBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to Pro to unlock it.'**
+  String get proUpsellGenericBody;
+
+  /// No description provided for @proBadgeTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Pro feature'**
+  String get proBadgeTooltip;
 }
 
 class _AppLocalizationsDelegate

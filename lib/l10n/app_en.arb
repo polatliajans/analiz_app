@@ -489,5 +489,34 @@
   "financialDisclaimerText": "CryptoAnaliz does not provide investment advice. Signals and analyses are for informational purposes only and carry no guarantee. Crypto asset investments carry high risk; you are responsible for your decisions and any resulting losses.",
   "appVersion": "App version",
   "close": "Close",
-  "couldNotOpenLink": "Could not open the link."
+  "couldNotOpenLink": "Could not open the link.",
+  "proUpsellBenefitsHeading": "With Pro you get",
+  "proBenefitNoAds": "No ads",
+  "proBenefitDeepAnalysis": "Deep analysis",
+  "proBenefitCredits": "300 credits every month",
+  "proBenefitAlerts": "Push notifications and price alerts",
+  "proBenefitTimeframes": "1m and 5m timeframes and the strong (3) signal filter",
+  "proBenefitWatchlist": "Unlimited watchlist",
+  "proUpsellNotNow": "Not now",
+  "proUpsellDeepTitle": "Deep analysis is a Pro feature",
+  "proUpsellDeepBody": "Pro members get a more detailed, multi-timeframe deep analysis of any coin.",
+  "proUpsellTimeframeTitle": "1m and 5m are Pro timeframes",
+  "proUpsellTimeframeBody": "Pro members can watch the fastest timeframes and run AI analysis on them.",
+  "proUpsellStrength3Title": "The strong (3) signal filter is a Pro feature",
+  "proUpsellStrength3Body": "Pro members can show only the strongest signals on the chart.",
+  "proUpsellWatchlistTitle": "Your watchlist is full ({count}/{limit})",
+  "@proUpsellWatchlistTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "proUpsellWatchlistBody": "Upgrade to Pro for an unlimited watchlist.",
+  "proUpsellGenericTitle": "This is a Pro feature",
+  "proUpsellGenericBody": "Upgrade to Pro to unlock it.",
+  "proBadgeTooltip": "Pro feature"
 }

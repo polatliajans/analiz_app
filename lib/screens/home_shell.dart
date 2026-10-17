@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../l10n/app_localizations.dart';
+import '../providers/app_config_provider.dart';
 import '../providers/home_tab_provider.dart';
 import 'account_screen.dart';
 import 'chart_screen.dart';
@@ -14,6 +15,8 @@ class HomeShell extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Keep plan config alive (and fetched) for the whole signed-in shell.
+    ref.watch(appConfigProvider);
     final index = ref.watch(homeTabProvider);
     final l10n = AppLocalizations.of(context)!;
 

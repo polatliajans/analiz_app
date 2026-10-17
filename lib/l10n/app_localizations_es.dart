@@ -752,4 +752,69 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get couldNotOpenLink => 'No se pudo abrir el enlace.';
+
+  @override
+  String get proUpsellBenefitsHeading => 'Con Pro obtienes';
+
+  @override
+  String get proBenefitNoAds => 'Sin anuncios';
+
+  @override
+  String get proBenefitDeepAnalysis => 'Análisis profundo';
+
+  @override
+  String get proBenefitCredits => '300 créditos cada mes';
+
+  @override
+  String get proBenefitAlerts => 'Notificaciones push y alertas de precio';
+
+  @override
+  String get proBenefitTimeframes =>
+      'Marcos de 1m y 5m y el filtro de señales fuertes (3)';
+
+  @override
+  String get proBenefitWatchlist => 'Lista de seguimiento ilimitada';
+
+  @override
+  String get proUpsellNotNow => 'Ahora no';
+
+  @override
+  String get proUpsellDeepTitle => 'El análisis profundo es una función Pro';
+
+  @override
+  String get proUpsellDeepBody =>
+      'Los miembros Pro reciben un análisis profundo más detallado y multi-marco de cualquier moneda.';
+
+  @override
+  String get proUpsellTimeframeTitle => '1m y 5m son marcos temporales Pro';
+
+  @override
+  String get proUpsellTimeframeBody =>
+      'Los miembros Pro pueden ver los marcos más rápidos y ejecutar análisis de IA en ellos.';
+
+  @override
+  String get proUpsellStrength3Title =>
+      'El filtro de señales fuertes (3) es una función Pro';
+
+  @override
+  String get proUpsellStrength3Body =>
+      'Los miembros Pro pueden mostrar solo las señales más fuertes en el gráfico.';
+
+  @override
+  String proUpsellWatchlistTitle(int count, int limit) {
+    return 'Tu lista de seguimiento está llena ($count/$limit)';
+  }
+
+  @override
+  String get proUpsellWatchlistBody =>
+      'Mejora a Pro para tener una lista de seguimiento ilimitada.';
+
+  @override
+  String get proUpsellGenericTitle => 'Esta es una función Pro';
+
+  @override
+  String get proUpsellGenericBody => 'Mejora a Pro para desbloquearla.';
+
+  @override
+  String get proBadgeTooltip => 'Función Pro';
 }

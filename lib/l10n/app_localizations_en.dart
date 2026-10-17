@@ -742,4 +742,69 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get couldNotOpenLink => 'Could not open the link.';
+
+  @override
+  String get proUpsellBenefitsHeading => 'With Pro you get';
+
+  @override
+  String get proBenefitNoAds => 'No ads';
+
+  @override
+  String get proBenefitDeepAnalysis => 'Deep analysis';
+
+  @override
+  String get proBenefitCredits => '300 credits every month';
+
+  @override
+  String get proBenefitAlerts => 'Push notifications and price alerts';
+
+  @override
+  String get proBenefitTimeframes =>
+      '1m and 5m timeframes and the strong (3) signal filter';
+
+  @override
+  String get proBenefitWatchlist => 'Unlimited watchlist';
+
+  @override
+  String get proUpsellNotNow => 'Not now';
+
+  @override
+  String get proUpsellDeepTitle => 'Deep analysis is a Pro feature';
+
+  @override
+  String get proUpsellDeepBody =>
+      'Pro members get a more detailed, multi-timeframe deep analysis of any coin.';
+
+  @override
+  String get proUpsellTimeframeTitle => '1m and 5m are Pro timeframes';
+
+  @override
+  String get proUpsellTimeframeBody =>
+      'Pro members can watch the fastest timeframes and run AI analysis on them.';
+
+  @override
+  String get proUpsellStrength3Title =>
+      'The strong (3) signal filter is a Pro feature';
+
+  @override
+  String get proUpsellStrength3Body =>
+      'Pro members can show only the strongest signals on the chart.';
+
+  @override
+  String proUpsellWatchlistTitle(int count, int limit) {
+    return 'Your watchlist is full ($count/$limit)';
+  }
+
+  @override
+  String get proUpsellWatchlistBody =>
+      'Upgrade to Pro for an unlimited watchlist.';
+
+  @override
+  String get proUpsellGenericTitle => 'This is a Pro feature';
+
+  @override
+  String get proUpsellGenericBody => 'Upgrade to Pro to unlock it.';
+
+  @override
+  String get proBadgeTooltip => 'Pro feature';
 }
