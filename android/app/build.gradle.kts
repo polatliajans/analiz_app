@@ -38,6 +38,13 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        // AdMob app id (required meta-data, the app crashes without it).
+        // Real id via ADMOB_APP_ID in android/key.properties; otherwise
+        // Google's sample/test app id.
+        manifestPlaceholders["admobAppId"] =
+            keystoreProperties.getProperty("ADMOB_APP_ID")?.takeIf { it.isNotBlank() }
+                ?: "ca-app-pub-3940256099942544~3347511713"
     }
 
     signingConfigs {

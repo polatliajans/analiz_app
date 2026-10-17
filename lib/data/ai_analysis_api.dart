@@ -37,9 +37,7 @@ class AiAnalysisApi {
     }
 
     if (isProRequired(response)) throw ProRequiredException();
-    if (response.statusCode == 402) {
-      throw AiAnalysisException(AppL10n.current.errorInsufficientCredit);
-    }
+    if (response.statusCode == 402) throw InsufficientCreditException();
     if (response.statusCode == 502) {
       throw AiAnalysisException(AppL10n.current.errorAnalysisUnavailable);
     }

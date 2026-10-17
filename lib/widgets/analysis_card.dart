@@ -9,14 +9,15 @@ String formatAnalysisDate(BuildContext context, DateTime dt) {
   return DateFormat.yMd(locale).add_Hm().format(dt.toLocal());
 }
 
-/// Shows the full text of an analysis in a bottom sheet.
-void showAnalysisSheet(
+/// Shows the full text of an analysis in a bottom sheet; completes when the
+/// sheet is closed.
+Future<void> showAnalysisSheet(
   BuildContext context, {
   required String result,
   required int creditCost,
 }) {
   final l10n = AppLocalizations.of(context)!;
-  showModalBottomSheet<void>(
+  return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
     useSafeArea: true,

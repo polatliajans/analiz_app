@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../ads/ad_logic.dart';
+import '../ads/banner_ad_slot.dart';
+import '../ads/rewarded_ad_button.dart';
 import '../l10n/app_localizations.dart';
 import '../models/member.dart';
 import '../providers/auth_prompt_provider.dart';
 import '../providers/auth_provider.dart';
+import '../providers/home_tab_provider.dart';
 import '../services/auth_failure.dart';
 import '../services/delete_account_warnings.dart';
 import '../widgets/email_verification_banner.dart';
@@ -148,6 +152,10 @@ class AccountScreen extends ConsumerWidget {
                 ),
               ],
             ),
+          ),
+          const BannerAdSlot(
+            placementKey: AdPlacementKeys.bannerProfile,
+            tabIndex: profileTabIndex,
           ),
         ],
       ),
@@ -311,6 +319,8 @@ class _CreditCard extends StatelessWidget {
                     icon: const Icon(Icons.workspace_premium_outlined),
                     label: Text(l10n.upgradeToPro),
                   ),
+                // Hidden unless offered (Free, rewards left today, ads on).
+                const RewardedAdButton(),
               ],
             ),
           ],

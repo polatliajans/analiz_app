@@ -37,9 +37,7 @@ class DeepAnalysisApi {
     }
 
     if (isProRequired(response)) throw ProRequiredException();
-    if (response.statusCode == 402) {
-      throw DeepAnalysisException(AppL10n.current.errorInsufficientCredit);
-    }
+    if (response.statusCode == 402) throw InsufficientCreditException();
     if (response.statusCode == 502) {
       throw DeepAnalysisException(AppL10n.current.errorDeepAnalysisUnavailable);
     }

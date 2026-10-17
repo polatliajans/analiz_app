@@ -11,6 +11,12 @@ class ProRequiredException implements Exception {
   String toString() => AppL10n.current.errorProOnly;
 }
 
+/// Server refused an analysis because the balance is too low (402).
+class InsufficientCreditException implements Exception {
+  @override
+  String toString() => AppL10n.current.errorInsufficientCredit;
+}
+
 /// The `code` field of a JSON error body, or null when absent/unparseable.
 String? errorCodeOf(http.Response response) {
   try {

@@ -15,6 +15,11 @@
 -dontwarn com.google.firebase.**
 -dontwarn com.google.android.gms.**
 
+# Google Mobile Ads / UMP consent (play-services-ads is covered above)
+-keep class com.google.android.ump.** { *; }
+-dontwarn com.google.android.ump.**
+-keep class io.flutter.plugins.googlemobileads.** { *; }
+
 # Google Sign-In (Credential Manager / Identity)
 -keep class androidx.credentials.** { *; }
 -keep class com.google.android.libraries.identity.googleid.** { *; }

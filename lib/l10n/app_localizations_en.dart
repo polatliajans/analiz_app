@@ -807,4 +807,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get proBadgeTooltip => 'Pro feature';
+
+  @override
+  String get adLabel => 'Ad';
+
+  @override
+  String rewardedWatchButton(int amount, int remaining) {
+    return 'Watch an ad, +$amount credits (left today: $remaining)';
+  }
+
+  @override
+  String get rewardedEarnedPending =>
+      'Thanks! Your credits will arrive in a few seconds.';
+
+  @override
+  String get rewardedAdUnavailable =>
+      'No ad is available right now. Please try again a bit later.';
+
+  @override
+  String get rewardedNotCompleted =>
+      'The ad was closed early, so no credits were added.';
+
+  @override
+  String get insufficientCreditTitle => 'Not enough credits';
+
+  @override
+  String get insufficientCreditBody =>
+      'You don\'t have enough credits for this analysis. You can buy credits to continue.';
+
+  @override
+  String get insufficientCreditBodyWithAd =>
+      'You don\'t have enough credits for this analysis. Buy credits, or watch a short ad to earn free credits.';
 }

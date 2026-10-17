@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../ads/ad_logic.dart';
+import '../ads/banner_ad_slot.dart';
+import '../ads/native_ads.dart';
 import '../l10n/app_localizations.dart';
 import '../models/radar_item.dart';
 import '../providers/home_tab_provider.dart';
@@ -14,8 +17,12 @@ class RadarScreen extends ConsumerStatefulWidget {
   ConsumerState<RadarScreen> createState() => _RadarScreenState();
 }
 
-class _RadarScreenState extends ConsumerState<RadarScreen> {
+class _RadarScreenState extends ConsumerState<RadarScreen>
+    with NativeAdPoolHost<RadarScreen> {
   String? _term;
+
+  @override
+  String get nativePlacementKey => AdPlacementKeys.nativeRadar;
 
   static List<(String?, String)> _terms(AppLocalizations l10n) => [
     (null, l10n.termAll),
@@ -49,6 +56,7 @@ class _RadarScreenState extends ConsumerState<RadarScreen> {
   Widget build(BuildContext context) {
     final radarAsync = ref.watch(radarProvider(_term));
     final l10n = AppLocalizations.of(context)!;
+    final nativeAds = watchNativeAds();
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.radar)),
@@ -94,13 +102,7 @@ class _RadarScreenState extends ConsumerState<RadarScreen> {
                 }
                 return RefreshIndicator(
                   onRefresh: () => ref.refresh(radarProvider(_term).future),
-                  child: ListView.separated(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    itemCount: items.length,
-                    separatorBuilder: (_, _) => const Divider(height: 1),
-                    itemBuilder: (context, index) =>
-                        _buildTile(context, items[index]),
-                  ),
+                  child: _buildList(context, items, nativeAds),
                 );
               },
             ),
@@ -113,8 +115,32 @@ class _RadarScreenState extends ConsumerState<RadarScreen> {
               textAlign: TextAlign.center,
             ),
           ),
+          const BannerAdSlot(
+            placementKey: AdPlacementKeys.bannerRadar,
+            tabIndex: radarTabIndex,
+          ),
         ],
       ),
+    );
+  }
+
+  Widget _buildList(
+    BuildContext context,
+    List<RadarItem> items,
+    ({NativeAdPool pool, int frequency})? nativeAds,
+  ) {
+    final n = nativeAds?.frequency ?? 0;
+    bool isAd(int i) => nativeAds != null && shouldShowNativeAt(i, n);
+    return ListView.separated(
+      physics: const AlwaysScrollableScrollPhysics(),
+      itemCount: itemCountWithAds(items.length, n),
+      // The ad row draws its own background instead of dividers.
+      separatorBuilder: (_, i) => isAd(i) || isAd(i + 1)
+          ? const SizedBox.shrink()
+          : const Divider(height: 1),
+      itemBuilder: (context, index) => isAd(index)
+          ? NativeAdRow(pool: nativeAds!.pool, slot: nativeSlotNumber(index, n))
+          : _buildTile(context, items[contentIndexAt(index, n)]),
     );
   }
 

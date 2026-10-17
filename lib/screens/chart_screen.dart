@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../ads/ads_controller.dart';
 import '../data/ai_analysis_api.dart';
 import '../data/deep_analysis_api.dart';
 import '../data/plan_errors.dart';
@@ -23,6 +24,7 @@ import '../widgets/analysis_card.dart';
 import '../widgets/analysis_progress_overlay.dart';
 import '../widgets/candlestick_chart.dart';
 import '../widgets/email_verification_banner.dart';
+import '../widgets/insufficient_credit_dialog.dart';
 import '../widgets/pro_upsell_sheet.dart';
 import 'auth_screen.dart';
 import 'coin_picker_sheet.dart';
@@ -73,10 +75,23 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
       );
       await ref.read(authProvider.notifier).refreshMember();
       ref.invalidate(analysisHistoryProvider);
+      final ads = ref.read(adsControllerProvider.notifier);
+      await ads.recordSuccessfulAnalysis();
       if (!mounted) return;
-      showAnalysisSheet(context, result: r.result, creditCost: r.creditCost);
+      await showAnalysisSheet(
+        context,
+        result: r.result,
+        creditCost: r.creditCost,
+      );
+      // Only after the user closed the result (never while waiting).
+      if (!mounted) return;
+      await ads.maybeShowInterstitial();
     } catch (e) {
       if (!mounted) return;
+      if (e is InsufficientCreditException) {
+        showInsufficientCreditDialog(context);
+        return;
+      }
       if (e is ProRequiredException) {
         // The server's view of the plan wins: resync, then explain.
         ref.read(authProvider.notifier).refreshMember();
@@ -227,7 +242,8 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
               },
             ),
           ),
-          if (supportsSignals(timeframe)) _buildStrengthFilter(l10n, textTheme, gate),
+          if (supportsSignals(timeframe))
+            _buildStrengthFilter(l10n, textTheme, gate),
           Expanded(flex: 5, child: _LiveChart(params: params)),
           Expanded(
             flex: 4,

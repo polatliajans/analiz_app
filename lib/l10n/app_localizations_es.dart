@@ -817,4 +817,35 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get proBadgeTooltip => 'Función Pro';
+
+  @override
+  String get adLabel => 'Anuncio';
+
+  @override
+  String rewardedWatchButton(int amount, int remaining) {
+    return 'Mira un anuncio, +$amount créditos (quedan hoy: $remaining)';
+  }
+
+  @override
+  String get rewardedEarnedPending =>
+      '¡Gracias! Tus créditos llegarán en unos segundos.';
+
+  @override
+  String get rewardedAdUnavailable =>
+      'No hay ningún anuncio disponible ahora. Inténtalo de nuevo en un rato.';
+
+  @override
+  String get rewardedNotCompleted =>
+      'El anuncio se cerró antes de terminar, así que no se añadieron créditos.';
+
+  @override
+  String get insufficientCreditTitle => 'Créditos insuficientes';
+
+  @override
+  String get insufficientCreditBody =>
+      'No tienes créditos suficientes para este análisis. Puedes comprar créditos para continuar.';
+
+  @override
+  String get insufficientCreditBodyWithAd =>
+      'No tienes créditos suficientes para este análisis. Compra créditos o mira un anuncio corto para ganar créditos gratis.';
 }

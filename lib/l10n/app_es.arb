@@ -232,5 +232,13 @@
   "proUpsellWatchlistBody": "Mejora a Pro para tener una lista de seguimiento ilimitada.",
   "proUpsellGenericTitle": "Esta es una función Pro",
   "proUpsellGenericBody": "Mejora a Pro para desbloquearla.",
-  "proBadgeTooltip": "Función Pro"
+  "proBadgeTooltip": "Función Pro",
+  "adLabel": "Anuncio",
+  "rewardedWatchButton": "Mira un anuncio, +{amount} créditos (quedan hoy: {remaining})",
+  "rewardedEarnedPending": "¡Gracias! Tus créditos llegarán en unos segundos.",
+  "rewardedAdUnavailable": "No hay ningún anuncio disponible ahora. Inténtalo de nuevo en un rato.",
+  "rewardedNotCompleted": "El anuncio se cerró antes de terminar, así que no se añadieron créditos.",
+  "insufficientCreditTitle": "Créditos insuficientes",
+  "insufficientCreditBody": "No tienes créditos suficientes para este análisis. Puedes comprar créditos para continuar.",
+  "insufficientCreditBodyWithAd": "No tienes créditos suficientes para este análisis. Compra créditos o mira un anuncio corto para ganar créditos gratis."
 }

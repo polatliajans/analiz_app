@@ -232,5 +232,13 @@
   "proUpsellWatchlistBody": "Limitsiz takip listesi için Pro'ya geç.",
   "proUpsellGenericTitle": "Bu bir Pro özelliğidir",
   "proUpsellGenericBody": "Açmak için Pro'ya geç.",
-  "proBadgeTooltip": "Pro özelliği"
+  "proBadgeTooltip": "Pro özelliği",
+  "adLabel": "Reklam",
+  "rewardedWatchButton": "Reklam izle, +{amount} kredi (bugün kalan: {remaining})",
+  "rewardedEarnedPending": "Teşekkürler! Kredin birkaç saniye içinde yüklenecek.",
+  "rewardedAdUnavailable": "Şu anda gösterilecek reklam yok. Lütfen biraz sonra tekrar dene.",
+  "rewardedNotCompleted": "Reklam tamamlanmadan kapatıldı; kredi eklenmedi.",
+  "insufficientCreditTitle": "Kredi yetersiz",
+  "insufficientCreditBody": "Bu analiz için yeterli kredin yok. Devam etmek için kredi alabilirsin.",
+  "insufficientCreditBodyWithAd": "Bu analiz için yeterli kredin yok. Kredi alabilir ya da kısa bir reklam izleyerek ücretsiz kredi kazanabilirsin."
 }

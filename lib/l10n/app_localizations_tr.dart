@@ -777,4 +777,35 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get proBadgeTooltip => 'Pro özelliği';
+
+  @override
+  String get adLabel => 'Reklam';
+
+  @override
+  String rewardedWatchButton(int amount, int remaining) {
+    return 'Reklam izle, +$amount kredi (bugün kalan: $remaining)';
+  }
+
+  @override
+  String get rewardedEarnedPending =>
+      'Teşekkürler! Kredin birkaç saniye içinde yüklenecek.';
+
+  @override
+  String get rewardedAdUnavailable =>
+      'Şu anda gösterilecek reklam yok. Lütfen biraz sonra tekrar dene.';
+
+  @override
+  String get rewardedNotCompleted =>
+      'Reklam tamamlanmadan kapatıldı; kredi eklenmedi.';
+
+  @override
+  String get insufficientCreditTitle => 'Kredi yetersiz';
+
+  @override
+  String get insufficientCreditBody =>
+      'Bu analiz için yeterli kredin yok. Devam etmek için kredi alabilirsin.';
+
+  @override
+  String get insufficientCreditBodyWithAd =>
+      'Bu analiz için yeterli kredin yok. Kredi alabilir ya da kısa bir reklam izleyerek ücretsiz kredi kazanabilirsin.';
 }

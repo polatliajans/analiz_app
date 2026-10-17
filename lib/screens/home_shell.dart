@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../ads/ads_controller.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/app_config_provider.dart';
 import '../providers/home_tab_provider.dart';
@@ -17,6 +18,8 @@ class HomeShell extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // Keep plan config alive (and fetched) for the whole signed-in shell.
     ref.watch(appConfigProvider);
+    // Ad SDK lifecycle (consent + init only when ads are enabled; never Pro).
+    ref.watch(adsControllerProvider);
     final index = ref.watch(homeTabProvider);
     final l10n = AppLocalizations.of(context)!;
 

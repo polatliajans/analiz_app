@@ -51,6 +51,7 @@ dependencies:
   web_socket_channel: ^3.0.3
   url_launcher: ^6.3.2
   package_info_plus: ^10.2.2
+  google_mobile_ads: ^9.1.0
 
 dependency_overrides:
   k_chart:

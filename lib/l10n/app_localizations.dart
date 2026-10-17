@@ -1395,6 +1395,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pro feature'**
   String get proBadgeTooltip;
+
+  /// No description provided for @adLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Ad'**
+  String get adLabel;
+
+  /// No description provided for @rewardedWatchButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch an ad, +{amount} credits (left today: {remaining})'**
+  String rewardedWatchButton(int amount, int remaining);
+
+  /// No description provided for @rewardedEarnedPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks! Your credits will arrive in a few seconds.'**
+  String get rewardedEarnedPending;
+
+  /// No description provided for @rewardedAdUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No ad is available right now. Please try again a bit later.'**
+  String get rewardedAdUnavailable;
+
+  /// No description provided for @rewardedNotCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'The ad was closed early, so no credits were added.'**
+  String get rewardedNotCompleted;
+
+  /// No description provided for @insufficientCreditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough credits'**
+  String get insufficientCreditTitle;
+
+  /// No description provided for @insufficientCreditBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have enough credits for this analysis. You can buy credits to continue.'**
+  String get insufficientCreditBody;
+
+  /// No description provided for @insufficientCreditBodyWithAd.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have enough credits for this analysis. Buy credits, or watch a short ad to earn free credits.'**
+  String get insufficientCreditBodyWithAd;
 }
 
 class _AppLocalizationsDelegate

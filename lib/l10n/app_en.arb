@@ -518,5 +518,23 @@
   "proUpsellWatchlistBody": "Upgrade to Pro for an unlimited watchlist.",
   "proUpsellGenericTitle": "This is a Pro feature",
   "proUpsellGenericBody": "Upgrade to Pro to unlock it.",
-  "proBadgeTooltip": "Pro feature"
+  "proBadgeTooltip": "Pro feature",
+  "adLabel": "Ad",
+  "rewardedWatchButton": "Watch an ad, +{amount} credits (left today: {remaining})",
+  "@rewardedWatchButton": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      },
+      "remaining": {
+        "type": "int"
+      }
+    }
+  },
+  "rewardedEarnedPending": "Thanks! Your credits will arrive in a few seconds.",
+  "rewardedAdUnavailable": "No ad is available right now. Please try again a bit later.",
+  "rewardedNotCompleted": "The ad was closed early, so no credits were added.",
+  "insufficientCreditTitle": "Not enough credits",
+  "insufficientCreditBody": "You don't have enough credits for this analysis. You can buy credits to continue.",
+  "insufficientCreditBodyWithAd": "You don't have enough credits for this analysis. Buy credits, or watch a short ad to earn free credits."
 }
