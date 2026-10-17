@@ -1,6 +1,13 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kriptoanaliz/models/app_config.dart';
+import 'package:kriptoanaliz/models/chart_signal.dart';
 import 'package:kriptoanaliz/utils/feature_gate.dart';
+
+ChartSignal _s(int strength) => ChartSignal(
+  candleTime: DateTime.utc(2026, 1, 1),
+  signalType: 'buy',
+  strength: strength,
+);
 
 void main() {
   const config = PlanConfig();
@@ -26,15 +33,22 @@ void main() {
       expect(gate.isTimeframeLocked('1w'), isFalse);
     });
 
-    test('strength 3 filter follows the config flag', () {
-      expect(gate.isStrength3FilterLocked, isTrue);
-      expect(
-        const FeatureGate(
-          plan: PlanConfig(strength3FilterRequiresPro: false),
-          isPro: false,
-        ).isStrength3FilterLocked,
-        isFalse,
+    test('only signals up to freeMaxSignalStrength are visible', () {
+      final all = [_s(1), _s(2), _s(3), _s(2)];
+      expect(gate.visibleSignals(all).map((s) => s.strength), [1, 2, 2]);
+      expect(gate.isSignalVisible(3), isFalse);
+      expect(gate.showStrongSignalsNote, isTrue);
+      const tight = FeatureGate(
+        plan: PlanConfig(freeMaxSignalStrength: 1),
+        isPro: false,
       );
+      expect(tight.visibleSignals(all).map((s) => s.strength), [1]);
+      const open = FeatureGate(
+        plan: PlanConfig(freeMaxSignalStrength: 3),
+        isPro: false,
+      );
+      expect(open.visibleSignals(all), hasLength(4));
+      expect(open.showStrongSignalsNote, isFalse);
     });
 
     test('watchlist limit', () {
@@ -52,8 +66,6 @@ void main() {
     test('persisted choices are clamped to what is allowed', () {
       expect(gate.effectiveTimeframe('1m'), '15m');
       expect(gate.effectiveTimeframe('4h'), '4h');
-      expect(gate.effectiveMinStrength(3), 1);
-      expect(gate.effectiveMinStrength(2), 2);
     });
   });
 
@@ -63,11 +75,12 @@ void main() {
     test('everything is open', () {
       expect(gate.canUseDeepAnalysis, isTrue);
       expect(gate.isTimeframeLocked('1m'), isFalse);
-      expect(gate.isStrength3FilterLocked, isFalse);
+      final all = [_s(1), _s(2), _s(3)];
+      expect(gate.visibleSignals(all), hasLength(3));
+      expect(gate.showStrongSignalsNote, isFalse);
       expect(gate.watchlistLimit, isNull);
       expect(gate.watchlistLimitReached(999), isFalse);
       expect(gate.effectiveTimeframe('1m'), '1m');
-      expect(gate.effectiveMinStrength(3), 3);
     });
   });
 
@@ -79,7 +92,7 @@ void main() {
           'free_watchlist_max': 7,
           'deep_analysis_requires_pro': false,
           'pro_only_timeframes': ['1m'],
-          'strength3_filter_requires_pro': false,
+          'free_max_signal_strength': 1,
           'alerts_require_pro': true,
         },
         'ads': {
@@ -112,6 +125,7 @@ void main() {
       expect(c.plan.role, 'free');
       expect(c.plan.freeWatchlistMax, 7);
       expect(c.plan.proOnlyTimeframes, ['1m']);
+      expect(c.plan.freeMaxSignalStrength, 1);
       expect(c.ads.enabled, isTrue);
       expect(c.ads.placements, hasLength(2));
       expect(c.ads.placement('interstitial_analysis')!.frequency, 3);
@@ -131,6 +145,7 @@ void main() {
       expect(c.plan.deepAnalysisRequiresPro, isTrue);
       expect(c.plan.proOnlyTimeframes, ['1m', '5m']);
       expect(c.plan.freeWatchlistMax, 10);
+      expect(c.plan.freeMaxSignalStrength, 2);
       expect(c.ads.enabled, isFalse);
       expect(c.ads.placements, isEmpty);
     });
@@ -140,9 +155,11 @@ void main() {
         role: 'free',
         freeWatchlistMax: 4,
         proOnlyTimeframes: ['1m'],
+        freeMaxSignalStrength: 1,
       );
       final back = PlanConfig.fromJson(original.toJson());
       expect(back.freeWatchlistMax, 4);
+      expect(back.freeMaxSignalStrength, 1);
       expect(back.proOnlyTimeframes, ['1m']);
     });
   });

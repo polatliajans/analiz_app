@@ -158,10 +158,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noCandleData => 'No candle data';
 
   @override
-  String get signalStrengthLabel => 'Signal strength';
-
-  @override
-  String get signalStrengthAll => 'All';
+  String get strongSignalsProNote => 'Strong (3) signals are Pro';
 
   @override
   String creditsSpent(int count) {
@@ -760,7 +757,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get proBenefitTimeframes =>
-      '1m and 5m timeframes and the strong (3) signal filter';
+      '1m and 5m timeframes and strong (3) level signals';
 
   @override
   String get proBenefitWatchlist => 'Unlimited watchlist';
@@ -783,12 +780,12 @@ class AppLocalizationsEn extends AppLocalizations {
       'Pro members can watch the fastest timeframes and run AI analysis on them.';
 
   @override
-  String get proUpsellStrength3Title =>
-      'The strong (3) signal filter is a Pro feature';
+  String get proUpsellStrongSignalsTitle =>
+      'Strong (3) level signals are a Pro feature';
 
   @override
-  String get proUpsellStrength3Body =>
-      'Pro members can show only the strongest signals on the chart.';
+  String get proUpsellStrongSignalsBody =>
+      'Pro members see all signal levels on the chart, including the strongest (3).';
 
   @override
   String proUpsellWatchlistTitle(int count, int limit) {

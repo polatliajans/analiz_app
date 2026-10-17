@@ -1,4 +1,5 @@
 import '../models/app_config.dart';
+import '../models/chart_signal.dart';
 
 /// Pure decisions about which features the current user may use. Pro is
 /// unrestricted; Free and guests follow the server-provided [PlanConfig].
@@ -13,7 +14,16 @@ class FeatureGate {
   bool isTimeframeLocked(String timeframe) =>
       !isPro && plan.proOnlyTimeframes.contains(timeframe);
 
-  bool get isStrength3FilterLocked => !isPro && plan.strength3FilterRequiresPro;
+  /// Pro sees every signal strength; Free / guests only up to
+  /// [PlanConfig.freeMaxSignalStrength] (the server enforces it too).
+  bool isSignalVisible(int strength) =>
+      isPro || strength <= plan.freeMaxSignalStrength;
+
+  List<ChartSignal> visibleSignals(List<ChartSignal> signals) =>
+      isPro ? signals : signals.where((s) => isSignalVisible(s.strength)).toList();
+
+  /// Whether to hint that stronger signals exist in Pro.
+  bool get showStrongSignalsNote => !isPro && plan.freeMaxSignalStrength < 3;
 
   /// Max watchlist size, null when unlimited.
   int? get watchlistLimit => isPro ? null : plan.freeWatchlistMax;
@@ -26,10 +36,6 @@ class FeatureGate {
   /// A previously saved timeframe the user may no longer use falls back.
   String effectiveTimeframe(String saved) =>
       isTimeframeLocked(saved) ? fallbackTimeframe : saved;
-
-  /// A previously saved strength filter the user may no longer use falls back.
-  int effectiveMinStrength(int saved) =>
-      (saved == 3 && isStrength3FilterLocked) ? 1 : saved;
 }
 
 /// Timeframe used when a saved one is locked.

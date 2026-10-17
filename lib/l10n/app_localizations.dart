@@ -364,17 +364,11 @@ abstract class AppLocalizations {
   /// **'No candle data'**
   String get noCandleData;
 
-  /// No description provided for @signalStrengthLabel.
+  /// No description provided for @strongSignalsProNote.
   ///
   /// In en, this message translates to:
-  /// **'Signal strength'**
-  String get signalStrengthLabel;
-
-  /// No description provided for @signalStrengthAll.
-  ///
-  /// In en, this message translates to:
-  /// **'All'**
-  String get signalStrengthAll;
+  /// **'Strong (3) signals are Pro'**
+  String get strongSignalsProNote;
 
   /// No description provided for @creditsSpent.
   ///
@@ -1315,7 +1309,7 @@ abstract class AppLocalizations {
   /// No description provided for @proBenefitTimeframes.
   ///
   /// In en, this message translates to:
-  /// **'1m and 5m timeframes and the strong (3) signal filter'**
+  /// **'1m and 5m timeframes and strong (3) level signals'**
   String get proBenefitTimeframes;
 
   /// No description provided for @proBenefitWatchlist.
@@ -1354,17 +1348,17 @@ abstract class AppLocalizations {
   /// **'Pro members can watch the fastest timeframes and run AI analysis on them.'**
   String get proUpsellTimeframeBody;
 
-  /// No description provided for @proUpsellStrength3Title.
+  /// No description provided for @proUpsellStrongSignalsTitle.
   ///
   /// In en, this message translates to:
-  /// **'The strong (3) signal filter is a Pro feature'**
-  String get proUpsellStrength3Title;
+  /// **'Strong (3) level signals are a Pro feature'**
+  String get proUpsellStrongSignalsTitle;
 
-  /// No description provided for @proUpsellStrength3Body.
+  /// No description provided for @proUpsellStrongSignalsBody.
   ///
   /// In en, this message translates to:
-  /// **'Pro members can show only the strongest signals on the chart.'**
-  String get proUpsellStrength3Body;
+  /// **'Pro members see all signal levels on the chart, including the strongest (3).'**
+  String get proUpsellStrongSignalsBody;
 
   /// No description provided for @proUpsellWatchlistTitle.
   ///

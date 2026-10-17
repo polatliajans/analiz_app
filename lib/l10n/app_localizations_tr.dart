@@ -158,10 +158,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get noCandleData => 'Mum verisi yok';
 
   @override
-  String get signalStrengthLabel => 'Sinyal gücü';
-
-  @override
-  String get signalStrengthAll => 'Tümü';
+  String get strongSignalsProNote => 'Güçlü (3) kademe sinyaller Pro\'da';
 
   @override
   String creditsSpent(int count) {
@@ -730,7 +727,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get proBenefitTimeframes =>
-      '1m ve 5m periyotları ile güçlü (3) sinyal filtresi';
+      '1m ve 5m periyotları ile güçlü (3) kademe sinyaller';
 
   @override
   String get proBenefitWatchlist => 'Limitsiz takip listesi';
@@ -753,12 +750,12 @@ class AppLocalizationsTr extends AppLocalizations {
       'Pro üyeler en hızlı periyotları izleyebilir ve bunlarda yapay zekâ analizi çalıştırabilir.';
 
   @override
-  String get proUpsellStrength3Title =>
-      'Güçlü (3) sinyal filtresi bir Pro özelliğidir';
+  String get proUpsellStrongSignalsTitle =>
+      'Güçlü (3) kademe sinyaller bir Pro özelliğidir';
 
   @override
-  String get proUpsellStrength3Body =>
-      'Pro üyeler grafikte yalnızca en güçlü sinyalleri gösterebilir.';
+  String get proUpsellStrongSignalsBody =>
+      'Pro üyeler grafikte en güçlü (3) kademe dahil tüm sinyalleri görür.';
 
   @override
   String proUpsellWatchlistTitle(int count, int limit) {

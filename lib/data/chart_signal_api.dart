@@ -11,6 +11,7 @@ class ChartSignalApi {
   Future<List<ChartSignal>> fetchSignals({
     required int coinId,
     required String timeframe,
+    String? token,
   }) async {
     final uri = Uri.parse(
       '${ApiConfig.baseUrl}/coins/$coinId/chart-signals',
@@ -18,7 +19,10 @@ class ChartSignalApi {
 
     final http.Response response;
     try {
-      response = await ApiHttp.get(uri).timeout(const Duration(seconds: 10));
+      response = await ApiHttp.get(
+        uri,
+        headers: token == null ? null : {'Authorization': 'Bearer $token'},
+      ).timeout(const Duration(seconds: 10));
     } catch (e) {
       throw ChartDataException(AppL10n.current.errorSignalsFailed('$e'));
     }

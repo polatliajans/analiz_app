@@ -9,6 +9,8 @@ import 'package:kriptoanaliz/data/kline_stream.dart';
 import 'package:kriptoanaliz/models/candle.dart';
 import 'package:kriptoanaliz/models/chart_signal.dart';
 import 'package:kriptoanaliz/models/coin.dart';
+import 'package:kriptoanaliz/models/member.dart';
+import 'package:kriptoanaliz/providers/auth_provider.dart';
 import 'package:kriptoanaliz/providers/chart_data_provider.dart';
 import 'package:kriptoanaliz/providers/home_tab_provider.dart';
 import 'package:kriptoanaliz/providers/live_chart_provider.dart';
@@ -57,16 +59,39 @@ class _FakeKlines extends BinanceKlinesApi {
 class _FakeSignals extends ChartSignalApi {
   int calls = 0;
   bool fail = false;
+  String? lastToken;
 
   @override
   Future<List<ChartSignal>> fetchSignals({
     required int coinId,
     required String timeframe,
+    String? token,
   }) async {
     calls++;
+    lastToken = token;
     if (fail) throw Exception('x');
-    return [ChartSignal(candleTime: DateTime.utc(2024), signalType: 'buy')];
+    return [
+      ChartSignal(candleTime: DateTime.utc(2024), signalType: 'buy'),
+      if (token != null)
+        ChartSignal(
+          candleTime: DateTime.utc(2024, 1, 2),
+          signalType: 'sell',
+          strength: 3,
+        ),
+    ];
   }
+}
+
+class _FakeAuth extends AuthNotifier {
+  @override
+  AuthState build() => const AuthState();
+
+  void signIn(String role) => state = AuthState(
+    token: 't-$role',
+    member: Member(id: 1, email: 'a@b.c', role: role, creditBalance: 0),
+  );
+
+  void signOut() => state = const AuthState();
 }
 
 class _FakeStream implements KlineStream {
@@ -105,6 +130,7 @@ class _Setup {
         binanceKlinesApiProvider.overrideWithValue(klines),
         chartSignalApiProvider.overrideWithValue(signals),
         klineStreamProvider.overrideWithValue(stream),
+        authProvider.overrideWith(_FakeAuth.new),
       ],
     );
     container.listen(liveChartProvider(_params), (_, _) {});
@@ -170,6 +196,30 @@ void main() {
     s.stream.current!.add(_u(120, 6));
     await tester.pump(liveUiThrottle);
     expect(s.state.candles.length, 3);
+    s.container.dispose();
+  });
+
+  testWidgets('refetches signals with the token when the role changes', (
+    tester,
+  ) async {
+    final s = _Setup();
+    await tester.pump();
+    await tester.pump();
+    expect(s.signals.lastToken, isNull);
+    expect(s.state.signals.length, 1);
+
+    final auth = s.container.read(authProvider.notifier) as _FakeAuth;
+    auth.signIn('pro');
+    await tester.pump();
+    await tester.pump();
+    expect(s.signals.lastToken, 't-pro');
+    expect(s.state.signals.map((x) => x.strength), contains(3));
+
+    auth.signOut();
+    await tester.pump();
+    await tester.pump();
+    expect(s.signals.lastToken, isNull);
+    expect(s.state.signals.map((x) => x.strength), isNot(contains(3)));
     s.container.dispose();
   });
 

@@ -8,7 +8,8 @@ class PlanConfig {
   final int? freeWatchlistMax;
   final bool deepAnalysisRequiresPro;
   final List<String> proOnlyTimeframes;
-  final bool strength3FilterRequiresPro;
+  /// Highest signal strength Free / guest users get from the server (1..3).
+  final int freeMaxSignalStrength;
   final bool alertsRequirePro;
 
   const PlanConfig({
@@ -16,7 +17,7 @@ class PlanConfig {
     this.freeWatchlistMax = 10,
     this.deepAnalysisRequiresPro = true,
     this.proOnlyTimeframes = const ['1m', '5m'],
-    this.strength3FilterRequiresPro = true,
+    this.freeMaxSignalStrength = 2,
     this.alertsRequirePro = true,
   });
 
@@ -37,9 +38,9 @@ class PlanConfig {
       proOnlyTimeframes: tfs is List
           ? tfs.map((e) => '$e').toList()
           : d.proOnlyTimeframes,
-      strength3FilterRequiresPro:
-          json['strength3_filter_requires_pro'] as bool? ??
-          d.strength3FilterRequiresPro,
+      freeMaxSignalStrength:
+          (json['free_max_signal_strength'] as num?)?.toInt().clamp(1, 3) ??
+          d.freeMaxSignalStrength,
       alertsRequirePro: json['alerts_require_pro'] as bool? ?? true,
     );
   }
@@ -49,7 +50,7 @@ class PlanConfig {
     'free_watchlist_max': freeWatchlistMax,
     'deep_analysis_requires_pro': deepAnalysisRequiresPro,
     'pro_only_timeframes': proOnlyTimeframes,
-    'strength3_filter_requires_pro': strength3FilterRequiresPro,
+    'free_max_signal_strength': freeMaxSignalStrength,
     'alerts_require_pro': alertsRequirePro,
   };
 }

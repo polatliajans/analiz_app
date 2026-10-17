@@ -15,10 +15,7 @@ import '../providers/chart_data_provider.dart';
 import '../providers/live_chart_provider.dart';
 import '../providers/price_alert_provider.dart';
 import '../providers/selected_coin_provider.dart';
-import '../providers/signal_strength_filter_provider.dart';
 import '../providers/watchlist_provider.dart';
-import '../utils/feature_gate.dart';
-import '../utils/signal_strength.dart';
 import '../utils/timeframes.dart';
 import '../widgets/analysis_card.dart';
 import '../widgets/analysis_progress_overlay.dart';
@@ -242,9 +239,9 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
               },
             ),
           ),
-          if (supportsSignals(timeframe))
-            _buildStrengthFilter(l10n, textTheme, gate),
           Expanded(flex: 5, child: _LiveChart(params: params)),
+          if (supportsSignals(timeframe) && gate.showStrongSignalsNote)
+            _buildStrongSignalsNote(l10n, textTheme),
           Expanded(
             flex: 4,
             child: ListView(
@@ -297,50 +294,26 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
     );
   }
 
-  Widget _buildStrengthFilter(
-    AppLocalizations l10n,
-    TextTheme textTheme,
-    FeatureGate gate,
-  ) {
-    final minStrength = gate.effectiveMinStrength(
-      ref.watch(signalMinStrengthProvider),
-    );
-    final options = <(int, String)>[
-      (1, l10n.signalStrengthAll),
-      (2, '2+'),
-      (3, '3'),
-    ];
-    return SizedBox(
-      height: 30,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        children: [
-          Center(
-            child: Text(l10n.signalStrengthLabel, style: textTheme.labelSmall),
-          ),
-          for (final (value, label) in options) ...[
-            const SizedBox(width: 6),
-            Center(
-              child: ChoiceChip(
-                label: Text(label),
-                avatar: value == 3 && gate.isStrength3FilterLocked
-                    ? const Icon(Icons.lock_outline, size: 12)
-                    : null,
-                labelStyle: textTheme.labelSmall,
-                visualDensity: VisualDensity.compact,
-                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                padding: EdgeInsets.zero,
-                selected: minStrength == value,
-                onSelected: (_) => value == 3 && gate.isStrength3FilterLocked
-                    ? showProUpsell(context, ProFeature.strength3)
-                    : ref
-                          .read(signalMinStrengthProvider.notifier)
-                          .select(value),
+  Widget _buildStrongSignalsNote(AppLocalizations l10n, TextTheme textTheme) {
+    final muted = Theme.of(context).colorScheme.onSurfaceVariant;
+    return InkWell(
+      onTap: () => showProUpsell(context, ProFeature.strongSignals),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.lock_outline, size: 12, color: muted),
+            const SizedBox(width: 4),
+            Flexible(
+              child: Text(
+                l10n.strongSignalsProNote,
+                style: textTheme.labelSmall?.copyWith(color: muted),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
-        ],
+        ),
       ),
     );
   }
@@ -526,12 +499,7 @@ class _LiveChart extends ConsumerWidget {
 
     return CandlestickChart(
       candles: live.candles,
-      signals: filterByStrength(
-        live.signals,
-        ref
-            .watch(featureGateProvider)
-            .effectiveMinStrength(ref.watch(signalMinStrengthProvider)),
-      ),
+      signals: ref.watch(featureGateProvider).visibleSignals(live.signals),
       timeframeMs: timeframeMs[params.timeframe]!,
     );
   }

@@ -158,10 +158,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get noCandleData => 'Sin datos de velas';
 
   @override
-  String get signalStrengthLabel => 'Fuerza de señal';
-
-  @override
-  String get signalStrengthAll => 'Todas';
+  String get strongSignalsProNote => 'Las señales fuertes (3) son Pro';
 
   @override
   String creditsSpent(int count) {
@@ -770,7 +767,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get proBenefitTimeframes =>
-      'Marcos de 1m y 5m y el filtro de señales fuertes (3)';
+      'Marcos de 1m y 5m y señales de nivel fuerte (3)';
 
   @override
   String get proBenefitWatchlist => 'Lista de seguimiento ilimitada';
@@ -793,12 +790,12 @@ class AppLocalizationsEs extends AppLocalizations {
       'Los miembros Pro pueden ver los marcos más rápidos y ejecutar análisis de IA en ellos.';
 
   @override
-  String get proUpsellStrength3Title =>
-      'El filtro de señales fuertes (3) es una función Pro';
+  String get proUpsellStrongSignalsTitle =>
+      'Las señales de nivel fuerte (3) son una función Pro';
 
   @override
-  String get proUpsellStrength3Body =>
-      'Los miembros Pro pueden mostrar solo las señales más fuertes en el gráfico.';
+  String get proUpsellStrongSignalsBody =>
+      'Los miembros Pro ven todos los niveles de señal en el gráfico, incluido el más fuerte (3).';
 
   @override
   String proUpsellWatchlistTitle(int count, int limit) {

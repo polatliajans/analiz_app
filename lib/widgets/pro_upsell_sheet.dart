@@ -10,7 +10,7 @@ import '../screens/subscription_screen.dart';
 enum ProFeature {
   deepAnalysis,
   timeframe,
-  strength3,
+  strongSignals,
   watchlistLimit,
   priceAlert,
   generic,
@@ -46,8 +46,11 @@ class _ProUpsellSheet extends ConsumerWidget {
         return (l10n.proUpsellDeepTitle, l10n.proUpsellDeepBody);
       case ProFeature.timeframe:
         return (l10n.proUpsellTimeframeTitle, l10n.proUpsellTimeframeBody);
-      case ProFeature.strength3:
-        return (l10n.proUpsellStrength3Title, l10n.proUpsellStrength3Body);
+      case ProFeature.strongSignals:
+        return (
+          l10n.proUpsellStrongSignalsTitle,
+          l10n.proUpsellStrongSignalsBody,
+        );
       case ProFeature.watchlistLimit:
         final l = limit ?? count ?? 0;
         return (

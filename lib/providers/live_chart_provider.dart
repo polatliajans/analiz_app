@@ -7,6 +7,7 @@ import '../data/kline_stream.dart';
 import '../models/candle.dart';
 import '../models/chart_signal.dart';
 import '../utils/timeframes.dart';
+import 'auth_provider.dart';
 import 'chart_data_provider.dart';
 import 'home_tab_provider.dart';
 
@@ -136,6 +137,12 @@ class LiveChartController extends Notifier<LiveChartState> {
       _sync();
     });
 
+    // Signal strength access depends on the session / role: refetch.
+    ref.listen(
+      authProvider.select((s) => (s.token, s.member?.role)),
+      (_, _) => _onAccessChanged(),
+    );
+
     ref.onDispose(() {
       _disposed = true;
       binding.removeObserver(_observer);
@@ -154,6 +161,19 @@ class LiveChartController extends Notifier<LiveChartState> {
   void retry() {
     _stop();
     _sync();
+  }
+
+  void _onAccessChanged() {
+    if (_disposed) return;
+    _signals = const [];
+    if (!_running) return;
+    final gen = _gen;
+    unawaited(() async {
+      final fresh = await _fetchSignals();
+      if (gen != _gen || fresh == null) return;
+      _signals = fresh;
+      _emitNow();
+    }());
   }
 
   void _sync() {
@@ -375,7 +395,11 @@ class LiveChartController extends Notifier<LiveChartState> {
     try {
       return await ref
           .read(chartSignalApiProvider)
-          .fetchSignals(coinId: params.coin.id, timeframe: params.timeframe);
+          .fetchSignals(
+            coinId: params.coin.id,
+            timeframe: params.timeframe,
+            token: ref.read(authProvider).token,
+          );
     } catch (_) {
       return null;
     }
