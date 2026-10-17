@@ -721,4 +721,35 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get alertErrorGeneric =>
       'Algo salió mal con la alerta. Inténtalo de nuevo.';
+
+  @override
+  String get legalAboutSection => 'Legal y acerca de';
+
+  @override
+  String get privacyPolicy => 'Política de privacidad';
+
+  @override
+  String get termsOfUse => 'Términos de uso';
+
+  @override
+  String get deleteAccountPage => 'Eliminar cuenta';
+
+  @override
+  String get support => 'Soporte';
+
+  @override
+  String get financialDisclaimer => 'Aviso financiero';
+
+  @override
+  String get financialDisclaimerText =>
+      'CryptoAnaliz no ofrece asesoramiento de inversión. Las señales y los análisis son solo informativos y no ofrecen garantías. Invertir en criptoactivos conlleva un riesgo elevado; usted es responsable de sus decisiones y de las posibles pérdidas.';
+
+  @override
+  String get appVersion => 'Versión de la app';
+
+  @override
+  String get close => 'Cerrar';
+
+  @override
+  String get couldNotOpenLink => 'No se pudo abrir el enlace.';
 }

@@ -1221,6 +1221,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Something went wrong with the alert. Please try again.'**
   String get alertErrorGeneric;
+
+  /// No description provided for @legalAboutSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal & About'**
+  String get legalAboutSection;
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacyPolicy;
+
+  /// No description provided for @termsOfUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Use'**
+  String get termsOfUse;
+
+  /// No description provided for @deleteAccountPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get deleteAccountPage;
+
+  /// No description provided for @support.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get support;
+
+  /// No description provided for @financialDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Financial disclaimer'**
+  String get financialDisclaimer;
+
+  /// No description provided for @financialDisclaimerText.
+  ///
+  /// In en, this message translates to:
+  /// **'CryptoAnaliz does not provide investment advice. Signals and analyses are for informational purposes only and carry no guarantee. Crypto asset investments carry high risk; you are responsible for your decisions and any resulting losses.'**
+  String get financialDisclaimerText;
+
+  /// No description provided for @appVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'App version'**
+  String get appVersion;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @couldNotOpenLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the link.'**
+  String get couldNotOpenLink;
 }
 
 class _AppLocalizationsDelegate

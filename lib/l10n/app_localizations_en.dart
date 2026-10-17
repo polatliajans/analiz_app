@@ -711,4 +711,35 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get alertErrorGeneric =>
       'Something went wrong with the alert. Please try again.';
+
+  @override
+  String get legalAboutSection => 'Legal & About';
+
+  @override
+  String get privacyPolicy => 'Privacy Policy';
+
+  @override
+  String get termsOfUse => 'Terms of Use';
+
+  @override
+  String get deleteAccountPage => 'Delete account';
+
+  @override
+  String get support => 'Support';
+
+  @override
+  String get financialDisclaimer => 'Financial disclaimer';
+
+  @override
+  String get financialDisclaimerText =>
+      'CryptoAnaliz does not provide investment advice. Signals and analyses are for informational purposes only and carry no guarantee. Crypto asset investments carry high risk; you are responsible for your decisions and any resulting losses.';
+
+  @override
+  String get appVersion => 'App version';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String get couldNotOpenLink => 'Could not open the link.';
 }

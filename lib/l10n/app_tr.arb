@@ -193,5 +193,15 @@
   "alertErrorProRequired": "Fiyat alarmı yalnızca Pro üyeler için kullanılabilir.",
   "alertErrorLimitReached": "En fazla {limit} aktif alarmın olabilir. Yenisini eklemek için birini iptal et.",
   "alertErrorDuplicate": "Bu fiyat için zaten aktif bir alarmın var.",
-  "alertErrorGeneric": "Alarm işleminde bir sorun oluştu. Lütfen tekrar dene."
+  "alertErrorGeneric": "Alarm işleminde bir sorun oluştu. Lütfen tekrar dene.",
+  "legalAboutSection": "Yasal ve Hakkında",
+  "privacyPolicy": "Gizlilik Politikası",
+  "termsOfUse": "Kullanım Koşulları",
+  "deleteAccountPage": "Hesap silme",
+  "support": "Destek",
+  "financialDisclaimer": "Finansal uyarı",
+  "financialDisclaimerText": "CryptoAnaliz yatırım tavsiyesi vermez. Sinyaller ve analizler yalnızca bilgilendirme amaçlıdır, garanti içermez. Kripto varlık yatırımları yüksek risk taşır; kararlarınızdan ve olası kayıplardan siz sorumlusunuz.",
+  "appVersion": "Uygulama sürümü",
+  "close": "Kapat",
+  "couldNotOpenLink": "Bağlantı açılamadı."
 }

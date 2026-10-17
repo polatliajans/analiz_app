@@ -479,5 +479,15 @@
     }
   },
   "alertErrorDuplicate": "You already have an active alert for this price.",
-  "alertErrorGeneric": "Something went wrong with the alert. Please try again."
+  "alertErrorGeneric": "Something went wrong with the alert. Please try again.",
+  "legalAboutSection": "Legal & About",
+  "privacyPolicy": "Privacy Policy",
+  "termsOfUse": "Terms of Use",
+  "deleteAccountPage": "Delete account",
+  "support": "Support",
+  "financialDisclaimer": "Financial disclaimer",
+  "financialDisclaimerText": "CryptoAnaliz does not provide investment advice. Signals and analyses are for informational purposes only and carry no guarantee. Crypto asset investments carry high risk; you are responsible for your decisions and any resulting losses.",
+  "appVersion": "App version",
+  "close": "Close",
+  "couldNotOpenLink": "Could not open the link."
 }

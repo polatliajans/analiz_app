@@ -193,5 +193,15 @@
   "alertErrorProRequired": "Las alertas de precio son solo para miembros Pro.",
   "alertErrorLimitReached": "Puedes tener como máximo {limit} alertas activas. Cancela una para añadir otra.",
   "alertErrorDuplicate": "Ya tienes una alerta activa para este precio.",
-  "alertErrorGeneric": "Algo salió mal con la alerta. Inténtalo de nuevo."
+  "alertErrorGeneric": "Algo salió mal con la alerta. Inténtalo de nuevo.",
+  "legalAboutSection": "Legal y acerca de",
+  "privacyPolicy": "Política de privacidad",
+  "termsOfUse": "Términos de uso",
+  "deleteAccountPage": "Eliminar cuenta",
+  "support": "Soporte",
+  "financialDisclaimer": "Aviso financiero",
+  "financialDisclaimerText": "CryptoAnaliz no ofrece asesoramiento de inversión. Las señales y los análisis son solo informativos y no ofrecen garantías. Invertir en criptoactivos conlleva un riesgo elevado; usted es responsable de sus decisiones y de las posibles pérdidas.",
+  "appVersion": "Versión de la app",
+  "close": "Cerrar",
+  "couldNotOpenLink": "No se pudo abrir el enlace."
 }

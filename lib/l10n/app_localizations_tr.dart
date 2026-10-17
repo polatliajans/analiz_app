@@ -681,4 +681,35 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get alertErrorGeneric =>
       'Alarm işleminde bir sorun oluştu. Lütfen tekrar dene.';
+
+  @override
+  String get legalAboutSection => 'Yasal ve Hakkında';
+
+  @override
+  String get privacyPolicy => 'Gizlilik Politikası';
+
+  @override
+  String get termsOfUse => 'Kullanım Koşulları';
+
+  @override
+  String get deleteAccountPage => 'Hesap silme';
+
+  @override
+  String get support => 'Destek';
+
+  @override
+  String get financialDisclaimer => 'Finansal uyarı';
+
+  @override
+  String get financialDisclaimerText =>
+      'CryptoAnaliz yatırım tavsiyesi vermez. Sinyaller ve analizler yalnızca bilgilendirme amaçlıdır, garanti içermez. Kripto varlık yatırımları yüksek risk taşır; kararlarınızdan ve olası kayıplardan siz sorumlusunuz.';
+
+  @override
+  String get appVersion => 'Uygulama sürümü';
+
+  @override
+  String get close => 'Kapat';
+
+  @override
+  String get couldNotOpenLink => 'Bağlantı açılamadı.';
 }
