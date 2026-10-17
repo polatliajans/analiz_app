@@ -540,4 +540,125 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get favoritesEmpty => 'Henüz favori yok';
+
+  @override
+  String get alertTooltip => 'Fiyat alarmı';
+
+  @override
+  String get myAlerts => 'Alarmlarım';
+
+  @override
+  String get alertsTabActive => 'Aktif';
+
+  @override
+  String get alertsTabHistory => 'Geçmiş';
+
+  @override
+  String get alertSetTitle => 'Fiyat alarmı kur';
+
+  @override
+  String alertCurrentPrice(String price) {
+    return 'Güncel fiyat: $price';
+  }
+
+  @override
+  String get alertWaitingPrice => 'Güncel fiyat bekleniyor...';
+
+  @override
+  String get alertTargetPriceLabel => 'Hedef fiyat';
+
+  @override
+  String alertWillTriggerAbove(String price) {
+    return 'Fiyat $price seviyesine çıkınca ya da üzerine geçince bildirim alacaksın.';
+  }
+
+  @override
+  String alertWillTriggerBelow(String price) {
+    return 'Fiyat $price seviyesine inince ya da altına düşünce bildirim alacaksın.';
+  }
+
+  @override
+  String get alertEnterDifferentPrice =>
+      'Güncel fiyattan farklı bir hedef fiyat gir.';
+
+  @override
+  String get alertSetButton => 'Alarm kur';
+
+  @override
+  String alertSetSuccess(String symbol) {
+    return '$symbol için alarm kuruldu';
+  }
+
+  @override
+  String get alertActiveForCoin => 'Bu coinin aktif alarmları';
+
+  @override
+  String alertLimitInfo(int count, int max) {
+    return '$max aktif alarmdan $count tanesi kullanıldı';
+  }
+
+  @override
+  String get alertCancelTooltip => 'Alarmı iptal et';
+
+  @override
+  String get alertCanceled => 'Alarm iptal edildi';
+
+  @override
+  String get alertRearm => 'Tekrar kur';
+
+  @override
+  String get alertRearmed => 'Alarm tekrar kuruldu';
+
+  @override
+  String alertDirectionAbove(String price) {
+    return '$price üzeri';
+  }
+
+  @override
+  String alertDirectionBelow(String price) {
+    return '$price altı';
+  }
+
+  @override
+  String get alertStatusTriggered => 'Tetiklendi';
+
+  @override
+  String get alertStatusCanceled => 'İptal edildi';
+
+  @override
+  String alertTriggeredAt(String date, String price) {
+    return '$date, fiyat $price';
+  }
+
+  @override
+  String get alertsEmptyActive =>
+      'Aktif alarm yok. Bir coinin grafiğinde zil simgesine dokunarak alarm kurabilirsin.';
+
+  @override
+  String get alertsEmptyHistory =>
+      'Henüz tetiklenen ya da iptal edilen alarm yok.';
+
+  @override
+  String get alertProTitle => 'Fiyat alarmı bir Pro özelliğidir';
+
+  @override
+  String get alertProBody =>
+      'Pro üyeler, bir coin hedef fiyatına ulaştığı anda anlık bildirim alır.';
+
+  @override
+  String get alertErrorProRequired =>
+      'Fiyat alarmı yalnızca Pro üyeler için kullanılabilir.';
+
+  @override
+  String alertErrorLimitReached(int limit) {
+    return 'En fazla $limit aktif alarmın olabilir. Yenisini eklemek için birini iptal et.';
+  }
+
+  @override
+  String get alertErrorDuplicate =>
+      'Bu fiyat için zaten aktif bir alarmın var.';
+
+  @override
+  String get alertErrorGeneric =>
+      'Alarm işleminde bir sorun oluştu. Lütfen tekrar dene.';
 }

@@ -571,4 +571,124 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get favoritesEmpty => 'No favorites yet';
+
+  @override
+  String get alertTooltip => 'Price alert';
+
+  @override
+  String get myAlerts => 'My alerts';
+
+  @override
+  String get alertsTabActive => 'Active';
+
+  @override
+  String get alertsTabHistory => 'History';
+
+  @override
+  String get alertSetTitle => 'Set price alert';
+
+  @override
+  String alertCurrentPrice(String price) {
+    return 'Current price: $price';
+  }
+
+  @override
+  String get alertWaitingPrice => 'Waiting for the current price...';
+
+  @override
+  String get alertTargetPriceLabel => 'Target price';
+
+  @override
+  String alertWillTriggerAbove(String price) {
+    return 'You will get a notification when the price rises to $price or higher.';
+  }
+
+  @override
+  String alertWillTriggerBelow(String price) {
+    return 'You will get a notification when the price falls to $price or lower.';
+  }
+
+  @override
+  String get alertEnterDifferentPrice =>
+      'Enter a target price different from the current price.';
+
+  @override
+  String get alertSetButton => 'Set alert';
+
+  @override
+  String alertSetSuccess(String symbol) {
+    return 'Alert set for $symbol';
+  }
+
+  @override
+  String get alertActiveForCoin => 'Active alerts for this coin';
+
+  @override
+  String alertLimitInfo(int count, int max) {
+    return '$count of $max active alerts used';
+  }
+
+  @override
+  String get alertCancelTooltip => 'Cancel alert';
+
+  @override
+  String get alertCanceled => 'Alert canceled';
+
+  @override
+  String get alertRearm => 'Set again';
+
+  @override
+  String get alertRearmed => 'Alert set again';
+
+  @override
+  String alertDirectionAbove(String price) {
+    return 'Above $price';
+  }
+
+  @override
+  String alertDirectionBelow(String price) {
+    return 'Below $price';
+  }
+
+  @override
+  String get alertStatusTriggered => 'Triggered';
+
+  @override
+  String get alertStatusCanceled => 'Canceled';
+
+  @override
+  String alertTriggeredAt(String date, String price) {
+    return '$date at $price';
+  }
+
+  @override
+  String get alertsEmptyActive =>
+      'No active alerts. Open a coin chart and tap the bell to set one.';
+
+  @override
+  String get alertsEmptyHistory => 'No triggered or canceled alerts yet.';
+
+  @override
+  String get alertProTitle => 'Price alerts are a Pro feature';
+
+  @override
+  String get alertProBody =>
+      'Pro members get a push notification the moment a coin reaches their target price.';
+
+  @override
+  String get alertErrorProRequired =>
+      'Price alerts are available for Pro members only.';
+
+  @override
+  String alertErrorLimitReached(int limit) {
+    return 'You can have at most $limit active alerts. Cancel one to add another.';
+  }
+
+  @override
+  String get alertErrorDuplicate =>
+      'You already have an active alert for this price.';
+
+  @override
+  String get alertErrorGeneric =>
+      'Something went wrong with the alert. Please try again.';
 }

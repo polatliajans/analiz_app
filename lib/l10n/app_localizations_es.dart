@@ -581,4 +581,124 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get favoritesEmpty => 'Aún no hay favoritos';
+
+  @override
+  String get alertTooltip => 'Alerta de precio';
+
+  @override
+  String get myAlerts => 'Mis alertas';
+
+  @override
+  String get alertsTabActive => 'Activas';
+
+  @override
+  String get alertsTabHistory => 'Historial';
+
+  @override
+  String get alertSetTitle => 'Crear alerta de precio';
+
+  @override
+  String alertCurrentPrice(String price) {
+    return 'Precio actual: $price';
+  }
+
+  @override
+  String get alertWaitingPrice => 'Esperando el precio actual...';
+
+  @override
+  String get alertTargetPriceLabel => 'Precio objetivo';
+
+  @override
+  String alertWillTriggerAbove(String price) {
+    return 'Recibirás una notificación cuando el precio suba a $price o más.';
+  }
+
+  @override
+  String alertWillTriggerBelow(String price) {
+    return 'Recibirás una notificación cuando el precio baje a $price o menos.';
+  }
+
+  @override
+  String get alertEnterDifferentPrice =>
+      'Introduce un precio objetivo distinto del precio actual.';
+
+  @override
+  String get alertSetButton => 'Crear alerta';
+
+  @override
+  String alertSetSuccess(String symbol) {
+    return 'Alerta creada para $symbol';
+  }
+
+  @override
+  String get alertActiveForCoin => 'Alertas activas de esta moneda';
+
+  @override
+  String alertLimitInfo(int count, int max) {
+    return '$count de $max alertas activas usadas';
+  }
+
+  @override
+  String get alertCancelTooltip => 'Cancelar alerta';
+
+  @override
+  String get alertCanceled => 'Alerta cancelada';
+
+  @override
+  String get alertRearm => 'Crear de nuevo';
+
+  @override
+  String get alertRearmed => 'Alerta creada de nuevo';
+
+  @override
+  String alertDirectionAbove(String price) {
+    return 'Por encima de $price';
+  }
+
+  @override
+  String alertDirectionBelow(String price) {
+    return 'Por debajo de $price';
+  }
+
+  @override
+  String get alertStatusTriggered => 'Activada';
+
+  @override
+  String get alertStatusCanceled => 'Cancelada';
+
+  @override
+  String alertTriggeredAt(String date, String price) {
+    return '$date, precio $price';
+  }
+
+  @override
+  String get alertsEmptyActive =>
+      'No hay alertas activas. Abre el gráfico de una moneda y toca la campana para crear una.';
+
+  @override
+  String get alertsEmptyHistory => 'Aún no hay alertas activadas o canceladas.';
+
+  @override
+  String get alertProTitle => 'Las alertas de precio son una función Pro';
+
+  @override
+  String get alertProBody =>
+      'Los miembros Pro reciben una notificación push en cuanto una moneda alcanza su precio objetivo.';
+
+  @override
+  String get alertErrorProRequired =>
+      'Las alertas de precio son solo para miembros Pro.';
+
+  @override
+  String alertErrorLimitReached(int limit) {
+    return 'Puedes tener como máximo $limit alertas activas. Cancela una para añadir otra.';
+  }
+
+  @override
+  String get alertErrorDuplicate =>
+      'Ya tienes una alerta activa para este precio.';
+
+  @override
+  String get alertErrorGeneric =>
+      'Algo salió mal con la alerta. Inténtalo de nuevo.';
 }

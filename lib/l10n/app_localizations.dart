@@ -999,6 +999,198 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No favorites yet'**
   String get favoritesEmpty;
+
+  /// No description provided for @alertTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Price alert'**
+  String get alertTooltip;
+
+  /// No description provided for @myAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'My alerts'**
+  String get myAlerts;
+
+  /// No description provided for @alertsTabActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get alertsTabActive;
+
+  /// No description provided for @alertsTabHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get alertsTabHistory;
+
+  /// No description provided for @alertSetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set price alert'**
+  String get alertSetTitle;
+
+  /// No description provided for @alertCurrentPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Current price: {price}'**
+  String alertCurrentPrice(String price);
+
+  /// No description provided for @alertWaitingPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the current price...'**
+  String get alertWaitingPrice;
+
+  /// No description provided for @alertTargetPriceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Target price'**
+  String get alertTargetPriceLabel;
+
+  /// No description provided for @alertWillTriggerAbove.
+  ///
+  /// In en, this message translates to:
+  /// **'You will get a notification when the price rises to {price} or higher.'**
+  String alertWillTriggerAbove(String price);
+
+  /// No description provided for @alertWillTriggerBelow.
+  ///
+  /// In en, this message translates to:
+  /// **'You will get a notification when the price falls to {price} or lower.'**
+  String alertWillTriggerBelow(String price);
+
+  /// No description provided for @alertEnterDifferentPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a target price different from the current price.'**
+  String get alertEnterDifferentPrice;
+
+  /// No description provided for @alertSetButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Set alert'**
+  String get alertSetButton;
+
+  /// No description provided for @alertSetSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert set for {symbol}'**
+  String alertSetSuccess(String symbol);
+
+  /// No description provided for @alertActiveForCoin.
+  ///
+  /// In en, this message translates to:
+  /// **'Active alerts for this coin'**
+  String get alertActiveForCoin;
+
+  /// No description provided for @alertLimitInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} of {max} active alerts used'**
+  String alertLimitInfo(int count, int max);
+
+  /// No description provided for @alertCancelTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel alert'**
+  String get alertCancelTooltip;
+
+  /// No description provided for @alertCanceled.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert canceled'**
+  String get alertCanceled;
+
+  /// No description provided for @alertRearm.
+  ///
+  /// In en, this message translates to:
+  /// **'Set again'**
+  String get alertRearm;
+
+  /// No description provided for @alertRearmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert set again'**
+  String get alertRearmed;
+
+  /// No description provided for @alertDirectionAbove.
+  ///
+  /// In en, this message translates to:
+  /// **'Above {price}'**
+  String alertDirectionAbove(String price);
+
+  /// No description provided for @alertDirectionBelow.
+  ///
+  /// In en, this message translates to:
+  /// **'Below {price}'**
+  String alertDirectionBelow(String price);
+
+  /// No description provided for @alertStatusTriggered.
+  ///
+  /// In en, this message translates to:
+  /// **'Triggered'**
+  String get alertStatusTriggered;
+
+  /// No description provided for @alertStatusCanceled.
+  ///
+  /// In en, this message translates to:
+  /// **'Canceled'**
+  String get alertStatusCanceled;
+
+  /// No description provided for @alertTriggeredAt.
+  ///
+  /// In en, this message translates to:
+  /// **'{date} at {price}'**
+  String alertTriggeredAt(String date, String price);
+
+  /// No description provided for @alertsEmptyActive.
+  ///
+  /// In en, this message translates to:
+  /// **'No active alerts. Open a coin chart and tap the bell to set one.'**
+  String get alertsEmptyActive;
+
+  /// No description provided for @alertsEmptyHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'No triggered or canceled alerts yet.'**
+  String get alertsEmptyHistory;
+
+  /// No description provided for @alertProTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Price alerts are a Pro feature'**
+  String get alertProTitle;
+
+  /// No description provided for @alertProBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Pro members get a push notification the moment a coin reaches their target price.'**
+  String get alertProBody;
+
+  /// No description provided for @alertErrorProRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Price alerts are available for Pro members only.'**
+  String get alertErrorProRequired;
+
+  /// No description provided for @alertErrorLimitReached.
+  ///
+  /// In en, this message translates to:
+  /// **'You can have at most {limit} active alerts. Cancel one to add another.'**
+  String alertErrorLimitReached(int limit);
+
+  /// No description provided for @alertErrorDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'You already have an active alert for this price.'**
+  String get alertErrorDuplicate;
+
+  /// No description provided for @alertErrorGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong with the alert. Please try again.'**
+  String get alertErrorGeneric;
 }
 
 class _AppLocalizationsDelegate

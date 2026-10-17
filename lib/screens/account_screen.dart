@@ -7,6 +7,7 @@ import '../providers/auth_prompt_provider.dart';
 import '../providers/auth_provider.dart';
 import '../services/auth_failure.dart';
 import '../widgets/email_verification_banner.dart';
+import 'alarms_screen.dart';
 import 'analysis_history_screen.dart';
 import 'auth_screen.dart';
 import 'credit_packages_screen.dart';
@@ -108,6 +109,13 @@ class AccountScreen extends ConsumerWidget {
                           title: Text(l10n.myWatchlist),
                           trailing: const Icon(Icons.chevron_right),
                           onTap: () => _push(context, const WatchlistScreen()),
+                        ),
+                        const Divider(height: 1),
+                        ListTile(
+                          leading: const Icon(Icons.notifications_outlined),
+                          title: Text(l10n.myAlerts),
+                          trailing: const Icon(Icons.chevron_right),
+                          onTap: () => _push(context, const AlarmsScreen()),
                         ),
                         const Divider(height: 1),
                         ListTile(

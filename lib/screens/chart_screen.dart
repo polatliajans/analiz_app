@@ -9,6 +9,7 @@ import '../providers/analysis_history_provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/chart_data_provider.dart';
 import '../providers/live_chart_provider.dart';
+import '../providers/price_alert_provider.dart';
 import '../providers/selected_coin_provider.dart';
 import '../providers/signal_strength_filter_provider.dart';
 import '../providers/watchlist_provider.dart';
@@ -20,6 +21,7 @@ import '../widgets/candlestick_chart.dart';
 import '../widgets/email_verification_banner.dart';
 import 'auth_screen.dart';
 import 'coin_picker_sheet.dart';
+import 'price_alert_sheet.dart';
 
 /// Home chart tab: shows the coin held by [selectedCoinProvider].
 class ChartScreen extends ConsumerStatefulWidget {
@@ -160,7 +162,10 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
             ),
           ),
         ),
-        actions: [_buildWatchlistButton(context, ref, coin)],
+        actions: [
+          _buildAlertButton(context, ref, coin, params),
+          _buildWatchlistButton(context, ref, coin),
+        ],
       ),
       body: Column(
         children: [
@@ -289,6 +294,26 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
       data: (records) => records.isEmpty
           ? [hint(l10n.analysisHistoryEmpty)]
           : [for (final r in records) AnalysisCard(record: r)],
+    );
+  }
+
+  Widget _buildAlertButton(
+    BuildContext context,
+    WidgetRef ref,
+    Coin coin,
+    ChartDataParams params,
+  ) {
+    final l10n = AppLocalizations.of(context)!;
+    final hasActive = ref.watch(
+      priceAlertsProvider.select(
+        (a) => a.value?.activeForCoin(coin.id).isNotEmpty ?? false,
+      ),
+    );
+    return IconButton(
+      tooltip: l10n.alertTooltip,
+      icon: Icon(hasActive ? Icons.notifications : Icons.notifications_none),
+      onPressed: () =>
+          openPriceAlertFlow(context, ref, coin: coin, params: params),
     );
   }
 

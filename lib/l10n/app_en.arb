@@ -366,5 +366,106 @@
   "analysisTypeDeep": "Deep",
   "favoritesTab": "Favorites",
   "favoritesLoginHint": "Log in to see your favorite coins",
-  "favoritesEmpty": "No favorites yet"
+  "favoritesEmpty": "No favorites yet",
+  "alertTooltip": "Price alert",
+  "myAlerts": "My alerts",
+  "alertsTabActive": "Active",
+  "alertsTabHistory": "History",
+  "alertSetTitle": "Set price alert",
+  "alertCurrentPrice": "Current price: {price}",
+  "@alertCurrentPrice": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "alertWaitingPrice": "Waiting for the current price...",
+  "alertTargetPriceLabel": "Target price",
+  "alertWillTriggerAbove": "You will get a notification when the price rises to {price} or higher.",
+  "@alertWillTriggerAbove": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "alertWillTriggerBelow": "You will get a notification when the price falls to {price} or lower.",
+  "@alertWillTriggerBelow": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "alertEnterDifferentPrice": "Enter a target price different from the current price.",
+  "alertSetButton": "Set alert",
+  "alertSetSuccess": "Alert set for {symbol}",
+  "@alertSetSuccess": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "alertActiveForCoin": "Active alerts for this coin",
+  "alertLimitInfo": "{count} of {max} active alerts used",
+  "@alertLimitInfo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "alertCancelTooltip": "Cancel alert",
+  "alertCanceled": "Alert canceled",
+  "alertRearm": "Set again",
+  "alertRearmed": "Alert set again",
+  "alertDirectionAbove": "Above {price}",
+  "@alertDirectionAbove": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "alertDirectionBelow": "Below {price}",
+  "@alertDirectionBelow": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "alertStatusTriggered": "Triggered",
+  "alertStatusCanceled": "Canceled",
+  "alertTriggeredAt": "{date} at {price}",
+  "@alertTriggeredAt": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "alertsEmptyActive": "No active alerts. Open a coin chart and tap the bell to set one.",
+  "alertsEmptyHistory": "No triggered or canceled alerts yet.",
+  "alertProTitle": "Price alerts are a Pro feature",
+  "alertProBody": "Pro members get a push notification the moment a coin reaches their target price.",
+  "alertErrorProRequired": "Price alerts are available for Pro members only.",
+  "alertErrorLimitReached": "You can have at most {limit} active alerts. Cancel one to add another.",
+  "@alertErrorLimitReached": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "alertErrorDuplicate": "You already have an active alert for this price.",
+  "alertErrorGeneric": "Something went wrong with the alert. Please try again."
 }
