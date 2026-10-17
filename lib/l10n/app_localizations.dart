@@ -1437,6 +1437,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You don\'t have enough credits for this analysis. Buy credits, or watch a short ad to earn free credits.'**
   String get insufficientCreditBodyWithAd;
+
+  /// No description provided for @notifChannelAnnouncementsName.
+  ///
+  /// In en, this message translates to:
+  /// **'Announcements'**
+  String get notifChannelAnnouncementsName;
+
+  /// No description provided for @notifChannelAnnouncementsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'News and announcements from the app'**
+  String get notifChannelAnnouncementsDesc;
+
+  /// No description provided for @notifChannelCreditsName.
+  ///
+  /// In en, this message translates to:
+  /// **'Credits'**
+  String get notifChannelCreditsName;
+
+  /// No description provided for @notifChannelCreditsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications when credits are added to your account'**
+  String get notifChannelCreditsDesc;
+
+  /// No description provided for @notifChannelSignalsName.
+  ///
+  /// In en, this message translates to:
+  /// **'Watchlist signals'**
+  String get notifChannelSignalsName;
+
+  /// No description provided for @notifChannelSignalsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Trading signals for the coins you follow'**
+  String get notifChannelSignalsDesc;
+
+  /// No description provided for @notifChannelAlertsName.
+  ///
+  /// In en, this message translates to:
+  /// **'Price alerts'**
+  String get notifChannelAlertsName;
+
+  /// No description provided for @notifChannelAlertsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications when a coin reaches your target price'**
+  String get notifChannelAlertsDesc;
+
+  /// No description provided for @notifRationaleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on notifications?'**
+  String get notifRationaleTitle;
+
+  /// No description provided for @notifRationaleBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Get credit and announcement notifications. Pro members also get watchlist signal and price alert notifications.'**
+  String get notifRationaleBody;
+
+  /// No description provided for @notifRationaleAllow.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow'**
+  String get notifRationaleAllow;
+
+  /// No description provided for @notifRationaleLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get notifRationaleLater;
+
+  /// No description provided for @notifSettingsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifSettingsSection;
+
+  /// No description provided for @notifAnnouncementsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Announcements'**
+  String get notifAnnouncementsTitle;
+
+  /// No description provided for @notifAnnouncementsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'News and updates from the app'**
+  String get notifAnnouncementsSubtitle;
+
+  /// No description provided for @notifCreditsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Credit notifications'**
+  String get notifCreditsTitle;
+
+  /// No description provided for @notifCreditsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'When credits are added to your account'**
+  String get notifCreditsSubtitle;
+
+  /// No description provided for @notifSignalsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Watchlist signals'**
+  String get notifSignalsTitle;
+
+  /// No description provided for @notifSignalsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New signals for the coins you follow'**
+  String get notifSignalsSubtitle;
+
+  /// No description provided for @notifAlertsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Price alerts'**
+  String get notifAlertsTitle;
+
+  /// No description provided for @notifAlertsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'When a coin reaches your target price'**
+  String get notifAlertsSubtitle;
+
+  /// No description provided for @notifPermissionOffTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification permission is off'**
+  String get notifPermissionOffTitle;
+
+  /// No description provided for @notifPermissionOffBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You won\'t receive notifications until you allow them.'**
+  String get notifPermissionOffBody;
+
+  /// No description provided for @notifOpenSystemSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open system settings'**
+  String get notifOpenSystemSettings;
+
+  /// No description provided for @notifPermissionManual.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn notifications on from your phone\'s settings.'**
+  String get notifPermissionManual;
+
+  /// No description provided for @notifSettingsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load notification settings.'**
+  String get notifSettingsLoadFailed;
+
+  /// No description provided for @notifSettingsSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save the change. Please try again.'**
+  String get notifSettingsSaveFailed;
+
+  /// No description provided for @proUpsellPushSignalsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Signal notifications are a Pro feature'**
+  String get proUpsellPushSignalsTitle;
+
+  /// No description provided for @proUpsellPushSignalsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Pro members get a push notification when a coin on their watchlist gets a new signal.'**
+  String get proUpsellPushSignalsBody;
 }
 
 class _AppLocalizationsDelegate

@@ -805,4 +805,102 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get insufficientCreditBodyWithAd =>
       'Bu analiz için yeterli kredin yok. Kredi alabilir ya da kısa bir reklam izleyerek ücretsiz kredi kazanabilirsin.';
+
+  @override
+  String get notifChannelAnnouncementsName => 'Duyurular';
+
+  @override
+  String get notifChannelAnnouncementsDesc =>
+      'Uygulamadan haberler ve duyurular';
+
+  @override
+  String get notifChannelCreditsName => 'Kredi';
+
+  @override
+  String get notifChannelCreditsDesc =>
+      'Hesabına kredi eklendiğinde gelen bildirimler';
+
+  @override
+  String get notifChannelSignalsName => 'Takip listesi sinyalleri';
+
+  @override
+  String get notifChannelSignalsDesc =>
+      'Takip ettiğin coinler için işlem sinyalleri';
+
+  @override
+  String get notifChannelAlertsName => 'Fiyat alarmları';
+
+  @override
+  String get notifChannelAlertsDesc =>
+      'Bir coin hedef fiyatına ulaştığında gelen bildirimler';
+
+  @override
+  String get notifRationaleTitle => 'Bildirimler açılsın mı?';
+
+  @override
+  String get notifRationaleBody =>
+      'Kredi ve duyuru bildirimleri al. Pro üyeler ayrıca takip listesi sinyali ve fiyat alarmı bildirimleri alır.';
+
+  @override
+  String get notifRationaleAllow => 'İzin ver';
+
+  @override
+  String get notifRationaleLater => 'Şimdi değil';
+
+  @override
+  String get notifSettingsSection => 'Bildirimler';
+
+  @override
+  String get notifAnnouncementsTitle => 'Duyurular';
+
+  @override
+  String get notifAnnouncementsSubtitle =>
+      'Uygulamadan haberler ve güncellemeler';
+
+  @override
+  String get notifCreditsTitle => 'Kredi bildirimleri';
+
+  @override
+  String get notifCreditsSubtitle => 'Hesabına kredi eklendiğinde';
+
+  @override
+  String get notifSignalsTitle => 'Takip listesi sinyalleri';
+
+  @override
+  String get notifSignalsSubtitle =>
+      'Takip ettiğin coinler için yeni sinyaller';
+
+  @override
+  String get notifAlertsTitle => 'Fiyat alarmları';
+
+  @override
+  String get notifAlertsSubtitle => 'Bir coin hedef fiyatına ulaştığında';
+
+  @override
+  String get notifPermissionOffTitle => 'Bildirim izni kapalı';
+
+  @override
+  String get notifPermissionOffBody =>
+      'İzin verene kadar bildirim almayacaksın.';
+
+  @override
+  String get notifOpenSystemSettings => 'Sistem ayarlarını aç';
+
+  @override
+  String get notifPermissionManual =>
+      'Bildirimleri telefonunun ayarlarından aç.';
+
+  @override
+  String get notifSettingsLoadFailed => 'Bildirim ayarları yüklenemedi.';
+
+  @override
+  String get notifSettingsSaveFailed =>
+      'Değişiklik kaydedilemedi. Lütfen tekrar dene.';
+
+  @override
+  String get proUpsellPushSignalsTitle => 'Sinyal bildirimleri Pro özelliğidir';
+
+  @override
+  String get proUpsellPushSignalsBody =>
+      'Pro üyeler, takip listesindeki bir coin için yeni sinyal geldiğinde anlık bildirim alır.';
 }

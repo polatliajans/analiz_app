@@ -8,6 +8,7 @@ import '../data/auth_api.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/auth_provider.dart';
 import '../providers/locale_provider.dart';
+import '../widgets/notification_settings_section.dart';
 import 'onboarding_screen.dart';
 
 final _packageInfoProvider = FutureProvider<PackageInfo>(
@@ -92,6 +93,7 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ),
           const Divider(),
+          const NotificationSettingsSection(),
           ListTile(
             title: Text(l10n.replayIntro),
             trailing: const Icon(Icons.chevron_right),

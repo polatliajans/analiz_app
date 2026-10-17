@@ -835,4 +835,101 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get insufficientCreditBodyWithAd =>
       'You don\'t have enough credits for this analysis. Buy credits, or watch a short ad to earn free credits.';
+
+  @override
+  String get notifChannelAnnouncementsName => 'Announcements';
+
+  @override
+  String get notifChannelAnnouncementsDesc =>
+      'News and announcements from the app';
+
+  @override
+  String get notifChannelCreditsName => 'Credits';
+
+  @override
+  String get notifChannelCreditsDesc =>
+      'Notifications when credits are added to your account';
+
+  @override
+  String get notifChannelSignalsName => 'Watchlist signals';
+
+  @override
+  String get notifChannelSignalsDesc =>
+      'Trading signals for the coins you follow';
+
+  @override
+  String get notifChannelAlertsName => 'Price alerts';
+
+  @override
+  String get notifChannelAlertsDesc =>
+      'Notifications when a coin reaches your target price';
+
+  @override
+  String get notifRationaleTitle => 'Turn on notifications?';
+
+  @override
+  String get notifRationaleBody =>
+      'Get credit and announcement notifications. Pro members also get watchlist signal and price alert notifications.';
+
+  @override
+  String get notifRationaleAllow => 'Allow';
+
+  @override
+  String get notifRationaleLater => 'Not now';
+
+  @override
+  String get notifSettingsSection => 'Notifications';
+
+  @override
+  String get notifAnnouncementsTitle => 'Announcements';
+
+  @override
+  String get notifAnnouncementsSubtitle => 'News and updates from the app';
+
+  @override
+  String get notifCreditsTitle => 'Credit notifications';
+
+  @override
+  String get notifCreditsSubtitle => 'When credits are added to your account';
+
+  @override
+  String get notifSignalsTitle => 'Watchlist signals';
+
+  @override
+  String get notifSignalsSubtitle => 'New signals for the coins you follow';
+
+  @override
+  String get notifAlertsTitle => 'Price alerts';
+
+  @override
+  String get notifAlertsSubtitle => 'When a coin reaches your target price';
+
+  @override
+  String get notifPermissionOffTitle => 'Notification permission is off';
+
+  @override
+  String get notifPermissionOffBody =>
+      'You won\'t receive notifications until you allow them.';
+
+  @override
+  String get notifOpenSystemSettings => 'Open system settings';
+
+  @override
+  String get notifPermissionManual =>
+      'Turn notifications on from your phone\'s settings.';
+
+  @override
+  String get notifSettingsLoadFailed => 'Couldn\'t load notification settings.';
+
+  @override
+  String get notifSettingsSaveFailed =>
+      'Couldn\'t save the change. Please try again.';
+
+  @override
+  String get proUpsellPushSignalsTitle =>
+      'Signal notifications are a Pro feature';
+
+  @override
+  String get proUpsellPushSignalsBody =>
+      'Pro members get a push notification when a coin on their watchlist gets a new signal.';
 }

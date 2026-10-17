@@ -845,4 +845,104 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get insufficientCreditBodyWithAd =>
       'No tienes créditos suficientes para este análisis. Compra créditos o mira un anuncio corto para ganar créditos gratis.';
+
+  @override
+  String get notifChannelAnnouncementsName => 'Anuncios';
+
+  @override
+  String get notifChannelAnnouncementsDesc => 'Novedades y anuncios de la app';
+
+  @override
+  String get notifChannelCreditsName => 'Créditos';
+
+  @override
+  String get notifChannelCreditsDesc =>
+      'Notificaciones cuando se añaden créditos a tu cuenta';
+
+  @override
+  String get notifChannelSignalsName => 'Señales de la lista de seguimiento';
+
+  @override
+  String get notifChannelSignalsDesc =>
+      'Señales de trading de las monedas que sigues';
+
+  @override
+  String get notifChannelAlertsName => 'Alertas de precio';
+
+  @override
+  String get notifChannelAlertsDesc =>
+      'Notificaciones cuando una moneda alcanza tu precio objetivo';
+
+  @override
+  String get notifRationaleTitle => '¿Activar las notificaciones?';
+
+  @override
+  String get notifRationaleBody =>
+      'Recibe notificaciones de créditos y anuncios. Los miembros Pro también reciben notificaciones de señales y alertas de precio.';
+
+  @override
+  String get notifRationaleAllow => 'Permitir';
+
+  @override
+  String get notifRationaleLater => 'Ahora no';
+
+  @override
+  String get notifSettingsSection => 'Notificaciones';
+
+  @override
+  String get notifAnnouncementsTitle => 'Anuncios';
+
+  @override
+  String get notifAnnouncementsSubtitle =>
+      'Novedades y actualizaciones de la app';
+
+  @override
+  String get notifCreditsTitle => 'Notificaciones de créditos';
+
+  @override
+  String get notifCreditsSubtitle => 'Cuando se añaden créditos a tu cuenta';
+
+  @override
+  String get notifSignalsTitle => 'Señales de la lista de seguimiento';
+
+  @override
+  String get notifSignalsSubtitle => 'Nuevas señales de las monedas que sigues';
+
+  @override
+  String get notifAlertsTitle => 'Alertas de precio';
+
+  @override
+  String get notifAlertsSubtitle =>
+      'Cuando una moneda alcanza tu precio objetivo';
+
+  @override
+  String get notifPermissionOffTitle =>
+      'El permiso de notificaciones está desactivado';
+
+  @override
+  String get notifPermissionOffBody =>
+      'No recibirás notificaciones hasta que las permitas.';
+
+  @override
+  String get notifOpenSystemSettings => 'Abrir ajustes del sistema';
+
+  @override
+  String get notifPermissionManual =>
+      'Activa las notificaciones en los ajustes del teléfono.';
+
+  @override
+  String get notifSettingsLoadFailed =>
+      'No se pudieron cargar los ajustes de notificaciones.';
+
+  @override
+  String get notifSettingsSaveFailed =>
+      'No se pudo guardar el cambio. Inténtalo de nuevo.';
+
+  @override
+  String get proUpsellPushSignalsTitle =>
+      'Las notificaciones de señales son una función Pro';
+
+  @override
+  String get proUpsellPushSignalsBody =>
+      'Los miembros Pro reciben una notificación push cuando una moneda de su lista de seguimiento tiene una nueva señal.';
 }

@@ -13,6 +13,7 @@ enum ProFeature {
   strongSignals,
   watchlistLimit,
   priceAlert,
+  pushSignals,
   generic,
 }
 
@@ -59,6 +60,8 @@ class _ProUpsellSheet extends ConsumerWidget {
         );
       case ProFeature.priceAlert:
         return (l10n.alertProTitle, l10n.alertProBody);
+      case ProFeature.pushSignals:
+        return (l10n.proUpsellPushSignalsTitle, l10n.proUpsellPushSignalsBody);
       case ProFeature.generic:
         return (l10n.proUpsellGenericTitle, l10n.proUpsellGenericBody);
     }
