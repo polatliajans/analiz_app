@@ -6,6 +6,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/device_token_api.dart';
 import '../l10n/app_l10n.dart';
@@ -144,6 +145,11 @@ class PushNotificationService {
   Future<void> _showForegroundNotification(RemoteMessage message) async {
     final notification = message.notification;
     if (!_localReady || notification == null) return;
+
+    // Drop re-deliveries of a message that was already shown.
+    final key = (message.data['push_id'] as String?) ?? message.messageId;
+    if (!await _isNewMessage(key)) return;
+
     final channelId = resolveChannelId(
       notification.android?.channelId,
       message.data,
@@ -173,7 +179,9 @@ class PushNotificationService {
     };
     try {
       await _localNotifications.show(
-        id: message.hashCode,
+        id: key != null && key.isNotEmpty
+            ? stableNotificationId(key)
+            : message.hashCode,
         title: notification.title,
         body: notification.body,
         notificationDetails: NotificationDetails(
@@ -190,6 +198,26 @@ class PushNotificationService {
       );
     } catch (e) {
       debugPrint('PushNotificationService: $e');
+    }
+  }
+
+  static const _seenMessagesKey = 'seen_push_message_ids';
+
+  /// Records [key] as delivered; false when it was already shown before.
+  Future<bool> _isNewMessage(String? key) async {
+    if (key == null || key.isEmpty) return true;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final result = rememberMessage(
+        prefs.getStringList(_seenMessagesKey) ?? const <String>[],
+        key,
+      );
+      if (result.isNew) {
+        await prefs.setStringList(_seenMessagesKey, result.seen);
+      }
+      return result.isNew;
+    } catch (_) {
+      return true;
     }
   }
 

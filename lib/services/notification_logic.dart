@@ -108,3 +108,35 @@ bool decideNotificationPermissionPrompt({
   required bool alreadyAsked,
   required bool permissionGranted,
 }) => loggedIn && !alreadyAsked && !permissionGranted;
+
+/// How many delivered message ids are remembered to drop re-deliveries.
+const seenMessageLimit = 50;
+
+/// Remembers a delivered message and says whether it is new.
+///
+/// FCM can deliver the same message again (typically when a battery manager
+/// kills the app before it acknowledges the first delivery). [key] is the
+/// server's `push_id` (or the FCM message id); a missing key is always new.
+({bool isNew, List<String> seen}) rememberMessage(
+  List<String> seen,
+  String? key, {
+  int limit = seenMessageLimit,
+}) {
+  if (key == null || key.isEmpty) return (isNew: true, seen: seen);
+  if (seen.contains(key)) return (isNew: false, seen: seen);
+  final next = [...seen, key];
+  return (
+    isNew: true,
+    seen: next.length > limit ? next.sublist(next.length - limit) : next,
+  );
+}
+
+/// Stable, positive 31-bit notification id for a message key so that a
+/// re-delivery replaces the notification instead of adding another.
+int stableNotificationId(String key) {
+  var hash = 0;
+  for (final unit in key.codeUnits) {
+    hash = (hash * 31 + unit) & 0x7fffffff;
+  }
+  return hash;
+}

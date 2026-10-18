@@ -154,4 +154,47 @@ void main() {
       );
     });
   });
+
+  group('rememberMessage / stableNotificationId', () {
+    test('a new key is accepted and remembered', () {
+      final r = rememberMessage(const [], '42');
+      expect(r.isNew, isTrue);
+      expect(r.seen, ['42']);
+    });
+
+    test('a repeated key is rejected and the list is unchanged', () {
+      final r = rememberMessage(const ['42', '43'], '42');
+      expect(r.isNew, isFalse);
+      expect(r.seen, ['42', '43']);
+    });
+
+    test('a missing or empty key is always treated as new', () {
+      expect(rememberMessage(const ['1'], null).isNew, isTrue);
+      expect(rememberMessage(const ['1'], '').isNew, isTrue);
+      expect(rememberMessage(const ['1'], null).seen, ['1']);
+    });
+
+    test('only the most recent ids are kept', () {
+      var seen = <String>[];
+      for (var i = 0; i < seenMessageLimit + 5; i++) {
+        seen = rememberMessage(seen, 'id$i').seen;
+      }
+      expect(seen.length, seenMessageLimit);
+      expect(seen.first, 'id5');
+      expect(seen.last, 'id${seenMessageLimit + 4}');
+      // An evicted id would be shown again; a recent one is still blocked.
+      expect(rememberMessage(seen, 'id0').isNew, isTrue);
+      expect(rememberMessage(seen, 'id${seenMessageLimit + 4}').isNew, isFalse);
+    });
+
+    test('notification id is stable, positive and 31-bit', () {
+      expect(stableNotificationId('7'), stableNotificationId('7'));
+      expect(stableNotificationId('7'), isNot(stableNotificationId('8')));
+      for (final k in ['1', 'push-12345', 'a' * 200]) {
+        final id = stableNotificationId(k);
+        expect(id, greaterThanOrEqualTo(0));
+        expect(id, lessThanOrEqualTo(0x7fffffff));
+      }
+    });
+  });
 }
