@@ -18,7 +18,8 @@ final pendingNotificationTargetProvider =
 
 final pushServiceProvider = Provider<PushNotificationService>((ref) {
   final service = PushNotificationService(
-    onTarget: (t) => ref.read(pendingNotificationTargetProvider.notifier).set(t),
+    onTarget: (t) =>
+        ref.read(pendingNotificationTargetProvider.notifier).set(t),
   );
   ref.onDispose(service.dispose);
   return service;

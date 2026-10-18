@@ -903,4 +903,91 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get proUpsellPushSignalsBody =>
       'Pro üyeler, takip listesindeki bir coin için yeni sinyal geldiğinde anlık bildirim alır.';
+
+  @override
+  String get structuredBiasBullish => 'Yükseliş';
+
+  @override
+  String get structuredBiasBearish => 'Düşüş';
+
+  @override
+  String get structuredBiasNeutral => 'Nötr';
+
+  @override
+  String structuredConfidence(int value) {
+    return 'Güven %$value';
+  }
+
+  @override
+  String structuredHorizon(String label) {
+    return 'Ufuk: $label';
+  }
+
+  @override
+  String structuredHorizonCandles(int count) {
+    return '$count mum';
+  }
+
+  @override
+  String get structuredSectionSummary => 'Özet';
+
+  @override
+  String get structuredSectionDrivers => 'Ana etkenler';
+
+  @override
+  String get structuredSectionScenarios => 'Senaryolar';
+
+  @override
+  String get structuredSectionLevels => 'Önemli seviyeler';
+
+  @override
+  String get structuredSectionRisks => 'Riskler';
+
+  @override
+  String get structuredSectionWatch => 'İzlenecekler';
+
+  @override
+  String get structuredSectionSources => 'Kaynaklar';
+
+  @override
+  String get structuredScenarioBull => 'Boğa senaryosu';
+
+  @override
+  String get structuredScenarioBase => 'Baz senaryo';
+
+  @override
+  String get structuredScenarioBear => 'Ayı senaryosu';
+
+  @override
+  String structuredScenarioTrigger(String price) {
+    return 'Tetikleyici: $price';
+  }
+
+  @override
+  String structuredScenarioTarget(String price) {
+    return 'Hedef: $price';
+  }
+
+  @override
+  String get structuredLevelResistance => 'Direnç';
+
+  @override
+  String get structuredLevelSupport => 'Destek';
+
+  @override
+  String get structuredLevelInvalidation => 'İptal seviyesi';
+
+  @override
+  String get structuredLevelPrice => 'Analiz anındaki fiyat';
+
+  @override
+  String structuredDataMissing(String sources) {
+    return 'Bazı veri kaynakları alınamadı: $sources';
+  }
+
+  @override
+  String get structuredDisclaimer => 'Yatırım tavsiyesi değildir.';
+
+  @override
+  String get structuredSourceOpenFailed => 'Bağlantı açılamadı.';
 }

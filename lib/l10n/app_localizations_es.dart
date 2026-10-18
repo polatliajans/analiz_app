@@ -945,4 +945,91 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get proUpsellPushSignalsBody =>
       'Los miembros Pro reciben una notificación push cuando una moneda de su lista de seguimiento tiene una nueva señal.';
+
+  @override
+  String get structuredBiasBullish => 'Alcista';
+
+  @override
+  String get structuredBiasBearish => 'Bajista';
+
+  @override
+  String get structuredBiasNeutral => 'Neutral';
+
+  @override
+  String structuredConfidence(int value) {
+    return 'Confianza $value%';
+  }
+
+  @override
+  String structuredHorizon(String label) {
+    return 'Horizonte: $label';
+  }
+
+  @override
+  String structuredHorizonCandles(int count) {
+    return '$count velas';
+  }
+
+  @override
+  String get structuredSectionSummary => 'Resumen';
+
+  @override
+  String get structuredSectionDrivers => 'Factores clave';
+
+  @override
+  String get structuredSectionScenarios => 'Escenarios';
+
+  @override
+  String get structuredSectionLevels => 'Niveles clave';
+
+  @override
+  String get structuredSectionRisks => 'Riesgos';
+
+  @override
+  String get structuredSectionWatch => 'Qué vigilar';
+
+  @override
+  String get structuredSectionSources => 'Fuentes';
+
+  @override
+  String get structuredScenarioBull => 'Escenario alcista';
+
+  @override
+  String get structuredScenarioBase => 'Escenario base';
+
+  @override
+  String get structuredScenarioBear => 'Escenario bajista';
+
+  @override
+  String structuredScenarioTrigger(String price) {
+    return 'Disparador: $price';
+  }
+
+  @override
+  String structuredScenarioTarget(String price) {
+    return 'Objetivo: $price';
+  }
+
+  @override
+  String get structuredLevelResistance => 'Resistencia';
+
+  @override
+  String get structuredLevelSupport => 'Soporte';
+
+  @override
+  String get structuredLevelInvalidation => 'Invalidación';
+
+  @override
+  String get structuredLevelPrice => 'Precio en el análisis';
+
+  @override
+  String structuredDataMissing(String sources) {
+    return 'Algunas fuentes de datos no estuvieron disponibles: $sources';
+  }
+
+  @override
+  String get structuredDisclaimer => 'No es asesoramiento de inversión.';
+
+  @override
+  String get structuredSourceOpenFailed => 'No se pudo abrir el enlace.';
 }

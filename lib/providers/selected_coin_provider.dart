@@ -65,17 +65,16 @@ class SelectedCoinNotifier extends AsyncNotifier<Coin?> {
   }
 }
 
-final selectedCoinProvider =
-    AsyncNotifierProvider<SelectedCoinNotifier, Coin?>(
-      SelectedCoinNotifier.new,
-    );
+final selectedCoinProvider = AsyncNotifierProvider<SelectedCoinNotifier, Coin?>(
+  SelectedCoinNotifier.new,
+);
 
 class TimeframeNotifier extends Notifier<String> {
   @override
   String build() {
-    final saved = ref.read(sharedPreferencesProvider).getString(
-      lastTimeframeKey,
-    );
+    final saved = ref
+        .read(sharedPreferencesProvider)
+        .getString(lastTimeframeKey);
     return chartTimeframes.contains(saved) ? saved! : defaultTimeframe;
   }
 

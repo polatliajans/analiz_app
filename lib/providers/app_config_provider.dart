@@ -33,9 +33,9 @@ class AppConfigNotifier extends Notifier<AppConfig> {
 
   PlanConfig _readCachedPlan() {
     try {
-      final raw = ref.read(sharedPreferencesProvider).getString(
-        appConfigCacheKey,
-      );
+      final raw = ref
+          .read(sharedPreferencesProvider)
+          .getString(appConfigCacheKey);
       if (raw == null) return PlanConfig.safeDefaults;
       return PlanConfig.fromJson(jsonDecode(raw) as Map<String, dynamic>);
     } catch (_) {

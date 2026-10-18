@@ -116,17 +116,19 @@ void main() {
   });
 
   group('decideNotificationPermissionPrompt', () {
-    test('shows the rationale once for a signed-in member without permission',
-        () {
-      expect(
-        decideNotificationPermissionPrompt(
-          loggedIn: true,
-          alreadyAsked: false,
-          permissionGranted: false,
-        ),
-        isTrue,
-      );
-    });
+    test(
+      'shows the rationale once for a signed-in member without permission',
+      () {
+        expect(
+          decideNotificationPermissionPrompt(
+            loggedIn: true,
+            alreadyAsked: false,
+            permissionGranted: false,
+          ),
+          isTrue,
+        );
+      },
+    );
     test('never when guest, already asked, or already granted', () {
       expect(
         decideNotificationPermissionPrompt(

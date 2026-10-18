@@ -932,4 +932,91 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get proUpsellPushSignalsBody =>
       'Pro members get a push notification when a coin on their watchlist gets a new signal.';
+
+  @override
+  String get structuredBiasBullish => 'Bullish';
+
+  @override
+  String get structuredBiasBearish => 'Bearish';
+
+  @override
+  String get structuredBiasNeutral => 'Neutral';
+
+  @override
+  String structuredConfidence(int value) {
+    return 'Confidence $value%';
+  }
+
+  @override
+  String structuredHorizon(String label) {
+    return 'Horizon: $label';
+  }
+
+  @override
+  String structuredHorizonCandles(int count) {
+    return '$count candles';
+  }
+
+  @override
+  String get structuredSectionSummary => 'Summary';
+
+  @override
+  String get structuredSectionDrivers => 'Key drivers';
+
+  @override
+  String get structuredSectionScenarios => 'Scenarios';
+
+  @override
+  String get structuredSectionLevels => 'Key levels';
+
+  @override
+  String get structuredSectionRisks => 'Risks';
+
+  @override
+  String get structuredSectionWatch => 'What to watch';
+
+  @override
+  String get structuredSectionSources => 'Sources';
+
+  @override
+  String get structuredScenarioBull => 'Bull case';
+
+  @override
+  String get structuredScenarioBase => 'Base case';
+
+  @override
+  String get structuredScenarioBear => 'Bear case';
+
+  @override
+  String structuredScenarioTrigger(String price) {
+    return 'Trigger: $price';
+  }
+
+  @override
+  String structuredScenarioTarget(String price) {
+    return 'Target: $price';
+  }
+
+  @override
+  String get structuredLevelResistance => 'Resistance';
+
+  @override
+  String get structuredLevelSupport => 'Support';
+
+  @override
+  String get structuredLevelInvalidation => 'Invalidation';
+
+  @override
+  String get structuredLevelPrice => 'Price at analysis';
+
+  @override
+  String structuredDataMissing(String sources) {
+    return 'Some data sources were unavailable: $sources';
+  }
+
+  @override
+  String get structuredDisclaimer => 'Not investment advice.';
+
+  @override
+  String get structuredSourceOpenFailed => 'Couldn\'t open the link.';
 }

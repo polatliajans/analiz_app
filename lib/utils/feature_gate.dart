@@ -19,8 +19,9 @@ class FeatureGate {
   bool isSignalVisible(int strength) =>
       isPro || strength <= plan.freeMaxSignalStrength;
 
-  List<ChartSignal> visibleSignals(List<ChartSignal> signals) =>
-      isPro ? signals : signals.where((s) => isSignalVisible(s.strength)).toList();
+  List<ChartSignal> visibleSignals(List<ChartSignal> signals) => isPro
+      ? signals
+      : signals.where((s) => isSignalVisible(s.strength)).toList();
 
   /// Whether to hint that stronger signals exist in Pro.
   bool get showStrongSignalsNote => !isPro && plan.freeMaxSignalStrength < 3;

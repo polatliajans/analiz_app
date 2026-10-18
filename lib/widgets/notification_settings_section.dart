@@ -47,7 +47,9 @@ class _NotificationSettingsSectionState
   Future<void> _toggle(String key, bool value) async {
     final failed = AppLocalizations.of(context)!.notifSettingsSaveFailed;
     try {
-      await ref.read(notificationSettingsProvider.notifier).setValue(key, value);
+      await ref
+          .read(notificationSettingsProvider.notifier)
+          .setValue(key, value);
     } catch (_) {
       if (mounted) _snack(failed);
     }
@@ -114,7 +116,10 @@ class _NotificationSettingsSectionState
         ),
         if (permission.value == false)
           ListTile(
-            leading: Icon(Icons.notifications_off_outlined, color: scheme.error),
+            leading: Icon(
+              Icons.notifications_off_outlined,
+              color: scheme.error,
+            ),
             title: Text(l10n.notifPermissionOffTitle),
             subtitle: Text(l10n.notifPermissionOffBody),
             trailing: TextButton(

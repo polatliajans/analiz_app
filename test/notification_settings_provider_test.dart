@@ -67,8 +67,13 @@ void main() {
     final c = make(_FakeApi());
     addTearDown(c.dispose);
     await c.read(notificationSettingsProvider.future);
-    await c.read(notificationSettingsProvider.notifier).setValue('credits', false);
-    expect(c.read(notificationSettingsProvider).value!.isOn('credits'), isFalse);
+    await c
+        .read(notificationSettingsProvider.notifier)
+        .setValue('credits', false);
+    expect(
+      c.read(notificationSettingsProvider).value!.isOn('credits'),
+      isFalse,
+    );
   });
 
   test('setValue rolls back and rethrows on failure', () async {

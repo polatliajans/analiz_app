@@ -29,6 +29,9 @@ void main() {
   });
 
   test('support mailto', () {
-    expect(LegalLinks.supportMailto.toString(), 'mailto:support@cryptoanaliz.net');
+    expect(
+      LegalLinks.supportMailto.toString(),
+      'mailto:support@cryptoanaliz.net',
+    );
   });
 }

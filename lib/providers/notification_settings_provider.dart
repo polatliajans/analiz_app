@@ -8,7 +8,8 @@ final notificationSettingsApiProvider = Provider<NotificationSettingsApi>(
 );
 
 /// The signed-in member's notification preferences. `null` data for guests.
-class NotificationSettingsNotifier extends AsyncNotifier<NotificationSettings?> {
+class NotificationSettingsNotifier
+    extends AsyncNotifier<NotificationSettings?> {
   @override
   Future<NotificationSettings?> build() async {
     final token = ref.watch(authProvider.select((s) => s.token));
@@ -24,9 +25,10 @@ class NotificationSettingsNotifier extends AsyncNotifier<NotificationSettings?> 
     if (token == null || current == null) return;
     state = AsyncData(current.withValue(key, value));
     try {
-      final saved = await ref
-          .read(notificationSettingsApiProvider)
-          .update(token, {key: value});
+      final saved = await ref.read(notificationSettingsApiProvider).update(
+        token,
+        {key: value},
+      );
       // Keep any other switch the user flipped meanwhile.
       final latest = state.value ?? saved;
       // (state.value is never null here, but stay defensive.)

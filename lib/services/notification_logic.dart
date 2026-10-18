@@ -69,7 +69,12 @@ NotificationTarget resolveNotificationPayload(String? payload) {
   return const NotificationTarget(NotificationScreen.none);
 }
 
-const notificationChannelIds = ['announcements', 'credits', 'signals', 'alerts'];
+const notificationChannelIds = [
+  'announcements',
+  'credits',
+  'signals',
+  'alerts',
+];
 const defaultNotificationChannelId = 'announcements';
 
 const _channelByCategory = <String, String>{

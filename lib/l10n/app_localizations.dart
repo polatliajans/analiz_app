@@ -1611,6 +1611,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pro members get a push notification when a coin on their watchlist gets a new signal.'**
   String get proUpsellPushSignalsBody;
+
+  /// No description provided for @structuredBiasBullish.
+  ///
+  /// In en, this message translates to:
+  /// **'Bullish'**
+  String get structuredBiasBullish;
+
+  /// No description provided for @structuredBiasBearish.
+  ///
+  /// In en, this message translates to:
+  /// **'Bearish'**
+  String get structuredBiasBearish;
+
+  /// No description provided for @structuredBiasNeutral.
+  ///
+  /// In en, this message translates to:
+  /// **'Neutral'**
+  String get structuredBiasNeutral;
+
+  /// No description provided for @structuredConfidence.
+  ///
+  /// In en, this message translates to:
+  /// **'Confidence {value}%'**
+  String structuredConfidence(int value);
+
+  /// No description provided for @structuredHorizon.
+  ///
+  /// In en, this message translates to:
+  /// **'Horizon: {label}'**
+  String structuredHorizon(String label);
+
+  /// No description provided for @structuredHorizonCandles.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} candles'**
+  String structuredHorizonCandles(int count);
+
+  /// No description provided for @structuredSectionSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Summary'**
+  String get structuredSectionSummary;
+
+  /// No description provided for @structuredSectionDrivers.
+  ///
+  /// In en, this message translates to:
+  /// **'Key drivers'**
+  String get structuredSectionDrivers;
+
+  /// No description provided for @structuredSectionScenarios.
+  ///
+  /// In en, this message translates to:
+  /// **'Scenarios'**
+  String get structuredSectionScenarios;
+
+  /// No description provided for @structuredSectionLevels.
+  ///
+  /// In en, this message translates to:
+  /// **'Key levels'**
+  String get structuredSectionLevels;
+
+  /// No description provided for @structuredSectionRisks.
+  ///
+  /// In en, this message translates to:
+  /// **'Risks'**
+  String get structuredSectionRisks;
+
+  /// No description provided for @structuredSectionWatch.
+  ///
+  /// In en, this message translates to:
+  /// **'What to watch'**
+  String get structuredSectionWatch;
+
+  /// No description provided for @structuredSectionSources.
+  ///
+  /// In en, this message translates to:
+  /// **'Sources'**
+  String get structuredSectionSources;
+
+  /// No description provided for @structuredScenarioBull.
+  ///
+  /// In en, this message translates to:
+  /// **'Bull case'**
+  String get structuredScenarioBull;
+
+  /// No description provided for @structuredScenarioBase.
+  ///
+  /// In en, this message translates to:
+  /// **'Base case'**
+  String get structuredScenarioBase;
+
+  /// No description provided for @structuredScenarioBear.
+  ///
+  /// In en, this message translates to:
+  /// **'Bear case'**
+  String get structuredScenarioBear;
+
+  /// No description provided for @structuredScenarioTrigger.
+  ///
+  /// In en, this message translates to:
+  /// **'Trigger: {price}'**
+  String structuredScenarioTrigger(String price);
+
+  /// No description provided for @structuredScenarioTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Target: {price}'**
+  String structuredScenarioTarget(String price);
+
+  /// No description provided for @structuredLevelResistance.
+  ///
+  /// In en, this message translates to:
+  /// **'Resistance'**
+  String get structuredLevelResistance;
+
+  /// No description provided for @structuredLevelSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get structuredLevelSupport;
+
+  /// No description provided for @structuredLevelInvalidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalidation'**
+  String get structuredLevelInvalidation;
+
+  /// No description provided for @structuredLevelPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Price at analysis'**
+  String get structuredLevelPrice;
+
+  /// No description provided for @structuredDataMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Some data sources were unavailable: {sources}'**
+  String structuredDataMissing(String sources);
+
+  /// No description provided for @structuredDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Not investment advice.'**
+  String get structuredDisclaimer;
+
+  /// No description provided for @structuredSourceOpenFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open the link.'**
+  String get structuredSourceOpenFailed;
 }
 
 class _AppLocalizationsDelegate

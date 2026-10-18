@@ -8,6 +8,7 @@ import '../data/plan_errors.dart';
 import '../data/watchlist_api.dart';
 import '../l10n/app_localizations.dart';
 import '../models/coin.dart';
+import '../models/structured_analysis.dart';
 import '../providers/analysis_history_provider.dart';
 import '../providers/app_config_provider.dart';
 import '../providers/auth_provider.dart';
@@ -38,10 +39,10 @@ class ChartScreen extends ConsumerStatefulWidget {
 class _ChartScreenState extends ConsumerState<ChartScreen> {
   Future<void> _runAnalysis(
     Coin coin, {
-    required Future<({String result, int creditCost})> Function(
-      String token,
-      String timeframe,
-    )
+    required Future<
+      ({String result, int creditCost, StructuredAnalysis? structured})
+    >
+    Function(String token, String timeframe)
     request,
     required String Function(AppLocalizations l10n, String details)
     failureMessage,
@@ -79,6 +80,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
         context,
         result: r.result,
         creditCost: r.creditCost,
+        structured: r.structured,
       );
       // Only after the user closed the result (never while waiting).
       if (!mounted) return;
@@ -110,7 +112,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
         coinId: coin.id,
         timeframe: timeframe,
       );
-      return (result: r.result, creditCost: r.creditCost);
+      return (result: r.result, creditCost: r.creditCost, structured: null);
     },
     failureMessage: (l10n, d) => l10n.analysisFailed(d),
     proFeature: ProFeature.timeframe,
@@ -124,7 +126,11 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
         coinId: coin.id,
         timeframe: timeframe,
       );
-      return (result: r.result, creditCost: r.creditCost);
+      return (
+        result: r.result,
+        creditCost: r.creditCost,
+        structured: r.structured,
+      );
     },
     failureMessage: (l10n, d) => l10n.deepAnalysisFailed(d),
     proFeature: ProFeature.deepAnalysis,

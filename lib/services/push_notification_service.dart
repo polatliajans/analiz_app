@@ -31,11 +31,10 @@ class PushNotificationService {
   bool _firebaseReady = false;
   bool _localReady = false;
 
-  AndroidFlutterLocalNotificationsPlugin? get _android =>
-      _localNotifications
-          .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin
-          >();
+  AndroidFlutterLocalNotificationsPlugin? get _android => _localNotifications
+      .resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin
+      >();
 
   Future<void> initialize() async {
     await _setupLocalNotifications();
@@ -93,7 +92,9 @@ class PushNotificationService {
       final launch = await _localNotifications
           .getNotificationAppLaunchDetails();
       if (launch?.didNotificationLaunchApp ?? false) {
-        _emit(resolveNotificationPayload(launch!.notificationResponse?.payload));
+        _emit(
+          resolveNotificationPayload(launch!.notificationResponse?.payload),
+        );
       }
     } catch (e) {
       debugPrint('PushNotificationService: $e');

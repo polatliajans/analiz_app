@@ -8,6 +8,7 @@ class PlanConfig {
   final int? freeWatchlistMax;
   final bool deepAnalysisRequiresPro;
   final List<String> proOnlyTimeframes;
+
   /// Highest signal strength Free / guest users get from the server (1..3).
   final int freeMaxSignalStrength;
   final bool alertsRequirePro;
@@ -148,7 +149,10 @@ class AppConfig {
   final PlanConfig plan;
   final AdsConfig ads;
 
-  const AppConfig({this.plan = PlanConfig.safeDefaults, this.ads = AdsConfig.none});
+  const AppConfig({
+    this.plan = PlanConfig.safeDefaults,
+    this.ads = AdsConfig.none,
+  });
 
   static const safeDefaults = AppConfig();
 
@@ -159,7 +163,9 @@ class AppConfig {
       plan: plan is Map<String, dynamic>
           ? PlanConfig.fromJson(plan)
           : PlanConfig.safeDefaults,
-      ads: ads is Map<String, dynamic> ? AdsConfig.fromJson(ads) : AdsConfig.none,
+      ads: ads is Map<String, dynamic>
+          ? AdsConfig.fromJson(ads)
+          : AdsConfig.none,
     );
   }
 }

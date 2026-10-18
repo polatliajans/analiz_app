@@ -3,7 +3,12 @@ import 'dart:convert';
 import '../config/api_config.dart';
 import 'api_http.dart';
 
-const notificationSettingKeys = ['announcements', 'credits', 'signals', 'alerts'];
+const notificationSettingKeys = [
+  'announcements',
+  'credits',
+  'signals',
+  'alerts',
+];
 
 class NotificationSettings {
   final Map<String, bool> values;
@@ -47,7 +52,8 @@ class NotificationSettingsException implements Exception {
 }
 
 class NotificationSettingsApi {
-  static Uri get _uri => Uri.parse('${ApiConfig.baseUrl}/notification-settings');
+  static Uri get _uri =>
+      Uri.parse('${ApiConfig.baseUrl}/notification-settings');
 
   Map<String, String> _headers(String token, {bool json = false}) => {
     'Authorization': 'Bearer $token',

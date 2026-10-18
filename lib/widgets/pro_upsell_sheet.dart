@@ -30,7 +30,8 @@ Future<void> showProUpsell(
     isScrollControlled: true,
     useSafeArea: true,
     showDragHandle: true,
-    builder: (_) => _ProUpsellSheet(feature: feature, count: count, limit: limit),
+    builder: (_) =>
+        _ProUpsellSheet(feature: feature, count: count, limit: limit),
   );
 }
 

@@ -3,6 +3,9 @@ import 'package:intl/intl.dart';
 
 import '../l10n/app_localizations.dart';
 import '../models/analysis_record.dart';
+import '../models/structured_analysis.dart';
+import '../utils/structured_analysis_logic.dart';
+import 'structured_analysis_view.dart';
 
 String formatAnalysisDate(BuildContext context, DateTime dt) {
   final locale = Localizations.localeOf(context).toString();
@@ -15,8 +18,36 @@ Future<void> showAnalysisSheet(
   BuildContext context, {
   required String result,
   required int creditCost,
+  StructuredAnalysis? structured,
 }) {
   final l10n = AppLocalizations.of(context)!;
+  if (shouldShowStructured(structured)) {
+    return showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      showDragHandle: true,
+      builder: (sheetContext) => DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 1,
+        minChildSize: 0.5,
+        maxChildSize: 1,
+        builder: (_, controller) => SingleChildScrollView(
+          controller: controller,
+          padding: EdgeInsets.fromLTRB(
+            16,
+            0,
+            16,
+            16 + MediaQuery.paddingOf(sheetContext).bottom,
+          ),
+          child: StructuredAnalysisView(
+            data: structured!,
+            creditCost: creditCost,
+          ),
+        ),
+      ),
+    );
+  }
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
@@ -66,6 +97,7 @@ class AnalysisCard extends StatelessWidget {
           context,
           result: record.result,
           creditCost: record.creditCost,
+          structured: record.structured,
         ),
         child: Padding(
           padding: const EdgeInsets.all(12),
@@ -109,6 +141,14 @@ class AnalysisCard extends StatelessWidget {
                   ),
                 ],
               ),
+              if (showsBiasBadge(record)) ...[
+                const SizedBox(height: 8),
+                BiasBadge(
+                  bias: record.structured!.bias!,
+                  confidence: record.structured!.confidence,
+                  compact: true,
+                ),
+              ],
               const SizedBox(height: 8),
               Text(
                 record.result,

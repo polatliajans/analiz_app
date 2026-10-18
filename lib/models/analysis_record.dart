@@ -1,3 +1,5 @@
+import 'structured_analysis.dart';
+
 class AnalysisRecord {
   final int id;
   final String type;
@@ -8,6 +10,7 @@ class AnalysisRecord {
   final String result;
   final int creditCost;
   final DateTime createdAt;
+  final StructuredAnalysis? structured;
 
   const AnalysisRecord({
     required this.id,
@@ -19,6 +22,7 @@ class AnalysisRecord {
     required this.result,
     required this.creditCost,
     required this.createdAt,
+    this.structured,
   });
 
   bool get isDeep => type == 'deep';
@@ -34,6 +38,7 @@ class AnalysisRecord {
       result: json['result'] as String,
       creditCost: json['credit_cost'] as int,
       createdAt: DateTime.parse(json['created_at'] as String).toLocal(),
+      structured: StructuredAnalysis.tryParse(json['structured']),
     );
   }
 }
