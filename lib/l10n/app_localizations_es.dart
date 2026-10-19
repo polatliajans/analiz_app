@@ -332,6 +332,29 @@ class AppLocalizationsEs extends AppLocalizations {
       'El análisis profundo no está disponible en este momento.';
 
   @override
+  String get deepAnalysisWaitingTitle => 'El análisis profundo está en curso';
+
+  @override
+  String get deepAnalysisWaitingBody =>
+      'Suele tardar entre 30 y 90 segundos, a veces hasta 4 minutos. Puedes salir de esta pantalla: te enviaremos una notificación cuando esté listo.';
+
+  @override
+  String get deepAnalysisFailedRefunded =>
+      'No se pudo completar el análisis profundo. Tus créditos han sido reembolsados.';
+
+  @override
+  String get deepAnalysisAlreadyRunning =>
+      'Ya tienes un análisis profundo en curso. Espera a que termine.';
+
+  @override
+  String get deepAnalysisCheckLater =>
+      'No pudimos conectar con el servidor. Tu análisis puede seguir en curso: vuelve más tarde o consulta tu historial de análisis.';
+
+  @override
+  String get deepAnalysisStillRunning =>
+      'Tu análisis sigue en curso. Recibirás una notificación cuando esté listo, o puedes encontrarlo en tu historial de análisis.';
+
+  @override
   String errorAnalysisRequestFailed(String details) {
     return 'No se pudo enviar la solicitud de análisis: $details';
   }

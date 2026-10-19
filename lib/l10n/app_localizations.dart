@@ -586,6 +586,42 @@ abstract class AppLocalizations {
   /// **'Deep analysis is currently unavailable.'**
   String get errorDeepAnalysisUnavailable;
 
+  /// No description provided for @deepAnalysisWaitingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Deep analysis is running'**
+  String get deepAnalysisWaitingTitle;
+
+  /// No description provided for @deepAnalysisWaitingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This usually takes 30-90 seconds, sometimes up to 4 minutes. You can leave this screen - we\'ll send you a notification when it\'s ready.'**
+  String get deepAnalysisWaitingBody;
+
+  /// No description provided for @deepAnalysisFailedRefunded.
+  ///
+  /// In en, this message translates to:
+  /// **'The deep analysis could not be completed. Your credits have been refunded.'**
+  String get deepAnalysisFailedRefunded;
+
+  /// No description provided for @deepAnalysisAlreadyRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'You already have a deep analysis running. Please wait for it to finish.'**
+  String get deepAnalysisAlreadyRunning;
+
+  /// No description provided for @deepAnalysisCheckLater.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t reach the server. Your analysis may still be running - check back later or look at your analysis history.'**
+  String get deepAnalysisCheckLater;
+
+  /// No description provided for @deepAnalysisStillRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'Your analysis is still running. You\'ll get a notification when it\'s ready, or you can find it in your analysis history.'**
+  String get deepAnalysisStillRunning;
+
   /// No description provided for @errorAnalysisRequestFailed.
   ///
   /// In en, this message translates to:

@@ -299,6 +299,29 @@ class AppLocalizationsTr extends AppLocalizations {
       'Derin analiz şu anda kullanılamıyor.';
 
   @override
+  String get deepAnalysisWaitingTitle => 'Derin analiz çalışıyor';
+
+  @override
+  String get deepAnalysisWaitingBody =>
+      'Bu genellikle 30-90 saniye sürer, bazen 4 dakikaya kadar uzayabilir. Bu ekrandan ayrılabilirsiniz - hazır olunca size bildirim göndereceğiz.';
+
+  @override
+  String get deepAnalysisFailedRefunded =>
+      'Derin analiz tamamlanamadı. Kredileriniz iade edildi.';
+
+  @override
+  String get deepAnalysisAlreadyRunning =>
+      'Zaten devam eden bir derin analiziniz var. Lütfen bitmesini bekleyin.';
+
+  @override
+  String get deepAnalysisCheckLater =>
+      'Sunucuya ulaşılamadı. Analiziniz hâlâ çalışıyor olabilir - daha sonra tekrar bakın veya analiz geçmişinize göz atın.';
+
+  @override
+  String get deepAnalysisStillRunning =>
+      'Analiziniz hâlâ çalışıyor. Hazır olunca bildirim alacaksınız; analiz geçmişinizden de ulaşabilirsiniz.';
+
+  @override
   String errorAnalysisRequestFailed(String details) {
     return 'Analiz isteği gönderilemedi: $details';
   }

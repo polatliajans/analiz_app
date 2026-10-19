@@ -331,6 +331,29 @@ class AppLocalizationsEn extends AppLocalizations {
       'Deep analysis is currently unavailable.';
 
   @override
+  String get deepAnalysisWaitingTitle => 'Deep analysis is running';
+
+  @override
+  String get deepAnalysisWaitingBody =>
+      'This usually takes 30-90 seconds, sometimes up to 4 minutes. You can leave this screen - we\'ll send you a notification when it\'s ready.';
+
+  @override
+  String get deepAnalysisFailedRefunded =>
+      'The deep analysis could not be completed. Your credits have been refunded.';
+
+  @override
+  String get deepAnalysisAlreadyRunning =>
+      'You already have a deep analysis running. Please wait for it to finish.';
+
+  @override
+  String get deepAnalysisCheckLater =>
+      'We couldn\'t reach the server. Your analysis may still be running - check back later or look at your analysis history.';
+
+  @override
+  String get deepAnalysisStillRunning =>
+      'Your analysis is still running. You\'ll get a notification when it\'s ready, or you can find it in your analysis history.';
+
+  @override
   String errorAnalysisRequestFailed(String details) {
     return 'Could not send the analysis request: $details';
   }
