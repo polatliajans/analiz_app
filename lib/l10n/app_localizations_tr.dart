@@ -1029,4 +1029,24 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get glossaryIntro =>
       'Analizlerde geçen terimlerin kısa ve tarafsız açıklamaları. Yalnızca bilgi amaçlıdır, yatırım tavsiyesi değildir.';
+
+  @override
+  String get structuredConclusionTitle => 'Nihai düşünce';
+
+  @override
+  String get structuredSectionBalance => 'Etken dengesi';
+
+  @override
+  String get structuredSectionLadder => 'Fiyat merdiveni';
+
+  @override
+  String get structuredSectionDataNotes => 'Veri notları';
+
+  @override
+  String get structuredSectionOdds => 'Senaryo olasılıkları';
+
+  @override
+  String structuredBalanceItem(String label, int count) {
+    return '$label $count';
+  }
 }

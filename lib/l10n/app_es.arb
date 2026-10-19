@@ -304,5 +304,12 @@
   "glossarySearchHint": "Buscar términos (p. ej. RSI, funding)",
   "glossaryNoResults": "No hay términos coincidentes.",
   "glossaryLearnTerms": "Aprende los términos",
-  "glossaryIntro": "Explicaciones breves y neutrales de los términos usados en los análisis. Solo informativo, no es asesoramiento de inversión."
+  "glossaryIntro": "Explicaciones breves y neutrales de los términos usados en los análisis. Solo informativo, no es asesoramiento de inversión.",
+  "structuredConclusionTitle": "Conclusión",
+  "structuredSectionBalance": "Balance de factores",
+  "structuredSectionLadder": "Escalera de precios",
+  "structuredSectionDataNotes": "Notas de datos",
+  "structuredSectionOdds": "Probabilidad de escenarios",
+  "structuredBalanceItem": "{label} {count}",
+  "@structuredBalanceItem": {"placeholders": {"label": {"type": "String"}, "count": {"type": "int"}}}
 }

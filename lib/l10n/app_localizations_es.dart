@@ -1071,4 +1071,24 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get glossaryIntro =>
       'Explicaciones breves y neutrales de los términos usados en los análisis. Solo informativo, no es asesoramiento de inversión.';
+
+  @override
+  String get structuredConclusionTitle => 'Conclusión';
+
+  @override
+  String get structuredSectionBalance => 'Balance de factores';
+
+  @override
+  String get structuredSectionLadder => 'Escalera de precios';
+
+  @override
+  String get structuredSectionDataNotes => 'Notas de datos';
+
+  @override
+  String get structuredSectionOdds => 'Probabilidad de escenarios';
+
+  @override
+  String structuredBalanceItem(String label, int count) {
+    return '$label $count';
+  }
 }

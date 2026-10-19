@@ -149,6 +149,34 @@ class AnalysisSource {
   );
 }
 
+class KeyMetric {
+  final String label;
+  final String value;
+  final AnalysisBias tone;
+  final String? hint;
+
+  const KeyMetric({
+    required this.label,
+    required this.value,
+    this.tone = AnalysisBias.neutral,
+    this.hint,
+  });
+
+  /// Null when label or value is missing (nothing to show).
+  static KeyMetric? tryFromJson(Map<String, dynamic> j) {
+    final label = _str(j['label']);
+    final rawValue = j['value'];
+    final value = _str(rawValue) ?? (rawValue is num ? '$rawValue' : null);
+    if (label == null || value == null) return null;
+    return KeyMetric(
+      label: label,
+      value: value,
+      tone: AnalysisBias.fromApi(j['tone']) ?? AnalysisBias.neutral,
+      hint: _str(j['hint']),
+    );
+  }
+}
+
 class StructuredAnalysis {
   final String? symbol;
   final String? marketType;
@@ -169,6 +197,8 @@ class StructuredAnalysis {
   final String? dataQualityNotes;
   final List<AnalysisSource> sources;
   final String? disclaimer;
+  final String? conclusion;
+  final List<KeyMetric> keyMetrics;
 
   const StructuredAnalysis({
     this.symbol,
@@ -190,6 +220,8 @@ class StructuredAnalysis {
     this.dataQualityNotes,
     this.sources = const [],
     this.disclaimer,
+    this.conclusion,
+    this.keyMetrics = const [],
   });
 
   factory StructuredAnalysis.fromJson(Map<String, dynamic> j) {
@@ -235,6 +267,11 @@ class StructuredAnalysis {
             AnalysisSource.fromJson(s),
       ],
       disclaimer: _str(j['disclaimer']),
+      conclusion: _str(j['conclusion']),
+      keyMetrics: [
+        for (final m in _mapList(j['key_metrics']))
+          if (KeyMetric.tryFromJson(m) != null) KeyMetric.tryFromJson(m)!,
+      ],
     );
   }
 

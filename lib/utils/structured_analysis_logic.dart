@@ -29,6 +29,46 @@ String formatLevel(double? price) {
   return price < 0 ? '-$t' : t;
 }
 
+/// Signed percent distance of [price] from [current]; null when unusable.
+double? distancePercent(double? price, double? current) {
+  if (price == null || current == null || !current.isFinite || current <= 0) {
+    return null;
+  }
+  return (price - current) / current * 100;
+}
+
+/// "+1.5%" / "-0.3%" text for a distance.
+String formatDistance(double? pct) {
+  if (pct == null || !pct.isFinite) return '';
+  final abs = pct.abs();
+  final t = abs >= 10 ? abs.toStringAsFixed(0) : abs.toStringAsFixed(1);
+  return '${pct < 0 ? '-' : '+'}$t%';
+}
+
+/// Number of drivers per direction (unknown direction counts as neutral).
+({int bull, int bear, int neutral}) driverBalance(
+  List<AnalysisDriver> drivers,
+) {
+  var bull = 0, bear = 0, neutral = 0;
+  for (final d in drivers) {
+    switch (d.direction) {
+      case AnalysisBias.bullish:
+        bull++;
+      case AnalysisBias.bearish:
+        bear++;
+      case AnalysisBias.neutral:
+      case null:
+        neutral++;
+    }
+  }
+  return (bull: bull, bear: bear, neutral: neutral);
+}
+
+/// Driver tiles start collapsed when they merely agree with the overall bias,
+/// except the first one.
+bool driverStartsExpanded(int index, AnalysisDriver d, AnalysisBias? bias) =>
+    index == 0 || bias == null || d.direction != bias;
+
 enum LevelKind { resistance, support, invalidation }
 
 class LevelEntry {

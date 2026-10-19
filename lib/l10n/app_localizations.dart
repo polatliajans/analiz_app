@@ -1827,6 +1827,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Short, neutral explanations of the terms used in analyses. For information only, not investment advice.'**
   String get glossaryIntro;
+
+  /// No description provided for @structuredConclusionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Final take'**
+  String get structuredConclusionTitle;
+
+  /// No description provided for @structuredSectionBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Driver balance'**
+  String get structuredSectionBalance;
+
+  /// No description provided for @structuredSectionLadder.
+  ///
+  /// In en, this message translates to:
+  /// **'Price ladder'**
+  String get structuredSectionLadder;
+
+  /// No description provided for @structuredSectionDataNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Data notes'**
+  String get structuredSectionDataNotes;
+
+  /// No description provided for @structuredSectionOdds.
+  ///
+  /// In en, this message translates to:
+  /// **'Scenario odds'**
+  String get structuredSectionOdds;
+
+  /// No description provided for @structuredBalanceItem.
+  ///
+  /// In en, this message translates to:
+  /// **'{label} {count}'**
+  String structuredBalanceItem(String label, int count);
 }
 
 class _AppLocalizationsDelegate

@@ -304,5 +304,12 @@
   "glossarySearchHint": "Terim ara (ör. RSI, fonlama)",
   "glossaryNoResults": "Eşleşen terim yok.",
   "glossaryLearnTerms": "Terimleri öğren",
-  "glossaryIntro": "Analizlerde geçen terimlerin kısa ve tarafsız açıklamaları. Yalnızca bilgi amaçlıdır, yatırım tavsiyesi değildir."
+  "glossaryIntro": "Analizlerde geçen terimlerin kısa ve tarafsız açıklamaları. Yalnızca bilgi amaçlıdır, yatırım tavsiyesi değildir.",
+  "structuredConclusionTitle": "Nihai düşünce",
+  "structuredSectionBalance": "Etken dengesi",
+  "structuredSectionLadder": "Fiyat merdiveni",
+  "structuredSectionDataNotes": "Veri notları",
+  "structuredSectionOdds": "Senaryo olasılıkları",
+  "structuredBalanceItem": "{label} {count}",
+  "@structuredBalanceItem": {"placeholders": {"label": {"type": "String"}, "count": {"type": "int"}}}
 }

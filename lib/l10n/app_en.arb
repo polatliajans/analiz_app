@@ -606,5 +606,12 @@
   "glossarySearchHint": "Search terms (e.g. RSI, funding)",
   "glossaryNoResults": "No matching terms.",
   "glossaryLearnTerms": "Learn the terms",
-  "glossaryIntro": "Short, neutral explanations of the terms used in analyses. For information only, not investment advice."
+  "glossaryIntro": "Short, neutral explanations of the terms used in analyses. For information only, not investment advice.",
+  "structuredConclusionTitle": "Final take",
+  "structuredSectionBalance": "Driver balance",
+  "structuredSectionLadder": "Price ladder",
+  "structuredSectionDataNotes": "Data notes",
+  "structuredSectionOdds": "Scenario odds",
+  "structuredBalanceItem": "{label} {count}",
+  "@structuredBalanceItem": {"placeholders": {"label": {"type": "String"}, "count": {"type": "int"}}}
 }
