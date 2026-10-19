@@ -70,15 +70,13 @@ void main() {
   test('transient errors are tolerated and the counter resets', () async {
     final h = _Harness();
     var calls = 0;
-    final outcome = await h
-        .poller((_) async {
-          calls++;
-          if (calls <= 5) throw Exception('offline');
-          if (calls == 6) return _job(DeepAnalysisJobStatus.running);
-          if (calls <= 11) throw Exception('offline');
-          return _job(DeepAnalysisJobStatus.completed);
-        })
-        .poll(7);
+    final outcome = await h.poller((_) async {
+      calls++;
+      if (calls <= 5) throw Exception('offline');
+      if (calls == 6) return _job(DeepAnalysisJobStatus.running);
+      if (calls <= 11) throw Exception('offline');
+      return _job(DeepAnalysisJobStatus.completed);
+    }).poll(7);
     expect(outcome, isA<PollCompleted>());
     expect(calls, 12);
   });
@@ -87,12 +85,10 @@ void main() {
     final h = _Harness();
     h.store.id = 7;
     var calls = 0;
-    final outcome = await h
-        .poller((_) async {
-          calls++;
-          throw Exception('offline');
-        })
-        .poll(7);
+    final outcome = await h.poller((_) async {
+      calls++;
+      throw Exception('offline');
+    }).poll(7);
     expect(outcome, isA<PollGaveUp>());
     expect(calls, 8);
     expect(h.store.id, 7);
@@ -102,12 +98,10 @@ void main() {
     final h = _Harness();
     h.store.id = 7;
     var calls = 0;
-    final outcome = await h
-        .poller((_) async {
-          calls++;
-          return _job(DeepAnalysisJobStatus.running);
-        })
-        .poll(7);
+    final outcome = await h.poller((_) async {
+      calls++;
+      return _job(DeepAnalysisJobStatus.running);
+    }).poll(7);
     expect(outcome, isA<PollTimedOut>());
     expect(h.time.difference(h.start).inMinutes, 8);
     expect(calls, greaterThan(100));
