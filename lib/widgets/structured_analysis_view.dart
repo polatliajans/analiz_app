@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -115,21 +117,39 @@ class StructuredAnalysisView extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
+    final hasNotes =
+        data.missingSources.isNotEmpty || data.dataQualityNotes != null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _Header(data: data),
+        if (data.keyMetrics.isNotEmpty) ...[
+          const SizedBox(height: 14),
+          _MetricGrid(metrics: data.keyMetrics),
+        ],
         if (data.summary != null) ...[
           _SectionTitle(l10n.structuredSectionSummary),
           Text(data.summary!, style: textTheme.bodyMedium),
         ],
         if (data.drivers.isNotEmpty) ...[
           _SectionTitle(l10n.structuredSectionDrivers),
-          for (final d in data.drivers) _DriverCard(driver: d),
+          _BalanceBar(drivers: data.drivers),
+          const SizedBox(height: 8),
+          for (var i = 0; i < data.drivers.length; i++)
+            _DriverTile(
+              driver: data.drivers[i],
+              initiallyExpanded: driverStartsExpanded(
+                i,
+                data.drivers[i],
+                data.bias,
+              ),
+            ),
         ],
         if (data.hasScenarios) ...[
           _SectionTitle(l10n.structuredSectionScenarios),
+          _ProbabilityBar(bull: data.bull, base: data.base, bear: data.bear),
+          const SizedBox(height: 8),
           if (data.bull != null)
             _ScenarioCard(
               label: l10n.structuredScenarioBull,
@@ -150,34 +170,69 @@ class StructuredAnalysisView extends StatelessWidget {
             ),
         ],
         if (!data.levels.isEmpty) ...[
-          _SectionTitle(l10n.structuredSectionLevels),
-          _LevelsList(levels: data.levels),
+          _SectionTitle(l10n.structuredSectionLadder),
+          _PriceLadder(levels: data.levels),
         ],
         if (data.risks.isNotEmpty) ...[
           _SectionTitle(l10n.structuredSectionRisks),
-          _Bullets(items: data.risks),
+          _Bullets(
+            items: data.risks,
+            icon: Icons.warning_amber_rounded,
+            color: _bearColor,
+          ),
         ],
         if (data.watch.isNotEmpty) ...[
           _SectionTitle(l10n.structuredSectionWatch),
-          _Bullets(items: data.watch),
-        ],
-        if (data.missingSources.isNotEmpty) ...[
-          const SizedBox(height: 12),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(Icons.warning_amber_rounded, size: 16, color: scheme.error),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  l10n.structuredDataMissing(data.missingSources.join(', ')),
-                  style: textTheme.bodySmall?.copyWith(
-                    color: scheme.onSurfaceVariant,
-                  ),
-                ),
-              ),
-            ],
+          _Bullets(
+            items: data.watch,
+            icon: Icons.visibility_outlined,
+            color: scheme.primary,
           ),
+        ],
+        if (hasNotes) ...[
+          const SizedBox(height: 12),
+          Theme(
+            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+            child: ExpansionTile(
+              key: const Key('data_notes'),
+              tilePadding: EdgeInsets.zero,
+              childrenPadding: const EdgeInsets.only(bottom: 8),
+              expandedCrossAxisAlignment: CrossAxisAlignment.start,
+              dense: true,
+              leading: Icon(
+                Icons.info_outline,
+                size: 18,
+                color: scheme.onSurfaceVariant,
+              ),
+              title: Text(
+                l10n.structuredSectionDataNotes,
+                style: textTheme.titleSmall,
+              ),
+              children: [
+                if (data.missingSources.isNotEmpty)
+                  Text(
+                    l10n.structuredDataMissing(data.missingSources.join(', ')),
+                    style: textTheme.bodySmall?.copyWith(
+                      color: scheme.onSurfaceVariant,
+                    ),
+                  ),
+                if (data.dataQualityNotes != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Text(
+                      data.dataQualityNotes!,
+                      style: textTheme.bodySmall?.copyWith(
+                        color: scheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
+        if (data.conclusion != null) ...[
+          const SizedBox(height: 18),
+          _ConclusionCard(text: data.conclusion!, bias: data.bias),
         ],
         if (data.sources.isNotEmpty) ...[
           _SectionTitle(l10n.structuredSectionSources),
@@ -233,6 +288,77 @@ class _SectionTitle extends StatelessWidget {
   );
 }
 
+/// Semi-circle confidence gauge with the score in the middle.
+class _ConfidenceGauge extends StatelessWidget {
+  final int value;
+  final Color color;
+  const _ConfidenceGauge({required this.value, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return SizedBox(
+      key: const Key('confidence_gauge'),
+      width: 108,
+      height: 62,
+      child: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          Positioned.fill(
+            child: CustomPaint(painter: _GaugePainter(value / 100, color)),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 2),
+            child: Text(
+              '$value',
+              style: textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.w800,
+                height: 1,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _GaugePainter extends CustomPainter {
+  final double fraction;
+  final Color color;
+  _GaugePainter(this.fraction, this.color);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    const stroke = 10.0;
+    final rect = Rect.fromLTWH(
+      stroke / 2,
+      stroke / 2,
+      size.width - stroke,
+      size.width - stroke,
+    );
+    final track = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = stroke
+      ..strokeCap = StrokeCap.round
+      ..color = color.withValues(alpha: 0.18);
+    canvas.drawArc(rect, math.pi, math.pi, false, track);
+    final f = fraction.clamp(0.0, 1.0);
+    if (f > 0) {
+      final fill = Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = stroke
+        ..strokeCap = StrokeCap.round
+        ..color = color;
+      canvas.drawArc(rect, math.pi, math.pi * f, false, fill);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_GaugePainter old) =>
+      old.fraction != fraction || old.color != color;
+}
+
 class _Header extends StatelessWidget {
   final StructuredAnalysis data;
   const _Header({required this.data});
@@ -253,31 +379,7 @@ class _Header extends StatelessWidget {
     return Row(
       children: [
         if (conf != null) ...[
-          SizedBox(
-            width: 56,
-            height: 56,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                SizedBox(
-                  width: 56,
-                  height: 56,
-                  child: CircularProgressIndicator(
-                    value: conf / 100,
-                    strokeWidth: 5,
-                    color: color,
-                    backgroundColor: color.withValues(alpha: 0.15),
-                  ),
-                ),
-                Text(
-                  '$conf',
-                  style: textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          _ConfidenceGauge(value: conf, color: color),
           const SizedBox(width: 12),
         ],
         Expanded(
@@ -309,42 +411,325 @@ class _Header extends StatelessWidget {
   }
 }
 
-class _DriverCard extends StatelessWidget {
-  final AnalysisDriver driver;
-  const _DriverCard({required this.driver});
+class _MetricGrid extends StatelessWidget {
+  final List<KeyMetric> metrics;
+  const _MetricGrid({required this.metrics});
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, c) {
+        const gap = 8.0;
+        final w = c.maxWidth.isFinite ? (c.maxWidth - gap) / 2 : 150.0;
+        return Wrap(
+          key: const Key('key_metrics'),
+          spacing: gap,
+          runSpacing: gap,
+          children: [
+            for (final m in metrics)
+              SizedBox(
+                width: w,
+                child: _MetricTile(metric: m),
+              ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _MetricTile extends StatelessWidget {
+  final KeyMetric metric;
+  const _MetricTile({required this.metric});
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
-    final color = biasColor(driver.direction, scheme);
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(biasIcon(driver.direction), size: 20, color: color),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    driver.title ?? driver.detail ?? '',
-                    style: textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+    final color = biasColor(metric.tone, scheme);
+    return Container(
+      padding: const EdgeInsets.fromLTRB(10, 8, 8, 8),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(10),
+        border: Border(left: BorderSide(color: color, width: 3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  metric.label,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: textTheme.labelSmall?.copyWith(
+                    color: scheme.onSurfaceVariant,
                   ),
                 ),
-              ],
-            ),
-            if (driver.title != null && driver.detail != null) ...[
-              const SizedBox(height: 4),
-              Text(driver.detail!, style: textTheme.bodyMedium),
+              ),
+              Icon(biasIcon(metric.tone), size: 14, color: color),
             ],
+          ),
+          const SizedBox(height: 2),
+          Text(
+            metric.value,
+            style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
+          ),
+          if (metric.hint != null)
+            Text(
+              metric.hint!,
+              style: textTheme.labelSmall?.copyWith(
+                color: scheme.onSurfaceVariant,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Legend extends StatelessWidget {
+  final List<(Color, String)> items;
+  const _Legend({required this.items});
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Wrap(
+      spacing: 14,
+      runSpacing: 2,
+      children: [
+        for (final (color, text) in items)
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+              ),
+              const SizedBox(width: 5),
+              Text(text, style: textTheme.bodySmall),
+            ],
+          ),
+      ],
+    );
+  }
+}
+
+/// Segmented horizontal bar; zero-weight segments are skipped.
+class _SegmentBar extends StatelessWidget {
+  final List<(Color, double, String?)> segments;
+  const _SegmentBar({super.key, required this.segments});
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final visible = [
+      for (final s in segments)
+        if (s.$2 > 0) s,
+    ];
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(6),
+      child: SizedBox(
+        height: 22,
+        child: Row(
+          children: [
+            for (final s in visible)
+              Expanded(
+                flex: math.max(1, (s.$2 * 1000).round()),
+                child: Container(
+                  color: s.$1,
+                  alignment: Alignment.center,
+                  child: s.$3 == null
+                      ? null
+                      : Text(
+                          s.$3!,
+                          maxLines: 1,
+                          overflow: TextOverflow.clip,
+                          softWrap: false,
+                          style: textTheme.labelSmall?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                ),
+              ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _BalanceBar extends StatelessWidget {
+  final List<AnalysisDriver> drivers;
+  const _BalanceBar({required this.drivers});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final scheme = Theme.of(context).colorScheme;
+    final b = driverBalance(drivers);
+    return Column(
+      key: const Key('balance_bar'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          l10n.structuredSectionBalance,
+          style: Theme.of(
+            context,
+          ).textTheme.labelMedium?.copyWith(color: scheme.onSurfaceVariant),
+        ),
+        const SizedBox(height: 4),
+        _SegmentBar(
+          segments: [
+            (_bullColor, b.bull.toDouble(), null),
+            (scheme.outline, b.neutral.toDouble(), null),
+            (_bearColor, b.bear.toDouble(), null),
+          ],
+        ),
+        const SizedBox(height: 4),
+        _Legend(
+          items: [
+            (
+              _bullColor,
+              l10n.structuredBalanceItem(
+                biasLabel(l10n, AnalysisBias.bullish),
+                b.bull,
+              ),
+            ),
+            (
+              scheme.outline,
+              l10n.structuredBalanceItem(
+                biasLabel(l10n, AnalysisBias.neutral),
+                b.neutral,
+              ),
+            ),
+            (
+              _bearColor,
+              l10n.structuredBalanceItem(
+                biasLabel(l10n, AnalysisBias.bearish),
+                b.bear,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _ProbabilityBar extends StatelessWidget {
+  final AnalysisScenario? bull;
+  final AnalysisScenario? base;
+  final AnalysisScenario? bear;
+  const _ProbabilityBar({this.bull, this.base, this.bear});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final scheme = Theme.of(context).colorScheme;
+    final entries = <(Color, String, int?)>[
+      (
+        _bullColor,
+        l10n.structuredScenarioBull,
+        probabilityPercent(bull?.probability),
+      ),
+      (
+        scheme.outline,
+        l10n.structuredScenarioBase,
+        probabilityPercent(base?.probability),
+      ),
+      (
+        _bearColor,
+        l10n.structuredScenarioBear,
+        probabilityPercent(bear?.probability),
+      ),
+    ];
+    final known = [
+      for (final e in entries)
+        if (e.$3 != null) e,
+    ];
+    if (known.isEmpty) return const SizedBox.shrink();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _SegmentBar(
+          key: const Key('probability_bar'),
+          segments: [
+            for (final e in known) (e.$1, e.$3!.toDouble(), '${e.$3}%'),
+          ],
+        ),
+        const SizedBox(height: 4),
+        _Legend(items: [for (final e in known) (e.$1, '${e.$2} ${e.$3}%')]),
+      ],
+    );
+  }
+}
+
+class _DriverTile extends StatefulWidget {
+  final AnalysisDriver driver;
+  final bool initiallyExpanded;
+  const _DriverTile({required this.driver, required this.initiallyExpanded});
+
+  @override
+  State<_DriverTile> createState() => _DriverTileState();
+}
+
+class _DriverTileState extends State<_DriverTile> {
+  late bool _expanded = widget.initiallyExpanded;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final scheme = Theme.of(context).colorScheme;
+    final d = widget.driver;
+    final color = biasColor(d.direction, scheme);
+    final expandable = d.title != null && d.detail != null;
+
+    final header = Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(biasIcon(d.direction), size: 20, color: color),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            d.title ?? d.detail ?? '',
+            style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+          ),
+        ),
+        if (expandable)
+          Icon(
+            _expanded ? Icons.expand_less : Icons.expand_more,
+            size: 20,
+            color: scheme.onSurfaceVariant,
+          ),
+      ],
+    );
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 6),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: expandable ? () => setState(() => _expanded = !_expanded) : null,
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border(left: BorderSide(color: color, width: 3)),
+          ),
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              header,
+              if (expandable && _expanded) ...[
+                const SizedBox(height: 6),
+                Text(d.detail!, style: textTheme.bodyMedium),
+              ],
+            ],
+          ),
         ),
       ),
     );
@@ -367,12 +752,15 @@ class _ScenarioCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
-    final fraction = probabilityFraction(scenario.probability);
     final percent = probabilityPercent(scenario.probability);
 
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
-      child: Padding(
+      clipBehavior: Clip.antiAlias,
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border(left: BorderSide(color: color, width: 3)),
+        ),
         padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -392,20 +780,8 @@ class _ScenarioCard extends StatelessWidget {
                   Text('$percent%', style: textTheme.titleSmall),
               ],
             ),
-            if (fraction != null) ...[
-              const SizedBox(height: 6),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(4),
-                child: LinearProgressIndicator(
-                  value: fraction,
-                  minHeight: 8,
-                  color: color,
-                  backgroundColor: color.withValues(alpha: 0.15),
-                ),
-              ),
-            ],
             if (scenario.description != null) ...[
-              const SizedBox(height: 8),
+              const SizedBox(height: 6),
               Text(scenario.description!, style: textTheme.bodyMedium),
             ],
             if (scenario.triggerLevel != null || scenario.target != null) ...[
@@ -442,9 +818,12 @@ class _ScenarioCard extends StatelessWidget {
   }
 }
 
-class _LevelsList extends StatelessWidget {
+/// Vertical level ladder: resistances on top, supports and invalidation below,
+/// current price highlighted, each with its distance from the current price
+/// and a bar scaled to the farthest level.
+class _PriceLadder extends StatelessWidget {
   final AnalysisLevels levels;
-  const _LevelsList({required this.levels});
+  const _PriceLadder({required this.levels});
 
   @override
   Widget build(BuildContext context) {
@@ -453,62 +832,202 @@ class _LevelsList extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final entries = sortedLevels(levels);
     final current = levels.priceAtAnalysis;
-    var currentInserted = current == null;
 
-    Widget row(String label, double price, Color color, {bool bold = false}) =>
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 3),
-          child: Row(
-            children: [
-              Container(
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-              ),
-              const SizedBox(width: 8),
-              Expanded(child: Text(label, style: textTheme.bodyMedium)),
-              const SizedBox(width: 8),
-              Text(
-                formatLevel(price),
-                style: textTheme.bodyMedium?.copyWith(
-                  fontWeight: bold ? FontWeight.w700 : FontWeight.w500,
+    double maxDist = 0;
+    for (final e in entries) {
+      final d = distancePercent(e.price, current);
+      if (d != null && d.abs() > maxDist) maxDist = d.abs();
+    }
+
+    Widget row({
+      required String label,
+      required double price,
+      required Color color,
+      bool isCurrent = false,
+    }) {
+      final dist = isCurrent ? null : distancePercent(price, current);
+      final distText = formatDistance(dist);
+      final barFraction = (dist == null || maxDist <= 0)
+          ? 0.0
+          : (dist.abs() / maxDist).clamp(0.04, 1.0);
+      return Container(
+        margin: const EdgeInsets.symmetric(vertical: 2),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: isCurrent
+              ? scheme.primary.withValues(alpha: 0.12)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(8),
+          border: isCurrent
+              ? Border.all(color: scheme.primary.withValues(alpha: 0.6))
+              : null,
+        ),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 10,
+                  height: 10,
+                  decoration: BoxDecoration(
+                    color: color,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    label,
+                    style: textTheme.bodyMedium?.copyWith(
+                      fontWeight: isCurrent ? FontWeight.w700 : null,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  formatLevel(price),
+                  style: textTheme.bodyMedium?.copyWith(
+                    fontWeight: isCurrent ? FontWeight.w800 : FontWeight.w600,
+                  ),
+                ),
+                if (distText.isNotEmpty) ...[
+                  const SizedBox(width: 8),
+                  SizedBox(
+                    width: 52,
+                    child: Text(
+                      distText,
+                      textAlign: TextAlign.end,
+                      style: textTheme.bodySmall?.copyWith(
+                        color: color,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+            if (barFraction > 0) ...[
+              const SizedBox(height: 4),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: FractionallySizedBox(
+                  widthFactor: barFraction,
+                  child: Container(
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: color.withValues(alpha: 0.7),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
                 ),
               ),
             ],
-          ),
-        );
+          ],
+        ),
+      );
+    }
 
     final rows = <Widget>[];
+    var currentInserted = current == null;
+    void addCurrent() => rows.add(
+      row(
+        label: l10n.structuredLevelPrice,
+        price: current!,
+        color: scheme.primary,
+        isCurrent: true,
+      ),
+    );
     for (final e in entries) {
       if (!currentInserted && current! >= e.price) {
-        rows.add(
-          row(l10n.structuredLevelPrice, current, scheme.primary, bold: true),
-        );
+        addCurrent();
         currentInserted = true;
       }
       switch (e.kind) {
         case LevelKind.resistance:
-          rows.add(row(l10n.structuredLevelResistance, e.price, _bearColor));
+          rows.add(
+            row(
+              label: l10n.structuredLevelResistance,
+              price: e.price,
+              color: _bearColor,
+            ),
+          );
         case LevelKind.support:
-          rows.add(row(l10n.structuredLevelSupport, e.price, _bullColor));
+          rows.add(
+            row(
+              label: l10n.structuredLevelSupport,
+              price: e.price,
+              color: _bullColor,
+            ),
+          );
         case LevelKind.invalidation:
           rows.add(
-            row(l10n.structuredLevelInvalidation, e.price, scheme.error),
+            row(
+              label: l10n.structuredLevelInvalidation,
+              price: e.price,
+              color: scheme.error,
+            ),
           );
       }
     }
-    if (!currentInserted) {
-      rows.add(
-        row(l10n.structuredLevelPrice, current!, scheme.primary, bold: true),
-      );
-    }
-    return Column(children: rows);
+    if (!currentInserted) addCurrent();
+    return Column(key: const Key('price_ladder'), children: rows);
+  }
+}
+
+class _ConclusionCard extends StatelessWidget {
+  final String text;
+  final AnalysisBias? bias;
+  const _ConclusionCard({required this.text, required this.bias});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final textTheme = Theme.of(context).textTheme;
+    final color = biasColor(bias, Theme.of(context).colorScheme);
+    return Container(
+      key: const Key('conclusion_card'),
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(12),
+        border: Border(left: BorderSide(color: color, width: 5)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(biasIcon(bias), size: 20, color: color),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  l10n.structuredConclusionTitle,
+                  style: textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    color: color,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(text, style: textTheme.bodyMedium),
+        ],
+      ),
+    );
   }
 }
 
 class _Bullets extends StatelessWidget {
   final List<String> items;
-  const _Bullets({required this.items});
+  final IconData icon;
+  final Color color;
+  const _Bullets({
+    required this.items,
+    required this.icon,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -518,11 +1037,15 @@ class _Bullets extends StatelessWidget {
       children: [
         for (final item in items)
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 2),
+            padding: const EdgeInsets.symmetric(vertical: 3),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('• ', style: textTheme.bodyMedium),
+                Padding(
+                  padding: const EdgeInsets.only(top: 2),
+                  child: Icon(icon, size: 16, color: color),
+                ),
+                const SizedBox(width: 8),
                 Expanded(child: Text(item, style: textTheme.bodyMedium)),
               ],
             ),

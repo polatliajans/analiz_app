@@ -57,8 +57,10 @@ void main() {
       expect(a.jobId, 12);
       expect(a.requiresLogin, isTrue);
       expect(
-        resolveNotificationTarget({'screen': 'deep_analysis', 'job_id': 3})
-            .jobId,
+        resolveNotificationTarget({
+          'screen': 'deep_analysis',
+          'job_id': 3,
+        }).jobId,
         3,
       );
       expect(

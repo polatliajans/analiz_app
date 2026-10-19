@@ -265,4 +265,165 @@ void main() {
     expect(find.text('Bullish'), findsOneWidget);
     expect(find.text('Sources'), findsOneWidget);
   });
+
+  group('redesigned view', () {
+    Widget host(
+      Map<String, dynamic> json, {
+      ThemeData? theme,
+      double textScale = 1,
+    }) {
+      return MaterialApp(
+        theme: theme,
+        locale: const Locale('en'),
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Builder(
+          builder: (context) => MediaQuery(
+            data: MediaQuery.of(
+              context,
+            ).copyWith(textScaler: TextScaler.linear(textScale)),
+            child: Scaffold(
+              body: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: StructuredAnalysisView(
+                  data: StructuredAnalysis.fromJson(json),
+                  creditCost: 3,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    Future<void> narrow(WidgetTester t) async {
+      t.view.physicalSize = const Size(360, 800);
+      t.view.devicePixelRatio = 1;
+      addTearDown(t.view.reset);
+    }
+
+    Map<String, dynamic> withNew() => {
+      ..._full(),
+      'conclusion': 'Stay long above support.',
+      'key_metrics': [
+        {'label': 'RSI', 'value': '61', 'tone': 'bullish', 'hint': 'Strong'},
+        {'label': 'Funding', 'value': '0.01%', 'tone': 'neutral', 'hint': ''},
+        {'label': 'OI', 'value': '-4%', 'tone': 'bearish', 'hint': 'Falling'},
+        {'label': '', 'value': 'dropped'},
+      ],
+    };
+
+    testWidgets('old format renders without new sections', (t) async {
+      await narrow(t);
+      await t.pumpWidget(host(_full()));
+      await t.pumpAndSettle();
+      expect(t.takeException(), isNull);
+      expect(find.byKey(const Key('conclusion_card')), findsNothing);
+      expect(find.byKey(const Key('key_metrics')), findsNothing);
+      expect(find.byKey(const Key('confidence_gauge')), findsOneWidget);
+      expect(find.byKey(const Key('price_ladder')), findsOneWidget);
+      expect(find.text('Uptrend intact.'), findsOneWidget);
+    });
+
+    testWidgets('new format shows metric tiles and conclusion', (t) async {
+      await narrow(t);
+      await t.pumpWidget(host(withNew()));
+      await t.pumpAndSettle();
+      expect(t.takeException(), isNull);
+      expect(find.byKey(const Key('key_metrics')), findsOneWidget);
+      expect(find.text('RSI'), findsOneWidget);
+      expect(find.text('0.01%'), findsOneWidget);
+      expect(find.text('Falling'), findsOneWidget);
+      expect(find.text('dropped'), findsNothing);
+      expect(find.byKey(const Key('conclusion_card')), findsOneWidget);
+      expect(find.text('Final take'), findsOneWidget);
+      expect(find.text('Stay long above support.'), findsOneWidget);
+      // Conclusion sits above the disclaimer.
+      expect(
+        t.getTopLeft(find.byKey(const Key('conclusion_card'))).dy,
+        lessThan(t.getTopLeft(find.text('Not advice')).dy),
+      );
+    });
+
+    testWidgets('stacked probability bar shows given probabilities', (t) async {
+      await narrow(t);
+      await t.pumpWidget(host(_full()));
+      await t.pumpAndSettle();
+      final bar = find.byKey(const Key('probability_bar'));
+      expect(bar, findsOneWidget);
+      expect(
+        find.descendant(of: bar, matching: find.text('50%')),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(of: bar, matching: find.text('30%')),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(of: bar, matching: find.text('20%')),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('driver tile expands and collapses on tap', (t) async {
+      await narrow(t);
+      final json = {
+        ..._full(),
+        'drivers': [
+          {'title': 'First', 'detail': 'First detail', 'direction': 'bullish'},
+          {
+            'title': 'Second',
+            'detail': 'Second detail',
+            'direction': 'bullish',
+          },
+          {'title': 'Third', 'detail': 'Third detail', 'direction': 'bearish'},
+        ],
+      };
+      await t.pumpWidget(host(json));
+      await t.pumpAndSettle();
+      // First always open, aligned-with-bias collapsed, others open.
+      expect(find.text('First detail'), findsOneWidget);
+      expect(find.text('Second detail'), findsNothing);
+      expect(find.text('Third detail'), findsOneWidget);
+      await t.ensureVisible(find.text('Second'));
+      await t.tap(find.text('Second'));
+      await t.pumpAndSettle();
+      expect(find.text('Second detail'), findsOneWidget);
+      await t.tap(find.text('Second'));
+      await t.pumpAndSettle();
+      expect(find.text('Second detail'), findsNothing);
+    });
+
+    testWidgets('data notes are collapsed until tapped', (t) async {
+      await narrow(t);
+      await t.pumpWidget(host(_full()));
+      await t.pumpAndSettle();
+      expect(find.text('Data notes'), findsOneWidget);
+      expect(find.text('x'), findsNothing);
+      await t.ensureVisible(find.text('Data notes'));
+      await t.tap(find.text('Data notes'));
+      await t.pumpAndSettle();
+      expect(find.text('x'), findsOneWidget);
+    });
+
+    testWidgets('no overflow at 360dp, large text, new format', (t) async {
+      await narrow(t);
+      await t.pumpWidget(host(withNew(), textScale: 1.6));
+      await t.pumpAndSettle();
+      expect(t.takeException(), isNull);
+    });
+
+    testWidgets('dark theme smoke', (t) async {
+      await narrow(t);
+      await t.pumpWidget(host(withNew(), theme: ThemeData.dark()));
+      await t.pumpAndSettle();
+      expect(t.takeException(), isNull);
+      expect(find.byKey(const Key('conclusion_card')), findsOneWidget);
+    });
+  });
 }
