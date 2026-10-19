@@ -344,32 +344,6 @@ class _DriverCard extends StatelessWidget {
               const SizedBox(height: 4),
               Text(driver.detail!, style: textTheme.bodyMedium),
             ],
-            if (driver.evidence.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 6,
-                runSpacing: 4,
-                children: [
-                  for (final e in driver.evidence)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: scheme.surfaceContainerHighest,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Text(
-                        e,
-                        style: textTheme.labelSmall?.copyWith(
-                          color: scheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ],
           ],
         ),
       ),
