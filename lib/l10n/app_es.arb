@@ -299,5 +299,10 @@
   "structuredLevelPrice": "Precio en el análisis",
   "structuredDataMissing": "Algunas fuentes de datos no estuvieron disponibles: {sources}",
   "structuredDisclaimer": "No es asesoramiento de inversión.",
-  "structuredSourceOpenFailed": "No se pudo abrir el enlace."
+  "structuredSourceOpenFailed": "No se pudo abrir el enlace.",
+  "glossaryTitle": "Glosario de términos técnicos",
+  "glossarySearchHint": "Buscar términos (p. ej. RSI, funding)",
+  "glossaryNoResults": "No hay términos coincidentes.",
+  "glossaryLearnTerms": "Aprende los términos",
+  "glossaryIntro": "Explicaciones breves y neutrales de los términos usados en los análisis. Solo informativo, no es asesoramiento de inversión."
 }

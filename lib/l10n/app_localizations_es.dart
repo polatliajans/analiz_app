@@ -1055,4 +1055,20 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get structuredSourceOpenFailed => 'No se pudo abrir el enlace.';
+
+  @override
+  String get glossaryTitle => 'Glosario de términos técnicos';
+
+  @override
+  String get glossarySearchHint => 'Buscar términos (p. ej. RSI, funding)';
+
+  @override
+  String get glossaryNoResults => 'No hay términos coincidentes.';
+
+  @override
+  String get glossaryLearnTerms => 'Aprende los términos';
+
+  @override
+  String get glossaryIntro =>
+      'Explicaciones breves y neutrales de los términos usados en los análisis. Solo informativo, no es asesoramiento de inversión.';
 }

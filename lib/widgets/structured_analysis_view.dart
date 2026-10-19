@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../l10n/app_localizations.dart';
 import '../models/structured_analysis.dart';
+import '../screens/glossary_screen.dart';
 import '../utils/structured_analysis_logic.dart';
 
 const _bullColor = Color(0xFF2E9E5B);
@@ -182,6 +183,15 @@ class StructuredAnalysisView extends StatelessWidget {
           _SectionTitle(l10n.structuredSectionSources),
           for (final s in data.sources) _SourceTile(source: s),
         ],
+        const SizedBox(height: 12),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: TextButton.icon(
+            onPressed: () => openGlossary(context),
+            icon: const Icon(Icons.menu_book_outlined, size: 18),
+            label: Text(l10n.glossaryLearnTerms),
+          ),
+        ),
         const SizedBox(height: 16),
         Text(
           data.disclaimer ?? l10n.structuredDisclaimer,

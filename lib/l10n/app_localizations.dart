@@ -1797,6 +1797,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t open the link.'**
   String get structuredSourceOpenFailed;
+
+  /// No description provided for @glossaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Glossary of technical terms'**
+  String get glossaryTitle;
+
+  /// No description provided for @glossarySearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search terms (e.g. RSI, funding)'**
+  String get glossarySearchHint;
+
+  /// No description provided for @glossaryNoResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching terms.'**
+  String get glossaryNoResults;
+
+  /// No description provided for @glossaryLearnTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'Learn the terms'**
+  String get glossaryLearnTerms;
+
+  /// No description provided for @glossaryIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Short, neutral explanations of the terms used in analyses. For information only, not investment advice.'**
+  String get glossaryIntro;
 }
 
 class _AppLocalizationsDelegate

@@ -299,5 +299,10 @@
   "structuredLevelPrice": "Analiz anındaki fiyat",
   "structuredDataMissing": "Bazı veri kaynakları alınamadı: {sources}",
   "structuredDisclaimer": "Yatırım tavsiyesi değildir.",
-  "structuredSourceOpenFailed": "Bağlantı açılamadı."
+  "structuredSourceOpenFailed": "Bağlantı açılamadı.",
+  "glossaryTitle": "Teknik Terimler Sözlüğü",
+  "glossarySearchHint": "Terim ara (ör. RSI, fonlama)",
+  "glossaryNoResults": "Eşleşen terim yok.",
+  "glossaryLearnTerms": "Terimleri öğren",
+  "glossaryIntro": "Analizlerde geçen terimlerin kısa ve tarafsız açıklamaları. Yalnızca bilgi amaçlıdır, yatırım tavsiyesi değildir."
 }

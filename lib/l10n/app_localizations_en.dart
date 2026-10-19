@@ -1042,4 +1042,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get structuredSourceOpenFailed => 'Couldn\'t open the link.';
+
+  @override
+  String get glossaryTitle => 'Glossary of technical terms';
+
+  @override
+  String get glossarySearchHint => 'Search terms (e.g. RSI, funding)';
+
+  @override
+  String get glossaryNoResults => 'No matching terms.';
+
+  @override
+  String get glossaryLearnTerms => 'Learn the terms';
+
+  @override
+  String get glossaryIntro =>
+      'Short, neutral explanations of the terms used in analyses. For information only, not investment advice.';
 }

@@ -9,6 +9,7 @@ import '../l10n/app_localizations.dart';
 import '../providers/auth_provider.dart';
 import '../providers/locale_provider.dart';
 import '../widgets/notification_settings_section.dart';
+import 'glossary_screen.dart';
 import 'onboarding_screen.dart';
 
 final _packageInfoProvider = FutureProvider<PackageInfo>(
@@ -102,6 +103,12 @@ class SettingsScreen extends ConsumerWidget {
                 builder: (_) => const OnboardingScreen(replay: true),
               ),
             ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.menu_book_outlined),
+            title: Text(l10n.glossaryTitle),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => openGlossary(context),
           ),
           const Divider(),
           Padding(

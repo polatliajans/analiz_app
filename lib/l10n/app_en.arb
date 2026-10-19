@@ -601,5 +601,10 @@
   "structuredDataMissing": "Some data sources were unavailable: {sources}",
   "@structuredDataMissing": {"placeholders": {"sources": {"type": "String"}}},
   "structuredDisclaimer": "Not investment advice.",
-  "structuredSourceOpenFailed": "Couldn't open the link."
+  "structuredSourceOpenFailed": "Couldn't open the link.",
+  "glossaryTitle": "Glossary of technical terms",
+  "glossarySearchHint": "Search terms (e.g. RSI, funding)",
+  "glossaryNoResults": "No matching terms.",
+  "glossaryLearnTerms": "Learn the terms",
+  "glossaryIntro": "Short, neutral explanations of the terms used in analyses. For information only, not investment advice."
 }

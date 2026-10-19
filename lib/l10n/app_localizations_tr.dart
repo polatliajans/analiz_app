@@ -1013,4 +1013,20 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get structuredSourceOpenFailed => 'Bağlantı açılamadı.';
+
+  @override
+  String get glossaryTitle => 'Teknik Terimler Sözlüğü';
+
+  @override
+  String get glossarySearchHint => 'Terim ara (ör. RSI, fonlama)';
+
+  @override
+  String get glossaryNoResults => 'Eşleşen terim yok.';
+
+  @override
+  String get glossaryLearnTerms => 'Terimleri öğren';
+
+  @override
+  String get glossaryIntro =>
+      'Analizlerde geçen terimlerin kısa ve tarafsız açıklamaları. Yalnızca bilgi amaçlıdır, yatırım tavsiyesi değildir.';
 }
