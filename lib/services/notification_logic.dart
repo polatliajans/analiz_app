@@ -9,28 +9,32 @@ enum NotificationScreen {
   radar,
   alarms,
   chart,
+  deepAnalysis,
 }
 
 class NotificationTarget {
   final NotificationScreen screen;
   final int? coinId;
+  final int? jobId;
 
-  const NotificationTarget(this.screen, {this.coinId});
+  const NotificationTarget(this.screen, {this.coinId, this.jobId});
 
   /// Screens that only make sense for a signed-in member.
   bool get requiresLogin =>
       screen == NotificationScreen.creditPackages ||
       screen == NotificationScreen.subscription ||
-      screen == NotificationScreen.alarms;
+      screen == NotificationScreen.alarms ||
+      screen == NotificationScreen.deepAnalysis;
 
   @override
   bool operator ==(Object other) =>
       other is NotificationTarget &&
       other.screen == screen &&
-      other.coinId == coinId;
+      other.coinId == coinId &&
+      other.jobId == jobId;
 
   @override
-  int get hashCode => Object.hash(screen, coinId);
+  int get hashCode => Object.hash(screen, coinId, jobId);
 }
 
 const _screenByName = <String, NotificationScreen>{
@@ -41,7 +45,11 @@ const _screenByName = <String, NotificationScreen>{
   'radar': NotificationScreen.radar,
   'alarms': NotificationScreen.alarms,
   'chart': NotificationScreen.chart,
+  'deep_analysis': NotificationScreen.deepAnalysis,
 };
+
+int? _intOf(Object? raw) =>
+    raw is num ? raw.toInt() : int.tryParse('${raw ?? ""}');
 
 /// Turns an FCM `data` map into a navigation target. Unknown or missing
 /// screens only open the app.
@@ -49,10 +57,11 @@ NotificationTarget resolveNotificationTarget(Map<String, dynamic> data) {
   final name = data['screen'];
   final screen = name is String ? _screenByName[name] : null;
   if (screen == null) return const NotificationTarget(NotificationScreen.none);
+  if (screen == NotificationScreen.deepAnalysis) {
+    return NotificationTarget(screen, jobId: _intOf(data['job_id']));
+  }
   if (screen != NotificationScreen.chart) return NotificationTarget(screen);
-  final raw = data['coin_id'];
-  final coinId = raw is num ? raw.toInt() : int.tryParse('${raw ?? ""}');
-  return NotificationTarget(screen, coinId: coinId);
+  return NotificationTarget(screen, coinId: _intOf(data['coin_id']));
 }
 
 /// Local notifications carry the FCM `data` map as a JSON payload.

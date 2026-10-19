@@ -47,6 +47,26 @@ void main() {
       );
     });
 
+    test('deep_analysis carries the job id and needs login', () {
+      final a = resolveNotificationTarget({
+        'screen': 'deep_analysis',
+        'job_id': '12',
+        'analysis_id': '5',
+      });
+      expect(a.screen, NotificationScreen.deepAnalysis);
+      expect(a.jobId, 12);
+      expect(a.requiresLogin, isTrue);
+      expect(
+        resolveNotificationTarget({'screen': 'deep_analysis', 'job_id': 3})
+            .jobId,
+        3,
+      );
+      expect(
+        resolveNotificationTarget({'screen': 'deep_analysis'}).jobId,
+        isNull,
+      );
+    });
+
     test('unknown or missing screen only opens the app', () {
       expect(
         resolveNotificationTarget({'screen': 'nope'}).screen,

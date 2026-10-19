@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/coin.dart';
 import '../providers/coin_list_provider.dart';
+import '../providers/deep_analysis_provider.dart';
 import '../providers/home_tab_provider.dart';
 import '../providers/price_alert_provider.dart';
 import '../providers/selected_coin_provider.dart';
@@ -63,6 +64,12 @@ Future<void> applyNotificationTarget(
         final context = navigator.overlay?.context;
         if (context != null) showProUpsell(context, ProFeature.priceAlert);
       }
+    case NotificationScreen.deepAnalysis:
+      // The chart tab shows the result sheet once the job has been fetched.
+      tabs.select(chartTabIndex);
+      final jobId = target.jobId;
+      if (jobId == null) return;
+      ref.read(deepAnalysisProvider.notifier).openJob(jobId);
     case NotificationScreen.chart:
       tabs.select(chartTabIndex);
       final id = target.coinId;
