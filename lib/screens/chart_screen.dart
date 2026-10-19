@@ -116,6 +116,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
         result: analysis.result,
         creditCost: analysis.creditCost,
         structured: analysis.structured,
+        generatedAt: analysis.generatedAt,
       );
       if (!mounted) return;
       await ads.maybeShowInterstitial();

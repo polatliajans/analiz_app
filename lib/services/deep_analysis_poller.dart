@@ -63,6 +63,11 @@ class PollNotFound extends PollOutcome {
   const PollNotFound();
 }
 
+/// A freshly started job may already be completed on the first poll (shared
+/// cache hit). Keep the waiting card up for at least this long so the user
+/// still sees "analysis in progress" before the result opens.
+const minWaitingCardDuration = Duration(seconds: 2);
+
 typedef FetchJob = Future<DeepAnalysisJob> Function(int jobId);
 
 /// Polls a deep-analysis job until it finishes. Clock and delay are
@@ -109,7 +114,15 @@ class DeepAnalysisPoller {
 
   /// Polls until a terminal state. With [persist] false (opening an old job
   /// from a push) the stored active id is left alone.
-  Future<PollOutcome> poll(int jobId, {bool persist = true}) async {
+  ///
+  /// With [minDuration], a completed outcome is held back until that much time
+  /// has passed since the poll began (real analyses are never delayed beyond
+  /// their real duration).
+  Future<PollOutcome> poll(
+    int jobId, {
+    bool persist = true,
+    Duration minDuration = Duration.zero,
+  }) async {
     final generation = ++_generation;
     _cancelled = false;
     _active++;
@@ -124,9 +137,15 @@ class DeepAnalysisPoller {
           onJob?.call(job);
           if (job.status.isTerminal) {
             if (persist) await _clearIfCurrent(jobId);
-            return job.status == DeepAnalysisJobStatus.completed
-                ? PollCompleted(job)
-                : PollFailed(job);
+            if (job.status == DeepAnalysisJobStatus.completed) {
+              final remaining = minDuration - now().difference(started);
+              if (remaining > Duration.zero) {
+                await delay(remaining);
+                if (generation != _generation) return const PollCancelled();
+              }
+              return PollCompleted(job);
+            }
+            return PollFailed(job);
           }
         } on DeepAnalysisJobNotFoundException {
           if (persist) await _clearIfCurrent(jobId);

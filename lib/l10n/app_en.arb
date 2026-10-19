@@ -613,5 +613,11 @@
   "structuredSectionDataNotes": "Data notes",
   "structuredSectionOdds": "Scenario odds",
   "structuredBalanceItem": "{label} {count}",
-  "@structuredBalanceItem": {"placeholders": {"label": {"type": "String"}, "count": {"type": "int"}}}
+  "@structuredBalanceItem": {"placeholders": {"label": {"type": "String"}, "count": {"type": "int"}}},
+  "analysisPreparedMinutes": "{count, plural, =1{Prepared 1 min ago} other{Prepared {count} min ago}}",
+  "analysisPreparedHours": "{count, plural, =1{Prepared 1 hr ago} other{Prepared {count} hr ago}}",
+  "analysisPreparedDays": "{count, plural, =1{Prepared 1 day ago} other{Prepared {count} days ago}}",
+  "@analysisPreparedMinutes": {"placeholders": {"count": {"type": "int"}}},
+  "@analysisPreparedHours": {"placeholders": {"count": {"type": "int"}}},
+  "@analysisPreparedDays": {"placeholders": {"count": {"type": "int"}}}
 }

@@ -19,6 +19,7 @@ Future<void> showAnalysisSheet(
   required String result,
   required int creditCost,
   StructuredAnalysis? structured,
+  DateTime? generatedAt,
 }) {
   final l10n = AppLocalizations.of(context)!;
   if (shouldShowStructured(structured)) {
@@ -43,6 +44,7 @@ Future<void> showAnalysisSheet(
           child: StructuredAnalysisView(
             data: structured!,
             creditCost: creditCost,
+            generatedAt: generatedAt,
           ),
         ),
       ),

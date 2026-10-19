@@ -311,5 +311,8 @@
   "structuredSectionDataNotes": "Veri notları",
   "structuredSectionOdds": "Senaryo olasılıkları",
   "structuredBalanceItem": "{label} {count}",
-  "@structuredBalanceItem": {"placeholders": {"label": {"type": "String"}, "count": {"type": "int"}}}
+  "@structuredBalanceItem": {"placeholders": {"label": {"type": "String"}, "count": {"type": "int"}}},
+  "analysisPreparedMinutes": "{count, plural, other{{count} dk önce hazırlandı}}",
+  "analysisPreparedHours": "{count, plural, other{{count} sa önce hazırlandı}}",
+  "analysisPreparedDays": "{count, plural, other{{count} gün önce hazırlandı}}"
 }

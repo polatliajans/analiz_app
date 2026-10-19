@@ -426,4 +426,62 @@ void main() {
       expect(find.byKey(const Key('conclusion_card')), findsOneWidget);
     });
   });
+
+  group('prepared-ago line', () {
+    final now = DateTime.utc(2026, 1, 1, 12);
+
+    Future<void> pump(WidgetTester t, DateTime? at, {Locale? locale}) async {
+      await t.pumpWidget(
+        MaterialApp(
+          locale: locale ?? const Locale('en'),
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: StructuredAnalysisView(
+                data: StructuredAnalysis.fromJson(_full()),
+                creditCost: 3,
+                generatedAt: at,
+                now: () => now,
+              ),
+            ),
+          ),
+        ),
+      );
+      await t.pumpAndSettle();
+    }
+
+    testWidgets('shows minutes ago', (t) async {
+      await pump(t, now.subtract(const Duration(minutes: 12)));
+      expect(find.text('Prepared 12 min ago'), findsOneWidget);
+    });
+
+    testWidgets('turkish hours', (t) async {
+      await pump(
+        t,
+        now.subtract(const Duration(hours: 3, minutes: 5)),
+        locale: const Locale('tr'),
+      );
+      expect(find.text('3 sa önce hazırlandı'), findsOneWidget);
+    });
+
+    testWidgets('hidden when under a minute old or unknown', (t) async {
+      await pump(t, now.subtract(const Duration(seconds: 30)));
+      expect(find.byKey(const Key('prepared_ago')), findsNothing);
+      await pump(t, null);
+      expect(find.byKey(const Key('prepared_ago')), findsNothing);
+    });
+
+    testWidgets('days and plural one', (t) async {
+      await pump(t, now.subtract(const Duration(days: 2)));
+      expect(find.text('Prepared 2 days ago'), findsOneWidget);
+      await pump(t, now.subtract(const Duration(minutes: 1)));
+      expect(find.text('Prepared 1 min ago'), findsOneWidget);
+    });
+  });
 }

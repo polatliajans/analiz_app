@@ -29,6 +29,10 @@ class DeepAnalysisJob {
   final AiAnalysisResult? analysis;
   final String? errorCode;
 
+  /// True when the result was served from the shared cache (older servers
+  /// omit the field, which reads as false).
+  final bool cached;
+
   const DeepAnalysisJob({
     required this.id,
     required this.status,
@@ -38,6 +42,7 @@ class DeepAnalysisJob {
     this.creditBalance,
     this.analysis,
     this.errorCode,
+    this.cached = false,
   });
 
   factory DeepAnalysisJob.fromJson(Map<String, dynamic> json) {
@@ -53,6 +58,7 @@ class DeepAnalysisJob {
           ? AiAnalysisResult.fromJson(analysis)
           : null,
       errorCode: json['error_code'] as String?,
+      cached: json['cached'] == true,
     );
   }
 }

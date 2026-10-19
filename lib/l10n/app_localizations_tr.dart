@@ -1049,4 +1049,34 @@ class AppLocalizationsTr extends AppLocalizations {
   String structuredBalanceItem(String label, int count) {
     return '$label $count';
   }
+
+  @override
+  String analysisPreparedMinutes(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count dk önce hazırlandı',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String analysisPreparedHours(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sa önce hazırlandı',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String analysisPreparedDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count gün önce hazırlandı',
+    );
+    return '$_temp0';
+  }
 }

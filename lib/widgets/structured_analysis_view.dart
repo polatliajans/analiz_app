@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../l10n/app_localizations.dart';
 import '../models/structured_analysis.dart';
 import '../screens/glossary_screen.dart';
+import '../utils/analysis_age.dart';
 import '../utils/structured_analysis_logic.dart';
 
 const _bullColor = Color(0xFF2E9E5B);
@@ -106,10 +107,19 @@ class StructuredAnalysisView extends StatelessWidget {
   final StructuredAnalysis data;
   final int creditCost;
 
+  /// Original generation time; shows a "prepared N min ago" line when older
+  /// than a minute.
+  final DateTime? generatedAt;
+
+  /// Clock override for tests.
+  final DateTime Function()? now;
+
   const StructuredAnalysisView({
     super.key,
     required this.data,
     required this.creditCost,
+    this.generatedAt,
+    this.now,
   });
 
   @override
@@ -124,6 +134,18 @@ class StructuredAnalysisView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _Header(data: data),
+        if (preparedAgoText(l10n, generatedAt, (now ?? DateTime.now)())
+            case final ago?)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Text(
+              ago,
+              key: const Key('prepared_ago'),
+              style: textTheme.bodySmall?.copyWith(
+                color: scheme.onSurfaceVariant,
+              ),
+            ),
+          ),
         if (data.keyMetrics.isNotEmpty) ...[
           const SizedBox(height: 14),
           _MetricGrid(metrics: data.keyMetrics),

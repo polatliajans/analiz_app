@@ -109,7 +109,7 @@ class DeepAnalysisNotifier extends Notifier<DeepAnalysisState> {
       ref.read(authProvider.notifier).setCreditBalance(balance);
     }
     await _poller.track(job.id);
-    await _poll(job.id);
+    await _poll(job.id, minDuration: minWaitingCardDuration);
   }
 
   /// Continues polling a persisted active job (screen open / app resume).
@@ -140,12 +140,21 @@ class DeepAnalysisNotifier extends Notifier<DeepAnalysisState> {
     resume();
   }
 
-  Future<void> _poll(int jobId, {bool persist = true, String? notice}) async {
+  Future<void> _poll(
+    int jobId, {
+    bool persist = true,
+    String? notice,
+    Duration minDuration = Duration.zero,
+  }) async {
     state = DeepAnalysisState(
       phase: DeepAnalysisPhase.waiting,
       message: notice,
     );
-    final outcome = await _poller.poll(jobId, persist: persist);
+    final outcome = await _poller.poll(
+      jobId,
+      persist: persist,
+      minDuration: minDuration,
+    );
     switch (outcome) {
       case PollCompleted(:final job):
         state = DeepAnalysisState(

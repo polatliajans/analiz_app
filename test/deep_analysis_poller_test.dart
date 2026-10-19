@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kriptoanaliz/data/deep_analysis_api.dart';
+import 'package:kriptoanaliz/models/ai_analysis_result.dart';
 import 'package:kriptoanaliz/models/deep_analysis_job.dart';
 import 'package:kriptoanaliz/services/deep_analysis_poller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -160,5 +161,82 @@ void main() {
     expect(store.read(), isNull);
     await poller.track(5);
     expect(store.read(), 5);
+  });
+
+  group('minimum waiting card time', () {
+    test('instant completion is held until minDuration', () async {
+      final h = _Harness();
+      final outcome = await h
+          .poller((_) async => _job(DeepAnalysisJobStatus.completed))
+          .poll(7, minDuration: minWaitingCardDuration);
+      expect(outcome, isA<PollCompleted>());
+      expect(h.delays, [minWaitingCardDuration]);
+      expect(h.time.difference(h.start), minWaitingCardDuration);
+    });
+
+    test('real analyses are not delayed beyond their real duration', () async {
+      final h = _Harness();
+      final queue = [
+        _job(DeepAnalysisJobStatus.running),
+        _job(DeepAnalysisJobStatus.completed),
+      ];
+      await h
+          .poller((_) async => queue.removeAt(0))
+          .poll(7, minDuration: minWaitingCardDuration);
+      expect(h.delays, [const Duration(seconds: 3)]);
+    });
+
+    test('no minimum by default and failures are never held', () async {
+      final h = _Harness();
+      await h
+          .poller((_) async => _job(DeepAnalysisJobStatus.completed))
+          .poll(7);
+      await h
+          .poller((_) async => _job(DeepAnalysisJobStatus.failed))
+          .poll(7, minDuration: minWaitingCardDuration);
+      expect(h.delays, isEmpty);
+    });
+
+    test('minimum is about two seconds', () {
+      expect(minWaitingCardDuration, const Duration(seconds: 2));
+    });
+  });
+
+  group('job model', () {
+    test('parses cached and generated_at', () {
+      final job = DeepAnalysisJob.fromJson({
+        'id': 1,
+        'status': 'completed',
+        'cached': true,
+        'analysis': {
+          'id': 2,
+          'result': 'x',
+          'credit_cost': 3,
+          'generated_at': '2026-01-01T10:00:00Z',
+        },
+      });
+      expect(job.cached, isTrue);
+      expect(job.analysis!.generatedAt, DateTime.utc(2026, 1, 1, 10));
+    });
+
+    test('old format without the fields still parses', () {
+      final job = DeepAnalysisJob.fromJson({
+        'id': 1,
+        'status': 'completed',
+        'analysis': {'id': 2, 'result': 'x', 'credit_cost': 3},
+      });
+      expect(job.cached, isFalse);
+      expect(job.analysis!.generatedAt, isNull);
+    });
+
+    test('garbage generated_at is ignored', () {
+      final a = AiAnalysisResult.fromJson({
+        'id': 2,
+        'result': 'x',
+        'credit_cost': 3,
+        'generated_at': 'nope',
+      });
+      expect(a.generatedAt, isNull);
+    });
   });
 }

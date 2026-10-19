@@ -1863,6 +1863,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{label} {count}'**
   String structuredBalanceItem(String label, int count);
+
+  /// No description provided for @analysisPreparedMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Prepared 1 min ago} other{Prepared {count} min ago}}'**
+  String analysisPreparedMinutes(int count);
+
+  /// No description provided for @analysisPreparedHours.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Prepared 1 hr ago} other{Prepared {count} hr ago}}'**
+  String analysisPreparedHours(int count);
+
+  /// No description provided for @analysisPreparedDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Prepared 1 day ago} other{Prepared {count} days ago}}'**
+  String analysisPreparedDays(int count);
 }
 
 class _AppLocalizationsDelegate
