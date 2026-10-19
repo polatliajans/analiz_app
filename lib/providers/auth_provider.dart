@@ -131,6 +131,24 @@ class AuthNotifier extends Notifier<AuthState> {
     }
   }
 
+  /// Applies a balance reported by the server (e.g. in a deep-analysis job
+  /// response) without an extra round trip.
+  void setCreditBalance(int balance) {
+    final m = state.member;
+    if (m == null || m.creditBalance == balance) return;
+    state = state.copyWith(
+      member: Member(
+        id: m.id,
+        name: m.name,
+        email: m.email,
+        role: m.role,
+        creditBalance: balance,
+        emailVerified: m.emailVerified,
+        locale: m.locale,
+      ),
+    );
+  }
+
   Future<void> logout() async {
     final token = state.token;
     if (token != null) {

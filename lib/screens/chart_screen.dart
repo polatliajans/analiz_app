@@ -3,16 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../ads/ads_controller.dart';
 import '../data/ai_analysis_api.dart';
-import '../data/deep_analysis_api.dart';
 import '../data/plan_errors.dart';
 import '../data/watchlist_api.dart';
 import '../l10n/app_localizations.dart';
 import '../models/coin.dart';
+import '../models/deep_analysis_job.dart';
 import '../models/structured_analysis.dart';
 import '../providers/analysis_history_provider.dart';
 import '../providers/app_config_provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/chart_data_provider.dart';
+import '../providers/deep_analysis_provider.dart';
 import '../providers/live_chart_provider.dart';
 import '../providers/price_alert_provider.dart';
 import '../providers/selected_coin_provider.dart';
@@ -36,7 +37,93 @@ class ChartScreen extends ConsumerStatefulWidget {
   ConsumerState<ChartScreen> createState() => _ChartScreenState();
 }
 
-class _ChartScreenState extends ConsumerState<ChartScreen> {
+class _ChartScreenState extends ConsumerState<ChartScreen>
+    with WidgetsBindingObserver {
+  bool _handlingDeepResult = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    // Picks up a job that was running when the screen/app was left.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ref.read(deepAnalysisProvider.notifier).resume();
+      _handleDeepState(ref.read(deepAnalysisProvider));
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    final notifier = ref.read(deepAnalysisProvider.notifier);
+    if (state == AppLifecycleState.resumed) {
+      notifier.resume();
+    } else if (state == AppLifecycleState.paused) {
+      notifier.pause();
+    }
+  }
+
+  void _handleDeepState(DeepAnalysisState s) {
+    if (!mounted || _handlingDeepResult) return;
+    final l10n = AppLocalizations.of(context)!;
+    final notifier = ref.read(deepAnalysisProvider.notifier);
+    void say(String text) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
+      notifier.acknowledge();
+    }
+
+    switch (s.phase) {
+      case DeepAnalysisPhase.completed:
+        _showDeepResult(s.job!);
+      case DeepAnalysisPhase.failed:
+        say(l10n.deepAnalysisFailedRefunded);
+      case DeepAnalysisPhase.timedOut:
+        say(l10n.deepAnalysisStillRunning);
+      case DeepAnalysisPhase.networkLost:
+        say(l10n.deepAnalysisCheckLater);
+      case DeepAnalysisPhase.error:
+        say(s.message ?? l10n.deepAnalysisCheckLater);
+      case DeepAnalysisPhase.waiting:
+      case DeepAnalysisPhase.idle:
+      case DeepAnalysisPhase.starting:
+        break;
+    }
+  }
+
+  Future<void> _showDeepResult(DeepAnalysisJob job) async {
+    final analysis = job.analysis;
+    final notifier = ref.read(deepAnalysisProvider.notifier);
+    if (analysis == null) {
+      notifier.acknowledge();
+      return;
+    }
+    _handlingDeepResult = true;
+    try {
+      await ref.read(authProvider.notifier).refreshMember();
+      ref.invalidate(analysisHistoryProvider);
+      final ads = ref.read(adsControllerProvider.notifier);
+      await ads.recordSuccessfulAnalysis();
+      if (!mounted) return;
+      notifier.acknowledge();
+      await showAnalysisSheet(
+        context,
+        result: analysis.result,
+        creditCost: analysis.creditCost,
+        structured: analysis.structured,
+      );
+      if (!mounted) return;
+      await ads.maybeShowInterstitial();
+    } finally {
+      _handlingDeepResult = false;
+    }
+  }
+
   Future<void> _runAnalysis(
     Coin coin, {
     required Future<
@@ -118,27 +205,68 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
     proFeature: ProFeature.timeframe,
   );
 
-  Future<void> _requestDeepAnalysis(Coin coin) => _runAnalysis(
-    coin,
-    request: (token, timeframe) async {
-      final r = await DeepAnalysisApi().requestAnalysis(
-        token: token,
-        coinId: coin.id,
-        timeframe: timeframe,
-      );
-      return (
-        result: r.result,
-        creditCost: r.creditCost,
-        structured: r.structured,
-      );
-    },
-    failureMessage: (l10n, d) => l10n.deepAnalysisFailed(d),
-    proFeature: ProFeature.deepAnalysis,
-  );
+  Future<void> _requestDeepAnalysis(Coin coin) async {
+    final l10n = AppLocalizations.of(context)!;
+    final auth = ref.read(authProvider);
+    if (!auth.isLoggedIn) {
+      showLoginRequiredSnackBar(context);
+      return;
+    }
+    if (ref.read(deepAnalysisProvider).isBusy) return;
+    final gate = ref.read(featureGateProvider);
+    final timeframe = gate.effectiveTimeframe(ref.read(timeframeProvider));
+    // Locked analyses never reach the server.
+    if (!gate.canUseDeepAnalysis) {
+      showProUpsell(context, ProFeature.deepAnalysis);
+      return;
+    }
+    if (gate.isTimeframeLocked(timeframe)) {
+      showProUpsell(context, ProFeature.timeframe);
+      return;
+    }
+    try {
+      await ref
+          .read(deepAnalysisProvider.notifier)
+          .start(coinId: coin.id, timeframe: timeframe);
+    } catch (e) {
+      if (!mounted) return;
+      if (e is InsufficientCreditException) {
+        showInsufficientCreditDialog(context);
+        return;
+      }
+      if (e is ProRequiredException) {
+        // The server's view of the plan wins: resync, then explain.
+        ref.read(authProvider.notifier).refreshMember();
+        ref.read(appConfigProvider.notifier).refresh();
+        showProUpsell(context, ProFeature.deepAnalysis);
+        return;
+      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.deepAnalysisFailed('$e'))));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    ref.listen(deepAnalysisProvider, (prev, next) {
+      if (next.phase == DeepAnalysisPhase.waiting &&
+          next.message != null &&
+          prev?.message != next.message) {
+        // 409: an analysis is already running; we resumed polling it.
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(next.message!)));
+      }
+      if (prev?.phase != next.phase) _handleDeepState(next);
+    });
+    ref.listen(authProvider, (prev, next) {
+      if (!(prev?.isLoggedIn ?? false) && next.isLoggedIn) {
+        ref.read(deepAnalysisProvider.notifier).resume();
+      }
+    });
+    final deepBusy = ref.watch(deepAnalysisProvider).isBusy;
     final coinAsync = ref.watch(selectedCoinProvider);
     final coin = coinAsync.value;
 
@@ -264,7 +392,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () => _requestDeepAnalysis(coin),
+                        onPressed: deepBusy ? null : () => _requestDeepAnalysis(coin),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -288,6 +416,10 @@ class _ChartScreenState extends ConsumerState<ChartScreen> {
                     ),
                   ],
                 ),
+                if (deepBusy) ...[
+                  const SizedBox(height: 12),
+                  const _DeepAnalysisWaitingCard(),
+                ],
                 const SizedBox(height: 16),
                 Text(l10n.analysisHistorySection, style: textTheme.titleSmall),
                 const SizedBox(height: 4),
@@ -507,6 +639,55 @@ class _LiveChart extends ConsumerWidget {
       candles: live.candles,
       signals: ref.watch(featureGateProvider).visibleSignals(live.signals),
       timeframeMs: timeframeMs[params.timeframe]!,
+    );
+  }
+}
+
+/// Inline, non-blocking status shown while a deep analysis runs in the
+/// background; the user can leave the screen.
+class _DeepAnalysisWaitingCard extends StatelessWidget {
+  const _DeepAnalysisWaitingCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final scheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    return Card(
+      color: scheme.surfaceContainerHighest,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    l10n.deepAnalysisWaitingTitle,
+                    style: textTheme.titleSmall,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            const LinearProgressIndicator(),
+            const SizedBox(height: 8),
+            Text(
+              l10n.deepAnalysisWaitingBody,
+              style: textTheme.bodySmall?.copyWith(
+                color: scheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
