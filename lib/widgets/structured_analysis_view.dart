@@ -111,6 +111,10 @@ class StructuredAnalysisView extends StatelessWidget {
   /// than a minute.
   final DateTime? generatedAt;
 
+  /// True when the result is a shared-cache hit: under a minute old it then
+  /// shows "just prepared" (a fresh analysis shows nothing).
+  final bool cached;
+
   /// Clock override for tests.
   final DateTime Function()? now;
 
@@ -119,6 +123,7 @@ class StructuredAnalysisView extends StatelessWidget {
     required this.data,
     required this.creditCost,
     this.generatedAt,
+    this.cached = false,
     this.now,
   });
 
@@ -134,7 +139,12 @@ class StructuredAnalysisView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _Header(data: data),
-        if (preparedAgoText(l10n, generatedAt, (now ?? DateTime.now)())
+        if (preparedAgoText(
+              l10n,
+              generatedAt,
+              (now ?? DateTime.now)(),
+              cached: cached,
+            )
             case final ago?)
           Padding(
             padding: const EdgeInsets.only(top: 8),

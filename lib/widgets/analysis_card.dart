@@ -20,6 +20,7 @@ Future<void> showAnalysisSheet(
   required int creditCost,
   StructuredAnalysis? structured,
   DateTime? generatedAt,
+  bool cached = false,
 }) {
   final l10n = AppLocalizations.of(context)!;
   if (shouldShowStructured(structured)) {
@@ -45,6 +46,7 @@ Future<void> showAnalysisSheet(
             data: structured!,
             creditCost: creditCost,
             generatedAt: generatedAt,
+            cached: cached,
           ),
         ),
       ),

@@ -314,5 +314,6 @@
   "@structuredBalanceItem": {"placeholders": {"label": {"type": "String"}, "count": {"type": "int"}}},
   "analysisPreparedMinutes": "{count, plural, =1{Preparado hace 1 min} other{Preparado hace {count} min}}",
   "analysisPreparedHours": "{count, plural, =1{Preparado hace 1 h} other{Preparado hace {count} h}}",
-  "analysisPreparedDays": "{count, plural, =1{Preparado hace 1 día} other{Preparado hace {count} días}}"
+  "analysisPreparedDays": "{count, plural, =1{Preparado hace 1 día} other{Preparado hace {count} días}}",
+  "analysisPreparedJustNow": "Recién preparado"
 }

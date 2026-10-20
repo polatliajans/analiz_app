@@ -1079,4 +1079,7 @@ class AppLocalizationsTr extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get analysisPreparedJustNow => 'Az önce hazırlandı';
 }

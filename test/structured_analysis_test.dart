@@ -430,7 +430,12 @@ void main() {
   group('prepared-ago line', () {
     final now = DateTime.utc(2026, 1, 1, 12);
 
-    Future<void> pump(WidgetTester t, DateTime? at, {Locale? locale}) async {
+    Future<void> pump(
+      WidgetTester t,
+      DateTime? at, {
+      Locale? locale,
+      bool cached = false,
+    }) async {
       await t.pumpWidget(
         MaterialApp(
           locale: locale ?? const Locale('en'),
@@ -447,6 +452,7 @@ void main() {
                 data: StructuredAnalysis.fromJson(_full()),
                 creditCost: 3,
                 generatedAt: at,
+                cached: cached,
                 now: () => now,
               ),
             ),
@@ -474,6 +480,32 @@ void main() {
       await pump(t, now.subtract(const Duration(seconds: 30)));
       expect(find.byKey(const Key('prepared_ago')), findsNothing);
       await pump(t, null);
+      expect(find.byKey(const Key('prepared_ago')), findsNothing);
+    });
+
+    testWidgets('cached and under a minute shows just prepared', (t) async {
+      final at = now.subtract(const Duration(seconds: 20));
+      await pump(t, at, cached: true);
+      expect(find.text('Just prepared'), findsOneWidget);
+      await pump(t, at, cached: true, locale: const Locale('tr'));
+      expect(find.text('Az önce hazırlandı'), findsOneWidget);
+      await pump(t, at, cached: true, locale: const Locale('es'));
+      expect(find.text('Recién preparado'), findsOneWidget);
+    });
+
+    testWidgets('fresh under a minute still shows nothing', (t) async {
+      await pump(t, now.subtract(const Duration(seconds: 20)));
+      expect(find.byKey(const Key('prepared_ago')), findsNothing);
+    });
+
+    testWidgets('cached but older keeps the age text', (t) async {
+      await pump(t, now.subtract(const Duration(minutes: 5)), cached: true);
+      expect(find.text('Prepared 5 min ago'), findsOneWidget);
+      expect(find.text('Just prepared'), findsNothing);
+    });
+
+    testWidgets('cached without a known time shows nothing', (t) async {
+      await pump(t, null, cached: true);
       expect(find.byKey(const Key('prepared_ago')), findsNothing);
     });
 

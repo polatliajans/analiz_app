@@ -1881,6 +1881,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =1{Prepared 1 day ago} other{Prepared {count} days ago}}'**
   String analysisPreparedDays(int count);
+
+  /// No description provided for @analysisPreparedJustNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Just prepared'**
+  String get analysisPreparedJustNow;
 }
 
 class _AppLocalizationsDelegate

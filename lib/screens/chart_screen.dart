@@ -117,6 +117,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
         creditCost: analysis.creditCost,
         structured: analysis.structured,
         generatedAt: analysis.generatedAt,
+        cached: job.cached,
       );
       if (!mounted) return;
       await ads.maybeShowInterstitial();
@@ -393,7 +394,9 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
                     const SizedBox(width: 12),
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: deepBusy ? null : () => _requestDeepAnalysis(coin),
+                        onPressed: deepBusy
+                            ? null
+                            : () => _requestDeepAnalysis(coin),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
