@@ -1087,14 +1087,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get tabHome => 'Ana Sayfa';
 
   @override
-  String homeGreeting(String name) {
-    return 'Merhaba, $name';
-  }
-
-  @override
-  String get homeGreetingNoName => 'Merhaba';
-
-  @override
   String homeStaleNote(String ago) {
     return 'Güncel değil · son güncelleme $ago';
   }
@@ -1275,4 +1267,48 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get startupPageTitle => 'Açılış sayfası';
+
+  @override
+  String get homeMktTitle => 'Piyasa';
+
+  @override
+  String get homeMktGainers => 'Yükselenler';
+
+  @override
+  String get homeMktLosers => 'Düşenler';
+
+  @override
+  String get homeMktVolume => 'Hacim';
+
+  @override
+  String get homeMktMore => 'Daha fazla';
+
+  @override
+  String get homeMktLess => 'Daha az';
+
+  @override
+  String homeMktVolumeShort(String amount) {
+    return 'Hacim $amount';
+  }
+
+  @override
+  String get homeQuickDeep => 'Derin analiz';
+
+  @override
+  String get homeQuickAlerts => 'Alarmlar';
+
+  @override
+  String get homeQuickGlossary => 'Sözlük';
+
+  @override
+  String get themeTitle => 'Tema';
+
+  @override
+  String get themeDark => 'Koyu';
+
+  @override
+  String get themeLight => 'Açık';
+
+  @override
+  String get themeSystem => 'Sistem';
 }

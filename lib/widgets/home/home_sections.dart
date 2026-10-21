@@ -6,7 +6,6 @@ import '../../l10n/app_localizations.dart';
 import '../../models/home_data.dart';
 import '../../utils/glossary_logic.dart';
 import '../../utils/home_logic.dart';
-import 'fear_greed_gauge.dart';
 
 /// FRED requires this exact notice wherever its data is used.
 const fredDisclaimer =
@@ -76,12 +75,13 @@ class HomeCard extends StatelessWidget {
 }
 
 /// A tappable row with a minimum 48dp touch height.
-class _TapRow extends StatelessWidget {
+class HomeTapRow extends StatelessWidget {
   final VoidCallback onTap;
   final String semanticsLabel;
   final Widget child;
 
-  const _TapRow({
+  const HomeTapRow({
+    super.key,
     required this.onTap,
     required this.semanticsLabel,
     required this.child,
@@ -124,6 +124,8 @@ class _MutedText extends StatelessWidget {
 
 // ---------------------------------------------------------------- Header
 
+/// One slim top band: member name on the left, credit balance and plan chips
+/// on the right. It sits below the status bar (the screen adds that inset).
 class HomeHeader extends StatelessWidget {
   final String? name;
   final int? credits;
@@ -147,40 +149,60 @@ class HomeHeader extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final n = name?.trim() ?? '';
-    final greeting = n.isEmpty ? l10n.homeGreetingNoName : l10n.homeGreeting(n);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Semantics(
-          header: true,
-          child: Text(
-            greeting,
-            style: theme.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          runSpacing: 4,
+        Row(
           children: [
-            if (credits != null)
-              ActionChip(
-                avatar: const Icon(Icons.toll_outlined, size: 18),
-                label: Text(l10n.creditsCount(credits!)),
-                onPressed: onCredits,
+            Expanded(
+              child: n.isEmpty
+                  ? const SizedBox.shrink()
+                  : Semantics(
+                      header: true,
+                      child: Text(
+                        n,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+            ),
+            const SizedBox(width: 8),
+            Flexible(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerRight,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (credits != null) ...[
+                      _BandChip(
+                        key: const ValueKey('home-credits-chip'),
+                        icon: Icons.toll_outlined,
+                        label: l10n.creditsCount(credits!),
+                        onTap: onCredits,
+                      ),
+                      const SizedBox(width: 8),
+                    ],
+                    _BandChip(
+                      key: const ValueKey('home-plan-chip'),
+                      icon: isPro
+                          ? Icons.workspace_premium
+                          : Icons.workspace_premium_outlined,
+                      label: isPro ? l10n.rolePro : l10n.roleFree,
+                      highlighted: isPro,
+                      onTap: onPro,
+                    ),
+                  ],
+                ),
               ),
-            if (isPro)
-              ActionChip(
-                avatar: const Icon(Icons.workspace_premium_outlined, size: 18),
-                label: Text(l10n.rolePro),
-                onPressed: onPro,
-              ),
+            ),
           ],
         ),
         if (staleNote != null) ...[
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
           Semantics(
             liveRegion: false,
             child: Row(
@@ -208,6 +230,66 @@ class HomeHeader extends StatelessWidget {
           ),
         ],
       ],
+    );
+  }
+}
+
+/// Compact tappable chip of the top band (36dp tall).
+class _BandChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool highlighted;
+  final VoidCallback onTap;
+
+  const _BandChip({
+    super.key,
+    required this.icon,
+    required this.label,
+    this.highlighted = false,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final bg = highlighted
+        ? scheme.primaryContainer
+        : scheme.surfaceContainerHighest;
+    final fg = highlighted ? scheme.onPrimaryContainer : scheme.onSurface;
+    return Semantics(
+      button: true,
+      label: label,
+      excludeSemantics: true,
+      onTap: onTap,
+      child: Material(
+        color: bg,
+        shape: const StadiumBorder(),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 36),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(icon, size: 16, color: fg),
+                  const SizedBox(width: 6),
+                  Text(
+                    label,
+                    maxLines: 1,
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: fg,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -323,56 +405,6 @@ class ResumeCard extends StatelessWidget {
 
 // ---------------------------------------------------------------- Market
 
-class _Stat extends StatelessWidget {
-  final String label;
-  final String value;
-  final String? sub;
-  final Color? subColor;
-
-  const _Stat({
-    required this.label,
-    required this.value,
-    this.sub,
-    this.subColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Semantics(
-      container: true,
-      label: '$label: $value${sub == null ? '' : ', $sub'}',
-      excludeSemantics: true,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            label,
-            style: theme.textTheme.labelMedium?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
-          Text(
-            value,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          if (sub != null)
-            Text(
-              sub!,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: subColor,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
 String regimeText(AppLocalizations l10n, String regime) {
   switch (regime) {
     case 'bull':
@@ -383,151 +415,6 @@ String regimeText(AppLocalizations l10n, String regime) {
       return l10n.homeRegimeSideways;
   }
   return l10n.homeRegimeUnknown;
-}
-
-class MarketPulseCard extends StatelessWidget {
-  final MarketPulse? market;
-
-  const MarketPulseCard({super.key, required this.market});
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final locale = Localizations.localeOf(context).toString();
-    final m = market;
-    if (m == null || !m.hasAnyData) {
-      return HomeCard(
-        title: l10n.homeMarketTitle,
-        icon: Icons.show_chart,
-        child: _MutedText(l10n.homeMarketUnavailable),
-      );
-    }
-    final theme = Theme.of(context);
-    final fg = m.fearGreed;
-    final btc = m.btc;
-    final cap = m.totalMarketCap;
-
-    return HomeCard(
-      title: l10n.homeMarketTitle,
-      icon: Icons.show_chart,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (fg != null) _FearGreedBlock(fg: fg),
-          if (fg != null) const SizedBox(height: 16),
-          Wrap(
-            spacing: 24,
-            runSpacing: 12,
-            children: [
-              if (btc?.price != null)
-                _Stat(
-                  label: 'BTC',
-                  value: formatUsdPrice(btc!.price!, locale),
-                  sub: btc.change24hPct == null
-                      ? null
-                      : formatSignedPct(btc.change24hPct!, locale),
-                  subColor: changeColor(context, btc.change24hPct),
-                ),
-              if (btc?.dominancePct != null)
-                _Stat(
-                  label: l10n.homeBtcDominance,
-                  value: formatPlainPct(btc!.dominancePct!, locale),
-                ),
-              if (cap?.usd != null)
-                _Stat(
-                  label: l10n.homeTotalCap,
-                  value: formatCompactUsd(cap!.usd!, locale),
-                  sub: cap.change24hPct == null
-                      ? null
-                      : formatSignedPct(cap.change24hPct!, locale),
-                  subColor: changeColor(context, cap.change24hPct),
-                ),
-            ],
-          ),
-          if (btc != null && btc.regime != 'unknown') ...[
-            const SizedBox(height: 12),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Chip(
-                avatar: Icon(
-                  btc.regime == 'bull'
-                      ? Icons.trending_up
-                      : btc.regime == 'bear'
-                      ? Icons.trending_down
-                      : Icons.trending_flat,
-                  size: 18,
-                ),
-                label: Text(
-                  l10n.homeRegimeLabel(regimeText(l10n, btc.regime)),
-                  style: theme.textTheme.labelLarge,
-                ),
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-class _FearGreedBlock extends StatelessWidget {
-  final FearGreed fg;
-  const _FearGreedBlock({required this.fg});
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
-    final level = fearGreedLevel(fg.label, fg.value);
-    final label = fearGreedText(l10n, level);
-    final delta = fg.change7d;
-    final deltaText = delta == null
-        ? null
-        : l10n.homeFngChange7d(delta > 0 ? '+$delta' : '$delta');
-
-    return Semantics(
-      container: true,
-      label:
-          '${l10n.homeFearGreedTitle}. ${l10n.homeFngSemantics(fg.value, label)}'
-          '${deltaText == null ? '' : ', $deltaText'}',
-      excludeSemantics: true,
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              l10n.homeFearGreedTitle,
-              style: theme.textTheme.labelMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-            ),
-            const SizedBox(height: 4),
-            FearGreedGauge(value: fg.value),
-            Text(
-              '${fg.value}',
-              style: theme.textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              style: theme.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            if (deltaText != null)
-              Text(
-                deltaText,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
 }
 
 // ---------------------------------------------------------------- Movers
@@ -567,7 +454,7 @@ class MoversCard extends StatelessWidget {
           : Column(
               children: [
                 for (final m in movers.take(5))
-                  _TapRow(
+                  HomeTapRow(
                     onTap: () => onTap(m),
                     semanticsLabel: [
                       m.symbol,
@@ -649,7 +536,7 @@ class RadarCard extends StatelessWidget {
                         l10n.homeSignalStrength(s.strength),
                         ?ago,
                       ].join(' · ');
-                      return _TapRow(
+                      return HomeTapRow(
                         onTap: () => onTap(s),
                         semanticsLabel: '${s.symbol}, $dirText, $detail',
                         child: Row(
@@ -790,7 +677,7 @@ class LastAnalysisCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _TapRow(
+          HomeTapRow(
             onTap: onOpen,
             semanticsLabel: [
               title,
@@ -1001,7 +888,7 @@ class LearnCard extends StatelessWidget {
     return HomeCard(
       title: l10n.homeLearnTitle,
       icon: Icons.menu_book_outlined,
-      child: _TapRow(
+      child: HomeTapRow(
         onTap: onTap,
         semanticsLabel:
             '${l10n.homeTermOfDay}: ${entry.name}. ${l10n.homeOpenGlossary}',

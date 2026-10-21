@@ -255,6 +255,69 @@ class HomeMover {
   }
 }
 
+/// One row of the exchange-wide "Piyasa" lists (gainers / losers / volume).
+class MarketMover {
+  final int? coinId;
+  final String symbol;
+  final String marketType;
+  final double? price;
+  final double? change24hPct;
+  final double? quoteVolumeUsd;
+
+  const MarketMover({
+    this.coinId,
+    required this.symbol,
+    this.marketType = 'spot',
+    this.price,
+    this.change24hPct,
+    this.quoteVolumeUsd,
+  });
+
+  static MarketMover? tryParse(Map<String, dynamic> m) {
+    final symbol = _str(m['symbol']);
+    if (symbol == null) return null;
+    return MarketMover(
+      coinId: _int(m['coin_id']),
+      symbol: symbol,
+      marketType: _str(m['market_type']) ?? 'spot',
+      price: _num(m['price']),
+      change24hPct: _num(m['change_24h_pct']),
+      quoteVolumeUsd: _num(m['quote_volume_usd']),
+    );
+  }
+}
+
+/// `market_movers` of `GET /api/home`: up to [maxPerList] rows per list.
+class MarketMovers {
+  static const maxPerList = 10;
+
+  final List<MarketMover> gainers;
+  final List<MarketMover> losers;
+  final List<MarketMover> volume;
+
+  const MarketMovers({
+    this.gainers = const [],
+    this.losers = const [],
+    this.volume = const [],
+  });
+
+  bool get isEmpty => gainers.isEmpty && losers.isEmpty && volume.isEmpty;
+
+  /// Null when the field is missing, not an object or holds no usable rows.
+  static MarketMovers? tryParse(Object? json) {
+    final m = _map(json);
+    if (m == null) return null;
+    List<MarketMover> list(String key) =>
+        _items(m[key], MarketMover.tryParse).take(maxPerList).toList();
+    final out = MarketMovers(
+      gainers: list('gainers'),
+      losers: list('losers'),
+      volume: list('volume'),
+    );
+    return out.isEmpty ? null : out;
+  }
+}
+
 class HomeLastAnalysis {
   final int? id;
   final int? coinId;
@@ -328,6 +391,9 @@ class HomeData {
   final List<HomeEvent> events;
   final List<HomeRadarSignal> radar;
   final List<HomeMover> movers;
+
+  /// Exchange-wide movers; null when the server did not send (usable) data.
+  final MarketMovers? marketMovers;
   final HomeLastAnalysis? lastAnalysis;
   final HomeCredits? credits;
 
@@ -338,6 +404,7 @@ class HomeData {
     this.events = const [],
     this.radar = const [],
     this.movers = const [],
+    this.marketMovers,
     this.lastAnalysis,
     this.credits,
   });
@@ -356,6 +423,7 @@ class HomeData {
       events: _items(m['events'], HomeEvent.tryParse).take(5).toList(),
       radar: _items(m['radar'], HomeRadarSignal.tryParse).take(5).toList(),
       movers: _items(m['movers'], HomeMover.tryParse).take(5).toList(),
+      marketMovers: MarketMovers.tryParse(m['market_movers']),
       lastAnalysis: HomeLastAnalysis.tryParse(m['last_analysis']),
       credits: HomeCredits.tryParse(m['credits']),
     );

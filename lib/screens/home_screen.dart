@@ -14,6 +14,9 @@ import '../services/chart_navigation.dart';
 import '../utils/home_logic.dart';
 import '../widgets/analysis_card.dart';
 import '../widgets/home/home_sections.dart';
+import '../widgets/home/market_movers_card.dart';
+import '../widgets/home/market_pulse_row.dart';
+import 'alarms_screen.dart';
 import 'auth_screen.dart';
 import 'credit_packages_screen.dart';
 import 'glossary_screen.dart';
@@ -144,17 +147,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     void gap() => children.add(const SizedBox(height: 12));
 
     if (!state.signedIn && !state.loading) {
-      children.add(
-        HomeHeader(
-          name: null,
-          credits: null,
-          isPro: false,
-          staleNote: null,
-          onCredits: () {},
-          onPro: () {},
-        ),
-      );
-      gap();
       children.add(HomeGuestCard(onLogin: () => openAuthScreen(context)));
     } else {
       children.add(
@@ -169,6 +161,42 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       );
     }
     gap();
+
+    if (state.signedIn) {
+      children.add(
+        HomeQuickActions(
+          actions: [
+            HomeQuickAction(
+              key: const ValueKey('quick-deep'),
+              icon: Icons.psychology_outlined,
+              label: l10n.homeQuickDeep,
+              onTap: () =>
+                  ref.read(homeTabProvider.notifier).select(chartTabIndex),
+            ),
+            HomeQuickAction(
+              key: const ValueKey('quick-radar'),
+              icon: Icons.radar,
+              label: l10n.radar,
+              onTap: () =>
+                  ref.read(homeTabProvider.notifier).select(radarTabIndex),
+            ),
+            HomeQuickAction(
+              key: const ValueKey('quick-alerts'),
+              icon: Icons.notifications_active_outlined,
+              label: l10n.homeQuickAlerts,
+              onTap: () => _push(const AlarmsScreen()),
+            ),
+            HomeQuickAction(
+              key: const ValueKey('quick-glossary'),
+              icon: Icons.menu_book_outlined,
+              label: l10n.homeQuickGlossary,
+              onTap: () => openGlossary(context),
+            ),
+          ],
+        ),
+      );
+      gap();
+    }
 
     if (lastSymbol != null) {
       children.add(
@@ -192,8 +220,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       );
     } else if (data != null) {
       children
-        ..add(MarketPulseCard(market: data.market))
-        ..add(const SizedBox(height: 12))
+        ..add(MarketPulseRow(market: data.market))
+        ..add(const SizedBox(height: 12));
+      final mm = data.marketMovers;
+      if (mm != null && !mm.isEmpty) {
+        children
+          ..add(
+            MarketMoversCard(
+              movers: mm,
+              onTap: (m) => _openChart(
+                coinId: m.coinId,
+                symbol: m.symbol,
+                marketType: m.marketType,
+              ),
+            ),
+          )
+          ..add(const SizedBox(height: 12));
+      }
+      children
         ..add(
           MoversCard(
             movers: data.movers,
@@ -255,19 +299,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     gap();
     children.add(const HomeFooter());
 
+    // No app bar: the slim top band is part of the list. The status bar /
+    // cutout inset is applied here; the bottom one is handled by the shell's
+    // navigation bar (or by the padding below when shown on its own).
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.tabHome)),
-      body: RefreshIndicator(
-        onRefresh: () => ref.read(homeProvider.notifier).refresh(force: true),
-        child: ListView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: EdgeInsets.fromLTRB(
-            16,
-            12,
-            16,
-            16 + MediaQuery.paddingOf(context).bottom,
+      body: SafeArea(
+        bottom: false,
+        child: RefreshIndicator(
+          onRefresh: () => ref.read(homeProvider.notifier).refresh(force: true),
+          child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.fromLTRB(
+              16,
+              8,
+              16,
+              16 + MediaQuery.paddingOf(context).bottom,
+            ),
+            children: children,
           ),
-          children: children,
         ),
       ),
     );

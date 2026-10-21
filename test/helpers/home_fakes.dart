@@ -76,6 +76,7 @@ Map<String, dynamic> fullHomeJson() => {
       'change_24h_pct': -4.5,
     },
   ],
+  'market_movers': marketMoversJson(),
   'last_analysis': {
     'id': 12,
     'coin_id': 1,
@@ -89,6 +90,41 @@ Map<String, dynamic> fullHomeJson() => {
     'cached': true,
   },
   'credits': {'balance': 80, 'is_pro': false},
+};
+
+Map<String, dynamic> mover(
+  String symbol,
+  double change, {
+  int? id,
+  double price = 1.5,
+  double volume = 1200000000,
+  String market = 'spot',
+}) => {
+  'coin_id': id ?? symbol.hashCode.abs() % 10000,
+  'symbol': symbol,
+  'market_type': market,
+  'price': price,
+  'change_24h_pct': change,
+  'quote_volume_usd': volume,
+};
+
+/// Exchange-wide lists: 7 gainers, 7 losers, 7 volume rows (more than the 5
+/// shown by default).
+Map<String, dynamic> marketMoversJson() => {
+  'gainers': [
+    for (var i = 0; i < 7; i++)
+      mover('GAIN${i}USDT', 20.0 - i, id: 100 + i, price: 2.0 + i),
+  ],
+  'losers': [
+    for (var i = 0; i < 7; i++)
+      mover('LOSE${i}USDT', -10.0 - i, id: 200 + i, price: 3.0 + i),
+  ],
+  'volume': [
+    mover('BTCUSDT', 1.0, id: 1, price: 82000, volume: 1.2e9),
+    mover('ETHUSDT', 0.5, id: 7, price: 3000, volume: 345e6),
+    for (var i = 0; i < 5; i++)
+      mover('VOL${i}USDT', 0.1 * i, id: 300 + i, volume: 12.3e6 - i * 1e6),
+  ],
 };
 
 Map<String, dynamic> emptyHomeJson() => {

@@ -1894,18 +1894,6 @@ abstract class AppLocalizations {
   /// **'Home'**
   String get tabHome;
 
-  /// No description provided for @homeGreeting.
-  ///
-  /// In en, this message translates to:
-  /// **'Hello, {name}'**
-  String homeGreeting(String name);
-
-  /// No description provided for @homeGreetingNoName.
-  ///
-  /// In en, this message translates to:
-  /// **'Hello'**
-  String get homeGreetingNoName;
-
   /// No description provided for @homeStaleNote.
   ///
   /// In en, this message translates to:
@@ -2223,6 +2211,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Start page'**
   String get startupPageTitle;
+
+  /// No description provided for @homeMktTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Market'**
+  String get homeMktTitle;
+
+  /// No description provided for @homeMktGainers.
+  ///
+  /// In en, this message translates to:
+  /// **'Gainers'**
+  String get homeMktGainers;
+
+  /// No description provided for @homeMktLosers.
+  ///
+  /// In en, this message translates to:
+  /// **'Losers'**
+  String get homeMktLosers;
+
+  /// No description provided for @homeMktVolume.
+  ///
+  /// In en, this message translates to:
+  /// **'Volume'**
+  String get homeMktVolume;
+
+  /// No description provided for @homeMktMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Show more'**
+  String get homeMktMore;
+
+  /// No description provided for @homeMktLess.
+  ///
+  /// In en, this message translates to:
+  /// **'Show less'**
+  String get homeMktLess;
+
+  /// No description provided for @homeMktVolumeShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Vol {amount}'**
+  String homeMktVolumeShort(String amount);
+
+  /// No description provided for @homeQuickDeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Deep analysis'**
+  String get homeQuickDeep;
+
+  /// No description provided for @homeQuickAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Alerts'**
+  String get homeQuickAlerts;
+
+  /// No description provided for @homeQuickGlossary.
+  ///
+  /// In en, this message translates to:
+  /// **'Glossary'**
+  String get homeQuickGlossary;
+
+  /// No description provided for @themeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get themeTitle;
+
+  /// No description provided for @themeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get themeDark;
+
+  /// No description provided for @themeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get themeLight;
+
+  /// No description provided for @themeSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get themeSystem;
 }
 
 class _AppLocalizationsDelegate

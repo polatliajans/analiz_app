@@ -124,15 +124,15 @@ void main() {
   testWidgets('full data shows every section', (tester) async {
     await _pump(tester, handler: _ok(fullHomeJson()));
 
-    expect(find.text('Hello, Ayse'), findsOneWidget);
+    expect(find.text('Ayse'), findsOneWidget);
     expect(find.text('80 credits'), findsOneWidget);
     expect(find.text('Where you left off'), findsOneWidget);
     expect(find.text('BTCUSDT · 1h'), findsOneWidget);
 
-    expect(find.text('Market pulse'), findsOneWidget);
+    expect(find.text('Fear & Greed'), findsOneWidget);
     expect(find.text('53'), findsOneWidget);
     expect(find.text('Neutral'), findsOneWidget);
-    expect(find.text('Regime: Bull'), findsOneWidget);
+    expect(find.text('Bull'), findsOneWidget);
     expect(find.text('+1.02%'), findsWidgets);
 
     expect(find.text('My watchlist'), findsOneWidget);
@@ -172,9 +172,10 @@ void main() {
     await _pump(tester, handler: _ok(fullHomeJson()));
     double y(String t) => tester.getTopLeft(find.text(t)).dy;
     final order = [
-      y('Hello, Ayse'),
+      y('Ayse'),
       y('Where you left off'),
-      y('Market pulse'),
+      y('Fear & Greed'),
+      y('Market'),
       y('My watchlist'),
       y('Latest signals from Radar'),
       y('Your latest deep analysis'),
@@ -219,11 +220,11 @@ void main() {
     final pending = Completer<HomeResponse>();
     await _pump(tester, handler: () => pending.future, settle: false);
     expect(find.byType(HomeSkeleton), findsOneWidget);
-    expect(find.text('Market pulse'), findsNothing);
+    expect(find.text('Fear & Greed'), findsNothing);
     pending.complete(homeResponse(fullHomeJson()));
     await tester.pumpAndSettle();
     expect(find.byType(HomeSkeleton), findsNothing);
-    expect(find.text('Market pulse'), findsOneWidget);
+    expect(find.text('Fear & Greed'), findsOneWidget);
   });
 
   testWidgets('refresh error with cached data keeps data + stale note', (
@@ -235,7 +236,7 @@ void main() {
       handler: () => Future.error(HomeException('offline')),
     );
     expect(find.text('ETHUSDT'), findsOneWidget);
-    expect(find.text('Market pulse'), findsOneWidget);
+    expect(find.text('Fear & Greed'), findsOneWidget);
     expect(find.textContaining('Not up to date'), findsOneWidget);
     expect(find.text('Could not load the overview'), findsNothing);
   });
@@ -277,7 +278,7 @@ void main() {
     final h = await _pump(tester, handler: _ok(fullHomeJson()), member: null);
     expect(find.text('See your overview'), findsOneWidget);
     expect(find.text('Log in / Sign up'), findsOneWidget);
-    expect(find.text('Market pulse'), findsNothing);
+    expect(find.text('Fear & Greed'), findsNothing);
     expect(find.text('Learn'), findsOneWidget);
     expect(h.api.calls, 0);
   });
@@ -435,15 +436,16 @@ void main() {
       handler: _ok(fullHomeJson()),
       brightness: Brightness.dark,
     );
-    expect(find.text('Market pulse'), findsOneWidget);
+    expect(find.text('Fear & Greed'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
   testWidgets('turkish locale uses translated labels', (tester) async {
     await _pump(tester, handler: _ok(fullHomeJson()), locale: 'tr');
-    expect(find.text('Ana Sayfa'), findsOneWidget);
-    expect(find.text('Merhaba, Ayse'), findsOneWidget);
-    expect(find.text('Piyasa nabzı'), findsOneWidget);
+    expect(find.text('Ana Sayfa'), findsNothing);
+    expect(find.text('Merhaba'), findsNothing);
+    expect(find.text('Ayse'), findsOneWidget);
+    expect(find.text('Korku ve Açgözlülük'), findsOneWidget);
     expect(find.text('Nötr'), findsOneWidget);
     expect(find.text('Kaldığın yer'), findsOneWidget);
     expect(find.textContaining('yatırım tavsiyesi değildir'), findsOneWidget);

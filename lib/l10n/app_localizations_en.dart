@@ -1119,14 +1119,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tabHome => 'Home';
 
   @override
-  String homeGreeting(String name) {
-    return 'Hello, $name';
-  }
-
-  @override
-  String get homeGreetingNoName => 'Hello';
-
-  @override
   String homeStaleNote(String ago) {
     return 'Not up to date · updated $ago';
   }
@@ -1313,4 +1305,48 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get startupPageTitle => 'Start page';
+
+  @override
+  String get homeMktTitle => 'Market';
+
+  @override
+  String get homeMktGainers => 'Gainers';
+
+  @override
+  String get homeMktLosers => 'Losers';
+
+  @override
+  String get homeMktVolume => 'Volume';
+
+  @override
+  String get homeMktMore => 'Show more';
+
+  @override
+  String get homeMktLess => 'Show less';
+
+  @override
+  String homeMktVolumeShort(String amount) {
+    return 'Vol $amount';
+  }
+
+  @override
+  String get homeQuickDeep => 'Deep analysis';
+
+  @override
+  String get homeQuickAlerts => 'Alerts';
+
+  @override
+  String get homeQuickGlossary => 'Glossary';
+
+  @override
+  String get themeTitle => 'Theme';
+
+  @override
+  String get themeDark => 'Dark';
+
+  @override
+  String get themeLight => 'Light';
+
+  @override
+  String get themeSystem => 'System';
 }

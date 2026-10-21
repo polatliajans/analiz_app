@@ -126,3 +126,57 @@ String formatCompactUsd(double usd, String locale) =>
       symbol: '\$',
       decimalDigits: 2,
     ).format(usd);
+
+/// Quote assets a Binance symbol may end with, longest first so that e.g.
+/// FDUSD wins over USD-like shorter suffixes.
+const _quoteAssets = <String>[
+  'FDUSD',
+  'USDT',
+  'USDC',
+  'BUSD',
+  'TUSD',
+  'USDP',
+  'DAI',
+  'TRY',
+  'EUR',
+  'BRL',
+  'BTC',
+  'ETH',
+  'BNB',
+];
+
+/// Splits "BTCUSDT" into ("BTC", "USDT"). Unknown quotes (or a symbol that is
+/// only a quote) come back whole as the base with an empty quote.
+(String base, String quote) splitSymbol(String symbol) {
+  final s = symbol.trim().toUpperCase();
+  for (final q in _quoteAssets) {
+    if (s.length > q.length && s.endsWith(q)) {
+      return (s.substring(0, s.length - q.length), q);
+    }
+  }
+  return (s, '');
+}
+
+/// Short volume like 1.2B / 345M / 12.3K (no currency sign).
+String formatVolumeShort(double v, String locale) {
+  final abs = v.abs();
+  const steps = <(double, String)>[
+    (1e12, 'T'),
+    (1e9, 'B'),
+    (1e6, 'M'),
+    (1e3, 'K'),
+  ];
+  for (final (size, suffix) in steps) {
+    if (abs >= size) {
+      final scaled = v / size;
+      final f = NumberFormat.decimalPattern(locale)
+        ..minimumFractionDigits = 0
+        ..maximumFractionDigits = scaled.abs() >= 100 ? 0 : 1;
+      return '${f.format(scaled)}$suffix';
+    }
+  }
+  final f = NumberFormat.decimalPattern(locale)
+    ..minimumFractionDigits = 0
+    ..maximumFractionDigits = 0;
+  return f.format(v);
+}
