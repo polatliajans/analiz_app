@@ -133,6 +133,8 @@ class _Setup {
         authProvider.overrideWith(_FakeAuth.new),
       ],
     );
+    // The app now opens on Home; these tests exercise a visible chart tab.
+    container.read(homeTabProvider.notifier).select(chartTabIndex);
     container.listen(liveChartProvider(_params), (_, _) {});
   }
 

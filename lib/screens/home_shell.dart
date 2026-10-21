@@ -7,10 +7,11 @@ import '../providers/app_config_provider.dart';
 import '../providers/home_tab_provider.dart';
 import 'account_screen.dart';
 import 'chart_screen.dart';
+import 'home_screen.dart';
 import 'radar_screen.dart';
 import 'watchlist_screen.dart';
 
-/// App home: bottom navigation with Chart, Radar, Watchlist and Profile tabs.
+/// App home: bottom navigation with Home, Chart, Radar, Watchlist and Profile tabs.
 class HomeShell extends ConsumerWidget {
   const HomeShell({super.key});
 
@@ -27,6 +28,7 @@ class HomeShell extends ConsumerWidget {
       body: IndexedStack(
         index: index,
         children: const [
+          HomeScreen(),
           ChartScreen(),
           RadarScreen(),
           WatchlistScreen(),
@@ -37,6 +39,11 @@ class HomeShell extends ConsumerWidget {
         selectedIndex: index,
         onDestinationSelected: ref.read(homeTabProvider.notifier).select,
         destinations: [
+          NavigationDestination(
+            icon: const Icon(Icons.home_outlined),
+            selectedIcon: const Icon(Icons.home),
+            label: l10n.tabHome,
+          ),
           NavigationDestination(
             icon: const Icon(Icons.candlestick_chart_outlined),
             selectedIcon: const Icon(Icons.candlestick_chart),
