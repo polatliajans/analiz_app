@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../../data/glossary_data.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/home_data.dart';
+import '../../theme/app_theme.dart';
 import '../../utils/glossary_logic.dart';
 import '../../utils/home_logic.dart';
 
@@ -12,13 +13,8 @@ const fredDisclaimer =
     'This product uses the FRED® API but is not endorsed or certified by the '
     'Federal Reserve Bank of St. Louis.';
 
-Color changeColor(BuildContext context, double? pct) {
-  final dark = Theme.of(context).brightness == Brightness.dark;
-  final scheme = Theme.of(context).colorScheme;
-  if (pct == null || pct == 0) return scheme.onSurfaceVariant;
-  if (pct > 0) return dark ? const Color(0xFF81C784) : const Color(0xFF1B5E20);
-  return dark ? const Color(0xFFE57373) : const Color(0xFFB71C1C);
-}
+Color changeColor(BuildContext context, double? pct) =>
+    trendColor(context, pct);
 
 String _marketSuffix(String marketType) =>
     marketType == 'futures' ? ' · Futures' : '';

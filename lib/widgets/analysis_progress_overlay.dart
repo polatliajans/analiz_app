@@ -1,3 +1,4 @@
+import '../theme/app_theme.dart';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -78,8 +79,8 @@ class _AnalysisProgressOverlayState extends State<AnalysisProgressOverlay>
                         builder: (_, _) => CustomPaint(
                           painter: _CandlesPainter(
                             progress: _controller.value,
-                            up: Colors.green,
-                            down: Colors.red,
+                            up: trendColor(context, 1),
+                            down: trendColor(context, -1),
                             line: scheme.primary,
                           ),
                         ),

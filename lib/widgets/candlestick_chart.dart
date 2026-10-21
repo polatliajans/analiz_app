@@ -4,6 +4,7 @@ import 'package:k_chart/flutter_k_chart.dart';
 import '../l10n/app_localizations.dart';
 import '../models/candle.dart';
 import '../models/chart_signal.dart';
+import '../theme/app_theme.dart';
 
 class CandlestickChart extends StatelessWidget {
   final List<Candle> candles;
@@ -73,14 +74,25 @@ class CandlestickChart extends StatelessWidget {
       return Center(child: Text(AppLocalizations.of(context)!.noCandleData));
     }
 
+    final palette = ChartPalette.of(Theme.of(context).brightness);
     final chartColors = ChartColors()
-      ..upColor = const Color(0xFF0ECB81)
-      ..dnColor = const Color(0xFFF6465D)
-      ..nowPriceUpColor = const Color(0xFF0ECB81)
-      ..nowPriceDnColor = const Color(0xFFF6465D)
-      ..bgColor = [const Color(0xFF161A1E), const Color(0xFF161A1E)]
-      ..defaultTextColor = const Color(0xFFB7BDC6)
-      ..gridColor = const Color(0xFF2B3139);
+      ..upColor = palette.up
+      ..dnColor = palette.down
+      ..nowPriceUpColor = palette.up
+      ..nowPriceDnColor = palette.down
+      ..nowPriceTextColor = palette.nowPriceText
+      ..bgColor = [palette.background, palette.background]
+      ..defaultTextColor = palette.text
+      ..gridColor = palette.grid
+      ..selectFillColor = palette.selectFill
+      ..selectBorderColor = palette.selectBorder
+      ..hCrossColor = palette.crossLine
+      ..vCrossColor = palette.crossLine.withValues(alpha: 0.12)
+      ..crossTextColor = palette.crossText
+      ..infoWindowNormalColor = palette.infoText
+      ..infoWindowTitleColor = palette.infoText
+      ..maxColor = palette.infoText
+      ..minColor = palette.infoText;
 
     return KChartWidget(
       _buildEntities(),

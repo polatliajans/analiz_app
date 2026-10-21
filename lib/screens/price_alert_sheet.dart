@@ -1,3 +1,4 @@
+import '../theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -184,11 +185,11 @@ class _PriceAlertSheetState extends ConsumerState<PriceAlertSheet> {
     } else if (direction == AlertDirection.above) {
       hint = l10n.alertWillTriggerAbove(formatAlertPrice(target!));
       hintIcon = Icons.trending_up;
-      hintColor = Colors.green;
+      hintColor = trendColor(context, 1);
     } else if (direction == AlertDirection.below) {
       hint = l10n.alertWillTriggerBelow(formatAlertPrice(target!));
       hintIcon = Icons.trending_down;
-      hintColor = Colors.red;
+      hintColor = trendColor(context, -1);
     } else {
       hint = l10n.alertEnterDifferentPrice;
     }
@@ -318,9 +319,10 @@ class _PriceAlertSheetState extends ConsumerState<PriceAlertSheet> {
                       alert.direction == AlertDirection.above
                           ? Icons.trending_up
                           : Icons.trending_down,
-                      color: alert.direction == AlertDirection.above
-                          ? Colors.green
-                          : Colors.red,
+                      color: trendColor(
+                        context,
+                        alert.direction == AlertDirection.above ? 1 : -1,
+                      ),
                     ),
                     title: Text(alertDirectionText(l10n, alert)),
                     trailing: _cancelingId == alert.id

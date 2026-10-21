@@ -9,6 +9,7 @@ import '../l10n/app_localizations.dart';
 import '../providers/auth_provider.dart';
 import '../providers/locale_provider.dart';
 import '../providers/startup_tab_provider.dart';
+import '../providers/theme_provider.dart';
 import '../widgets/notification_settings_section.dart';
 import 'glossary_screen.dart';
 import 'onboarding_screen.dart';
@@ -91,6 +92,36 @@ class SettingsScreen extends ConsumerWidget {
               children: [
                 for (final (locale, name) in options)
                   RadioListTile<Locale>(value: locale, title: Text(name)),
+              ],
+            ),
+          ),
+          const Divider(),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            child: Text(
+              l10n.themeTitle,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+          ),
+          RadioGroup<ThemeMode>(
+            groupValue: ref.watch(themeModeProvider),
+            onChanged: (v) {
+              if (v != null) ref.read(themeModeProvider.notifier).select(v);
+            },
+            child: Column(
+              children: [
+                RadioListTile<ThemeMode>(
+                  value: ThemeMode.dark,
+                  title: Text(l10n.themeDark),
+                ),
+                RadioListTile<ThemeMode>(
+                  value: ThemeMode.light,
+                  title: Text(l10n.themeLight),
+                ),
+                RadioListTile<ThemeMode>(
+                  value: ThemeMode.system,
+                  title: Text(l10n.themeSystem),
+                ),
               ],
             ),
           ),

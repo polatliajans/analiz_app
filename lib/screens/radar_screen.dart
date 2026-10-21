@@ -111,7 +111,10 @@ class _RadarScreenState extends ConsumerState<RadarScreen>
             padding: const EdgeInsets.all(12),
             child: Text(
               l10n.radarFooter,
-              style: const TextStyle(fontSize: 12, color: Colors.grey),
+              style: TextStyle(
+                fontSize: 12,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
             ),
           ),

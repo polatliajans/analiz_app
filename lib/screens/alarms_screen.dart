@@ -1,3 +1,4 @@
+import '../theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -345,7 +346,7 @@ class _AlertTile extends StatelessWidget {
       onTap: onTap,
       leading: Icon(
         above ? Icons.trending_up : Icons.trending_down,
-        color: above ? Colors.green : Colors.red,
+        color: trendColor(context, above ? 1 : -1),
       ),
       title: Row(
         children: [

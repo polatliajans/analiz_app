@@ -1,3 +1,4 @@
+import '../theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -578,10 +579,10 @@ class _LiveHeader extends ConsumerWidget {
     final change = live.change24h ?? coin.priceChangePercent24h;
     final changeColor = change == null
         ? null
-        : (change >= 0 ? Colors.green : Colors.red);
-    final priceColor = live.direction > 0
-        ? Colors.green
-        : (live.direction < 0 ? Colors.red : null);
+        : trendColor(context, change >= 0 ? 1 : -1);
+    final priceColor = live.direction == 0
+        ? null
+        : trendColor(context, live.direction > 0 ? 1 : -1);
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.baseline,

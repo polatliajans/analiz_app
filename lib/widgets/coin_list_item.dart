@@ -1,3 +1,4 @@
+import '../theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 import '../l10n/app_localizations.dart';
@@ -15,7 +16,7 @@ class CoinListItem extends StatelessWidget {
     final change = coin.priceChangePercent24h;
     final changeColor = change == null
         ? null
-        : (change >= 0 ? Colors.green : Colors.red);
+        : trendColor(context, change >= 0 ? 1 : -1);
 
     return ListTile(
       onTap: onTap,
