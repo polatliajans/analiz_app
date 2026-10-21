@@ -119,7 +119,7 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                         initiallyExpanded: term.id == _deepLinkId,
                       ),
                   ],
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24 + MediaQuery.paddingOf(context).bottom),
                 ],
               ),
             ),

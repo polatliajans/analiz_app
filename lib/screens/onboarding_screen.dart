@@ -148,38 +148,45 @@ class _SlidePage extends StatelessWidget {
       color: theme.colorScheme.primary,
     );
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(
-            height: 220,
-            child: Center(
-              child: slide.imageUrl == null
-                  ? icon
-                  : Image.network(
-                      slide.imageUrl!,
-                      fit: BoxFit.contain,
-                      errorBuilder: (_, _, _) => icon,
-                    ),
-            ),
+    // Scrollable so a small screen, large text or a keyboard/inset-heavy
+    // window never overflows; centered when there is room.
+    return LayoutBuilder(
+      builder: (context, constraints) => SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 32),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: constraints.maxHeight),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 220,
+                child: Center(
+                  child: slide.imageUrl == null
+                      ? icon
+                      : Image.network(
+                          slide.imageUrl!,
+                          fit: BoxFit.contain,
+                          errorBuilder: (_, _, _) => icon,
+                        ),
+                ),
+              ),
+              const SizedBox(height: 32),
+              Text(
+                slide.title,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                slide.body,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodyLarge,
+              ),
+            ],
           ),
-          const SizedBox(height: 32),
-          Text(
-            slide.title,
-            textAlign: TextAlign.center,
-            style: theme.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            slide.body,
-            textAlign: TextAlign.center,
-            style: theme.textTheme.bodyLarge,
-          ),
-        ],
+        ),
       ),
     );
   }

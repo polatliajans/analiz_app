@@ -25,15 +25,21 @@ class HomeShell extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      body: IndexedStack(
-        index: index,
-        children: const [
-          HomeScreen(),
-          ChartScreen(),
-          RadarScreen(),
-          WatchlistScreen(),
-          AccountScreen(),
-        ],
+      // Top and bottom are handled by each tab's app bar / the navigation
+      // bar; the sides matter in landscape next to a display cutout.
+      body: SafeArea(
+        top: false,
+        bottom: false,
+        child: IndexedStack(
+          index: index,
+          children: const [
+            HomeScreen(),
+            ChartScreen(),
+            RadarScreen(),
+            WatchlistScreen(),
+            AccountScreen(),
+          ],
+        ),
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: index,
