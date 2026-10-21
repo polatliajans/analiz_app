@@ -1082,4 +1082,197 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get analysisPreparedJustNow => 'Az önce hazırlandı';
+
+  @override
+  String get tabHome => 'Ana Sayfa';
+
+  @override
+  String homeGreeting(String name) {
+    return 'Merhaba, $name';
+  }
+
+  @override
+  String get homeGreetingNoName => 'Merhaba';
+
+  @override
+  String homeStaleNote(String ago) {
+    return 'Güncel değil · son güncelleme $ago';
+  }
+
+  @override
+  String get homeStaleNoTime => 'Güncel değil';
+
+  @override
+  String get homeGuestTitle => 'Özetini gör';
+
+  @override
+  String get homeGuestBody =>
+      'Giriş yap; piyasa nabzı, takip listen, radar sinyalleri ve son analizin tek yerde olsun.';
+
+  @override
+  String get homeErrorTitle => 'Özet yüklenemedi';
+
+  @override
+  String get homeLoadingSemantics => 'Özet yükleniyor';
+
+  @override
+  String get homeResumeTitle => 'Kaldığın yer';
+
+  @override
+  String get homeResumeOpen => 'Grafiği aç';
+
+  @override
+  String get homeMarketTitle => 'Piyasa nabzı';
+
+  @override
+  String get homeFearGreedTitle => 'Korku ve Açgözlülük';
+
+  @override
+  String get homeFngExtremeFear => 'Aşırı korku';
+
+  @override
+  String get homeFngFear => 'Korku';
+
+  @override
+  String get homeFngNeutral => 'Nötr';
+
+  @override
+  String get homeFngGreed => 'Açgözlülük';
+
+  @override
+  String get homeFngExtremeGreed => 'Aşırı açgözlülük';
+
+  @override
+  String homeFngChange7d(String delta) {
+    return '7 gün: $delta';
+  }
+
+  @override
+  String homeFngSemantics(int value, String label) {
+    return 'Korku ve Açgözlülük endeksi $value, $label';
+  }
+
+  @override
+  String get homeBtcDominance => 'BTC dominansı';
+
+  @override
+  String get homeTotalCap => 'Toplam piyasa değeri';
+
+  @override
+  String homeRegimeLabel(String regime) {
+    return 'Rejim: $regime';
+  }
+
+  @override
+  String get homeRegimeBull => 'Boğa';
+
+  @override
+  String get homeRegimeBear => 'Ayı';
+
+  @override
+  String get homeRegimeSideways => 'Yatay';
+
+  @override
+  String get homeRegimeUnknown => 'Belirsiz';
+
+  @override
+  String get homeMarketUnavailable => 'Piyasa verisi şu an alınamıyor.';
+
+  @override
+  String get homeMoversTitle => 'Takip listem';
+
+  @override
+  String get homeMoversEmpty =>
+      'Coin takip et; 24 saatteki en büyük hareketler burada görünsün.';
+
+  @override
+  String get homeMoversEmptyAction => 'Takip listeme git';
+
+  @override
+  String get homeRadarTitle => 'Radar\'dan son sinyaller';
+
+  @override
+  String get homeRadarEmpty => 'Şu an yeni radar sinyali yok.';
+
+  @override
+  String get homeSignalBuy => 'Al';
+
+  @override
+  String get homeSignalSell => 'Sat';
+
+  @override
+  String homeSignalStrength(int n) {
+    return 'Güç $n/3';
+  }
+
+  @override
+  String get homeAnalysisTitle => 'Son derin analizin';
+
+  @override
+  String get homeAnalysisEmpty =>
+      'Henüz derin analiz yapmadın. Bir coin seç ve ilk analizini dene.';
+
+  @override
+  String get homeAnalysisNew => 'Yeni analiz';
+
+  @override
+  String get homeAnalysisCachedBadge => 'Ortak sonuç';
+
+  @override
+  String get homeAnalysisOpenFailed =>
+      'Bu analiz açılamadı. Lütfen tekrar dene.';
+
+  @override
+  String get homeEventsTitle => 'Yaklaşan olaylar';
+
+  @override
+  String homeInMinutes(int n) {
+    return '$n dk sonra';
+  }
+
+  @override
+  String homeInHours(int n) {
+    return '$n sa sonra';
+  }
+
+  @override
+  String homeInDays(int n) {
+    return '$n gün sonra';
+  }
+
+  @override
+  String get homeEventHigh => 'Yüksek önem';
+
+  @override
+  String get homeEventMedium => 'Orta önem';
+
+  @override
+  String get homeLearnTitle => 'Öğren';
+
+  @override
+  String get homeTermOfDay => 'Günün terimi';
+
+  @override
+  String get homeOpenGlossary => 'Sözlüğü aç';
+
+  @override
+  String get homeProPromoTitle => 'Pro ile daha ileri git';
+
+  @override
+  String get homeProPromoBody =>
+      'Derin analiz, fiyat alarmları ve aylık krediler; ihtiyacın olduğunda.';
+
+  @override
+  String get homeProPromoAction => 'Pro\'yu incele';
+
+  @override
+  String get homeFooterDisclaimer =>
+      'Yalnızca bilgilendirme amaçlıdır; yatırım tavsiyesi değildir.';
+
+  @override
+  String get homeFooterSources =>
+      'Veri kaynakları: Binance, CoinMarketCap, Alternative.me (Fear & Greed Index), FRED.';
+
+  @override
+  String get startupPageTitle => 'Açılış sayfası';
 }

@@ -1887,6 +1887,342 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Just prepared'**
   String get analysisPreparedJustNow;
+
+  /// No description provided for @tabHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get tabHome;
+
+  /// No description provided for @homeGreeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello, {name}'**
+  String homeGreeting(String name);
+
+  /// No description provided for @homeGreetingNoName.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello'**
+  String get homeGreetingNoName;
+
+  /// No description provided for @homeStaleNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Not up to date · updated {ago}'**
+  String homeStaleNote(String ago);
+
+  /// No description provided for @homeStaleNoTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Not up to date'**
+  String get homeStaleNoTime;
+
+  /// No description provided for @homeGuestTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'See your overview'**
+  String get homeGuestTitle;
+
+  /// No description provided for @homeGuestBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Log in to see the market pulse, your watchlist, radar signals and your latest analysis in one place.'**
+  String get homeGuestBody;
+
+  /// No description provided for @homeErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load the overview'**
+  String get homeErrorTitle;
+
+  /// No description provided for @homeLoadingSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading overview'**
+  String get homeLoadingSemantics;
+
+  /// No description provided for @homeResumeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Where you left off'**
+  String get homeResumeTitle;
+
+  /// No description provided for @homeResumeOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open chart'**
+  String get homeResumeOpen;
+
+  /// No description provided for @homeMarketTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Market pulse'**
+  String get homeMarketTitle;
+
+  /// No description provided for @homeFearGreedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fear & Greed'**
+  String get homeFearGreedTitle;
+
+  /// No description provided for @homeFngExtremeFear.
+  ///
+  /// In en, this message translates to:
+  /// **'Extreme fear'**
+  String get homeFngExtremeFear;
+
+  /// No description provided for @homeFngFear.
+  ///
+  /// In en, this message translates to:
+  /// **'Fear'**
+  String get homeFngFear;
+
+  /// No description provided for @homeFngNeutral.
+  ///
+  /// In en, this message translates to:
+  /// **'Neutral'**
+  String get homeFngNeutral;
+
+  /// No description provided for @homeFngGreed.
+  ///
+  /// In en, this message translates to:
+  /// **'Greed'**
+  String get homeFngGreed;
+
+  /// No description provided for @homeFngExtremeGreed.
+  ///
+  /// In en, this message translates to:
+  /// **'Extreme greed'**
+  String get homeFngExtremeGreed;
+
+  /// No description provided for @homeFngChange7d.
+  ///
+  /// In en, this message translates to:
+  /// **'7d: {delta}'**
+  String homeFngChange7d(String delta);
+
+  /// No description provided for @homeFngSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Fear and Greed index {value}, {label}'**
+  String homeFngSemantics(int value, String label);
+
+  /// No description provided for @homeBtcDominance.
+  ///
+  /// In en, this message translates to:
+  /// **'BTC dominance'**
+  String get homeBtcDominance;
+
+  /// No description provided for @homeTotalCap.
+  ///
+  /// In en, this message translates to:
+  /// **'Total market cap'**
+  String get homeTotalCap;
+
+  /// No description provided for @homeRegimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Regime: {regime}'**
+  String homeRegimeLabel(String regime);
+
+  /// No description provided for @homeRegimeBull.
+  ///
+  /// In en, this message translates to:
+  /// **'Bull'**
+  String get homeRegimeBull;
+
+  /// No description provided for @homeRegimeBear.
+  ///
+  /// In en, this message translates to:
+  /// **'Bear'**
+  String get homeRegimeBear;
+
+  /// No description provided for @homeRegimeSideways.
+  ///
+  /// In en, this message translates to:
+  /// **'Sideways'**
+  String get homeRegimeSideways;
+
+  /// No description provided for @homeRegimeUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get homeRegimeUnknown;
+
+  /// No description provided for @homeMarketUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Market data is unavailable right now.'**
+  String get homeMarketUnavailable;
+
+  /// No description provided for @homeMoversTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My watchlist'**
+  String get homeMoversTitle;
+
+  /// No description provided for @homeMoversEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow coins to see their biggest 24h moves here.'**
+  String get homeMoversEmpty;
+
+  /// No description provided for @homeMoversEmptyAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Open my watchlist'**
+  String get homeMoversEmptyAction;
+
+  /// No description provided for @homeRadarTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Latest signals from Radar'**
+  String get homeRadarTitle;
+
+  /// No description provided for @homeRadarEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No new radar signals right now.'**
+  String get homeRadarEmpty;
+
+  /// No description provided for @homeSignalBuy.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy'**
+  String get homeSignalBuy;
+
+  /// No description provided for @homeSignalSell.
+  ///
+  /// In en, this message translates to:
+  /// **'Sell'**
+  String get homeSignalSell;
+
+  /// No description provided for @homeSignalStrength.
+  ///
+  /// In en, this message translates to:
+  /// **'Strength {n}/3'**
+  String homeSignalStrength(int n);
+
+  /// No description provided for @homeAnalysisTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your latest deep analysis'**
+  String get homeAnalysisTitle;
+
+  /// No description provided for @homeAnalysisEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You have not run a deep analysis yet. Pick a coin and try your first one.'**
+  String get homeAnalysisEmpty;
+
+  /// No description provided for @homeAnalysisNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New analysis'**
+  String get homeAnalysisNew;
+
+  /// No description provided for @homeAnalysisCachedBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared result'**
+  String get homeAnalysisCachedBadge;
+
+  /// No description provided for @homeAnalysisOpenFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open this analysis. Please try again.'**
+  String get homeAnalysisOpenFailed;
+
+  /// No description provided for @homeEventsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming events'**
+  String get homeEventsTitle;
+
+  /// No description provided for @homeInMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'in {n} min'**
+  String homeInMinutes(int n);
+
+  /// No description provided for @homeInHours.
+  ///
+  /// In en, this message translates to:
+  /// **'in {n} h'**
+  String homeInHours(int n);
+
+  /// No description provided for @homeInDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, =1{in 1 day} other{in {n} days}}'**
+  String homeInDays(int n);
+
+  /// No description provided for @homeEventHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High importance'**
+  String get homeEventHigh;
+
+  /// No description provided for @homeEventMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium importance'**
+  String get homeEventMedium;
+
+  /// No description provided for @homeLearnTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Learn'**
+  String get homeLearnTitle;
+
+  /// No description provided for @homeTermOfDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Term of the day'**
+  String get homeTermOfDay;
+
+  /// No description provided for @homeOpenGlossary.
+  ///
+  /// In en, this message translates to:
+  /// **'Open glossary'**
+  String get homeOpenGlossary;
+
+  /// No description provided for @homeProPromoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Go further with Pro'**
+  String get homeProPromoTitle;
+
+  /// No description provided for @homeProPromoBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Deep analysis, price alerts and monthly credits, whenever you feel like it.'**
+  String get homeProPromoBody;
+
+  /// No description provided for @homeProPromoAction.
+  ///
+  /// In en, this message translates to:
+  /// **'See Pro'**
+  String get homeProPromoAction;
+
+  /// No description provided for @homeFooterDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'For information only; not investment advice.'**
+  String get homeFooterDisclaimer;
+
+  /// No description provided for @homeFooterSources.
+  ///
+  /// In en, this message translates to:
+  /// **'Data sources: Binance, CoinMarketCap, Alternative.me (Fear & Greed Index), FRED.'**
+  String get homeFooterSources;
+
+  /// No description provided for @startupPageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start page'**
+  String get startupPageTitle;
 }
 
 class _AppLocalizationsDelegate

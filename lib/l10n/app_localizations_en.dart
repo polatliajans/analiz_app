@@ -1114,4 +1114,203 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get analysisPreparedJustNow => 'Just prepared';
+
+  @override
+  String get tabHome => 'Home';
+
+  @override
+  String homeGreeting(String name) {
+    return 'Hello, $name';
+  }
+
+  @override
+  String get homeGreetingNoName => 'Hello';
+
+  @override
+  String homeStaleNote(String ago) {
+    return 'Not up to date · updated $ago';
+  }
+
+  @override
+  String get homeStaleNoTime => 'Not up to date';
+
+  @override
+  String get homeGuestTitle => 'See your overview';
+
+  @override
+  String get homeGuestBody =>
+      'Log in to see the market pulse, your watchlist, radar signals and your latest analysis in one place.';
+
+  @override
+  String get homeErrorTitle => 'Could not load the overview';
+
+  @override
+  String get homeLoadingSemantics => 'Loading overview';
+
+  @override
+  String get homeResumeTitle => 'Where you left off';
+
+  @override
+  String get homeResumeOpen => 'Open chart';
+
+  @override
+  String get homeMarketTitle => 'Market pulse';
+
+  @override
+  String get homeFearGreedTitle => 'Fear & Greed';
+
+  @override
+  String get homeFngExtremeFear => 'Extreme fear';
+
+  @override
+  String get homeFngFear => 'Fear';
+
+  @override
+  String get homeFngNeutral => 'Neutral';
+
+  @override
+  String get homeFngGreed => 'Greed';
+
+  @override
+  String get homeFngExtremeGreed => 'Extreme greed';
+
+  @override
+  String homeFngChange7d(String delta) {
+    return '7d: $delta';
+  }
+
+  @override
+  String homeFngSemantics(int value, String label) {
+    return 'Fear and Greed index $value, $label';
+  }
+
+  @override
+  String get homeBtcDominance => 'BTC dominance';
+
+  @override
+  String get homeTotalCap => 'Total market cap';
+
+  @override
+  String homeRegimeLabel(String regime) {
+    return 'Regime: $regime';
+  }
+
+  @override
+  String get homeRegimeBull => 'Bull';
+
+  @override
+  String get homeRegimeBear => 'Bear';
+
+  @override
+  String get homeRegimeSideways => 'Sideways';
+
+  @override
+  String get homeRegimeUnknown => 'Unknown';
+
+  @override
+  String get homeMarketUnavailable => 'Market data is unavailable right now.';
+
+  @override
+  String get homeMoversTitle => 'My watchlist';
+
+  @override
+  String get homeMoversEmpty =>
+      'Follow coins to see their biggest 24h moves here.';
+
+  @override
+  String get homeMoversEmptyAction => 'Open my watchlist';
+
+  @override
+  String get homeRadarTitle => 'Latest signals from Radar';
+
+  @override
+  String get homeRadarEmpty => 'No new radar signals right now.';
+
+  @override
+  String get homeSignalBuy => 'Buy';
+
+  @override
+  String get homeSignalSell => 'Sell';
+
+  @override
+  String homeSignalStrength(int n) {
+    return 'Strength $n/3';
+  }
+
+  @override
+  String get homeAnalysisTitle => 'Your latest deep analysis';
+
+  @override
+  String get homeAnalysisEmpty =>
+      'You have not run a deep analysis yet. Pick a coin and try your first one.';
+
+  @override
+  String get homeAnalysisNew => 'New analysis';
+
+  @override
+  String get homeAnalysisCachedBadge => 'Shared result';
+
+  @override
+  String get homeAnalysisOpenFailed =>
+      'Could not open this analysis. Please try again.';
+
+  @override
+  String get homeEventsTitle => 'Upcoming events';
+
+  @override
+  String homeInMinutes(int n) {
+    return 'in $n min';
+  }
+
+  @override
+  String homeInHours(int n) {
+    return 'in $n h';
+  }
+
+  @override
+  String homeInDays(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'in $n days',
+      one: 'in 1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get homeEventHigh => 'High importance';
+
+  @override
+  String get homeEventMedium => 'Medium importance';
+
+  @override
+  String get homeLearnTitle => 'Learn';
+
+  @override
+  String get homeTermOfDay => 'Term of the day';
+
+  @override
+  String get homeOpenGlossary => 'Open glossary';
+
+  @override
+  String get homeProPromoTitle => 'Go further with Pro';
+
+  @override
+  String get homeProPromoBody =>
+      'Deep analysis, price alerts and monthly credits, whenever you feel like it.';
+
+  @override
+  String get homeProPromoAction => 'See Pro';
+
+  @override
+  String get homeFooterDisclaimer =>
+      'For information only; not investment advice.';
+
+  @override
+  String get homeFooterSources =>
+      'Data sources: Binance, CoinMarketCap, Alternative.me (Fear & Greed Index), FRED.';
+
+  @override
+  String get startupPageTitle => 'Start page';
 }
