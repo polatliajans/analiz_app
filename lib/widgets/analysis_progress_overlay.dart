@@ -5,12 +5,9 @@ import 'package:flutter/material.dart';
 
 import '../l10n/app_localizations.dart';
 
-/// Runs [task] while a full-screen, non-dismissible progress overlay is shown.
-/// The overlay is removed when the task completes or throws.
-Future<T> runWithAnalysisOverlay<T>(
-  BuildContext context,
-  Future<T> Function() task,
-) async {
+/// Shows the blocking progress overlay; call the returned function to remove
+/// it (safe to call more than once).
+void Function() startAnalysisOverlay(BuildContext context) {
   final navigator = Navigator.of(context, rootNavigator: true);
   final route = PageRouteBuilder<void>(
     opaque: false,
@@ -23,10 +20,22 @@ Future<T> runWithAnalysisOverlay<T>(
         FadeTransition(opacity: animation, child: child),
   );
   navigator.push(route);
+  return () {
+    if (route.isActive) navigator.removeRoute(route);
+  };
+}
+
+/// Runs [task] while a full-screen, non-dismissible progress overlay is shown.
+/// The overlay is removed when the task completes or throws.
+Future<T> runWithAnalysisOverlay<T>(
+  BuildContext context,
+  Future<T> Function() task,
+) async {
+  final close = startAnalysisOverlay(context);
   try {
     return await task();
   } finally {
-    if (route.isActive) navigator.removeRoute(route);
+    close();
   }
 }
 

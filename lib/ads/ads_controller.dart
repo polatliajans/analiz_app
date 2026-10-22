@@ -9,6 +9,7 @@ import '../providers/app_config_provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/locale_provider.dart';
 import '../providers/price_alert_provider.dart';
+import 'ad_analysis_flow.dart';
 import 'ad_counters.dart';
 import 'ad_logic.dart';
 
@@ -24,6 +25,16 @@ final effectiveAdsConfigProvider = Provider<AdsConfig>(
     isPro: ref.watch(isProProvider),
     forceTestAds: forceTestAds,
   ),
+);
+
+/// Free, signed-in member and the server offers ad-funded quick analysis:
+/// the SDK (consent + init) and a rewarded ad are needed even when the
+/// banner/interstitial ads are switched off.
+final adAnalysisWantedProvider = Provider<bool>(
+  (ref) =>
+      ref.watch(authProvider.select((s) => s.isLoggedIn)) &&
+      !ref.watch(isProProvider) &&
+      ref.watch(appConfigProvider.select((c) => c.adAnalysisEnabled)),
 );
 
 final adCountersProvider = Provider<AdCounters>(
@@ -46,8 +57,6 @@ class AdsState {
   );
 }
 
-enum RewardedOutcome { earned, dismissed, unavailable, failed }
-
 /// Owns the ad SDK lifecycle: UMP consent, `MobileAds.initialize`, and the
 /// full-screen (interstitial / rewarded) ads. Banner and native widgets load
 /// their own ads only while [adsReadyProvider] is true.
@@ -65,6 +74,10 @@ class AdsController extends Notifier<AdsState> {
   @override
   AdsState build() {
     ref.listen(effectiveAdsConfigProvider, (_, next) => _onConfig(next));
+    ref.listen(
+      adAnalysisWantedProvider,
+      (_, _) => _onConfig(ref.read(effectiveAdsConfigProvider)),
+    );
     ref.listen(authProvider.select((s) => s.member?.id), (_, id) {
       // A rewarded ad is tied to the signed-in member: drop it on sign-out.
       _rewarded?.dispose();
@@ -78,7 +91,7 @@ class AdsController extends Notifier<AdsState> {
   }
 
   Future<void> _onConfig(AdsConfig config) async {
-    if (!config.enabled) {
+    if (!config.enabled && !_adAnalysisWanted) {
       _disposeFullScreenAds();
       state = const AdsState();
       return;
@@ -86,7 +99,9 @@ class AdsController extends Notifier<AdsState> {
     final ok = await (_consentAndInit ??= _obtainConsentAndInitialize());
     // Config may have changed (e.g. upgraded to Pro) while consent ran.
     if (!ok || !ref.mounted) return;
-    if (!ref.read(effectiveAdsConfigProvider).enabled) return;
+    if (!ref.read(effectiveAdsConfigProvider).enabled && !_adAnalysisWanted) {
+      return;
+    }
     if (!state.sdkReady) state = state.copyWith(sdkReady: true);
     _loadInterstitial();
     _loadRewarded();
@@ -213,18 +228,10 @@ class AdsController extends Notifier<AdsState> {
 
   // -------------------------------------------------------------------- rewarded
 
-  bool get _canOfferRewarded {
-    final auth = ref.read(authProvider);
-    return canOfferRewarded(
-      ads: _config,
-      isPro: ref.read(isProProvider),
-      isLoggedIn: auth.isLoggedIn,
-      emailVerified: auth.member?.emailVerified ?? false,
-    );
-  }
+  bool get _adAnalysisWanted => ref.read(adAnalysisWantedProvider);
 
   void _loadRewarded() {
-    if (!state.sdkReady || !_canOfferRewarded) return;
+    if (!state.sdkReady || !_adAnalysisWanted) return;
     if (_rewarded != null || _rewardedLoading) return;
     final unit = resolveUnitId(
       _config.rewarded.unitId,
@@ -251,12 +258,31 @@ class AdsController extends Notifier<AdsState> {
     );
   }
 
-  /// Retries loading a rewarded ad (e.g. when a dialog offering it opens).
+  /// Retries loading a rewarded ad.
   void preloadRewarded() => _loadRewarded();
 
-  /// Shows the rewarded ad. Credits are granted by the server (SSV) with the
-  /// member id as `user_id`; see [refreshBalanceAfterReward].
-  Future<RewardedOutcome> showRewarded() async {
+  /// Runs consent / SDK init if still pending, loads a rewarded ad and waits
+  /// (up to [timeout]) until one is ready. False when ads cannot be shown.
+  Future<bool> prepareRewarded({
+    Duration timeout = const Duration(seconds: 10),
+  }) async {
+    if (!_adAnalysisWanted) return false;
+    if (!state.sdkReady) await _onConfig(ref.read(effectiveAdsConfigProvider));
+    if (!ref.mounted || !state.sdkReady) return false;
+    _loadRewarded();
+    final deadline = DateTime.now().add(timeout);
+    while (ref.mounted && !state.rewardedLoaded) {
+      if (DateTime.now().isAfter(deadline)) return false;
+      await Future<void>.delayed(const Duration(milliseconds: 250));
+      if (!state.rewardedLoaded) _loadRewarded();
+    }
+    return ref.mounted && state.rewardedLoaded;
+  }
+
+  /// Shows the rewarded ad. AdMob server-side verification carries the
+  /// member id as `user_id` and [customData] (the ad-analysis session id) as
+  /// `custom_data`; the server marks the session verified from that callback.
+  Future<RewardedOutcome> showRewarded({String? customData}) async {
     final ad = _rewarded;
     final member = ref.read(authProvider).member;
     if (ad == null || member == null || _showingFullScreen) {
@@ -272,13 +298,15 @@ class AdsController extends Notifier<AdsState> {
       _showingFullScreen = false;
       a.dispose();
       if (!result.isCompleted) result.complete(outcome);
-      // After a reward the next ad loads once the balance was refreshed.
-      if (outcome != RewardedOutcome.earned) _loadRewarded();
+      _loadRewarded();
     }
 
     try {
       await ad.setServerSideOptions(
-        ServerSideVerificationOptions(userId: '${member.id}'),
+        ServerSideVerificationOptions(
+          userId: '${member.id}',
+          customData: customData,
+        ),
       );
       ad.fullScreenContentCallback = FullScreenContentCallback(
         onAdDismissedFullScreenContent: (a) => finish(
@@ -294,23 +322,19 @@ class AdsController extends Notifier<AdsState> {
     }
     return result.future;
   }
+}
 
-  /// The SSV callback reaches the server a few seconds after the reward, so
-  /// poll `/auth/me` and app-config (remaining today) until the balance moves.
-  Future<void> refreshBalanceAfterReward() async {
-    final before = ref.read(authProvider).member?.creditBalance;
-    for (final delay in rewardRefreshDelays) {
-      await Future<void>.delayed(delay);
-      if (!ref.mounted) return;
-      await ref.read(authProvider.notifier).refreshMember();
-      if (!ref.mounted) return;
-      await ref.read(appConfigProvider.notifier).refresh();
-      if (!ref.mounted) return;
-      final now = ref.read(authProvider).member?.creditBalance;
-      if (now != null && before != null && now > before) break;
-    }
-    _loadRewarded();
-  }
+/// Bridges [AdsController] to the ad-analysis flow.
+class AdsControllerAdService implements AdAnalysisAdService {
+  final AdsController controller;
+  AdsControllerAdService(this.controller);
+
+  @override
+  Future<bool> prepare() => controller.prepareRewarded();
+
+  @override
+  Future<RewardedOutcome> show(String sessionId) =>
+      controller.showRewarded(customData: sessionId);
 }
 
 final adsControllerProvider = NotifierProvider<AdsController, AdsState>(

@@ -4,6 +4,8 @@ import '../models/app_config.dart';
 
 enum AdFormat { banner, native, interstitial, rewarded }
 
+enum RewardedOutcome { earned, dismissed, unavailable, failed }
+
 /// Placement keys served by `GET /api/app-config`.
 abstract final class AdPlacementKeys {
   static const bannerRadar = 'banner_radar';
@@ -34,14 +36,6 @@ const defaultInterstitialFrequency = 3;
 const defaultInterstitialCooldownMinutes = 5;
 const defaultRewardedAmount = 3;
 const defaultRewardedDailyCap = 3;
-
-/// After a rewarded ad the server credits the member asynchronously (AdMob
-/// SSV callback), so the balance is re-polled with these gaps.
-const rewardRefreshDelays = [
-  Duration(seconds: 2),
-  Duration(seconds: 5),
-  Duration(seconds: 10),
-];
 
 /// Google's public test ad units (safe to click, never billed).
 const testUnitIds = <AdFormat, String>{
@@ -122,18 +116,6 @@ bool shouldShowInterstitial({
   if (analysisCount % frequency != 0) return false;
   if (lastShownAt == null) return true;
   return now.difference(lastShownAt) >= Duration(minutes: cooldownMinutes);
-}
-
-/// Whether "watch an ad for credits" is offered at all.
-bool canOfferRewarded({
-  required AdsConfig ads,
-  required bool isPro,
-  required bool isLoggedIn,
-  required bool emailVerified,
-}) {
-  if (isPro || !isLoggedIn || !emailVerified) return false;
-  if (!ads.enabled || !ads.rewarded.enabled) return false;
-  return (ads.rewarded.remainingToday ?? 0) > 0;
 }
 
 /// Ads actually used by the app. Pro never sees ads. [forceTestAds] (debug
