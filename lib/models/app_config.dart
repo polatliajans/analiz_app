@@ -99,7 +99,9 @@ class RewardedConfig {
 
   factory RewardedConfig.fromJson(Map<String, dynamic> json) => RewardedConfig(
     enabled: json['enabled'] as bool? ?? false,
-    unitId: json['unit_id'] as String?,
+    // The server serves the rewarded unit for ad-funded quick analyses as
+    // `analysis_unit_id`; the legacy `unit_id` is null once credit rewards are off.
+    unitId: (json['analysis_unit_id'] as String?) ?? (json['unit_id'] as String?),
     amount: (json['amount'] as num?)?.toInt() ?? 0,
     dailyCap: (json['daily_cap'] as num?)?.toInt() ?? 0,
     remainingToday: (json['remaining_today'] as num?)?.toInt(),

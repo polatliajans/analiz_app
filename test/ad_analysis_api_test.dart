@@ -11,6 +11,7 @@ http.Response _err(int status, String code) =>
     http.Response(jsonEncode({'code': code, 'message': 'm'}), status);
 
 void main() {
+  rewardedUnitTests();
   group('app-config', () {
     test('parses ad_analysis_enabled and daily cap', () {
       final c = AppConfig.fromJson({
@@ -163,5 +164,21 @@ void main() {
         throwsA(isA<AiAnalysisException>()),
       );
     });
+  });
+}
+
+// Added after the backend contract check: the rewarded unit for ad-funded quick
+// analyses arrives as `analysis_unit_id`.
+void rewardedUnitTests() {
+  test('rewarded config prefers analysis_unit_id over legacy unit_id', () {
+    final both = RewardedConfig.fromJson({
+      'enabled': true,
+      'unit_id': 'legacy',
+      'analysis_unit_id': 'analysis',
+    });
+    expect(both.unitId, 'analysis');
+    final legacy = RewardedConfig.fromJson({'unit_id': 'legacy'});
+    expect(legacy.unitId, 'legacy');
+    expect(RewardedConfig.fromJson({}).unitId, isNull);
   });
 }
