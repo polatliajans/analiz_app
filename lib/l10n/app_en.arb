@@ -525,23 +525,27 @@
   "proUpsellGenericBody": "Upgrade to Pro to unlock it.",
   "proBadgeTooltip": "Pro feature",
   "adLabel": "Ad",
-  "rewardedWatchButton": "Watch an ad, +{amount} credits (left today: {remaining})",
-  "@rewardedWatchButton": {
+  "insufficientCreditTitle": "Not enough credits",
+  "insufficientCreditBody": "You don't have enough credits for this analysis. You can buy credits to continue.",
+  "insufficientCreditBodyWithAd": "You don't have enough credits for this analysis. Watch a short ad to run this one quick analysis, buy credits, or go Pro.",
+  "insufficientCreditDeepBody": "You don't have enough credits for a deep analysis. You can buy credits or go Pro.",
+  "adAnalysisDeepAlwaysCredits": "Deep analysis always uses credits.",
+  "adAnalysisWatchButton": "Watch an ad and analyze",
+  "adAnalysisRemainingToday": "Left today: {remaining}",
+  "@adAnalysisRemainingToday": {
     "placeholders": {
-      "amount": {
-        "type": "int"
-      },
       "remaining": {
         "type": "int"
       }
     }
   },
-  "rewardedEarnedPending": "Thanks! Your credits will arrive in a few seconds.",
-  "rewardedAdUnavailable": "No ad is available right now. Please try again a bit later.",
-  "rewardedNotCompleted": "The ad was closed early, so no credits were added.",
-  "insufficientCreditTitle": "Not enough credits",
-  "insufficientCreditBody": "You don't have enough credits for this analysis. You can buy credits to continue.",
-  "insufficientCreditBodyWithAd": "You don't have enough credits for this analysis. Buy credits, or watch a short ad to earn free credits.",
+  "adAnalysisCapReached": "You've used all of today's ad-funded analyses: buy credits or go Pro.",
+  "adAnalysisEmailUnverified": "Verify your e-mail address to run an analysis by watching an ad.",
+  "adAnalysisAdUnavailable": "The ad couldn't be loaded right now. Please try again in a moment.",
+  "adAnalysisVerifyTimeout": "We couldn't confirm the ad yet. Please try again in a few seconds.",
+  "adAnalysisSessionExpired": "This ad session has expired. Please try again.",
+  "adAnalysisNotFree": "Ad-funded analysis is only available to free members.",
+  "adAnalysisDisabled": "Ad-funded analysis isn't available right now.",
   "notifChannelAnnouncementsName": "Announcements",
   "notifChannelAnnouncementsDesc": "News and announcements from the app",
   "notifChannelCreditsName": "Credits",

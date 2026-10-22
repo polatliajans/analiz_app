@@ -2,6 +2,8 @@ import '../theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../ads/ad_analysis_flow.dart';
+import '../ads/ad_analysis_messages.dart';
 import '../ads/ads_controller.dart';
 import '../data/ai_analysis_api.dart';
 import '../data/plan_errors.dart';
@@ -10,6 +12,7 @@ import '../l10n/app_localizations.dart';
 import '../models/coin.dart';
 import '../models/deep_analysis_job.dart';
 import '../models/structured_analysis.dart';
+import '../providers/ad_analysis_provider.dart';
 import '../providers/analysis_history_provider.dart';
 import '../providers/app_config_provider.dart';
 import '../providers/auth_provider.dart';
@@ -161,24 +164,16 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
         context,
         () => request(auth.token!, timeframe),
       );
-      await ref.read(authProvider.notifier).refreshMember();
-      ref.invalidate(analysisHistoryProvider);
-      final ads = ref.read(adsControllerProvider.notifier);
-      await ads.recordSuccessfulAnalysis();
-      if (!mounted) return;
-      await showAnalysisSheet(
-        context,
+      await _presentQuickResult(
         result: r.result,
         creditCost: r.creditCost,
         structured: r.structured,
       );
-      // Only after the user closed the result (never while waiting).
-      if (!mounted) return;
-      await ads.maybeShowInterstitial();
     } catch (e) {
       if (!mounted) return;
       if (e is InsufficientCreditException) {
-        showInsufficientCreditDialog(context);
+        final watchAd = await showInsufficientCreditDialog(context);
+        if (watchAd && mounted) await _runAdAnalysis(coin);
         return;
       }
       if (e is ProRequiredException) {
@@ -191,6 +186,113 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(failureMessage(l10n, '$e'))));
+    }
+  }
+
+  /// Shared result presentation of every quick analysis (credit- or
+  /// ad-funded): history, balance, result sheet.
+  Future<void> _presentQuickResult({
+    required String result,
+    required int creditCost,
+    required StructuredAnalysis? structured,
+    bool showInterstitial = true,
+  }) async {
+    await ref.read(authProvider.notifier).refreshMember();
+    ref.invalidate(analysisHistoryProvider);
+    final ads = ref.read(adsControllerProvider.notifier);
+    await ads.recordSuccessfulAnalysis();
+    if (!mounted) return;
+    await showAnalysisSheet(
+      context,
+      result: result,
+      creditCost: creditCost,
+      structured: structured,
+    );
+    // Only after the user closed the result (never while waiting). No
+    // interstitial after an analysis the member already paid for with an ad.
+    if (!mounted || !showInterstitial) return;
+    await ads.maybeShowInterstitial();
+  }
+
+  /// Quick analysis funded by one rewarded ad (Free members, insufficient
+  /// credit): ad -> server verification -> analysis with `ad_session_id`.
+  Future<void> _runAdAnalysis(Coin coin) async {
+    final l10n = AppLocalizations.of(context)!;
+    final auth = ref.read(authProvider);
+    if (!auth.isLoggedIn) {
+      showLoginRequiredSnackBar(context);
+      return;
+    }
+    final gate = ref.read(featureGateProvider);
+    final timeframe = gate.effectiveTimeframe(ref.read(timeframeProvider));
+    if (gate.isTimeframeLocked(timeframe)) {
+      showProUpsell(context, ProFeature.timeframe);
+      return;
+    }
+    void Function()? closeOverlay;
+    final flow = AdAnalysisFlow(
+      api: ref.read(adAnalysisApiProvider),
+      ads: AdsControllerAdService(ref.read(adsControllerProvider.notifier)),
+      token: auth.token!,
+      analyze: (sessionId) => AiAnalysisApi().requestAnalysis(
+        token: auth.token!,
+        coinId: coin.id,
+        timeframe: timeframe,
+        adSessionId: sessionId,
+      ),
+      onPhase: (phase) {
+        // The progress overlay covers verification + the analysis request
+        // (it cannot be shown over the full-screen ad itself).
+        if (phase == AdFlowPhase.verifying && mounted) {
+          closeOverlay = startAnalysisOverlay(context);
+        }
+      },
+    );
+    final AdFlowResult result;
+    try {
+      result = await flow.run();
+    } finally {
+      closeOverlay?.call();
+    }
+    if (!mounted) return;
+    final messenger = ScaffoldMessenger.of(context);
+    void say(String text) =>
+        messenger.showSnackBar(SnackBar(content: Text(text)));
+
+    switch (result.outcome) {
+      case AdFlowOutcome.success:
+        final r = result.analysis!;
+        await _presentQuickResult(
+          result: r.result,
+          creditCost: r.creditCost,
+          structured: null,
+          showInterstitial: false,
+        );
+      case AdFlowOutcome.hasCredit:
+        // Credit arrived in the meantime: just run the normal analysis.
+        await ref.read(authProvider.notifier).refreshMember();
+        if (mounted) await _requestAnalysis(coin);
+      case AdFlowOutcome.cancelled:
+        break;
+      case AdFlowOutcome.failed:
+        final e = result.error;
+        if (e is InsufficientCreditException) {
+          await showInsufficientCreditDialog(context);
+        } else if (e is ProRequiredException) {
+          ref.read(authProvider.notifier).refreshMember();
+          ref.read(appConfigProvider.notifier).refresh();
+          showProUpsell(context, ProFeature.timeframe);
+        } else {
+          say(l10n.analysisFailed('$e'));
+        }
+      default:
+        final text = adFlowMessage(l10n, result.outcome);
+        if (text != null) say(text);
+        if (result.outcome == AdFlowOutcome.capReached ||
+            result.outcome == AdFlowOutcome.notFree ||
+            result.outcome == AdFlowOutcome.disabled) {
+          ref.read(appConfigProvider.notifier).refresh();
+        }
     }
   }
 
@@ -234,7 +336,8 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
     } catch (e) {
       if (!mounted) return;
       if (e is InsufficientCreditException) {
-        showInsufficientCreditDialog(context);
+        // Deep analysis always costs credits: no ad option.
+        showInsufficientCreditDialog(context, kind: AnalysisKind.deep);
         return;
       }
       if (e is ProRequiredException) {

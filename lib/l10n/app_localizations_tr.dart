@@ -802,23 +802,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get adLabel => 'Reklam';
 
   @override
-  String rewardedWatchButton(int amount, int remaining) {
-    return 'Reklam izle, +$amount kredi (bugün kalan: $remaining)';
-  }
-
-  @override
-  String get rewardedEarnedPending =>
-      'Teşekkürler! Kredin birkaç saniye içinde yüklenecek.';
-
-  @override
-  String get rewardedAdUnavailable =>
-      'Şu anda gösterilecek reklam yok. Lütfen biraz sonra tekrar dene.';
-
-  @override
-  String get rewardedNotCompleted =>
-      'Reklam tamamlanmadan kapatıldı; kredi eklenmedi.';
-
-  @override
   String get insufficientCreditTitle => 'Kredi yetersiz';
 
   @override
@@ -827,7 +810,50 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get insufficientCreditBodyWithAd =>
-      'Bu analiz için yeterli kredin yok. Kredi alabilir ya da kısa bir reklam izleyerek ücretsiz kredi kazanabilirsin.';
+      'Bu analiz için yeterli kredin yok. Kısa bir reklam izleyerek bu hızlı analizi yapabilir, kredi alabilir ya da Pro olabilirsin.';
+
+  @override
+  String get insufficientCreditDeepBody =>
+      'Derin analiz için yeterli kredin yok. Kredi alabilir ya da Pro olabilirsin.';
+
+  @override
+  String get adAnalysisDeepAlwaysCredits =>
+      'Derin analiz her zaman kredi harcar.';
+
+  @override
+  String get adAnalysisWatchButton => 'Reklam izle ve analiz yap';
+
+  @override
+  String adAnalysisRemainingToday(int remaining) {
+    return 'Bugün kalan: $remaining';
+  }
+
+  @override
+  String get adAnalysisCapReached =>
+      'Bugünkü reklamlı analiz hakkın doldu: kredi al veya Pro ol.';
+
+  @override
+  String get adAnalysisEmailUnverified =>
+      'Reklam izleyerek analiz yapmak için önce e-posta adresini doğrulamalısın.';
+
+  @override
+  String get adAnalysisAdUnavailable =>
+      'Reklam şu an yüklenemedi. Lütfen biraz sonra tekrar dene.';
+
+  @override
+  String get adAnalysisVerifyTimeout =>
+      'Reklam henüz doğrulanamadı. Lütfen birkaç saniye sonra tekrar dene.';
+
+  @override
+  String get adAnalysisSessionExpired =>
+      'Reklam oturumunun süresi doldu. Lütfen tekrar dene.';
+
+  @override
+  String get adAnalysisNotFree =>
+      'Reklamlı analiz yalnızca ücretsiz üyeler içindir.';
+
+  @override
+  String get adAnalysisDisabled => 'Reklamlı analiz şu an kullanılamıyor.';
 
   @override
   String get notifChannelAnnouncementsName => 'Duyurular';

@@ -1432,30 +1432,6 @@ abstract class AppLocalizations {
   /// **'Ad'**
   String get adLabel;
 
-  /// No description provided for @rewardedWatchButton.
-  ///
-  /// In en, this message translates to:
-  /// **'Watch an ad, +{amount} credits (left today: {remaining})'**
-  String rewardedWatchButton(int amount, int remaining);
-
-  /// No description provided for @rewardedEarnedPending.
-  ///
-  /// In en, this message translates to:
-  /// **'Thanks! Your credits will arrive in a few seconds.'**
-  String get rewardedEarnedPending;
-
-  /// No description provided for @rewardedAdUnavailable.
-  ///
-  /// In en, this message translates to:
-  /// **'No ad is available right now. Please try again a bit later.'**
-  String get rewardedAdUnavailable;
-
-  /// No description provided for @rewardedNotCompleted.
-  ///
-  /// In en, this message translates to:
-  /// **'The ad was closed early, so no credits were added.'**
-  String get rewardedNotCompleted;
-
   /// No description provided for @insufficientCreditTitle.
   ///
   /// In en, this message translates to:
@@ -1471,8 +1447,74 @@ abstract class AppLocalizations {
   /// No description provided for @insufficientCreditBodyWithAd.
   ///
   /// In en, this message translates to:
-  /// **'You don\'t have enough credits for this analysis. Buy credits, or watch a short ad to earn free credits.'**
+  /// **'You don\'t have enough credits for this analysis. Watch a short ad to run this one quick analysis, buy credits, or go Pro.'**
   String get insufficientCreditBodyWithAd;
+
+  /// No description provided for @insufficientCreditDeepBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have enough credits for a deep analysis. You can buy credits or go Pro.'**
+  String get insufficientCreditDeepBody;
+
+  /// No description provided for @adAnalysisDeepAlwaysCredits.
+  ///
+  /// In en, this message translates to:
+  /// **'Deep analysis always uses credits.'**
+  String get adAnalysisDeepAlwaysCredits;
+
+  /// No description provided for @adAnalysisWatchButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch an ad and analyze'**
+  String get adAnalysisWatchButton;
+
+  /// No description provided for @adAnalysisRemainingToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Left today: {remaining}'**
+  String adAnalysisRemainingToday(int remaining);
+
+  /// No description provided for @adAnalysisCapReached.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve used all of today\'s ad-funded analyses: buy credits or go Pro.'**
+  String get adAnalysisCapReached;
+
+  /// No description provided for @adAnalysisEmailUnverified.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify your e-mail address to run an analysis by watching an ad.'**
+  String get adAnalysisEmailUnverified;
+
+  /// No description provided for @adAnalysisAdUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'The ad couldn\'t be loaded right now. Please try again in a moment.'**
+  String get adAnalysisAdUnavailable;
+
+  /// No description provided for @adAnalysisVerifyTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t confirm the ad yet. Please try again in a few seconds.'**
+  String get adAnalysisVerifyTimeout;
+
+  /// No description provided for @adAnalysisSessionExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'This ad session has expired. Please try again.'**
+  String get adAnalysisSessionExpired;
+
+  /// No description provided for @adAnalysisNotFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Ad-funded analysis is only available to free members.'**
+  String get adAnalysisNotFree;
+
+  /// No description provided for @adAnalysisDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Ad-funded analysis isn\'t available right now.'**
+  String get adAnalysisDisabled;
 
   /// No description provided for @notifChannelAnnouncementsName.
   ///

@@ -4,7 +4,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../ads/ad_logic.dart';
 import '../ads/banner_ad_slot.dart';
-import '../ads/rewarded_ad_button.dart';
 import '../l10n/app_localizations.dart';
 import '../models/member.dart';
 import '../providers/auth_prompt_provider.dart';
@@ -319,8 +318,6 @@ class _CreditCard extends StatelessWidget {
                     icon: const Icon(Icons.workspace_premium_outlined),
                     label: Text(l10n.upgradeToPro),
                   ),
-                // Hidden unless offered (Free, rewards left today, ads on).
-                const RewardedAdButton(),
               ],
             ),
           ],

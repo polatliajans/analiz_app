@@ -121,61 +121,6 @@ void main() {
     });
   });
 
-  group('rewarded offer', () {
-    const cfg = RewardedConfig(
-      enabled: true,
-      amount: 3,
-      dailyCap: 3,
-      remainingToday: 2,
-    );
-
-    bool offer(
-      RewardedConfig c, {
-      bool adsEnabled = true,
-      bool isPro = false,
-      bool loggedIn = true,
-      bool verified = true,
-    }) => canOfferRewarded(
-      ads: AdsConfig(enabled: adsEnabled, rewarded: c),
-      isPro: isPro,
-      isLoggedIn: loggedIn,
-      emailVerified: verified,
-    );
-
-    test('free, signed-in, verified member with rewards left', () {
-      expect(offer(cfg), isTrue);
-    });
-
-    test('hidden when the daily limit is used up or unknown', () {
-      expect(
-        offer(
-          const RewardedConfig(enabled: true, amount: 3, remainingToday: 0),
-        ),
-        isFalse,
-      );
-      expect(offer(const RewardedConfig(enabled: true, amount: 3)), isFalse);
-    });
-
-    test('hidden for Pro, guests, unverified, disabled ads', () {
-      expect(offer(cfg, isPro: true), isFalse);
-      expect(offer(cfg, loggedIn: false), isFalse);
-      expect(offer(cfg, verified: false), isFalse);
-      expect(offer(cfg, adsEnabled: false), isFalse);
-      expect(
-        offer(const RewardedConfig(enabled: false, remainingToday: 3)),
-        isFalse,
-      );
-    });
-
-    test('balance is re-polled 2s, 5s and 10s apart', () {
-      expect(rewardRefreshDelays, const [
-        Duration(seconds: 2),
-        Duration(seconds: 5),
-        Duration(seconds: 10),
-      ]);
-    });
-  });
-
   group('unit ids', () {
     test('server id wins in every build', () {
       expect(

@@ -832,23 +832,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adLabel => 'Ad';
 
   @override
-  String rewardedWatchButton(int amount, int remaining) {
-    return 'Watch an ad, +$amount credits (left today: $remaining)';
-  }
-
-  @override
-  String get rewardedEarnedPending =>
-      'Thanks! Your credits will arrive in a few seconds.';
-
-  @override
-  String get rewardedAdUnavailable =>
-      'No ad is available right now. Please try again a bit later.';
-
-  @override
-  String get rewardedNotCompleted =>
-      'The ad was closed early, so no credits were added.';
-
-  @override
   String get insufficientCreditTitle => 'Not enough credits';
 
   @override
@@ -857,7 +840,51 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get insufficientCreditBodyWithAd =>
-      'You don\'t have enough credits for this analysis. Buy credits, or watch a short ad to earn free credits.';
+      'You don\'t have enough credits for this analysis. Watch a short ad to run this one quick analysis, buy credits, or go Pro.';
+
+  @override
+  String get insufficientCreditDeepBody =>
+      'You don\'t have enough credits for a deep analysis. You can buy credits or go Pro.';
+
+  @override
+  String get adAnalysisDeepAlwaysCredits =>
+      'Deep analysis always uses credits.';
+
+  @override
+  String get adAnalysisWatchButton => 'Watch an ad and analyze';
+
+  @override
+  String adAnalysisRemainingToday(int remaining) {
+    return 'Left today: $remaining';
+  }
+
+  @override
+  String get adAnalysisCapReached =>
+      'You\'ve used all of today\'s ad-funded analyses: buy credits or go Pro.';
+
+  @override
+  String get adAnalysisEmailUnverified =>
+      'Verify your e-mail address to run an analysis by watching an ad.';
+
+  @override
+  String get adAnalysisAdUnavailable =>
+      'The ad couldn\'t be loaded right now. Please try again in a moment.';
+
+  @override
+  String get adAnalysisVerifyTimeout =>
+      'We couldn\'t confirm the ad yet. Please try again in a few seconds.';
+
+  @override
+  String get adAnalysisSessionExpired =>
+      'This ad session has expired. Please try again.';
+
+  @override
+  String get adAnalysisNotFree =>
+      'Ad-funded analysis is only available to free members.';
+
+  @override
+  String get adAnalysisDisabled =>
+      'Ad-funded analysis isn\'t available right now.';
 
   @override
   String get notifChannelAnnouncementsName => 'Announcements';
