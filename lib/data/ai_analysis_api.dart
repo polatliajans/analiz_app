@@ -5,6 +5,7 @@ import 'api_http.dart';
 import '../config/api_config.dart';
 import '../l10n/app_l10n.dart';
 import '../models/ai_analysis_result.dart';
+import 'ad_analysis_api.dart';
 import 'plan_errors.dart';
 
 class AiAnalysisException implements Exception {
@@ -20,6 +21,7 @@ class AiAnalysisApi {
     required String token,
     required int coinId,
     required String timeframe,
+    String? adSessionId,
   }) async {
     final uri = Uri.parse('${ApiConfig.baseUrl}/coins/$coinId/analyses');
 
@@ -28,7 +30,10 @@ class AiAnalysisApi {
       response = await ApiHttp.post(
         uri,
         headers: {'Authorization': 'Bearer $token'},
-        body: {'timeframe': timeframe},
+        body: {
+          'timeframe': timeframe,
+          'ad_session_id': ?adSessionId,
+        },
       ).timeout(const Duration(seconds: 50));
     } catch (e) {
       throw AiAnalysisException(
@@ -36,7 +41,18 @@ class AiAnalysisApi {
       );
     }
 
+    return parseResponse(response, withAdSession: adSessionId != null);
+  }
+
+  /// Maps a quick-analysis response to a result or a typed exception.
+  static AiAnalysisResult parseResponse(
+    http.Response response, {
+    bool withAdSession = false,
+  }) {
     if (isProRequired(response)) throw ProRequiredException();
+    if (withAdSession && isAdAnalysisCode(errorCodeOf(response))) {
+      throw AdAnalysisException.fromResponse(response);
+    }
     if (response.statusCode == 402) throw InsufficientCreditException();
     if (response.statusCode == 502) {
       throw AiAnalysisException(AppL10n.current.errorAnalysisUnavailable);

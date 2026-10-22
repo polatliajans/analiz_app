@@ -149,9 +149,16 @@ class AppConfig {
   final PlanConfig plan;
   final AdsConfig ads;
 
+  /// Free members may watch one rewarded ad instead of paying 2 credits for
+  /// a quick analysis (never for deep analysis).
+  final bool adAnalysisEnabled;
+  final int adAnalysisDailyCap;
+
   const AppConfig({
     this.plan = PlanConfig.safeDefaults,
     this.ads = AdsConfig.none,
+    this.adAnalysisEnabled = false,
+    this.adAnalysisDailyCap = 0,
   });
 
   static const safeDefaults = AppConfig();
@@ -166,6 +173,20 @@ class AppConfig {
       ads: ads is Map<String, dynamic>
           ? AdsConfig.fromJson(ads)
           : AdsConfig.none,
+      adAnalysisEnabled: _lookup(json, 'ad_analysis_enabled') == true,
+      adAnalysisDailyCap:
+          (_lookup(json, 'ad_analysis_daily_cap') as num?)?.toInt() ?? 0,
     );
+  }
+
+  /// The contract puts the ad-analysis keys at the top level; tolerate them
+  /// being nested in `ads` or `plan` too.
+  static Object? _lookup(Map<String, dynamic> json, String key) {
+    if (json[key] != null) return json[key];
+    for (final group in ['ads', 'plan']) {
+      final m = json[group];
+      if (m is Map<String, dynamic> && m[key] != null) return m[key];
+    }
+    return null;
   }
 }
