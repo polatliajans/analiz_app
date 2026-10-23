@@ -1282,6 +1282,18 @@ abstract class AppLocalizations {
   /// **'Support'**
   String get support;
 
+  /// No description provided for @crashReportingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Crash reporting'**
+  String get crashReportingTitle;
+
+  /// No description provided for @crashReportingNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Anonymous crash reports (app version, language, screen, signed-in yes/no) help us fix bugs. No personal or financial data is included.'**
+  String get crashReportingNote;
+
   /// No description provided for @financialDisclaimer.
   ///
   /// In en, this message translates to:

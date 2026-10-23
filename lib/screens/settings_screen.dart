@@ -219,6 +219,11 @@ class SettingsScreen extends ConsumerWidget {
             onTap: () => _showDisclaimer(context),
           ),
           ListTile(
+            leading: const Icon(Icons.bug_report_outlined),
+            title: Text(l10n.crashReportingTitle),
+            subtitle: Text(l10n.crashReportingNote),
+          ),
+          ListTile(
             leading: const Icon(Icons.info_outline),
             title: Text(l10n.appVersion),
             subtitle: Text(

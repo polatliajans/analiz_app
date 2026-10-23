@@ -52,6 +52,7 @@ dependencies:
   url_launcher: ^6.3.2
   package_info_plus: ^10.2.2
   google_mobile_ads: ^9.1.0
+  firebase_crashlytics: 4.3.10
 
 dependency_overrides:
   k_chart:

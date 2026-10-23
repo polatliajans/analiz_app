@@ -490,6 +490,8 @@
   "termsOfUse": "Terms of Use",
   "deleteAccountPage": "Delete account",
   "support": "Support",
+  "crashReportingTitle": "Crash reporting",
+  "crashReportingNote": "Anonymous crash reports (app version, language, screen, signed-in yes/no) help us fix bugs. No personal or financial data is included.",
   "financialDisclaimer": "Financial disclaimer",
   "financialDisclaimerText": "CryptoAnaliz does not provide investment advice. Signals and analyses are for informational purposes only and carry no guarantee. Crypto asset investments carry high risk; you are responsible for your decisions and any resulting losses.",
   "appVersion": "App version",

@@ -758,6 +758,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get support => 'Soporte';
 
   @override
+  String get crashReportingTitle => 'Informes de fallos';
+
+  @override
+  String get crashReportingNote =>
+      'Los informes anónimos de fallos (versión de la app, idioma, pantalla, sesión iniciada sí/no) nos ayudan a corregir errores. No incluyen datos personales ni financieros.';
+
+  @override
   String get financialDisclaimer => 'Aviso financiero';
 
   @override

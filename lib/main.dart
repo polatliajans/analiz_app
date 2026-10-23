@@ -1,11 +1,16 @@
+import 'dart:async';
+
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'l10n/app_localizations.dart';
 import 'providers/auth_prompt_provider.dart';
+import 'providers/home_tab_provider.dart';
 import 'providers/auth_provider.dart';
 import 'providers/locale_provider.dart';
 import 'providers/onboarding_provider.dart';
@@ -16,18 +21,32 @@ import 'screens/onboarding_screen.dart';
 import 'providers/push_provider.dart';
 import 'providers/theme_provider.dart';
 import 'theme/app_theme.dart';
+import 'services/crash_reporter.dart';
+import 'services/firebase_crash_backend.dart';
 import 'services/notification_logic.dart';
 import 'services/notification_navigation.dart';
 import 'services/push_notification_service.dart';
 import 'widgets/notification_permission_dialog.dart';
 
 Future<void> main() async {
+  await runZonedGuarded(_bootstrap, (error, stack) {
+    CrashReporter.instance.recordFatal(error, stack);
+  });
+}
+
+Future<void> _bootstrap() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Draw behind the system bars on every Android version (Android 15 enforces
   // it); screens add their own insets.
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   try {
     await Firebase.initializeApp();
+    // Crash reporting: off in debug, wrapped so it can never break startup.
+    final reporter = SafeCrashReporter(FirebaseCrashBackend());
+    await reporter.init(enabled: !kDebugMode);
+    CrashReporter.instance = reporter;
+    installCrashHandlers(reporter);
+    unawaited(_setVersionContext(reporter));
   } catch (_) {
     // Firebase is not configured yet; the app still starts (auth/push disabled).
   }
@@ -39,6 +58,15 @@ Future<void> main() async {
     ),
   );
 }
+
+Future<void> _setVersionContext(CrashReporter reporter) async {
+  try {
+    final info = await PackageInfo.fromPlatform();
+    reporter.setContext(appVersion: '${info.version}+${info.buildNumber}');
+  } catch (_) {}
+}
+
+const _screenNames = ['home', 'chart', 'radar', 'watchlist', 'profile'];
 
 class KriptoAnalizApp extends ConsumerStatefulWidget {
   const KriptoAnalizApp({super.key});
@@ -115,10 +143,17 @@ class _KriptoAnalizAppState extends ConsumerState<KriptoAnalizApp> {
   @override
   Widget build(BuildContext context) {
     ref.listen(authProvider, (previous, next) {
+      CrashReporter.instance.setContext(loggedIn: next.isLoggedIn);
       _pushService.updateAuth(authToken: next.isLoggedIn ? next.token : null);
     });
     ref.listen(localeProvider, (previous, next) {
       if (previous?.locale != next.locale) _pushService.refreshChannels();
+      CrashReporter.instance.setContext(locale: next.locale.languageCode);
+    });
+    ref.listen(homeTabProvider, (previous, next) {
+      if (next >= 0 && next < _screenNames.length) {
+        CrashReporter.instance.setContext(screen: _screenNames[next]);
+      }
     });
 
     final localeState = ref.watch(localeProvider);

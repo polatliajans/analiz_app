@@ -204,6 +204,8 @@
   "termsOfUse": "Kullanım Koşulları",
   "deleteAccountPage": "Hesap silme",
   "support": "Destek",
+  "crashReportingTitle": "Çökme raporlama",
+  "crashReportingNote": "Anonim çökme raporları (uygulama sürümü, dil, ekran, giriş yapıldı mı) hataları düzeltmemize yardımcı olur. Kişisel veya finansal veri içermez.",
   "financialDisclaimer": "Finansal uyarı",
   "financialDisclaimerText": "CryptoAnaliz yatırım tavsiyesi vermez. Sinyaller ve analizler yalnızca bilgilendirme amaçlıdır, garanti içermez. Kripto varlık yatırımları yüksek risk taşır; kararlarınızdan ve olası kayıplardan siz sorumlusunuz.",
   "appVersion": "Uygulama sürümü",

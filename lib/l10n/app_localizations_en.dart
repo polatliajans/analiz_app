@@ -748,6 +748,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get support => 'Support';
 
   @override
+  String get crashReportingTitle => 'Crash reporting';
+
+  @override
+  String get crashReportingNote =>
+      'Anonymous crash reports (app version, language, screen, signed-in yes/no) help us fix bugs. No personal or financial data is included.';
+
+  @override
   String get financialDisclaimer => 'Financial disclaimer';
 
   @override

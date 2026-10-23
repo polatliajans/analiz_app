@@ -204,6 +204,8 @@
   "termsOfUse": "Términos de uso",
   "deleteAccountPage": "Eliminar cuenta",
   "support": "Soporte",
+  "crashReportingTitle": "Informes de fallos",
+  "crashReportingNote": "Los informes anónimos de fallos (versión de la app, idioma, pantalla, sesión iniciada sí/no) nos ayudan a corregir errores. No incluyen datos personales ni financieros.",
   "financialDisclaimer": "Aviso financiero",
   "financialDisclaimerText": "CryptoAnaliz no ofrece asesoramiento de inversión. Las señales y los análisis son solo informativos y no ofrecen garantías. Invertir en criptoactivos conlleva un riesgo elevado; usted es responsable de sus decisiones y de las posibles pérdidas.",
   "appVersion": "Versión de la app",

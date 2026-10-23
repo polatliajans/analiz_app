@@ -718,6 +718,13 @@ class AppLocalizationsTr extends AppLocalizations {
   String get support => 'Destek';
 
   @override
+  String get crashReportingTitle => 'Çökme raporlama';
+
+  @override
+  String get crashReportingNote =>
+      'Anonim çökme raporları (uygulama sürümü, dil, ekran, giriş yapıldı mı) hataları düzeltmemize yardımcı olur. Kişisel veya finansal veri içermez.';
+
+  @override
   String get financialDisclaimer => 'Finansal uyarı';
 
   @override
