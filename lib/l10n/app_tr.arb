@@ -478,7 +478,7 @@
   "mkDepthTitle": "Emir defteri derinliği",
   "mkDepthBid": "Alış",
   "mkDepthAsk": "Satış",
-  "mkDepthImbalance": "Dengesizlik {pct}",
+  "mkDepthImbalance": "Alış/satış derinlik oranı {pct}",
   "@mkDepthImbalance": {"placeholders": {"pct": {"type": "String"}}},
   "mkDepthNote": "Derinlik emir defterinin anlık görüntüsüdür, sinyal değildir.",
   "mkActivityTitle": "Hareketlilik",
@@ -499,5 +499,9 @@
   "alTabLoginHint": "Fiyat alarmı kurmak için giriş yap",
   "alTabHistory": "Geçmiş alarmlar",
   "ovPeriod1h": "1s",
-  "ovPeriod4h": "4s"
+  "ovPeriod4h": "4s",
+  "mkDepthIncomplete": "Derinlik sığ: kapsanan pencere ±{pct}%",
+  "@mkDepthIncomplete": {"placeholders": {"pct": {"type": "String"}}},
+  "ovSourceFrom": "Veri: {sources}",
+  "@ovSourceFrom": {"placeholders": {"sources": {"type": "String"}}}
 }

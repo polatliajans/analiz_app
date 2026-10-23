@@ -32,7 +32,7 @@ class MarketTab extends StatelessWidget {
           return TabMessage(icon: Icons.insights_outlined, title: l10n.mkEmpty);
         }
         return MarketContent(
-          isFutures: coin.marketType == 'futures',
+          isFutures: coin.marketType == 'futures' && m.isFutures != false,
           market: m,
         );
       },
@@ -379,7 +379,7 @@ class LiquiditySection extends StatelessWidget {
           if (l.spreadBps != null)
             LabelValueRow(
               label: l10n.mkSpread,
-              value: l10n.mkSpreadValue(l.spreadBps!.toStringAsFixed(1)),
+              value: l10n.mkSpreadValue(formatBps(l.spreadBps!)),
             ),
           if (l.depth.isNotEmpty) ...[
             const SizedBox(height: 8),
@@ -420,9 +420,7 @@ class _DepthRow extends StatelessWidget {
     final bid = band.bidUsd, ask = band.askUsd;
     final imb = band.imbalance;
     final total = (bid ?? 0) + (ask ?? 0);
-    final bandText = band.bandPct == band.bandPct.roundToDouble()
-        ? band.bandPct.toStringAsFixed(0)
-        : band.bandPct.toString();
+    final bandText = formatWindowPct(band.windowPct);
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: Column(
@@ -448,9 +446,11 @@ class _DepthRow extends StatelessWidget {
             leftColor: trendColor(context, 1),
             rightColor: trendColor(context, -1),
           ),
-          if (imb != null)
+          if (imb != null) HintText(l10n.mkDepthImbalance(formatRatio(imb))),
+          if (!band.complete)
             HintText(
-              l10n.mkDepthImbalance(formatSignedPct(imb * 100, digits: 0)),
+              l10n.mkDepthIncomplete(bandText),
+              key: const Key('market-depth-incomplete'),
             ),
         ],
       ),
@@ -492,6 +492,7 @@ class ActivitySection extends StatelessWidget {
               label: l10n.mkVolumeRank,
               value: total != null ? '$rank/$total' : '#$rank',
             ),
+          if (rank != null && a.rankScope != null) HintText(a.rankScope!),
         ],
       ),
     );

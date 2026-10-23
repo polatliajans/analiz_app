@@ -69,17 +69,22 @@ class PriceExtreme {
   final DateTime? date;
   final double? distancePct;
 
-  const PriceExtreme({this.price, this.date, this.distancePct});
+  const PriceExtreme({this.price, this.date, this.distancePct, this.daysSince});
 
   bool get isEmpty => price == null && date == null && distancePct == null;
+
+  /// Days since the extreme happened (served for the ATH).
+  final int? daysSince;
 
   static PriceExtreme? tryParse(Object? json) {
     final m = _map(json);
     if (m == null) return null;
     final e = PriceExtreme(
+      daysSince: _int(m['days_since']),
       price: _pickNum(m, const ['price', 'value']),
       date: _date(_pick(m, const ['date', 'at', 'time'])),
       distancePct: _pickNum(m, const [
+        'dist_pct',
         'distance_pct',
         'distance_percent',
         'pct_from_current',
@@ -98,7 +103,9 @@ class OverviewSummary {
   final double? marketCap;
   final double? fdv;
   final double? volume24h;
-  final double? volumeMarketCapRatio;
+
+  /// 24h volume as percent of market cap (already a percent, e.g. 14.8).
+  final double? volumeToMarketCapPct;
   final double? circulatingSupply;
   final double? totalSupply;
   final double? maxSupply;
@@ -114,6 +121,7 @@ class OverviewSummary {
   final List<String> tags;
   final String? platform;
   final int? ageDays;
+  final DateTime? dateLaunched;
   final int? listingAgeDays;
   final bool newListing;
   final List<String> sources;
@@ -125,7 +133,7 @@ class OverviewSummary {
     this.marketCap,
     this.fdv,
     this.volume24h,
-    this.volumeMarketCapRatio,
+    this.volumeToMarketCapPct,
     this.circulatingSupply,
     this.totalSupply,
     this.maxSupply,
@@ -141,6 +149,7 @@ class OverviewSummary {
     this.tags = const [],
     this.platform,
     this.ageDays,
+    this.dateLaunched,
     this.listingAgeDays,
     this.newListing = false,
     this.sources = const [],
@@ -158,7 +167,7 @@ class OverviewSummary {
   }
 
   bool get showsSupplyProgress =>
-      (hasMaxSupply ?? maxSupply != null) && circulatingPctOfMax != null;
+      hasMaxSupply != false && circulatingPctOfMax != null;
 
   List<double?> get changes => [change24h, change7d, change30d, change90d];
 
@@ -168,7 +177,7 @@ class OverviewSummary {
       marketCap == null &&
       fdv == null &&
       volume24h == null &&
-      volumeMarketCapRatio == null &&
+      volumeToMarketCapPct == null &&
       circulatingSupply == null &&
       totalSupply == null &&
       maxSupply == null &&
@@ -182,12 +191,19 @@ class OverviewSummary {
       listingAgeDays == null &&
       !newListing;
 
+  static double? _ratioToPct(double? v) => v == null ? null : v * 100;
+
   static OverviewSummary? tryParse(Object? json) {
     final m = _map(json);
     if (m == null) return null;
     final supply = _map(_pick(m, const ['supply']));
     final changes = _map(
-      _pick(m, const ['changes', 'price_change', 'percent_change']),
+      _pick(m, const [
+        'change_pct',
+        'changes',
+        'price_change',
+        'percent_change',
+      ]),
     );
     final both = [changes, m];
     final tags = _pick(m, const ['tags']);
@@ -197,19 +213,33 @@ class OverviewSummary {
       name: _str(m['name']),
       symbol: _str(m['symbol']),
       rank: _int(_pick(m, const ['rank', 'cmc_rank', 'market_cap_rank'])),
-      marketCap: _pickNum(m, const ['market_cap', 'marketcap']),
+      marketCap: _pickNum(m, const [
+        'market_cap_usd',
+        'market_cap',
+        'marketcap',
+      ]),
       fdv: _pickNum(m, const [
+        'fully_diluted_market_cap_usd',
         'fdv',
         'fully_diluted_market_cap',
         'fully_diluted_valuation',
       ]),
-      volume24h: _pickNum(m, const ['volume_24h', 'volume24h']),
-      volumeMarketCapRatio: _pickNum(m, const [
-        'volume_market_cap_ratio',
-        'volume_to_market_cap',
-        'volume_mcap_ratio',
-        'vol_mcap',
+      volume24h: _pickNum(m, const [
+        'volume_24h_usd',
+        'volume_24h',
+        'volume24h',
       ]),
+      volumeToMarketCapPct:
+          _pickNum(m, const ['volume_to_market_cap_pct']) ??
+          // Older/guessed shapes served a ratio (0.148 = 14.8%).
+          _ratioToPct(
+            _pickNum(m, const [
+              'volume_market_cap_ratio',
+              'volume_to_market_cap',
+              'volume_mcap_ratio',
+              'vol_mcap',
+            ]),
+          ),
       circulatingSupply: _pickNumIn(
         [supply, m],
         const ['circulating', 'circulating_supply'],
@@ -221,7 +251,11 @@ class OverviewSummary {
       ),
       circulatingPctOfMax: _pickNumIn(
         [supply, m],
-        const ['circulating_pct_of_max', 'circulating_percent_of_max'],
+        const [
+          'circulating_supply_pct_of_max',
+          'circulating_pct_of_max',
+          'circulating_percent_of_max',
+        ],
       ),
       change24h: _pickNumIn(both, const [
         '24h',
@@ -262,6 +296,7 @@ class OverviewSummary {
           : const [],
       platform: _str(_pick(m, const ['platform', 'chain'])),
       ageDays: _int(_pick(m, const ['age_days', 'coin_age_days'])),
+      dateLaunched: _date(m['date_launched']),
       listingAgeDays: _int(_pick(m, const ['listing_age_days', 'listed_days'])),
       newListing:
           _bool(_pick(m, const ['new_listing', 'is_new_listing'])) ?? false,
@@ -329,15 +364,17 @@ class FuturesMetrics {
       takerBuySell24h == null &&
       basisPct == null;
 
-  /// Fractions (<= 1) are scaled to percent.
-  static double? _share(double? v) =>
+  /// Fractions (<= 1) from legacy keys are scaled to percent.
+  static double? _legacyShare(double? v) =>
       v == null ? null : (v >= 0 && v <= 1 ? v * 100 : v).clamp(0.0, 100.0);
 
   static FuturesMetrics? tryParse(Object? json) {
     final m = _map(json);
     if (m == null) return null;
     final funding = _map(m['funding']);
-    final oi = _map(_pick(m, const ['oi_change', 'open_interest_change']));
+    final oi = _map(
+      _pick(m, const ['oi_change_pct', 'oi_change', 'open_interest_change']),
+    );
     final taker = _map(_pick(m, const ['taker', 'taker_buy_sell']));
     final ratio = _pickNumIn(
       [funding, m],
@@ -349,32 +386,41 @@ class FuturesMetrics {
       fundingRatePct: ratio ?? (raw == null ? null : raw * 100),
       fundingPercentile: _pickNumIn(
         [funding, m],
-        const ['percentile', 'funding_percentile'],
+        const ['funding_percentile_90', 'percentile', 'funding_percentile'],
       )?.clamp(0.0, 100.0),
       oiChange1h: _pickNumIn([oi, m], const ['1h', 'oi_change_1h']),
       oiChange4h: _pickNumIn([oi, m], const ['4h', 'oi_change_4h']),
       oiChange24h: _pickNumIn([oi, m], const ['24h', 'oi_change_24h']),
       oiChange7d: _pickNumIn([oi, m], const ['7d', 'oi_change_7d']),
-      longSharePct: _share(
-        _pickNum(m, const [
-          'long_share',
-          'long_share_pct',
-          'long_account_pct',
-          'long_pct',
-        ]),
-      ),
+      // `long_share_pct` is already a 0..100 percent.
+      longSharePct:
+          _pickNum(m, const ['long_share_pct'])?.clamp(0.0, 100.0) ??
+          _legacyShare(
+            _pickNum(m, const ['long_share', 'long_account_pct', 'long_pct']),
+          ),
       longShortRatio: _pickNum(m, const ['long_short_ratio', 'ls_ratio']),
       topTraderRatio: _pickNum(m, const [
+        'top_trader_position_ls',
         'top_trader_ratio',
         'top_trader_long_short_ratio',
       ]),
       takerBuySell1h: _pickNumIn(
         [taker, m],
-        const ['1h', 'taker_buy_sell_1h', 'taker_ratio_1h'],
+        const [
+          'taker_buy_sell_ratio_1h',
+          '1h',
+          'taker_buy_sell_1h',
+          'taker_ratio_1h',
+        ],
       ),
       takerBuySell24h: _pickNumIn(
         [taker, m],
-        const ['24h', 'taker_buy_sell_24h', 'taker_ratio_24h'],
+        const [
+          'taker_buy_sell_ratio_24h',
+          '24h',
+          'taker_buy_sell_24h',
+          'taker_ratio_24h',
+        ],
       ),
       basisPct: _pickNum(m, const ['basis_pct', 'basis', 'basis_percent']),
     );
@@ -382,30 +428,52 @@ class FuturesMetrics {
   }
 }
 
-/// One order book band (e.g. within 1% of the mid price).
+/// One order book window (e.g. within 1% of the mid price).
 class DepthBand {
-  final double bandPct;
+  /// Half-width of the window around the mid price, in percent.
+  final double windowPct;
   final double? bidUsd;
   final double? askUsd;
 
-  const DepthBand({required this.bandPct, this.bidUsd, this.askUsd});
+  /// False when the book is too shallow to cover the whole window: the
+  /// numbers then describe only the covered [windowPct].
+  final bool complete;
 
-  /// (bid - ask) / (bid + ask) in -1..1; null when unknown or empty.
+  const DepthBand({
+    required this.windowPct,
+    this.bidUsd,
+    this.askUsd,
+    double? imbalanceRatio,
+    this.complete = true,
+  }) : _imbalanceRatio = imbalanceRatio;
+
+  final double? _imbalanceRatio;
+
+  /// Server-given ratio, else bid / ask.
   double? get imbalance {
+    final given = _imbalanceRatio;
+    if (given != null) return given;
     final b = bidUsd, a = askUsd;
-    if (b == null || a == null || b < 0 || a < 0 || b + a <= 0) return null;
-    return (b - a) / (b + a);
+    if (b == null || a == null || b < 0 || a <= 0) return null;
+    return b / a;
   }
 
   static DepthBand? tryParse(Object? json, [double? keyed]) {
     final m = _map(json);
     if (m == null) return null;
-    final band = _pickNum(m, const ['band_pct', 'band', 'pct']) ?? keyed;
-    if (band == null) return null;
-    final bid = _pickNum(m, const ['bid_usd', 'bid', 'bids']);
-    final ask = _pickNum(m, const ['ask_usd', 'ask', 'asks']);
+    final w =
+        _pickNum(m, const ['window_pct', 'band_pct', 'band', 'pct']) ?? keyed;
+    if (w == null) return null;
+    final bid = _pickNum(m, const ['bid_depth_usd', 'bid_usd', 'bid', 'bids']);
+    final ask = _pickNum(m, const ['ask_depth_usd', 'ask_usd', 'ask', 'asks']);
     if (bid == null && ask == null) return null;
-    return DepthBand(bandPct: band, bidUsd: bid, askUsd: ask);
+    return DepthBand(
+      windowPct: w,
+      bidUsd: bid,
+      askUsd: ask,
+      imbalanceRatio: _pickNum(m, const ['imbalance_ratio']),
+      complete: _bool(m['complete']) ?? true,
+    );
   }
 }
 
@@ -420,7 +488,7 @@ class LiquidityMetrics {
   static LiquidityMetrics? tryParse(Object? json) {
     final m = _map(json);
     if (m == null) return null;
-    final raw = _pick(m, const ['depth', 'depth_bands']);
+    final raw = _pick(m, const ['depth_bands', 'depth']);
     final bands = <DepthBand>[];
     if (raw is List) {
       for (final e in raw) {
@@ -434,7 +502,7 @@ class LiquidityMetrics {
         if (b != null) bands.add(b);
       });
     }
-    bands.sort((a, b) => a.bandPct.compareTo(b.bandPct));
+    bands.sort((a, b) => a.windowPct.compareTo(b.windowPct));
     final l = LiquidityMetrics(
       spreadBps: _pickNum(m, const ['spread_bps', 'spread']),
       depth: bands,
@@ -449,11 +517,15 @@ class ActivityMetrics {
   final int? volumeRank;
   final int? volumeRankTotal;
 
+  /// What the rank is among, e.g. "active futures USDT coins".
+  final String? rankScope;
+
   const ActivityMetrics({
     this.volume24h,
     this.trades24h,
     this.volumeRank,
     this.volumeRankTotal,
+    this.rankScope,
   });
 
   bool get isEmpty =>
@@ -466,26 +538,31 @@ class ActivityMetrics {
     final m = _map(json);
     if (m == null) return null;
     final a = ActivityMetrics(
-      volume24h: _pickNum(m, const ['volume_24h', 'quote_volume_24h']),
+      volume24h: _pickNum(m, const [
+        'quote_volume_24h_usd',
+        'volume_24h',
+        'quote_volume_24h',
+      ]),
       trades24h: _int(_pick(m, const ['trades_24h', 'trade_count_24h'])),
       volumeRank: _int(_pick(m, const ['volume_rank', 'rank'])),
       volumeRankTotal: _int(
-        _pick(m, const ['volume_rank_total', 'rank_total', 'total']),
+        _pick(m, const ['rank_of', 'volume_rank_total', 'rank_total', 'total']),
       ),
+      rankScope: _str(m['rank_scope']),
     );
     return a.isEmpty ? null : a;
   }
 }
 
 class OverviewMarket {
-  /// "spot" or "futures" as seen by the server; null when not given.
-  final String? marketType;
+  /// Whether the coin is a futures coin (`market.futures`); null if absent.
+  final bool? isFutures;
   final FuturesMetrics? futures;
   final LiquidityMetrics? liquidity;
   final ActivityMetrics? activity;
 
   const OverviewMarket({
-    this.marketType,
+    this.isFutures,
     this.futures,
     this.liquidity,
     this.activity,
@@ -496,11 +573,13 @@ class OverviewMarket {
   static OverviewMarket? tryParse(Object? json) {
     final m = _map(json);
     if (m == null) return null;
+    final flag = m['futures'];
+    // Contract: the futures metrics are flat in `market` and `futures` is a
+    // bool. A nested object (`futures` / `derivatives`) is also understood.
+    final nested = flag is Map ? flag : m['derivatives'];
     final market = OverviewMarket(
-      marketType: _str(_pick(m, const ['market_type', 'type'])),
-      futures: FuturesMetrics.tryParse(
-        _pick(m, const ['futures', 'derivatives']),
-      ),
+      isFutures: flag is bool ? flag : (nested is Map ? true : null),
+      futures: FuturesMetrics.tryParse(nested is Map ? nested : m),
       liquidity: LiquidityMetrics.tryParse(m['liquidity']),
       activity: ActivityMetrics.tryParse(m['activity']),
     );
@@ -513,7 +592,19 @@ class CoinOverview {
   final OverviewMarket? market;
   final DateTime? generatedAt;
 
-  const CoinOverview({this.summary, this.market, this.generatedAt});
+  /// The server served cached data because a refresh failed.
+  final bool stale;
+
+  /// Data sources, e.g. ["Binance", "CoinMarketCap"].
+  final List<String> attribution;
+
+  const CoinOverview({
+    this.summary,
+    this.market,
+    this.generatedAt,
+    this.stale = false,
+    this.attribution = const [],
+  });
 
   /// What an old server without the endpoint (or garbage) is treated as.
   static const empty = CoinOverview();
@@ -530,6 +621,14 @@ class CoinOverview {
       summary: OverviewSummary.tryParse(m['summary']),
       market: OverviewMarket.tryParse(m['market']),
       generatedAt: _date(m['generated_at']),
+      stale: _bool(m['stale']) ?? false,
+      attribution: switch (m['attribution']) {
+        final List l => [
+          for (final e in l)
+            if (_str(e) != null) _str(e)!,
+        ],
+        _ => const [],
+      },
     );
   }
 

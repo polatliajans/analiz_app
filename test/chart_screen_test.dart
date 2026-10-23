@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -325,7 +327,7 @@ void main() {
       expect(find.text('\$1.6T'), findsOneWidget);
       expect(find.text('FDV'), findsOneWidget);
       expect(find.text('Volume / market cap'), findsOneWidget);
-      expect(find.text('0.028'), findsOneWidget);
+      expect(find.text('2.8%'), findsOneWidget);
       expect(find.text('24h volume'), findsOneWidget);
       expect(find.byKey(const Key('overview-supply-progress')), findsOneWidget);
       expect(
@@ -474,6 +476,47 @@ void main() {
       expect(find.text('Funding rate'), findsNothing);
       expect(find.byKey(const Key('market-liquidity')), findsOneWidget);
       expect(find.byKey(const Key('market-activity')), findsOneWidget);
+      await disposeChartScreen(tester);
+    });
+
+    testWidgets('real samples reach the UI: SUI futures and BTC spot', (
+      tester,
+    ) async {
+      Future<CoinOverview> sample(String f) async => CoinOverview.parse(
+        jsonDecode(File('test/fixtures/$f').readAsStringSync()),
+      );
+      await pumpChartScreen(
+        tester,
+        coin: chartTestFuturesCoin,
+        overview: () => sample('overview_sui_futures.json'),
+      );
+      expect(find.text('Data: Binance'), findsOneWidget);
+      await _openTab(tester, 'Market');
+      expect(find.text('+0.0051%'), findsOneWidget);
+      expect(find.text('Long share 67%'), findsOneWidget);
+      expect(find.text('2.00'), findsOneWidget, reason: 'top trader 2.002');
+      expect(find.text('1.01 bps', skipOffstage: false), findsOneWidget);
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('market-activity')),
+        300,
+        scrollable: find.byType(Scrollable).first,
+      );
+      expect(find.text('22/740'), findsOneWidget);
+      expect(find.text('active futures USDT coins'), findsOneWidget);
+      expect(find.byKey(const Key('market-depth-incomplete')), findsNothing);
+      await disposeChartScreen(tester);
+
+      await pumpChartScreen(
+        tester,
+        overview: () => sample('overview_btc_spot.json'),
+      );
+      await _openTab(tester, 'Market');
+      expect(find.byKey(const Key('market-spot-note')), findsOneWidget);
+      expect(find.text('±0.1%'), findsOneWidget);
+      expect(
+        find.text('Depth is thin: only the covered window of ±0.1% is shown'),
+        findsOneWidget,
+      );
       await disposeChartScreen(tester);
     });
 

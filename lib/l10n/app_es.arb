@@ -478,7 +478,7 @@
   "mkDepthTitle": "Profundidad del libro de órdenes",
   "mkDepthBid": "Compra",
   "mkDepthAsk": "Venta",
-  "mkDepthImbalance": "Desequilibrio {pct}",
+  "mkDepthImbalance": "Ratio de profundidad compra/venta {pct}",
   "@mkDepthImbalance": {"placeholders": {"pct": {"type": "String"}}},
   "mkDepthNote": "La profundidad es una instantánea del libro de órdenes, no una señal.",
   "mkActivityTitle": "Actividad",
@@ -499,5 +499,9 @@
   "alTabLoginHint": "Inicia sesión para crear alertas de precio",
   "alTabHistory": "Alertas anteriores",
   "ovPeriod1h": "1h",
-  "ovPeriod4h": "4h"
+  "ovPeriod4h": "4h",
+  "mkDepthIncomplete": "Libro poco profundo: ventana cubierta ±{pct}%",
+  "@mkDepthIncomplete": {"placeholders": {"pct": {"type": "String"}}},
+  "ovSourceFrom": "Datos: {sources}",
+  "@ovSourceFrom": {"placeholders": {"sources": {"type": "String"}}}
 }

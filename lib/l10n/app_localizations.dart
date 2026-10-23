@@ -2779,7 +2779,7 @@ abstract class AppLocalizations {
   /// No description provided for @mkDepthImbalance.
   ///
   /// In en, this message translates to:
-  /// **'Imbalance {pct}'**
+  /// **'Bid/ask depth ratio {pct}'**
   String mkDepthImbalance(String pct);
 
   /// No description provided for @mkDepthNote.
@@ -2889,6 +2889,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'4h'**
   String get ovPeriod4h;
+
+  /// No description provided for @mkDepthIncomplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Depth is thin: only the covered window of ±{pct}% is shown'**
+  String mkDepthIncomplete(String pct);
+
+  /// No description provided for @ovSourceFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Data: {sources}'**
+  String ovSourceFrom(String sources);
 }
 
 class _AppLocalizationsDelegate

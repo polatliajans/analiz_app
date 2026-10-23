@@ -32,6 +32,21 @@ String formatSignedPct(double value, {int digits = 2}) {
 String formatPlainPct(double value, {int digits = 0}) =>
     '${value.toStringAsFixed(digits)}%';
 
+/// Basis points: 0.001 -> "0.001", 1.01 -> "1.01", 12 -> "12".
+String formatBps(double v) {
+  final t = v.toStringAsFixed(v.abs() < 1 ? 3 : 2);
+  return t.contains('.')
+      ? t.replaceFirst(RegExp(r'0+$'), '').replaceFirst(RegExp(r'\.$'), '')
+      : t;
+}
+
+/// Depth window half-width: 1 -> "1", 0.101 -> "0.1", 2.5 -> "2.5".
+String formatWindowPct(double v) {
+  if (v == v.roundToDouble()) return v.toStringAsFixed(0);
+  final t = v.toStringAsFixed(2);
+  return t.replaceFirst(RegExp(r'0+$'), '').replaceFirst(RegExp(r'\.$'), '');
+}
+
 /// Ratio like 0.052 or 1.25 with a sensible number of decimals.
 String formatRatio(double value) {
   final digits = value.abs() >= 10 ? 1 : (value.abs() >= 1 ? 2 : 3);

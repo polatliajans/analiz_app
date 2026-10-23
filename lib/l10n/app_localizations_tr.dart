@@ -1592,7 +1592,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String mkDepthImbalance(String pct) {
-    return 'Dengesizlik $pct';
+    return 'Alış/satış derinlik oranı $pct';
   }
 
   @override
@@ -1656,4 +1656,14 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get ovPeriod4h => '4s';
+
+  @override
+  String mkDepthIncomplete(String pct) {
+    return 'Derinlik sığ: kapsanan pencere ±$pct%';
+  }
+
+  @override
+  String ovSourceFrom(String sources) {
+    return 'Veri: $sources';
+  }
 }

@@ -788,7 +788,7 @@
   "mkDepthTitle": "Order book depth",
   "mkDepthBid": "Bid",
   "mkDepthAsk": "Ask",
-  "mkDepthImbalance": "Imbalance {pct}",
+  "mkDepthImbalance": "Bid/ask depth ratio {pct}",
   "@mkDepthImbalance": {"placeholders": {"pct": {"type": "String"}}},
   "mkDepthNote": "Depth is a momentary snapshot of the order book, not a signal.",
   "mkActivityTitle": "Activity",
@@ -809,5 +809,9 @@
   "alTabLoginHint": "Log in to set price alerts",
   "alTabHistory": "Past alerts",
   "ovPeriod1h": "1h",
-  "ovPeriod4h": "4h"
+  "ovPeriod4h": "4h",
+  "mkDepthIncomplete": "Depth is thin: only the covered window of ±{pct}% is shown",
+  "@mkDepthIncomplete": {"placeholders": {"pct": {"type": "String"}}},
+  "ovSourceFrom": "Data: {sources}",
+  "@ovSourceFrom": {"placeholders": {"sources": {"type": "String"}}}
 }

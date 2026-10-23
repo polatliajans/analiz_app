@@ -25,7 +25,11 @@ class SummaryTab extends StatelessWidget {
         if (s == null) {
           return TabMessage(icon: Icons.info_outline, title: l10n.ovEmpty);
         }
-        return SummaryContent(coin: coin, summary: s);
+        return SummaryContent(
+          coin: coin,
+          summary: s,
+          sources: overview.attribution,
+        );
       },
     );
   }
@@ -35,7 +39,15 @@ class SummaryContent extends StatelessWidget {
   final Coin coin;
   final OverviewSummary summary;
 
-  const SummaryContent({super.key, required this.coin, required this.summary});
+  /// Data sources served by the backend; the default line is used if empty.
+  final List<String> sources;
+
+  const SummaryContent({
+    super.key,
+    required this.coin,
+    required this.summary,
+    this.sources = const [],
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -63,10 +75,10 @@ class SummaryContent extends StatelessWidget {
           value: formatCompactUsd(s.volume24h!, locale),
           termId: 'volume',
         ),
-      if (s.volumeMarketCapRatio != null)
+      if (s.volumeToMarketCapPct != null)
         _Tile(
           label: l10n.ovVolMcap,
-          value: formatRatio(s.volumeMarketCapRatio!),
+          value: formatPlainPct(s.volumeToMarketCapPct!, digits: 1),
           termId: 'volmcap',
         ),
     ];
@@ -139,7 +151,9 @@ class SummaryContent extends StatelessWidget {
           ),
         const SizedBox(height: 4),
         Text(
-          l10n.ovSource,
+          sources.isEmpty
+              ? l10n.ovSource
+              : l10n.ovSourceFrom(sources.join(', ')),
           key: const Key('overview-attribution'),
           textAlign: TextAlign.center,
           style: theme.textTheme.bodySmall?.copyWith(
@@ -154,6 +168,7 @@ class SummaryContent extends StatelessWidget {
       s.circulatingSupply != null ||
       s.totalSupply != null ||
       s.maxSupply != null ||
+      s.circulatingPctOfMax != null ||
       s.hasMaxSupply == false;
 }
 

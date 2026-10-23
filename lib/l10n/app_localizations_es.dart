@@ -1680,7 +1680,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String mkDepthImbalance(String pct) {
-    return 'Desequilibrio $pct';
+    return 'Ratio de profundidad compra/venta $pct';
   }
 
   @override
@@ -1744,4 +1744,14 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get ovPeriod4h => '4h';
+
+  @override
+  String mkDepthIncomplete(String pct) {
+    return 'Libro poco profundo: ventana cubierta ±$pct%';
+  }
+
+  @override
+  String ovSourceFrom(String sources) {
+    return 'Datos: $sources';
+  }
 }
