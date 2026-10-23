@@ -1650,4 +1650,10 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get alTabHistory => 'Geçmiş alarmlar';
+
+  @override
+  String get ovPeriod1h => '1s';
+
+  @override
+  String get ovPeriod4h => '4s';
 }

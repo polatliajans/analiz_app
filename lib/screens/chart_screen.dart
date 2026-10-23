@@ -11,21 +11,26 @@ import '../data/watchlist_api.dart';
 import '../l10n/app_localizations.dart';
 import '../models/coin.dart';
 import '../models/deep_analysis_job.dart';
+import '../models/chart_signal.dart';
 import '../models/structured_analysis.dart';
 import '../providers/ad_analysis_provider.dart';
 import '../providers/analysis_history_provider.dart';
 import '../providers/app_config_provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/chart_data_provider.dart';
+import '../providers/coin_overview_provider.dart';
 import '../providers/deep_analysis_provider.dart';
 import '../providers/live_chart_provider.dart';
 import '../providers/price_alert_provider.dart';
 import '../providers/selected_coin_provider.dart';
 import '../providers/watchlist_provider.dart';
+import '../utils/feature_gate.dart';
 import '../utils/timeframes.dart';
 import '../widgets/analysis_card.dart';
 import '../widgets/analysis_progress_overlay.dart';
 import '../widgets/candlestick_chart.dart';
+import '../widgets/chart_tabs/chart_tabs.dart';
+import '../widgets/chart_tabs/tab_widgets.dart';
 import '../widgets/email_verification_banner.dart';
 import '../widgets/insufficient_credit_dialog.dart';
 import '../widgets/pro_upsell_sheet.dart';
@@ -42,8 +47,17 @@ class ChartScreen extends ConsumerStatefulWidget {
 }
 
 class _ChartScreenState extends ConsumerState<ChartScreen>
-    with WidgetsBindingObserver {
+    with WidgetsBindingObserver, SingleTickerProviderStateMixin {
   bool _handlingDeepResult = false;
+
+  /// Drives the sticky tab bar and the tab content below the chart.
+  late final TabController _tabs = TabController(
+    length: ChartTab.values.length,
+    vsync: this,
+  );
+
+  /// Top of the page (header, timeframes, chart); signal taps scroll here.
+  final _chartKey = GlobalKey();
 
   @override
   void initState() {
@@ -60,6 +74,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _tabs.dispose();
     super.dispose();
   }
 
@@ -406,6 +421,10 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
     final timeframe = gate.effectiveTimeframe(ref.watch(timeframeProvider));
     final params = ChartDataParams(coin: coin, timeframe: timeframe);
     final textTheme = Theme.of(context).textTheme;
+    final chartHeight = (MediaQuery.sizeOf(context).height * 0.42).clamp(
+      280.0,
+      420.0,
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -445,96 +464,188 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
           _buildWatchlistButton(context, ref, coin),
         ],
       ),
-      body: Column(
-        children: [
-          const EmailVerificationBanner(),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
-            child: _LiveHeader(params: params, coin: coin),
-          ),
-          SizedBox(
-            height: 36,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              itemCount: chartTimeframes.length,
-              separatorBuilder: (_, _) => const SizedBox(width: 6),
-              itemBuilder: (_, i) {
-                final tf = chartTimeframes[i];
-                final locked = gate.isTimeframeLocked(tf);
-                return ChoiceChip(
-                  label: Text(tf),
-                  avatar: locked
-                      ? const Icon(Icons.lock_outline, size: 14)
-                      : null,
-                  labelStyle: textTheme.labelMedium,
-                  visualDensity: VisualDensity.compact,
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  padding: const EdgeInsets.symmetric(horizontal: 2),
-                  selected: tf == timeframe,
-                  onSelected: (_) => locked
-                      ? showProUpsell(context, ProFeature.timeframe)
-                      : ref.read(timeframeProvider.notifier).select(tf),
-                );
-              },
+      body: RefreshIndicator(
+        onRefresh: () => _refreshPage(coin, params),
+        child: CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            SliverToBoxAdapter(
+              child: Column(
+                key: _chartKey,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const EmailVerificationBanner(),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+                    child: _LiveHeader(params: params, coin: coin),
+                  ),
+                  SizedBox(
+                    height: 36,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      itemCount: chartTimeframes.length,
+                      separatorBuilder: (_, _) => const SizedBox(width: 6),
+                      itemBuilder: (_, i) {
+                        final tf = chartTimeframes[i];
+                        final locked = gate.isTimeframeLocked(tf);
+                        return ChoiceChip(
+                          label: Text(tf),
+                          avatar: locked
+                              ? const Icon(Icons.lock_outline, size: 14)
+                              : null,
+                          labelStyle: textTheme.labelMedium,
+                          visualDensity: VisualDensity.compact,
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
+                          padding: const EdgeInsets.symmetric(horizontal: 2),
+                          selected: tf == timeframe,
+                          onSelected: (_) => locked
+                              ? showProUpsell(context, ProFeature.timeframe)
+                              : ref.read(timeframeProvider.notifier).select(tf),
+                        );
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    key: const Key('chart-area'),
+                    height: chartHeight,
+                    child: _LiveChart(params: params),
+                  ),
+                  if (supportsSignals(timeframe) && gate.showStrongSignalsNote)
+                    _buildStrongSignalsNote(l10n, textTheme),
+                ],
+              ),
             ),
-          ),
-          Expanded(flex: 5, child: _LiveChart(params: params)),
-          if (supportsSignals(timeframe) && gate.showStrongSignalsNote)
-            _buildStrongSignalsNote(l10n, textTheme),
-          Expanded(
-            flex: 4,
-            child: ListView(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-              children: [
-                Row(
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () => _requestAnalysis(coin),
-                        child: Text(l10n.quickAnalysisButton),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: deepBusy
-                            ? null
-                            : () => _requestDeepAnalysis(coin),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            if (!gate.canUseDeepAnalysis) ...[
-                              const Icon(Icons.lock_outline, size: 16),
-                              const SizedBox(width: 4),
-                            ],
-                            Flexible(
-                              child: Text(
-                                l10n.deepAnalysisButton,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            if (!gate.canUseDeepAnalysis) ...[
-                              const SizedBox(width: 6),
-                              const ProBadge(),
-                            ],
-                          ],
-                        ),
-                      ),
-                    ),
+                    _buildAnalysisButtons(context, l10n, coin, gate, deepBusy),
+                    if (deepBusy) ...[
+                      const SizedBox(height: 12),
+                      const _DeepAnalysisWaitingCard(),
+                    ],
                   ],
                 ),
-                if (deepBusy) ...[
-                  const SizedBox(height: 12),
-                  const _DeepAnalysisWaitingCard(),
-                ],
-                const SizedBox(height: 16),
-                Text(l10n.analysisHistorySection, style: textTheme.titleSmall),
-                const SizedBox(height: 4),
-                ..._historyItems(context, l10n, coin),
-              ],
+              ),
             ),
+            SliverPersistentHeader(
+              pinned: true,
+              delegate: ChartTabBarDelegate(
+                controller: _tabs,
+                labels: [
+                  for (final t in ChartTab.values) chartTabLabel(l10n, t),
+                ],
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: ChartTabsContent(
+                controller: _tabs,
+                coin: coin,
+                params: params,
+                onSignalSelected: _revealChart,
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: SizedBox(
+                height: 16 + MediaQuery.paddingOf(context).bottom,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Pull-to-refresh: reloads what the active tab shows.
+  Future<void> _refreshPage(Coin coin, ChartDataParams params) async {
+    switch (ChartTab.values[_tabs.index]) {
+      case ChartTab.summary:
+      case ChartTab.market:
+        await ref
+            .read(coinOverviewProvider(coin.id).notifier)
+            .load(force: true);
+      case ChartTab.analyses:
+        if (ref.read(authProvider).isLoggedIn) {
+          ref.invalidate(analysisHistoryProvider(coin.id));
+          try {
+            await ref.read(analysisHistoryProvider(coin.id).future);
+          } catch (_) {}
+        }
+      case ChartTab.signals:
+        ref.read(liveChartProvider(params).notifier).retry();
+      case ChartTab.alerts:
+        if (ref.read(authProvider).isLoggedIn) {
+          ref.invalidate(priceAlertsProvider);
+          try {
+            await ref.read(priceAlertsProvider.future);
+          } catch (_) {}
+        }
+    }
+  }
+
+  /// A signal row was tapped: bring the chart back into view.
+  void _revealChart(ChartSignal signal) {
+    final ctx = _chartKey.currentContext;
+    if (ctx == null) return;
+    Scrollable.ensureVisible(
+      ctx,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
+  }
+
+  /// "Quick analysis - N credits" / "Deep analysis - N credits" buttons.
+  Widget _buildAnalysisButtons(
+    BuildContext context,
+    AppLocalizations l10n,
+    Coin coin,
+    FeatureGate gate,
+    bool deepBusy,
+  ) {
+    final plan = ref.watch(appConfigProvider.select((c) => c.plan));
+    final quick = ElevatedButton(
+      key: const Key('quick-analysis-button'),
+      onPressed: () => _requestAnalysis(coin),
+      child: Text(
+        l10n.quickAnalysisButtonCost(plan.quickAnalysisCost),
+        textAlign: TextAlign.center,
+      ),
+    );
+    final deep = ElevatedButton(
+      key: const Key('deep-analysis-button'),
+      onPressed: deepBusy ? null : () => _requestDeepAnalysis(coin),
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: 4,
+        children: [
+          if (!gate.canUseDeepAnalysis)
+            const Icon(Icons.lock_outline, size: 16),
+          Text(
+            l10n.deepAnalysisButtonCost(plan.deepAnalysisCost),
+            textAlign: TextAlign.center,
           ),
+          if (!gate.canUseDeepAnalysis) const ProBadge(),
+        ],
+      ),
+    );
+    if (isLargeText(context)) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [quick, const SizedBox(height: 8), deep],
+      );
+    }
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(child: quick),
+          const SizedBox(width: 12),
+          Expanded(child: deep),
         ],
       ),
     );
@@ -561,35 +672,6 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
           ],
         ),
       ),
-    );
-  }
-
-  List<Widget> _historyItems(
-    BuildContext context,
-    AppLocalizations l10n,
-    Coin coin,
-  ) {
-    final auth = ref.watch(authProvider);
-    final muted = Theme.of(context).colorScheme.onSurfaceVariant;
-    Widget hint(String text) => Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12),
-      child: Text(text, style: TextStyle(color: muted)),
-    );
-
-    if (!auth.isLoggedIn) return [hint(l10n.analysisHistoryLoginHint)];
-
-    final async = ref.watch(analysisHistoryProvider(coin.id));
-    return async.when(
-      loading: () => const [
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 16),
-          child: Center(child: CircularProgressIndicator()),
-        ),
-      ],
-      error: (e, _) => [hint(l10n.errorOccurred('$e'))],
-      data: (records) => records.isEmpty
-          ? [hint(l10n.analysisHistoryEmpty)]
-          : [for (final r in records) AnalysisCard(record: r)],
     );
   }
 

@@ -807,5 +807,7 @@
   "alTabEmpty": "No alerts for this coin yet.",
   "alTabAdd": "Add alert",
   "alTabLoginHint": "Log in to set price alerts",
-  "alTabHistory": "Past alerts"
+  "alTabHistory": "Past alerts",
+  "ovPeriod1h": "1h",
+  "ovPeriod4h": "4h"
 }

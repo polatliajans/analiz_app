@@ -2877,6 +2877,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Past alerts'**
   String get alTabHistory;
+
+  /// No description provided for @ovPeriod1h.
+  ///
+  /// In en, this message translates to:
+  /// **'1h'**
+  String get ovPeriod1h;
+
+  /// No description provided for @ovPeriod4h.
+  ///
+  /// In en, this message translates to:
+  /// **'4h'**
+  String get ovPeriod4h;
 }
 
 class _AppLocalizationsDelegate

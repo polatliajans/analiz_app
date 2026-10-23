@@ -262,11 +262,9 @@ class OverviewSummary {
           : const [],
       platform: _str(_pick(m, const ['platform', 'chain'])),
       ageDays: _int(_pick(m, const ['age_days', 'coin_age_days'])),
-      listingAgeDays: _int(
-        _pick(m, const ['listing_age_days', 'listed_days']),
-      ),
-      newListing: _bool(_pick(m, const ['new_listing', 'is_new_listing'])) ??
-          false,
+      listingAgeDays: _int(_pick(m, const ['listing_age_days', 'listed_days'])),
+      newListing:
+          _bool(_pick(m, const ['new_listing', 'is_new_listing'])) ?? false,
       sources: sources is List
           ? [
               for (final t in sources)
@@ -332,9 +330,8 @@ class FuturesMetrics {
       basisPct == null;
 
   /// Fractions (<= 1) are scaled to percent.
-  static double? _share(double? v) => v == null
-      ? null
-      : (v >= 0 && v <= 1 ? v * 100 : v).clamp(0.0, 100.0);
+  static double? _share(double? v) =>
+      v == null ? null : (v >= 0 && v <= 1 ? v * 100 : v).clamp(0.0, 100.0);
 
   static FuturesMetrics? tryParse(Object? json) {
     final m = _map(json);
@@ -342,18 +339,18 @@ class FuturesMetrics {
     final funding = _map(m['funding']);
     final oi = _map(_pick(m, const ['oi_change', 'open_interest_change']));
     final taker = _map(_pick(m, const ['taker', 'taker_buy_sell']));
-    final ratio = _pickNumIn([funding, m], const [
-      'rate_pct',
-      'funding_rate_pct',
-    ]);
+    final ratio = _pickNumIn(
+      [funding, m],
+      const ['rate_pct', 'funding_rate_pct'],
+    );
     // `funding_rate` is the raw exchange fraction (0.0001 = 0.01%).
     final raw = _pickNumIn([funding, m], const ['rate', 'funding_rate']);
     final f = FuturesMetrics(
       fundingRatePct: ratio ?? (raw == null ? null : raw * 100),
-      fundingPercentile: _pickNumIn([funding, m], const [
-        'percentile',
-        'funding_percentile',
-      ])?.clamp(0.0, 100.0),
+      fundingPercentile: _pickNumIn(
+        [funding, m],
+        const ['percentile', 'funding_percentile'],
+      )?.clamp(0.0, 100.0),
       oiChange1h: _pickNumIn([oi, m], const ['1h', 'oi_change_1h']),
       oiChange4h: _pickNumIn([oi, m], const ['4h', 'oi_change_4h']),
       oiChange24h: _pickNumIn([oi, m], const ['24h', 'oi_change_24h']),
@@ -371,16 +368,14 @@ class FuturesMetrics {
         'top_trader_ratio',
         'top_trader_long_short_ratio',
       ]),
-      takerBuySell1h: _pickNumIn([taker, m], const [
-        '1h',
-        'taker_buy_sell_1h',
-        'taker_ratio_1h',
-      ]),
-      takerBuySell24h: _pickNumIn([taker, m], const [
-        '24h',
-        'taker_buy_sell_24h',
-        'taker_ratio_24h',
-      ]),
+      takerBuySell1h: _pickNumIn(
+        [taker, m],
+        const ['1h', 'taker_buy_sell_1h', 'taker_ratio_1h'],
+      ),
+      takerBuySell24h: _pickNumIn(
+        [taker, m],
+        const ['24h', 'taker_buy_sell_24h', 'taker_ratio_24h'],
+      ),
       basisPct: _pickNum(m, const ['basis_pct', 'basis', 'basis_percent']),
     );
     return f.isEmpty ? null : f;

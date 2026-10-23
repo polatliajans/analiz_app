@@ -497,5 +497,7 @@
   "alTabEmpty": "Aún no tienes alertas para esta moneda.",
   "alTabAdd": "Añadir alerta",
   "alTabLoginHint": "Inicia sesión para crear alertas de precio",
-  "alTabHistory": "Alertas anteriores"
+  "alTabHistory": "Alertas anteriores",
+  "ovPeriod1h": "1h",
+  "ovPeriod4h": "4h"
 }

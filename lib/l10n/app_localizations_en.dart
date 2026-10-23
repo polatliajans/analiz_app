@@ -1718,4 +1718,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get alTabHistory => 'Past alerts';
+
+  @override
+  String get ovPeriod1h => '1h';
+
+  @override
+  String get ovPeriod4h => '4h';
 }

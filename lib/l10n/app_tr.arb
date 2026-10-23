@@ -497,5 +497,7 @@
   "alTabEmpty": "Bu coin için henüz alarmın yok.",
   "alTabAdd": "Alarm ekle",
   "alTabLoginHint": "Fiyat alarmı kurmak için giriş yap",
-  "alTabHistory": "Geçmiş alarmlar"
+  "alTabHistory": "Geçmiş alarmlar",
+  "ovPeriod1h": "1s",
+  "ovPeriod4h": "4s"
 }
