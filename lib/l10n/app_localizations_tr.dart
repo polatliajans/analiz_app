@@ -1337,4 +1337,317 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get themeSystem => 'Sistem';
+
+  @override
+  String quickAnalysisButtonCost(int cost) {
+    return 'Hızlı analiz · $cost kredi';
+  }
+
+  @override
+  String deepAnalysisButtonCost(int cost) {
+    return 'Derin analiz · $cost kredi';
+  }
+
+  @override
+  String get chartTabSummary => 'Özet';
+
+  @override
+  String get chartTabAnalyses => 'Analizlerim';
+
+  @override
+  String get chartTabMarket => 'Piyasa';
+
+  @override
+  String get chartTabSignals => 'Sinyaller';
+
+  @override
+  String get chartTabAlerts => 'Alarmlar';
+
+  @override
+  String get ovEmpty => 'Bu coin için henüz özet bilgi yok.';
+
+  @override
+  String get ovMarketCap => 'Piyasa değeri';
+
+  @override
+  String get ovFdv => 'Tam seyreltilmiş değer (FDV)';
+
+  @override
+  String get ovVolume24h => '24s hacim';
+
+  @override
+  String get ovVolMcap => 'Hacim / piyasa değeri';
+
+  @override
+  String get ovSupplyTitle => 'Arz';
+
+  @override
+  String get ovCirculating => 'Dolaşımdaki';
+
+  @override
+  String get ovTotalSupply => 'Toplam';
+
+  @override
+  String get ovMaxSupply => 'Maksimum';
+
+  @override
+  String get ovNoMaxSupply => 'Maksimum arz sınırı yok';
+
+  @override
+  String ovCirculatingOfMax(String pct) {
+    return 'Maksimum arzın %$pct kadarı dolaşımda';
+  }
+
+  @override
+  String get ovPriceChangeTitle => 'Fiyat değişimi';
+
+  @override
+  String get ovPeriod24h => '24s';
+
+  @override
+  String get ovPeriod7d => '7g';
+
+  @override
+  String get ovPeriod30d => '30g';
+
+  @override
+  String get ovPeriod90d => '90g';
+
+  @override
+  String get ovAth => 'Tüm zamanların zirvesi';
+
+  @override
+  String get ovAtl => 'Tüm zamanların dibi';
+
+  @override
+  String ovFromCurrent(String pct) {
+    return 'Güncel fiyata göre $pct';
+  }
+
+  @override
+  String get ovCategory => 'Kategori';
+
+  @override
+  String get ovTags => 'Etiketler';
+
+  @override
+  String get ovPlatform => 'Platform';
+
+  @override
+  String get ovCoinAge => 'Coin yaşı';
+
+  @override
+  String get ovListingAge => 'Listeleme yaşı';
+
+  @override
+  String get ovNewListing => 'Yeni listeleme';
+
+  @override
+  String ovAgeDays(int count) {
+    return '$count gün';
+  }
+
+  @override
+  String ovAgeMonths(int count) {
+    return '$count ay';
+  }
+
+  @override
+  String ovAgeYears(int count) {
+    return '$count yıl';
+  }
+
+  @override
+  String get ovSource => 'Veri: CoinMarketCap, Binance';
+
+  @override
+  String get tabLoadFailed => 'Bu bölüm yüklenemedi.';
+
+  @override
+  String get glossaryHelpTooltip => 'Bu ne demek?';
+
+  @override
+  String get coAnalysesEmptyTitle => 'Bu coin için henüz analizin yok';
+
+  @override
+  String get coAnalysesEmptyBody =>
+      'Yukarıdaki butonlarla ilk hızlı veya derin analizini yaptır.';
+
+  @override
+  String get coAnalysesLoginHint =>
+      'Bu coin için analizlerini görmek için giriş yap';
+
+  @override
+  String get coAnalysisCached => 'önbellek';
+
+  @override
+  String get relAgoNow => 'az önce';
+
+  @override
+  String relAgoMinutes(int count) {
+    return '$count dk önce';
+  }
+
+  @override
+  String relAgoHours(int count) {
+    return '$count sa önce';
+  }
+
+  @override
+  String relAgoDays(int count) {
+    return '$count gün önce';
+  }
+
+  @override
+  String get mkEmpty => 'Bu coin için henüz piyasa verisi yok.';
+
+  @override
+  String get mkFuturesTitle => 'Vadeli işlemler (türev)';
+
+  @override
+  String get mkFunding => 'Fonlama oranı';
+
+  @override
+  String mkFundingPercentile(String pct) {
+    return 'Son ölçümlerin %$pct kadarından yüksek';
+  }
+
+  @override
+  String get mkFundingHintHigh =>
+      'Fonlama yakın geçmişe göre yüksek: long pozisyonlar shortlara ödeme yapıyor, long tarafın kalabalık olduğuna işaret eder.';
+
+  @override
+  String get mkFundingHintLow =>
+      'Fonlama yakın geçmişe göre düşük: shortlar longlara ödeme yapıyor veya long taraf kalabalık değil.';
+
+  @override
+  String get mkFundingHintNormal => 'Fonlama olağan aralığında.';
+
+  @override
+  String get mkOpenInterest => 'Açık pozisyon değişimi';
+
+  @override
+  String get mkOiHint =>
+      'Açık pozisyon artıyorsa yeni para pozisyonlara giriyor, azalıyorsa pozisyonlar kapanıyor demektir.';
+
+  @override
+  String get mkLongShort => 'Long / short dengesi';
+
+  @override
+  String mkLongShare(String pct) {
+    return 'Long payı %$pct';
+  }
+
+  @override
+  String get mkLsRatio => 'Long/short oranı';
+
+  @override
+  String get mkTopTrader => 'En iyi traderların oranı';
+
+  @override
+  String get mkLongShortHint =>
+      '1 üzeri long pozisyonların short pozisyonlardan fazla olduğunu gösterir. Yönü değil, pozisyonlanmayı anlatır.';
+
+  @override
+  String get mkTaker => 'Taker alım / satım';
+
+  @override
+  String get mkTakerHintBuy => 'Son işlemlerde agresif alıcılar ağır basıyor.';
+
+  @override
+  String get mkTakerHintSell =>
+      'Son işlemlerde agresif satıcılar ağır basıyor.';
+
+  @override
+  String get mkTakerHintBalanced => 'Agresif alım ve satım kabaca dengede.';
+
+  @override
+  String get mkBasis => 'Baz (vadeli - spot farkı)';
+
+  @override
+  String get mkBasisHintPos => 'Vadeli fiyat spotun üzerinde (prim).';
+
+  @override
+  String get mkBasisHintNeg => 'Vadeli fiyat spotun altında (iskonto).';
+
+  @override
+  String get mkLiquidityTitle => 'Likidite';
+
+  @override
+  String get mkSpread => 'Spread (alış-satış farkı)';
+
+  @override
+  String mkSpreadValue(String bps) {
+    return '$bps baz puan';
+  }
+
+  @override
+  String get mkDepthTitle => 'Emir defteri derinliği';
+
+  @override
+  String get mkDepthBid => 'Alış';
+
+  @override
+  String get mkDepthAsk => 'Satış';
+
+  @override
+  String mkDepthImbalance(String pct) {
+    return 'Dengesizlik $pct';
+  }
+
+  @override
+  String get mkDepthNote =>
+      'Derinlik emir defterinin anlık görüntüsüdür, sinyal değildir.';
+
+  @override
+  String get mkActivityTitle => 'Hareketlilik';
+
+  @override
+  String get mkVolume24h => '24s hacim';
+
+  @override
+  String get mkTrades24h => 'İşlem sayısı (24s)';
+
+  @override
+  String get mkVolumeRank => 'Hacim sırası';
+
+  @override
+  String get mkSpotNote =>
+      'Türev verileri (fonlama, açık pozisyon, long/short) yalnızca vadeli işlem coinleri için geçerlidir.';
+
+  @override
+  String get sgEmptyTitle => 'Henüz sinyal yok';
+
+  @override
+  String get sgEmptyBody =>
+      'Yüklenen geçmişte bu coin ve zaman dilimi için ok yok.';
+
+  @override
+  String get sgUnsupported =>
+      'Sinyaller 15d, 1s, 4s ve 1g zaman dilimlerinde bulunur.';
+
+  @override
+  String sgPriceAtSignal(String price) {
+    return 'Sinyalde $price';
+  }
+
+  @override
+  String sgSinceSignal(String pct) {
+    return 'Sinyalden beri $pct';
+  }
+
+  @override
+  String get sgTapHint => 'Grafiğe dönmek için bir satıra dokun.';
+
+  @override
+  String get alTabEmpty => 'Bu coin için henüz alarmın yok.';
+
+  @override
+  String get alTabAdd => 'Alarm ekle';
+
+  @override
+  String get alTabLoginHint => 'Fiyat alarmı kurmak için giriş yap';
+
+  @override
+  String get alTabHistory => 'Geçmiş alarmlar';
 }

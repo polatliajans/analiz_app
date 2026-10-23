@@ -1390,4 +1390,352 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get themeSystem => 'Sistema';
+
+  @override
+  String quickAnalysisButtonCost(int cost) {
+    String _temp0 = intl.Intl.pluralLogic(
+      cost,
+      locale: localeName,
+      other: '$cost créditos',
+      one: '1 crédito',
+    );
+    return 'Análisis rápido · $_temp0';
+  }
+
+  @override
+  String deepAnalysisButtonCost(int cost) {
+    String _temp0 = intl.Intl.pluralLogic(
+      cost,
+      locale: localeName,
+      other: '$cost créditos',
+      one: '1 crédito',
+    );
+    return 'Análisis profundo · $_temp0';
+  }
+
+  @override
+  String get chartTabSummary => 'Resumen';
+
+  @override
+  String get chartTabAnalyses => 'Mis análisis';
+
+  @override
+  String get chartTabMarket => 'Mercado';
+
+  @override
+  String get chartTabSignals => 'Señales';
+
+  @override
+  String get chartTabAlerts => 'Alertas';
+
+  @override
+  String get ovEmpty => 'Aún no hay resumen para esta moneda.';
+
+  @override
+  String get ovMarketCap => 'Capitalización';
+
+  @override
+  String get ovFdv => 'FDV';
+
+  @override
+  String get ovVolume24h => 'Volumen 24h';
+
+  @override
+  String get ovVolMcap => 'Volumen / capitalización';
+
+  @override
+  String get ovSupplyTitle => 'Suministro';
+
+  @override
+  String get ovCirculating => 'En circulación';
+
+  @override
+  String get ovTotalSupply => 'Total';
+
+  @override
+  String get ovMaxSupply => 'Máximo';
+
+  @override
+  String get ovNoMaxSupply => 'Sin suministro máximo';
+
+  @override
+  String ovCirculatingOfMax(String pct) {
+    return 'El $pct% del suministro máximo está en circulación';
+  }
+
+  @override
+  String get ovPriceChangeTitle => 'Cambio de precio';
+
+  @override
+  String get ovPeriod24h => '24h';
+
+  @override
+  String get ovPeriod7d => '7d';
+
+  @override
+  String get ovPeriod30d => '30d';
+
+  @override
+  String get ovPeriod90d => '90d';
+
+  @override
+  String get ovAth => 'Máximo histórico';
+
+  @override
+  String get ovAtl => 'Mínimo histórico';
+
+  @override
+  String ovFromCurrent(String pct) {
+    return '$pct respecto al precio actual';
+  }
+
+  @override
+  String get ovCategory => 'Categoría';
+
+  @override
+  String get ovTags => 'Etiquetas';
+
+  @override
+  String get ovPlatform => 'Plataforma';
+
+  @override
+  String get ovCoinAge => 'Antigüedad';
+
+  @override
+  String get ovListingAge => 'Tiempo listada';
+
+  @override
+  String get ovNewListing => 'Nueva en el listado';
+
+  @override
+  String ovAgeDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count días',
+      one: '1 día',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String ovAgeMonths(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count meses',
+      one: '1 mes',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String ovAgeYears(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count años',
+      one: '1 año',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get ovSource => 'Datos: CoinMarketCap, Binance';
+
+  @override
+  String get tabLoadFailed => 'No se pudo cargar esta sección.';
+
+  @override
+  String get glossaryHelpTooltip => '¿Qué significa?';
+
+  @override
+  String get coAnalysesEmptyTitle => 'Aún no tienes análisis de esta moneda';
+
+  @override
+  String get coAnalysesEmptyBody =>
+      'Haz tu primer análisis rápido o profundo con los botones de arriba.';
+
+  @override
+  String get coAnalysesLoginHint =>
+      'Inicia sesión para ver tus análisis de esta moneda';
+
+  @override
+  String get coAnalysisCached => 'en caché';
+
+  @override
+  String get relAgoNow => 'justo ahora';
+
+  @override
+  String relAgoMinutes(int count) {
+    return 'hace $count min';
+  }
+
+  @override
+  String relAgoHours(int count) {
+    return 'hace $count h';
+  }
+
+  @override
+  String relAgoDays(int count) {
+    return 'hace $count d';
+  }
+
+  @override
+  String get mkEmpty => 'Aún no hay datos de mercado para esta moneda.';
+
+  @override
+  String get mkFuturesTitle => 'Futuros (derivados)';
+
+  @override
+  String get mkFunding => 'Tasa de financiación';
+
+  @override
+  String mkFundingPercentile(String pct) {
+    return 'Mayor que el $pct% de las lecturas recientes';
+  }
+
+  @override
+  String get mkFundingHintHigh =>
+      'La financiación es alta frente a su historial reciente: los largos pagan a los cortos, señal de posiciones largas saturadas.';
+
+  @override
+  String get mkFundingHintLow =>
+      'La financiación es baja frente a su historial reciente: los cortos pagan a los largos o los largos no están saturados.';
+
+  @override
+  String get mkFundingHintNormal =>
+      'La financiación está en su rango habitual.';
+
+  @override
+  String get mkOpenInterest => 'Cambio del interés abierto';
+
+  @override
+  String get mkOiHint =>
+      'Si el interés abierto sube, entra dinero nuevo en posiciones; si baja, se cierran posiciones.';
+
+  @override
+  String get mkLongShort => 'Equilibrio largo / corto';
+
+  @override
+  String mkLongShare(String pct) {
+    return 'Cuota larga $pct%';
+  }
+
+  @override
+  String get mkLsRatio => 'Ratio largo/corto';
+
+  @override
+  String get mkTopTrader => 'Ratio de los mejores traders';
+
+  @override
+  String get mkLongShortHint =>
+      'Por encima de 1 hay más largos que cortos. Describe el posicionamiento, no la dirección.';
+
+  @override
+  String get mkTaker => 'Compras / ventas taker';
+
+  @override
+  String get mkTakerHintBuy =>
+      'Los compradores agresivos dominan las operaciones recientes.';
+
+  @override
+  String get mkTakerHintSell =>
+      'Los vendedores agresivos dominan las operaciones recientes.';
+
+  @override
+  String get mkTakerHintBalanced =>
+      'Las compras y ventas agresivas están equilibradas.';
+
+  @override
+  String get mkBasis => 'Base (futuros vs spot)';
+
+  @override
+  String get mkBasisHintPos =>
+      'Los futuros cotizan por encima del spot (prima).';
+
+  @override
+  String get mkBasisHintNeg =>
+      'Los futuros cotizan por debajo del spot (descuento).';
+
+  @override
+  String get mkLiquidityTitle => 'Liquidez';
+
+  @override
+  String get mkSpread => 'Diferencial (spread)';
+
+  @override
+  String mkSpreadValue(String bps) {
+    return '$bps pb';
+  }
+
+  @override
+  String get mkDepthTitle => 'Profundidad del libro de órdenes';
+
+  @override
+  String get mkDepthBid => 'Compra';
+
+  @override
+  String get mkDepthAsk => 'Venta';
+
+  @override
+  String mkDepthImbalance(String pct) {
+    return 'Desequilibrio $pct';
+  }
+
+  @override
+  String get mkDepthNote =>
+      'La profundidad es una instantánea del libro de órdenes, no una señal.';
+
+  @override
+  String get mkActivityTitle => 'Actividad';
+
+  @override
+  String get mkVolume24h => 'Volumen 24h';
+
+  @override
+  String get mkTrades24h => 'Operaciones (24h)';
+
+  @override
+  String get mkVolumeRank => 'Ranking de volumen';
+
+  @override
+  String get mkSpotNote =>
+      'Las métricas de derivados (financiación, interés abierto, largo/corto) solo aplican a monedas de futuros.';
+
+  @override
+  String get sgEmptyTitle => 'Aún no hay señales';
+
+  @override
+  String get sgEmptyBody =>
+      'No hay flechas para esta moneda y temporalidad en el historial cargado.';
+
+  @override
+  String get sgUnsupported =>
+      'Las señales están disponibles en 15m, 1h, 4h y 1d.';
+
+  @override
+  String sgPriceAtSignal(String price) {
+    return 'En la señal $price';
+  }
+
+  @override
+  String sgSinceSignal(String pct) {
+    return '$pct desde entonces';
+  }
+
+  @override
+  String get sgTapHint => 'Toca una fila para volver al gráfico.';
+
+  @override
+  String get alTabEmpty => 'Aún no tienes alertas para esta moneda.';
+
+  @override
+  String get alTabAdd => 'Añadir alerta';
+
+  @override
+  String get alTabLoginHint => 'Inicia sesión para crear alertas de precio';
+
+  @override
+  String get alTabHistory => 'Alertas anteriores';
 }

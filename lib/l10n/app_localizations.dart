@@ -2337,6 +2337,546 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'System'**
   String get themeSystem;
+
+  /// No description provided for @quickAnalysisButtonCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick analysis · {cost, plural, =1{1 credit} other{{cost} credits}}'**
+  String quickAnalysisButtonCost(int cost);
+
+  /// No description provided for @deepAnalysisButtonCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Deep analysis · {cost, plural, =1{1 credit} other{{cost} credits}}'**
+  String deepAnalysisButtonCost(int cost);
+
+  /// No description provided for @chartTabSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Summary'**
+  String get chartTabSummary;
+
+  /// No description provided for @chartTabAnalyses.
+  ///
+  /// In en, this message translates to:
+  /// **'My analyses'**
+  String get chartTabAnalyses;
+
+  /// No description provided for @chartTabMarket.
+  ///
+  /// In en, this message translates to:
+  /// **'Market'**
+  String get chartTabMarket;
+
+  /// No description provided for @chartTabSignals.
+  ///
+  /// In en, this message translates to:
+  /// **'Signals'**
+  String get chartTabSignals;
+
+  /// No description provided for @chartTabAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Alerts'**
+  String get chartTabAlerts;
+
+  /// No description provided for @ovEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No summary available for this coin yet.'**
+  String get ovEmpty;
+
+  /// No description provided for @ovMarketCap.
+  ///
+  /// In en, this message translates to:
+  /// **'Market cap'**
+  String get ovMarketCap;
+
+  /// No description provided for @ovFdv.
+  ///
+  /// In en, this message translates to:
+  /// **'FDV'**
+  String get ovFdv;
+
+  /// No description provided for @ovVolume24h.
+  ///
+  /// In en, this message translates to:
+  /// **'24h volume'**
+  String get ovVolume24h;
+
+  /// No description provided for @ovVolMcap.
+  ///
+  /// In en, this message translates to:
+  /// **'Volume / market cap'**
+  String get ovVolMcap;
+
+  /// No description provided for @ovSupplyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Supply'**
+  String get ovSupplyTitle;
+
+  /// No description provided for @ovCirculating.
+  ///
+  /// In en, this message translates to:
+  /// **'Circulating'**
+  String get ovCirculating;
+
+  /// No description provided for @ovTotalSupply.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get ovTotalSupply;
+
+  /// No description provided for @ovMaxSupply.
+  ///
+  /// In en, this message translates to:
+  /// **'Max'**
+  String get ovMaxSupply;
+
+  /// No description provided for @ovNoMaxSupply.
+  ///
+  /// In en, this message translates to:
+  /// **'No max supply'**
+  String get ovNoMaxSupply;
+
+  /// No description provided for @ovCirculatingOfMax.
+  ///
+  /// In en, this message translates to:
+  /// **'{pct}% of the max supply is in circulation'**
+  String ovCirculatingOfMax(String pct);
+
+  /// No description provided for @ovPriceChangeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Price change'**
+  String get ovPriceChangeTitle;
+
+  /// No description provided for @ovPeriod24h.
+  ///
+  /// In en, this message translates to:
+  /// **'24h'**
+  String get ovPeriod24h;
+
+  /// No description provided for @ovPeriod7d.
+  ///
+  /// In en, this message translates to:
+  /// **'7d'**
+  String get ovPeriod7d;
+
+  /// No description provided for @ovPeriod30d.
+  ///
+  /// In en, this message translates to:
+  /// **'30d'**
+  String get ovPeriod30d;
+
+  /// No description provided for @ovPeriod90d.
+  ///
+  /// In en, this message translates to:
+  /// **'90d'**
+  String get ovPeriod90d;
+
+  /// No description provided for @ovAth.
+  ///
+  /// In en, this message translates to:
+  /// **'All-time high'**
+  String get ovAth;
+
+  /// No description provided for @ovAtl.
+  ///
+  /// In en, this message translates to:
+  /// **'All-time low'**
+  String get ovAtl;
+
+  /// No description provided for @ovFromCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'{pct} from current price'**
+  String ovFromCurrent(String pct);
+
+  /// No description provided for @ovCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get ovCategory;
+
+  /// No description provided for @ovTags.
+  ///
+  /// In en, this message translates to:
+  /// **'Tags'**
+  String get ovTags;
+
+  /// No description provided for @ovPlatform.
+  ///
+  /// In en, this message translates to:
+  /// **'Platform'**
+  String get ovPlatform;
+
+  /// No description provided for @ovCoinAge.
+  ///
+  /// In en, this message translates to:
+  /// **'Coin age'**
+  String get ovCoinAge;
+
+  /// No description provided for @ovListingAge.
+  ///
+  /// In en, this message translates to:
+  /// **'Listing age'**
+  String get ovListingAge;
+
+  /// No description provided for @ovNewListing.
+  ///
+  /// In en, this message translates to:
+  /// **'New listing'**
+  String get ovNewListing;
+
+  /// No description provided for @ovAgeDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 day} other{{count} days}}'**
+  String ovAgeDays(int count);
+
+  /// No description provided for @ovAgeMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 month} other{{count} months}}'**
+  String ovAgeMonths(int count);
+
+  /// No description provided for @ovAgeYears.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 year} other{{count} years}}'**
+  String ovAgeYears(int count);
+
+  /// No description provided for @ovSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Data: CoinMarketCap, Binance'**
+  String get ovSource;
+
+  /// No description provided for @tabLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load this section.'**
+  String get tabLoadFailed;
+
+  /// No description provided for @glossaryHelpTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'What does this mean?'**
+  String get glossaryHelpTooltip;
+
+  /// No description provided for @coAnalysesEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No analyses of this coin yet'**
+  String get coAnalysesEmptyTitle;
+
+  /// No description provided for @coAnalysesEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Run your first quick or deep analysis with the buttons above.'**
+  String get coAnalysesEmptyBody;
+
+  /// No description provided for @coAnalysesLoginHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Log in to see your analyses of this coin'**
+  String get coAnalysesLoginHint;
+
+  /// No description provided for @coAnalysisCached.
+  ///
+  /// In en, this message translates to:
+  /// **'cached'**
+  String get coAnalysisCached;
+
+  /// No description provided for @relAgoNow.
+  ///
+  /// In en, this message translates to:
+  /// **'just now'**
+  String get relAgoNow;
+
+  /// No description provided for @relAgoMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} min ago'**
+  String relAgoMinutes(int count);
+
+  /// No description provided for @relAgoHours.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} h ago'**
+  String relAgoHours(int count);
+
+  /// No description provided for @relAgoDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} d ago'**
+  String relAgoDays(int count);
+
+  /// No description provided for @mkEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No market data for this coin yet.'**
+  String get mkEmpty;
+
+  /// No description provided for @mkFuturesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Futures (derivatives)'**
+  String get mkFuturesTitle;
+
+  /// No description provided for @mkFunding.
+  ///
+  /// In en, this message translates to:
+  /// **'Funding rate'**
+  String get mkFunding;
+
+  /// No description provided for @mkFundingPercentile.
+  ///
+  /// In en, this message translates to:
+  /// **'Higher than {pct}% of recent readings'**
+  String mkFundingPercentile(String pct);
+
+  /// No description provided for @mkFundingHintHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'Funding is high compared to its recent history: longs are paying shorts, a sign of crowded long positions.'**
+  String get mkFundingHintHigh;
+
+  /// No description provided for @mkFundingHintLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Funding is low compared to its recent history: shorts are paying longs or longs are not crowded.'**
+  String get mkFundingHintLow;
+
+  /// No description provided for @mkFundingHintNormal.
+  ///
+  /// In en, this message translates to:
+  /// **'Funding is within its usual range.'**
+  String get mkFundingHintNormal;
+
+  /// No description provided for @mkOpenInterest.
+  ///
+  /// In en, this message translates to:
+  /// **'Open interest change'**
+  String get mkOpenInterest;
+
+  /// No description provided for @mkOiHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Rising open interest means new money is entering positions; falling means positions are being closed.'**
+  String get mkOiHint;
+
+  /// No description provided for @mkLongShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Long / short balance'**
+  String get mkLongShort;
+
+  /// No description provided for @mkLongShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Long share {pct}%'**
+  String mkLongShare(String pct);
+
+  /// No description provided for @mkLsRatio.
+  ///
+  /// In en, this message translates to:
+  /// **'Long/short ratio'**
+  String get mkLsRatio;
+
+  /// No description provided for @mkTopTrader.
+  ///
+  /// In en, this message translates to:
+  /// **'Top traders ratio'**
+  String get mkTopTrader;
+
+  /// No description provided for @mkLongShortHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Above 1 means more longs than shorts. It describes positioning, not direction.'**
+  String get mkLongShortHint;
+
+  /// No description provided for @mkTaker.
+  ///
+  /// In en, this message translates to:
+  /// **'Taker buy / sell'**
+  String get mkTaker;
+
+  /// No description provided for @mkTakerHintBuy.
+  ///
+  /// In en, this message translates to:
+  /// **'Aggressive buyers dominate recent trades.'**
+  String get mkTakerHintBuy;
+
+  /// No description provided for @mkTakerHintSell.
+  ///
+  /// In en, this message translates to:
+  /// **'Aggressive sellers dominate recent trades.'**
+  String get mkTakerHintSell;
+
+  /// No description provided for @mkTakerHintBalanced.
+  ///
+  /// In en, this message translates to:
+  /// **'Aggressive buying and selling are roughly balanced.'**
+  String get mkTakerHintBalanced;
+
+  /// No description provided for @mkBasis.
+  ///
+  /// In en, this message translates to:
+  /// **'Basis (futures vs spot)'**
+  String get mkBasis;
+
+  /// No description provided for @mkBasisHintPos.
+  ///
+  /// In en, this message translates to:
+  /// **'Futures trade above spot (premium).'**
+  String get mkBasisHintPos;
+
+  /// No description provided for @mkBasisHintNeg.
+  ///
+  /// In en, this message translates to:
+  /// **'Futures trade below spot (discount).'**
+  String get mkBasisHintNeg;
+
+  /// No description provided for @mkLiquidityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Liquidity'**
+  String get mkLiquidityTitle;
+
+  /// No description provided for @mkSpread.
+  ///
+  /// In en, this message translates to:
+  /// **'Spread'**
+  String get mkSpread;
+
+  /// No description provided for @mkSpreadValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{bps} bps'**
+  String mkSpreadValue(String bps);
+
+  /// No description provided for @mkDepthTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Order book depth'**
+  String get mkDepthTitle;
+
+  /// No description provided for @mkDepthBid.
+  ///
+  /// In en, this message translates to:
+  /// **'Bid'**
+  String get mkDepthBid;
+
+  /// No description provided for @mkDepthAsk.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask'**
+  String get mkDepthAsk;
+
+  /// No description provided for @mkDepthImbalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Imbalance {pct}'**
+  String mkDepthImbalance(String pct);
+
+  /// No description provided for @mkDepthNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Depth is a momentary snapshot of the order book, not a signal.'**
+  String get mkDepthNote;
+
+  /// No description provided for @mkActivityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity'**
+  String get mkActivityTitle;
+
+  /// No description provided for @mkVolume24h.
+  ///
+  /// In en, this message translates to:
+  /// **'24h volume'**
+  String get mkVolume24h;
+
+  /// No description provided for @mkTrades24h.
+  ///
+  /// In en, this message translates to:
+  /// **'Trades (24h)'**
+  String get mkTrades24h;
+
+  /// No description provided for @mkVolumeRank.
+  ///
+  /// In en, this message translates to:
+  /// **'Volume rank'**
+  String get mkVolumeRank;
+
+  /// No description provided for @mkSpotNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Derivatives metrics (funding, open interest, long/short) apply to futures coins only.'**
+  String get mkSpotNote;
+
+  /// No description provided for @sgEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No signals yet'**
+  String get sgEmptyTitle;
+
+  /// No description provided for @sgEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'No arrows for this coin and timeframe in the loaded history.'**
+  String get sgEmptyBody;
+
+  /// No description provided for @sgUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Signals are available for the 15m, 1h, 4h and 1d timeframes.'**
+  String get sgUnsupported;
+
+  /// No description provided for @sgPriceAtSignal.
+  ///
+  /// In en, this message translates to:
+  /// **'At signal {price}'**
+  String sgPriceAtSignal(String price);
+
+  /// No description provided for @sgSinceSignal.
+  ///
+  /// In en, this message translates to:
+  /// **'{pct} since'**
+  String sgSinceSignal(String pct);
+
+  /// No description provided for @sgTapHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a row to go back to the chart.'**
+  String get sgTapHint;
+
+  /// No description provided for @alTabEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No alerts for this coin yet.'**
+  String get alTabEmpty;
+
+  /// No description provided for @alTabAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add alert'**
+  String get alTabAdd;
+
+  /// No description provided for @alTabLoginHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Log in to set price alerts'**
+  String get alTabLoginHint;
+
+  /// No description provided for @alTabHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Past alerts'**
+  String get alTabHistory;
 }
 
 class _AppLocalizationsDelegate

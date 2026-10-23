@@ -1376,4 +1376,346 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get themeSystem => 'System';
+
+  @override
+  String quickAnalysisButtonCost(int cost) {
+    String _temp0 = intl.Intl.pluralLogic(
+      cost,
+      locale: localeName,
+      other: '$cost credits',
+      one: '1 credit',
+    );
+    return 'Quick analysis · $_temp0';
+  }
+
+  @override
+  String deepAnalysisButtonCost(int cost) {
+    String _temp0 = intl.Intl.pluralLogic(
+      cost,
+      locale: localeName,
+      other: '$cost credits',
+      one: '1 credit',
+    );
+    return 'Deep analysis · $_temp0';
+  }
+
+  @override
+  String get chartTabSummary => 'Summary';
+
+  @override
+  String get chartTabAnalyses => 'My analyses';
+
+  @override
+  String get chartTabMarket => 'Market';
+
+  @override
+  String get chartTabSignals => 'Signals';
+
+  @override
+  String get chartTabAlerts => 'Alerts';
+
+  @override
+  String get ovEmpty => 'No summary available for this coin yet.';
+
+  @override
+  String get ovMarketCap => 'Market cap';
+
+  @override
+  String get ovFdv => 'FDV';
+
+  @override
+  String get ovVolume24h => '24h volume';
+
+  @override
+  String get ovVolMcap => 'Volume / market cap';
+
+  @override
+  String get ovSupplyTitle => 'Supply';
+
+  @override
+  String get ovCirculating => 'Circulating';
+
+  @override
+  String get ovTotalSupply => 'Total';
+
+  @override
+  String get ovMaxSupply => 'Max';
+
+  @override
+  String get ovNoMaxSupply => 'No max supply';
+
+  @override
+  String ovCirculatingOfMax(String pct) {
+    return '$pct% of the max supply is in circulation';
+  }
+
+  @override
+  String get ovPriceChangeTitle => 'Price change';
+
+  @override
+  String get ovPeriod24h => '24h';
+
+  @override
+  String get ovPeriod7d => '7d';
+
+  @override
+  String get ovPeriod30d => '30d';
+
+  @override
+  String get ovPeriod90d => '90d';
+
+  @override
+  String get ovAth => 'All-time high';
+
+  @override
+  String get ovAtl => 'All-time low';
+
+  @override
+  String ovFromCurrent(String pct) {
+    return '$pct from current price';
+  }
+
+  @override
+  String get ovCategory => 'Category';
+
+  @override
+  String get ovTags => 'Tags';
+
+  @override
+  String get ovPlatform => 'Platform';
+
+  @override
+  String get ovCoinAge => 'Coin age';
+
+  @override
+  String get ovListingAge => 'Listing age';
+
+  @override
+  String get ovNewListing => 'New listing';
+
+  @override
+  String ovAgeDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days',
+      one: '1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String ovAgeMonths(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count months',
+      one: '1 month',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String ovAgeYears(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count years',
+      one: '1 year',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get ovSource => 'Data: CoinMarketCap, Binance';
+
+  @override
+  String get tabLoadFailed => 'Could not load this section.';
+
+  @override
+  String get glossaryHelpTooltip => 'What does this mean?';
+
+  @override
+  String get coAnalysesEmptyTitle => 'No analyses of this coin yet';
+
+  @override
+  String get coAnalysesEmptyBody =>
+      'Run your first quick or deep analysis with the buttons above.';
+
+  @override
+  String get coAnalysesLoginHint => 'Log in to see your analyses of this coin';
+
+  @override
+  String get coAnalysisCached => 'cached';
+
+  @override
+  String get relAgoNow => 'just now';
+
+  @override
+  String relAgoMinutes(int count) {
+    return '$count min ago';
+  }
+
+  @override
+  String relAgoHours(int count) {
+    return '$count h ago';
+  }
+
+  @override
+  String relAgoDays(int count) {
+    return '$count d ago';
+  }
+
+  @override
+  String get mkEmpty => 'No market data for this coin yet.';
+
+  @override
+  String get mkFuturesTitle => 'Futures (derivatives)';
+
+  @override
+  String get mkFunding => 'Funding rate';
+
+  @override
+  String mkFundingPercentile(String pct) {
+    return 'Higher than $pct% of recent readings';
+  }
+
+  @override
+  String get mkFundingHintHigh =>
+      'Funding is high compared to its recent history: longs are paying shorts, a sign of crowded long positions.';
+
+  @override
+  String get mkFundingHintLow =>
+      'Funding is low compared to its recent history: shorts are paying longs or longs are not crowded.';
+
+  @override
+  String get mkFundingHintNormal => 'Funding is within its usual range.';
+
+  @override
+  String get mkOpenInterest => 'Open interest change';
+
+  @override
+  String get mkOiHint =>
+      'Rising open interest means new money is entering positions; falling means positions are being closed.';
+
+  @override
+  String get mkLongShort => 'Long / short balance';
+
+  @override
+  String mkLongShare(String pct) {
+    return 'Long share $pct%';
+  }
+
+  @override
+  String get mkLsRatio => 'Long/short ratio';
+
+  @override
+  String get mkTopTrader => 'Top traders ratio';
+
+  @override
+  String get mkLongShortHint =>
+      'Above 1 means more longs than shorts. It describes positioning, not direction.';
+
+  @override
+  String get mkTaker => 'Taker buy / sell';
+
+  @override
+  String get mkTakerHintBuy => 'Aggressive buyers dominate recent trades.';
+
+  @override
+  String get mkTakerHintSell => 'Aggressive sellers dominate recent trades.';
+
+  @override
+  String get mkTakerHintBalanced =>
+      'Aggressive buying and selling are roughly balanced.';
+
+  @override
+  String get mkBasis => 'Basis (futures vs spot)';
+
+  @override
+  String get mkBasisHintPos => 'Futures trade above spot (premium).';
+
+  @override
+  String get mkBasisHintNeg => 'Futures trade below spot (discount).';
+
+  @override
+  String get mkLiquidityTitle => 'Liquidity';
+
+  @override
+  String get mkSpread => 'Spread';
+
+  @override
+  String mkSpreadValue(String bps) {
+    return '$bps bps';
+  }
+
+  @override
+  String get mkDepthTitle => 'Order book depth';
+
+  @override
+  String get mkDepthBid => 'Bid';
+
+  @override
+  String get mkDepthAsk => 'Ask';
+
+  @override
+  String mkDepthImbalance(String pct) {
+    return 'Imbalance $pct';
+  }
+
+  @override
+  String get mkDepthNote =>
+      'Depth is a momentary snapshot of the order book, not a signal.';
+
+  @override
+  String get mkActivityTitle => 'Activity';
+
+  @override
+  String get mkVolume24h => '24h volume';
+
+  @override
+  String get mkTrades24h => 'Trades (24h)';
+
+  @override
+  String get mkVolumeRank => 'Volume rank';
+
+  @override
+  String get mkSpotNote =>
+      'Derivatives metrics (funding, open interest, long/short) apply to futures coins only.';
+
+  @override
+  String get sgEmptyTitle => 'No signals yet';
+
+  @override
+  String get sgEmptyBody =>
+      'No arrows for this coin and timeframe in the loaded history.';
+
+  @override
+  String get sgUnsupported =>
+      'Signals are available for the 15m, 1h, 4h and 1d timeframes.';
+
+  @override
+  String sgPriceAtSignal(String price) {
+    return 'At signal $price';
+  }
+
+  @override
+  String sgSinceSignal(String pct) {
+    return '$pct since';
+  }
+
+  @override
+  String get sgTapHint => 'Tap a row to go back to the chart.';
+
+  @override
+  String get alTabEmpty => 'No alerts for this coin yet.';
+
+  @override
+  String get alTabAdd => 'Add alert';
+
+  @override
+  String get alTabLoginHint => 'Log in to set price alerts';
+
+  @override
+  String get alTabHistory => 'Past alerts';
 }
