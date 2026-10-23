@@ -125,7 +125,16 @@ class SummaryContent extends StatelessWidget {
         if (changePills.isNotEmpty)
           SectionCard(
             title: l10n.ovPriceChangeTitle,
-            child: Wrap(spacing: 8, runSpacing: 8, children: changePills),
+            // Four periods share one row: equal-width pills that shrink their
+            // text instead of wrapping to a second line.
+            child: Row(
+              children: [
+                for (var i = 0; i < changePills.length; i++) ...[
+                  if (i > 0) const SizedBox(width: 6),
+                  Expanded(child: changePills[i]),
+                ],
+              ],
+            ),
           ),
         if (extremes.isNotEmpty) ...[
           AdaptiveGrid(children: extremes),

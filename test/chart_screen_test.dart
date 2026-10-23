@@ -318,6 +318,24 @@ void main() {
   });
 
   group('Summary tab', () {
+    for (final scale in [1.0, 1.6]) {
+      testWidgets('four change pills share one row (text scale $scale)', (
+        tester,
+      ) async {
+        await pumpChartScreen(tester, textScale: scale);
+        final tops = [
+          for (final l in ['24h', '7d', '30d', '90d'])
+            tester.getTopLeft(find.text(l).first).dy,
+        ];
+        expect(
+          tops.every((t) => (t - tops.first).abs() < 8),
+          isTrue,
+          reason: 'the 24h/7d/30d/90d pills must sit on a single row: $tops',
+        );
+        expect(tester.takeException(), isNull);
+      });
+    }
+
     testWidgets('full data', (tester) async {
       await pumpChartScreen(tester);
       expect(find.text('Bitcoin'), findsWidgets);
