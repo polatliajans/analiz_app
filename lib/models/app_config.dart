@@ -1,3 +1,7 @@
+/// Costs shown until the server says otherwise.
+const defaultQuickAnalysisCost = 2;
+const defaultDeepAnalysisCost = 5;
+
 /// Plan limits (what Free / guest users may do) as served by
 /// `GET /api/app-config`.
 class PlanConfig {
@@ -13,6 +17,10 @@ class PlanConfig {
   final int freeMaxSignalStrength;
   final bool alertsRequirePro;
 
+  /// Credits a quick / deep analysis costs, as served by the server.
+  final int quickAnalysisCost;
+  final int deepAnalysisCost;
+
   const PlanConfig({
     this.role = 'guest',
     this.freeWatchlistMax = 10,
@@ -20,6 +28,8 @@ class PlanConfig {
     this.proOnlyTimeframes = const ['1m', '5m'],
     this.freeMaxSignalStrength = 2,
     this.alertsRequirePro = true,
+    this.quickAnalysisCost = defaultQuickAnalysisCost,
+    this.deepAnalysisCost = defaultDeepAnalysisCost,
   });
 
   /// Safe behaviour used offline / on error before any value was cached.
@@ -43,8 +53,40 @@ class PlanConfig {
           (json['free_max_signal_strength'] as num?)?.toInt().clamp(1, 3) ??
           d.freeMaxSignalStrength,
       alertsRequirePro: json['alerts_require_pro'] as bool? ?? true,
+      quickAnalysisCost: _cost(
+        json['quick_analysis_cost'] ?? _costGroup(json)?['quick'],
+        d.quickAnalysisCost,
+      ),
+      deepAnalysisCost: _cost(
+        json['deep_analysis_cost'] ?? _costGroup(json)?['deep'],
+        d.deepAnalysisCost,
+      ),
     );
   }
+
+  static Map<String, dynamic>? _costGroup(Map<String, dynamic> json) {
+    for (final k in ['analysis_costs', 'credit_costs', 'costs']) {
+      final g = json[k];
+      if (g is Map<String, dynamic>) return g;
+    }
+    return null;
+  }
+
+  static int _cost(Object? v, int fallback) {
+    final n = v is num ? v.toInt() : int.tryParse('${v ?? ''}');
+    return n != null && n >= 0 ? n : fallback;
+  }
+
+  PlanConfig withCosts({int? quick, int? deep}) => PlanConfig(
+    role: role,
+    freeWatchlistMax: freeWatchlistMax,
+    deepAnalysisRequiresPro: deepAnalysisRequiresPro,
+    proOnlyTimeframes: proOnlyTimeframes,
+    freeMaxSignalStrength: freeMaxSignalStrength,
+    alertsRequirePro: alertsRequirePro,
+    quickAnalysisCost: quick ?? quickAnalysisCost,
+    deepAnalysisCost: deep ?? deepAnalysisCost,
+  );
 
   Map<String, dynamic> toJson() => {
     'role': role,
@@ -53,6 +95,8 @@ class PlanConfig {
     'pro_only_timeframes': proOnlyTimeframes,
     'free_max_signal_strength': freeMaxSignalStrength,
     'alerts_require_pro': alertsRequirePro,
+    'quick_analysis_cost': quickAnalysisCost,
+    'deep_analysis_cost': deepAnalysisCost,
   };
 }
 
@@ -168,10 +212,23 @@ class AppConfig {
   factory AppConfig.fromJson(Map<String, dynamic> json) {
     final plan = json['plan'];
     final ads = json['ads'];
+    // The costs may sit at the top level instead of inside `plan`.
+    final topCosts = PlanConfig.fromJson(json);
+    final parsedPlan = plan is Map<String, dynamic>
+        ? PlanConfig.fromJson(plan)
+        : PlanConfig.safeDefaults;
+    final planHasCosts =
+        plan is Map<String, dynamic> &&
+        (plan.containsKey('quick_analysis_cost') ||
+            plan.containsKey('deep_analysis_cost') ||
+            PlanConfig._costGroup(plan) != null);
     return AppConfig(
-      plan: plan is Map<String, dynamic>
-          ? PlanConfig.fromJson(plan)
-          : PlanConfig.safeDefaults,
+      plan: planHasCosts
+          ? parsedPlan
+          : parsedPlan.withCosts(
+              quick: topCosts.quickAnalysisCost,
+              deep: topCosts.deepAnalysisCost,
+            ),
       ads: ads is Map<String, dynamic>
           ? AdsConfig.fromJson(ads)
           : AdsConfig.none,

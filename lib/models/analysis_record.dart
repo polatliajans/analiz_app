@@ -12,6 +12,9 @@ class AnalysisRecord {
   final DateTime createdAt;
   final StructuredAnalysis? structured;
 
+  /// Served from the shared analysis cache (older servers omit this).
+  final bool cached;
+
   const AnalysisRecord({
     required this.id,
     required this.type,
@@ -23,6 +26,7 @@ class AnalysisRecord {
     required this.creditCost,
     required this.createdAt,
     this.structured,
+    this.cached = false,
   });
 
   bool get isDeep => type == 'deep';
@@ -39,6 +43,7 @@ class AnalysisRecord {
       creditCost: json['credit_cost'] as int,
       createdAt: DateTime.parse(json['created_at'] as String).toLocal(),
       structured: StructuredAnalysis.tryParse(json['structured']),
+      cached: (json['cached'] ?? json['from_cache']) == true,
     );
   }
 }
