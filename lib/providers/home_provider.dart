@@ -1,3 +1,4 @@
+import 'dart:io' show Platform;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/home_api.dart';
@@ -13,7 +14,16 @@ const homeCacheUserKey = 'home_cache_user';
 const homeStaleAfter = Duration(minutes: 15);
 
 /// Resume / tab-visible refreshes are skipped when the last attempt is newer.
-const homeMinRefreshGap = Duration(minutes: 1);
+const homeMinRefreshGap = Duration(seconds: 30);
+
+/// While the home tab is on screen the data (live BTC price, movers...) is refreshed this
+/// often. null disables it; widget tests (FLUTTER_TEST) run without it unless they override
+/// the provider, so no stray timers are left behind.
+final homeAutoRefreshProvider = Provider<Duration?>(
+  (ref) => Platform.environment.containsKey('FLUTTER_TEST')
+      ? null
+      : const Duration(seconds: 45),
+);
 
 final homeApiProvider = Provider<HomeApi>((ref) => HomeApi());
 

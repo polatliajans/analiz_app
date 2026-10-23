@@ -330,8 +330,6 @@
   "homeGuestBody": "Inicia sesión para ver el pulso del mercado, tu lista, las señales del radar y tu último análisis en un solo lugar.",
   "homeErrorTitle": "No se pudo cargar el resumen",
   "homeLoadingSemantics": "Cargando resumen",
-  "homeResumeTitle": "Donde lo dejaste",
-  "homeResumeOpen": "Abrir gráfico",
   "homeMarketTitle": "Pulso del mercado",
   "homeFearGreedTitle": "Miedo y codicia",
   "homeFngExtremeFear": "Miedo extremo",

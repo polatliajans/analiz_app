@@ -1180,12 +1180,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get homeLoadingSemantics => 'Cargando resumen';
 
   @override
-  String get homeResumeTitle => 'Donde lo dejaste';
-
-  @override
-  String get homeResumeOpen => 'Abrir gráfico';
-
-  @override
   String get homeMarketTitle => 'Pulso del mercado';
 
   @override

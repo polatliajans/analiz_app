@@ -330,8 +330,6 @@
   "homeGuestBody": "Giriş yap; piyasa nabzı, takip listen, radar sinyalleri ve son analizin tek yerde olsun.",
   "homeErrorTitle": "Özet yüklenemedi",
   "homeLoadingSemantics": "Özet yükleniyor",
-  "homeResumeTitle": "Kaldığın yer",
-  "homeResumeOpen": "Grafiği aç",
   "homeMarketTitle": "Piyasa nabzı",
   "homeFearGreedTitle": "Korku ve Açgözlülük",
   "homeFngExtremeFear": "Aşırı korku",

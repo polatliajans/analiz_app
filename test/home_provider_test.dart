@@ -139,7 +139,7 @@ void main() {
     expect(st.data, isNotNull);
   });
 
-  test('non-forced refreshes are debounced to once per minute', () async {
+  test('non-forced refreshes are debounced to once per 30 seconds', () async {
     final s = await _setup(
       handler: () => Future.value(homeResponse(fullHomeJson())),
     );
@@ -147,11 +147,11 @@ void main() {
     expect(s.api.calls, 1);
 
     final n = s.c.read(homeProvider.notifier);
-    s.clock.now = s.clock.now.add(const Duration(seconds: 30));
+    s.clock.now = s.clock.now.add(const Duration(seconds: 20));
     await n.refresh();
     expect(s.api.calls, 1);
 
-    s.clock.now = s.clock.now.add(const Duration(seconds: 31));
+    s.clock.now = s.clock.now.add(const Duration(seconds: 11));
     await n.refresh();
     expect(s.api.calls, 2);
 

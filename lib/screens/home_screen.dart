@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -7,9 +9,7 @@ import '../providers/analysis_history_provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/home_provider.dart';
 import '../providers/home_tab_provider.dart';
-import '../providers/locale_provider.dart';
 import '../providers/price_alert_provider.dart';
-import '../providers/selected_coin_provider.dart';
 import '../services/chart_navigation.dart';
 import '../utils/home_logic.dart';
 import '../widgets/analysis_card.dart';
@@ -33,22 +33,36 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen>
     with WidgetsBindingObserver {
+  Timer? _autoRefresh;
+  bool _appResumed = true;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    final every = ref.read(homeAutoRefreshProvider);
+    if (every != null) {
+      _autoRefresh = Timer.periodic(every, (_) {
+        // Only while the app is in the foreground and this tab is the visible one.
+        if (!mounted || !_appResumed) return;
+        if (ref.read(homeTabProvider) != homeTabIndex) return;
+        ref.read(homeProvider.notifier).refresh();
+      });
+    }
   }
 
   @override
   void dispose() {
+    _autoRefresh?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // Debounced inside the notifier (at most once a minute).
-    if (state == AppLifecycleState.resumed) {
+    _appResumed = state == AppLifecycleState.resumed;
+    // Debounced inside the notifier (at most once every 30 seconds).
+    if (_appResumed) {
       ref.read(homeProvider.notifier).refresh();
     }
   }
@@ -133,16 +147,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     final credits = data?.credits?.balance ?? member?.creditBalance;
     final isPro = data?.credits?.isPro ?? isProRole;
 
-    // Where the user left off: the coin/timeframe the chart tab shows.
-    final selected = ref.watch(selectedCoinProvider).value;
-    final timeframe = ref.watch(timeframeProvider);
-    final prefs = ref.watch(sharedPreferencesProvider);
-    final lastSymbol = selected?.symbol ?? prefs.getString(lastCoinSymbolKey);
-    final lastMarket =
-        selected?.marketType ??
-        prefs.getString(lastCoinMarketKey) ??
-        defaultMarketType;
-
     final children = <Widget>[];
     void gap() => children.add(const SizedBox(height: 12));
 
@@ -193,18 +197,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               onTap: () => openGlossary(context),
             ),
           ],
-        ),
-      );
-      gap();
-    }
-
-    if (lastSymbol != null) {
-      children.add(
-        ResumeCard(
-          symbol: lastSymbol,
-          marketType: lastMarket,
-          timeframe: timeframe,
-          onTap: () => ref.read(homeTabProvider.notifier).select(chartTabIndex),
         ),
       );
       gap();

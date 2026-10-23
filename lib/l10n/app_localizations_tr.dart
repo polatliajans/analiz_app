@@ -1134,12 +1134,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get homeLoadingSemantics => 'Özet yükleniyor';
 
   @override
-  String get homeResumeTitle => 'Kaldığın yer';
-
-  @override
-  String get homeResumeOpen => 'Grafiği aç';
-
-  @override
   String get homeMarketTitle => 'Piyasa nabzı';
 
   @override

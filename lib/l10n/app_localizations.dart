@@ -1972,18 +1972,6 @@ abstract class AppLocalizations {
   /// **'Loading overview'**
   String get homeLoadingSemantics;
 
-  /// No description provided for @homeResumeTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Where you left off'**
-  String get homeResumeTitle;
-
-  /// No description provided for @homeResumeOpen.
-  ///
-  /// In en, this message translates to:
-  /// **'Open chart'**
-  String get homeResumeOpen;
-
   /// No description provided for @homeMarketTitle.
   ///
   /// In en, this message translates to:

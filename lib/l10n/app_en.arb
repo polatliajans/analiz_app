@@ -633,8 +633,6 @@
   "homeGuestBody": "Log in to see the market pulse, your watchlist, radar signals and your latest analysis in one place.",
   "homeErrorTitle": "Could not load the overview",
   "homeLoadingSemantics": "Loading overview",
-  "homeResumeTitle": "Where you left off",
-  "homeResumeOpen": "Open chart",
   "homeMarketTitle": "Market pulse",
   "homeFearGreedTitle": "Fear & Greed",
   "homeFngExtremeFear": "Extreme fear",

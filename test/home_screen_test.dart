@@ -38,6 +38,7 @@ Future<_Harness> _pump(
   Size size = const Size(360, 3600),
   bool settle = true,
   MutableClock? clock,
+  Duration? autoRefresh,
 }) async {
   SharedPreferences.setMockInitialValues(prefs);
   final p = await SharedPreferences.getInstance();
@@ -51,6 +52,7 @@ Future<_Harness> _pump(
       sharedPreferencesProvider.overrideWithValue(p),
       authProvider.overrideWith(() => FakeAuth(member)),
       homeApiProvider.overrideWithValue(api),
+      homeAutoRefreshProvider.overrideWithValue(autoRefresh),
       homeClockProvider.overrideWithValue(clock?.call ?? () => homeTestNow),
       coinApiProvider.overrideWithValue(
         FakeCoinApi([
@@ -121,13 +123,35 @@ Map<String, Object> _cache() => {
 };
 
 void main() {
+  testWidgets('refreshes by itself while the home tab is visible', (
+    tester,
+  ) async {
+    final clock = MutableClock(homeTestNow);
+    final h = await _pump(
+      tester,
+      handler: _ok(fullHomeJson()),
+      clock: clock,
+      autoRefresh: const Duration(seconds: 40),
+    );
+    final before = h.api.calls;
+    clock.now = clock.now.add(const Duration(seconds: 41));
+    await tester.pump(const Duration(seconds: 41));
+    await tester.pump();
+    expect(h.api.calls, before + 1, reason: 'periodic refresh fetched once');
+    // Leaving the tab pauses it.
+    h.container.read(homeTabProvider.notifier).select(chartTabIndex);
+    clock.now = clock.now.add(const Duration(seconds: 41));
+    await tester.pump(const Duration(seconds: 41));
+    expect(h.api.calls, before + 1);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
   testWidgets('full data shows every section', (tester) async {
     await _pump(tester, handler: _ok(fullHomeJson()));
 
     expect(find.text('Ayse'), findsOneWidget);
     expect(find.text('80 credits'), findsOneWidget);
-    expect(find.text('Where you left off'), findsOneWidget);
-    expect(find.text('BTCUSDT · 1h'), findsOneWidget);
+    expect(find.text('Where you left off'), findsNothing);
 
     expect(find.text('Fear & Greed'), findsOneWidget);
     expect(find.text('53'), findsOneWidget);
@@ -173,7 +197,6 @@ void main() {
     double y(String t) => tester.getTopLeft(find.text(t)).dy;
     final order = [
       y('Ayse'),
-      y('Where you left off'),
       y('Fear & Greed'),
       y('Market'),
       y('My watchlist'),
@@ -339,22 +362,6 @@ void main() {
       expect(h.container.read(homeTabProvider), chartTabIndex);
     });
 
-    testWidgets('"where you left off" opens the chart tab', (tester) async {
-      final h = await _pump(
-        tester,
-        handler: _ok(fullHomeJson()),
-        prefs: {
-          lastCoinSymbolKey: 'ETHUSDT',
-          lastCoinMarketKey: 'spot',
-          lastTimeframeKey: '15m',
-        },
-      );
-      expect(find.text('ETHUSDT · 15m'), findsOneWidget);
-      await tester.tap(find.text('ETHUSDT · 15m'));
-      await tester.pumpAndSettle();
-      expect(h.container.read(homeTabProvider), chartTabIndex);
-    });
-
     testWidgets('new analysis button opens the chart tab', (tester) async {
       final h = await _pump(tester, handler: _ok(emptyHomeJson()));
       await tester.tap(find.text('New analysis'));
@@ -447,7 +454,7 @@ void main() {
     expect(find.text('Ayse'), findsOneWidget);
     expect(find.text('Korku ve Açgözlülük'), findsOneWidget);
     expect(find.text('Nötr'), findsOneWidget);
-    expect(find.text('Kaldığın yer'), findsOneWidget);
+    expect(find.text('Kaldığın yer'), findsNothing);
     expect(find.textContaining('yatırım tavsiyesi değildir'), findsOneWidget);
   });
 }
