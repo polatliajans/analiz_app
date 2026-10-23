@@ -333,6 +333,7 @@ void main() {
           reason: 'the 24h/7d/30d/90d pills must sit on a single row: $tops',
         );
         expect(tester.takeException(), isNull);
+        await disposeChartScreen(tester);
       });
     }
 
