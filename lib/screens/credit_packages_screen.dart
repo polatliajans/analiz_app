@@ -272,7 +272,8 @@ class _CreditPackagesScreenState extends ConsumerState<CreditPackagesScreen> {
                             ? null
                             : () => _buy(package.id, productId),
                         child: Text(
-                          storePrices[productId] ?? '${package.price} ₺',
+                          // The server's fallback prices are USD; the store's own localized price wins.
+                          storePrices[productId] ?? '\$${package.price}',
                         ),
                       ),
               );

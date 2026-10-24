@@ -265,7 +265,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                         child: Text(
                           storePrices[productId] ??
                               ((double.tryParse(plan.price) ?? 0) > 0
-                                  ? '${plan.price} ₺'
+                                  ? '\$${plan.price}'
                                   : l10n.buy),
                         ),
                       ),
