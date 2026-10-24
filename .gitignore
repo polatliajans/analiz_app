@@ -51,3 +51,6 @@ android/key.properties
 
 # Gradle/Kotlin build byproduct
 android/.kotlin/
+
+# raw phone screenshots (status bar etc.); only the composed store images are tracked
+store_assets/screenshots/raw/
