@@ -4,12 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../ads/ads_controller.dart';
 import '../data/ad_analysis_api.dart';
 import '../l10n/app_localizations.dart';
+import '../models/credit_breakdown.dart';
 import '../providers/ad_analysis_provider.dart';
 import '../providers/app_config_provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/price_alert_provider.dart';
 import '../screens/credit_packages_screen.dart';
 import '../screens/subscription_screen.dart';
+import 'credit_summary.dart';
 
 enum AnalysisKind { quick, deep }
 
@@ -115,6 +117,15 @@ class _InsufficientCreditDialogState
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(body),
+          if (creditNote(l10n, context, auth.member?.credits)
+              case final note?) ...[
+            const SizedBox(height: 8),
+            Text(
+              note,
+              key: const Key('creditRenewalNote'),
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ],
           if (!quick) ...[
             const SizedBox(height: 8),
             Text(
@@ -181,4 +192,24 @@ class _InsufficientCreditDialogState
       ],
     );
   }
+}
+
+/// One short line: the renewal date when it is within a week, else a reminder
+/// that purchased credits never expire; null when there is nothing to add.
+String? creditNote(
+  AppLocalizations l10n,
+  BuildContext context,
+  CreditBreakdown? b, {
+  DateTime? now,
+}) {
+  if (b == null) return null;
+  final days = b.daysUntilRenewal(now ?? DateTime.now());
+  if (b.renewAt != null && days != null && days <= 7) {
+    return l10n.insufficientRenewsOn(formatRenewalDate(context, b.renewAt!));
+  }
+  final purchased = b.purchasedCredits;
+  if (purchased != null && purchased > 0) {
+    return l10n.insufficientKeepsPurchased(purchased);
+  }
+  return null;
 }

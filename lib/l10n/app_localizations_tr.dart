@@ -1667,4 +1667,69 @@ class AppLocalizationsTr extends AppLocalizations {
   String ovSourceFrom(String sources) {
     return 'Veri: $sources';
   }
+
+  @override
+  String get creditSummaryTitle => 'Kredilerin';
+
+  @override
+  String creditSummaryTotal(int count) {
+    return 'Toplam: $count';
+  }
+
+  @override
+  String creditSummaryMonthly(int left, int total) {
+    return 'Aylık krediler $left / $total';
+  }
+
+  @override
+  String creditSummaryMonthlyLeft(int left) {
+    return 'Aylık krediler $left';
+  }
+
+  @override
+  String creditSummaryRenewal(String date, int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days gün sonra',
+      zero: 'bugün',
+    );
+    return 'Yenilenme: $date ($_temp0)';
+  }
+
+  @override
+  String creditSummaryPurchased(int count) {
+    return 'Satın alınan krediler $count — süresiz geçerli';
+  }
+
+  @override
+  String get creditPolicyGeneric =>
+      'Aylık krediler bir sonraki aya devretmez. Yenilenme gününde kalan aylık krediler paketindeki kredi sayısına (Ücretsiz: 10, Pro: 300) tamamlanır. Satın alınan krediler dolmaz; önce aylık krediler harcanır.';
+
+  @override
+  String creditPolicyWithTotal(int total) {
+    return 'Aylık krediler bir sonraki aya devretmez. Yenilenme gününde kalan aylık krediler paketindeki kredi sayısına ($total) tamamlanır. Satın alınan krediler dolmaz; önce aylık krediler harcanır.';
+  }
+
+  @override
+  String get creditPolicyShort =>
+      'Aylık krediler devretmez; yenilenme gününde paketindeki sayıya tamamlanır. Satın alınan krediler dolmaz.';
+
+  @override
+  String planMonthlyNoCarry(int count) {
+    return 'Her ay $count kredi · devretmez, yenilenme gününde $count krediye tamamlanır';
+  }
+
+  @override
+  String insufficientRenewsOn(String date) {
+    return 'Aylık kredilerin $date tarihinde yenilenir.';
+  }
+
+  @override
+  String insufficientKeepsPurchased(int count) {
+    return 'Satın aldığın $count kredi dolmaz.';
+  }
+
+  @override
+  String get creditTxMonthlyReset => 'Aylık kredi yenileme';
 }

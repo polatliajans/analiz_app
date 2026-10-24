@@ -8,6 +8,7 @@ import '../models/credit_package.dart';
 import '../providers/auth_provider.dart';
 import '../providers/credit_package_provider.dart';
 import '../providers/store_price_provider.dart';
+import '../widgets/credit_summary.dart';
 
 class CreditPackagesScreen extends ConsumerStatefulWidget {
   const CreditPackagesScreen({super.key});
@@ -213,6 +214,7 @@ class _CreditPackagesScreenState extends ConsumerState<CreditPackagesScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final packagesAsync = ref.watch(creditPackageListProvider);
+    final member = ref.watch(authProvider.select((a) => a.member));
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.buyCredits)),
@@ -239,8 +241,19 @@ class _CreditPackagesScreenState extends ConsumerState<CreditPackagesScreen> {
             padding: EdgeInsets.only(
               bottom: MediaQuery.paddingOf(context).bottom,
             ),
-            itemCount: packages.length,
-            itemBuilder: (context, index) {
+            itemCount: packages.length + 1,
+            itemBuilder: (context, i) {
+              if (i == 0) {
+                if (member == null) return const SizedBox.shrink();
+                return Card(
+                  margin: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: CreditSummary(member: member),
+                  ),
+                );
+              }
+              final index = i - 1;
               final package = packages[index];
               final productId = package.storeProductIdAndroid;
               final isBusy =

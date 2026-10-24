@@ -503,5 +503,18 @@
   "mkDepthIncomplete": "Libro poco profundo: ventana cubierta ±{pct}%",
   "@mkDepthIncomplete": {"placeholders": {"pct": {"type": "String"}}},
   "ovSourceFrom": "Datos: {sources}",
-  "@ovSourceFrom": {"placeholders": {"sources": {"type": "String"}}}
+  "@ovSourceFrom": {"placeholders": {"sources": {"type": "String"}}},
+  "creditSummaryTitle": "Tus créditos",
+  "creditSummaryTotal": "Total: {count}",
+  "creditSummaryMonthly": "Créditos mensuales {left} / {total}",
+  "creditSummaryMonthlyLeft": "Créditos mensuales {left}",
+  "creditSummaryRenewal": "Renovación: {date} ({days, plural, =0{hoy} =1{en 1 día} other{en {days} días}})",
+  "creditSummaryPurchased": "Créditos comprados {count} — no caducan",
+  "creditPolicyGeneric": "Los créditos mensuales no se acumulan al mes siguiente. El día de renovación, los créditos mensuales restantes se completan hasta la cantidad de tu paquete (Gratis: 10, Pro: 300). Los créditos comprados no caducan; primero se gastan los mensuales.",
+  "creditPolicyWithTotal": "Los créditos mensuales no se acumulan al mes siguiente. El día de renovación, los créditos mensuales restantes se completan hasta la cantidad de tu paquete ({total}). Los créditos comprados no caducan; primero se gastan los mensuales.",
+  "creditPolicyShort": "Los créditos mensuales no se acumulan; se completan hasta la cantidad de tu paquete el día de renovación. Los créditos comprados no caducan.",
+  "planMonthlyNoCarry": "{count} créditos cada mes · no se acumulan, se completan hasta {count} créditos el día de renovación",
+  "insufficientRenewsOn": "Tus créditos mensuales se renuevan el {date}.",
+  "insufficientKeepsPurchased": "Tus {count} créditos comprados no caducan.",
+  "creditTxMonthlyReset": "Renovación de créditos mensuales"
 }

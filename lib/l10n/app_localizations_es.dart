@@ -1755,4 +1755,70 @@ class AppLocalizationsEs extends AppLocalizations {
   String ovSourceFrom(String sources) {
     return 'Datos: $sources';
   }
+
+  @override
+  String get creditSummaryTitle => 'Tus créditos';
+
+  @override
+  String creditSummaryTotal(int count) {
+    return 'Total: $count';
+  }
+
+  @override
+  String creditSummaryMonthly(int left, int total) {
+    return 'Créditos mensuales $left / $total';
+  }
+
+  @override
+  String creditSummaryMonthlyLeft(int left) {
+    return 'Créditos mensuales $left';
+  }
+
+  @override
+  String creditSummaryRenewal(String date, int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'en $days días',
+      one: 'en 1 día',
+      zero: 'hoy',
+    );
+    return 'Renovación: $date ($_temp0)';
+  }
+
+  @override
+  String creditSummaryPurchased(int count) {
+    return 'Créditos comprados $count — no caducan';
+  }
+
+  @override
+  String get creditPolicyGeneric =>
+      'Los créditos mensuales no se acumulan al mes siguiente. El día de renovación, los créditos mensuales restantes se completan hasta la cantidad de tu paquete (Gratis: 10, Pro: 300). Los créditos comprados no caducan; primero se gastan los mensuales.';
+
+  @override
+  String creditPolicyWithTotal(int total) {
+    return 'Los créditos mensuales no se acumulan al mes siguiente. El día de renovación, los créditos mensuales restantes se completan hasta la cantidad de tu paquete ($total). Los créditos comprados no caducan; primero se gastan los mensuales.';
+  }
+
+  @override
+  String get creditPolicyShort =>
+      'Los créditos mensuales no se acumulan; se completan hasta la cantidad de tu paquete el día de renovación. Los créditos comprados no caducan.';
+
+  @override
+  String planMonthlyNoCarry(int count) {
+    return '$count créditos cada mes · no se acumulan, se completan hasta $count créditos el día de renovación';
+  }
+
+  @override
+  String insufficientRenewsOn(String date) {
+    return 'Tus créditos mensuales se renuevan el $date.';
+  }
+
+  @override
+  String insufficientKeepsPurchased(int count) {
+    return 'Tus $count créditos comprados no caducan.';
+  }
+
+  @override
+  String get creditTxMonthlyReset => 'Renovación de créditos mensuales';
 }

@@ -1735,4 +1735,70 @@ class AppLocalizationsEn extends AppLocalizations {
   String ovSourceFrom(String sources) {
     return 'Data: $sources';
   }
+
+  @override
+  String get creditSummaryTitle => 'Your credits';
+
+  @override
+  String creditSummaryTotal(int count) {
+    return 'Total: $count';
+  }
+
+  @override
+  String creditSummaryMonthly(int left, int total) {
+    return 'Monthly credits $left / $total';
+  }
+
+  @override
+  String creditSummaryMonthlyLeft(int left) {
+    return 'Monthly credits $left';
+  }
+
+  @override
+  String creditSummaryRenewal(String date, int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'in $days days',
+      one: 'in 1 day',
+      zero: 'today',
+    );
+    return 'Renews: $date ($_temp0)';
+  }
+
+  @override
+  String creditSummaryPurchased(int count) {
+    return 'Purchased credits $count — never expire';
+  }
+
+  @override
+  String get creditPolicyGeneric =>
+      'Monthly credits do not carry over to the next month. On the renewal day your remaining monthly credits are topped up to your package amount (Free: 10, Pro: 300). Purchased credits never expire; monthly credits are spent first.';
+
+  @override
+  String creditPolicyWithTotal(int total) {
+    return 'Monthly credits do not carry over to the next month. On the renewal day your remaining monthly credits are topped up to your package amount ($total). Purchased credits never expire; monthly credits are spent first.';
+  }
+
+  @override
+  String get creditPolicyShort =>
+      'Monthly credits do not carry over; they are topped up to your package amount on the renewal day. Purchased credits never expire.';
+
+  @override
+  String planMonthlyNoCarry(int count) {
+    return '$count credits every month · no carry-over, topped up to $count credits on the renewal day';
+  }
+
+  @override
+  String insufficientRenewsOn(String date) {
+    return 'Your monthly credits renew on $date.';
+  }
+
+  @override
+  String insufficientKeepsPurchased(int count) {
+    return 'Your $count purchased credits never expire.';
+  }
+
+  @override
+  String get creditTxMonthlyReset => 'Monthly credit renewal';
 }

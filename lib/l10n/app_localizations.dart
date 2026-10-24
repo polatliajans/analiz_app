@@ -2901,6 +2901,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Data: {sources}'**
   String ovSourceFrom(String sources);
+
+  /// No description provided for @creditSummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your credits'**
+  String get creditSummaryTitle;
+
+  /// No description provided for @creditSummaryTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total: {count}'**
+  String creditSummaryTotal(int count);
+
+  /// No description provided for @creditSummaryMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly credits {left} / {total}'**
+  String creditSummaryMonthly(int left, int total);
+
+  /// No description provided for @creditSummaryMonthlyLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly credits {left}'**
+  String creditSummaryMonthlyLeft(int left);
+
+  /// No description provided for @creditSummaryRenewal.
+  ///
+  /// In en, this message translates to:
+  /// **'Renews: {date} ({days, plural, =0{today} =1{in 1 day} other{in {days} days}})'**
+  String creditSummaryRenewal(String date, int days);
+
+  /// No description provided for @creditSummaryPurchased.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchased credits {count} — never expire'**
+  String creditSummaryPurchased(int count);
+
+  /// No description provided for @creditPolicyGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly credits do not carry over to the next month. On the renewal day your remaining monthly credits are topped up to your package amount (Free: 10, Pro: 300). Purchased credits never expire; monthly credits are spent first.'**
+  String get creditPolicyGeneric;
+
+  /// No description provided for @creditPolicyWithTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly credits do not carry over to the next month. On the renewal day your remaining monthly credits are topped up to your package amount ({total}). Purchased credits never expire; monthly credits are spent first.'**
+  String creditPolicyWithTotal(int total);
+
+  /// No description provided for @creditPolicyShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly credits do not carry over; they are topped up to your package amount on the renewal day. Purchased credits never expire.'**
+  String get creditPolicyShort;
+
+  /// No description provided for @planMonthlyNoCarry.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} credits every month · no carry-over, topped up to {count} credits on the renewal day'**
+  String planMonthlyNoCarry(int count);
+
+  /// No description provided for @insufficientRenewsOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Your monthly credits renew on {date}.'**
+  String insufficientRenewsOn(String date);
+
+  /// No description provided for @insufficientKeepsPurchased.
+  ///
+  /// In en, this message translates to:
+  /// **'Your {count} purchased credits never expire.'**
+  String insufficientKeepsPurchased(int count);
+
+  /// No description provided for @creditTxMonthlyReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly credit renewal'**
+  String get creditTxMonthlyReset;
 }
 
 class _AppLocalizationsDelegate

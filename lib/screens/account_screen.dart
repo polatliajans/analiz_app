@@ -15,6 +15,7 @@ import '../widgets/email_verification_banner.dart';
 import 'alarms_screen.dart';
 import 'analysis_history_screen.dart';
 import 'auth_screen.dart';
+import '../widgets/credit_summary.dart';
 import 'credit_packages_screen.dart';
 import 'settings_screen.dart';
 import 'subscription_screen.dart';
@@ -245,11 +246,13 @@ class _HeaderCard extends StatelessWidget {
                                 : scheme.error,
                           ),
                           const SizedBox(width: 4),
-                          Text(
-                            member.emailVerified
-                                ? l10n.accountEmailVerified
-                                : l10n.accountEmailNotVerified,
-                            style: textTheme.bodySmall,
+                          Flexible(
+                            child: Text(
+                              member.emailVerified
+                                  ? l10n.accountEmailVerified
+                                  : l10n.accountEmailNotVerified,
+                              style: textTheme.bodySmall,
+                            ),
                           ),
                         ],
                       ),
@@ -301,6 +304,12 @@ class _CreditCard extends StatelessWidget {
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: 8),
+            CreditSummary(
+              member: member,
+              compact: true,
+              textColor: scheme.onSecondaryContainer,
             ),
             const SizedBox(height: 12),
             Wrap(

@@ -248,9 +248,10 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 title: Text(plan.name),
                 subtitle: Text(
                   plan.monthlyCredit > 0
-                      ? '${l10n.durationDays(plan.durationDays)} · ${l10n.monthlyCredits(plan.monthlyCredit)}'
+                      ? '${l10n.durationDays(plan.durationDays)}\n${l10n.planMonthlyNoCarry(plan.monthlyCredit)}'
                       : l10n.durationDays(plan.durationDays),
                 ),
+                isThreeLine: plan.monthlyCredit > 0,
                 trailing: isBusy
                     ? const SizedBox(
                         width: 20,
