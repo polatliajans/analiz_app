@@ -22,6 +22,22 @@
           }
         },
         {
+          "client_id": "514019641839-n7i4g9pe4dr8r64dkgcbl42ot8e48ll2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.polatliajans.kriptoanaliz",
+            "certificate_hash": "398f0ce59957eea49b679b818115a2dfd117e9c4"
+          }
+        },
+        {
+          "client_id": "514019641839-r9b5uudtu67u91an3mv8ngc2crouv5ke.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.polatliajans.kriptoanaliz",
+            "certificate_hash": "7b45bc9535ac15a47c47bab6f17d23eb4f3086b0"
+          }
+        },
+        {
           "client_id": "514019641839-k1e6beepliengt42bk2akv6davun8cu4.apps.googleusercontent.com",
           "client_type": 3
         }
