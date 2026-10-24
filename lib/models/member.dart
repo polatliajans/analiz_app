@@ -1,3 +1,5 @@
+import 'credit_breakdown.dart';
+
 class Member {
   final int id;
   final String? name;
@@ -7,6 +9,9 @@ class Member {
   final bool emailVerified;
   final String? locale;
 
+  /// Monthly / purchased split of [creditBalance]; empty on an old server.
+  final CreditBreakdown credits;
+
   const Member({
     required this.id,
     this.name,
@@ -15,6 +20,7 @@ class Member {
     required this.creditBalance,
     this.emailVerified = true,
     this.locale,
+    this.credits = CreditBreakdown.none,
   });
 
   factory Member.fromJson(Map<String, dynamic> json) {
@@ -26,6 +32,7 @@ class Member {
       creditBalance: json['credit_balance'] as int,
       emailVerified: json['email_verified'] as bool? ?? true,
       locale: json['locale'] as String?,
+      credits: CreditBreakdown.fromJson(json),
     );
   }
 }

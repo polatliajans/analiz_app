@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'credit_breakdown.dart';
+
 // Models for `GET /api/home`. Parsing is defensive: every section may be
 // missing or null, unknown fields are ignored, and malformed list items are
 // dropped instead of failing the whole response.
@@ -370,7 +372,14 @@ class HomeCredits {
   final int? balance;
   final bool isPro;
 
-  const HomeCredits({this.balance, this.isPro = false});
+  /// Monthly / purchased split; empty when the server does not send it.
+  final CreditBreakdown breakdown;
+
+  const HomeCredits({
+    this.balance,
+    this.isPro = false,
+    this.breakdown = CreditBreakdown.none,
+  });
 
   static HomeCredits? tryParse(Object? json) {
     final m = _map(json);
@@ -378,6 +387,7 @@ class HomeCredits {
     return HomeCredits(
       balance: _int(m['balance']),
       isPro: _bool(m['is_pro']) ?? false,
+      breakdown: CreditBreakdown.fromJson(m),
     );
   }
 }

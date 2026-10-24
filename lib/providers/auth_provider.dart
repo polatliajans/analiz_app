@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../data/auth_api.dart';
+import '../models/credit_breakdown.dart';
 import '../models/member.dart';
 import '../services/firebase_auth_service.dart';
 
@@ -145,6 +146,12 @@ class AuthNotifier extends Notifier<AuthState> {
         creditBalance: balance,
         emailVerified: m.emailVerified,
         locale: m.locale,
+        // The split is stale once the total moved; keep what is still true
+        // (package amount, renewal) and let the next /me refresh the rest.
+        credits: CreditBreakdown(
+          planCreditTotal: m.credits.planCreditTotal,
+          renewAt: m.credits.renewAt,
+        ),
       ),
     );
   }
