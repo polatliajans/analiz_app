@@ -1,0 +1,46 @@
+CryptoAnaliz te ayuda a seguir los mercados de criptomonedas con gráficos en tiempo real, señales basadas en indicadores técnicos y análisis redactados por inteligencia artificial, todo en una aplicación sencilla.
+
+GRÁFICOS EN TIEMPO REAL
+• Gráficos de velas en tiempo real con datos de mercado públicos de Binance
+• Pares spot y de futuros
+• Intervalos de 1 minuto a 1 semana
+
+SEÑALES DE COMPRA / VENTA
+• Señales calculadas a partir de indicadores técnicos como el RSI y las Bandas de Bollinger
+• Las señales se muestran en el gráfico en tres niveles de intensidad
+
+RADAR
+• Analiza el mercado y muestra las monedas con movimientos técnicos destacados
+
+ANÁLISIS CON IA
+• Análisis rápido: un breve resumen de los datos técnicos
+• Análisis profundo: combina los datos técnicos con titulares de noticias recientes sobre la moneda
+• Los análisis consumen créditos; los créditos solo se descuentan cuando el análisis se completa correctamente
+• Consulta tus análisis anteriores cuando quieras
+
+LISTA DE SEGUIMIENTO Y NOTIFICACIONES
+• Añade monedas a tu lista de seguimiento y recibe una notificación cuando aparezca una nueva señal
+
+ALERTAS DE PRECIO (PRO)
+• Fija un precio objetivo y recibe una notificación cuando el precio lo alcance
+
+CRÉDITOS Y SUSCRIPCIÓN PRO
+• Paquete gratuito: 10 créditos cada mes (crédito de bienvenida tras verificar el correo electrónico)
+• Pro: suscripción mensual (el precio se muestra en Google Play); 300 créditos cada mes y funciones Pro como las alertas de precio
+• Un análisis rápido consume 2 créditos y uno profundo 5; los paquetes de créditos de pago único están disponibles en Google Play
+• Los créditos mensuales no se acumulan: el día de renovación los créditos mensuales que queden en tu cuenta se completan hasta la cantidad del paquete y los no utilizados caducan. Los créditos comprados nunca caducan; primero se gastan los mensuales
+• Los miembros gratuitos sin créditos suficientes para un análisis rápido pueden ver un anuncio con recompensa opcional para ejecutar solo un análisis rápido
+
+IDIOMAS
+• Español, inglés y turco
+
+PRIVACIDAD
+• Los miembros gratuitos ven anuncios de Google AdMob; los miembros Pro no ven anuncios
+• Se recopilan informes de fallos anónimos (Firebase Crashlytics) para la estabilidad
+• Elimina tu cuenta cuando quieras desde la propia aplicación
+• Política de privacidad: https://www.cryptoanaliz.net/privacy
+
+IMPORTANTE
+CryptoAnaliz es una herramienta informativa y su contenido no constituye asesoramiento financiero. Las señales y los análisis se generan automáticamente, pueden ser erróneos y no garantizan resultados futuros. Operar con criptoactivos conlleva un riesgo elevado. Todas las decisiones de inversión son tuyas. CryptoAnaliz no es un exchange ni un monedero; no realiza operaciones y no se conecta a tu cuenta de exchange. La aplicación está destinada a mayores de 18 años.
+
+Soporte: support@cryptoanaliz.net

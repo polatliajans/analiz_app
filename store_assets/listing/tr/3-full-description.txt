@@ -1,0 +1,46 @@
+CryptoAnaliz, kripto piyasalarını canlı grafikler, teknik gösterge sinyalleri ve yapay zekâ ile yazılmış analizlerle tek bir sade uygulamada takip etmenize yardımcı olur.
+
+CANLI GRAFİKLER
+• Binance'in halka açık piyasa verileriyle canlı mum grafikleri
+• Spot ve vadeli (futures) pariteler
+• 1 dakikadan 1 haftaya kadar zaman dilimleri
+
+AL / SAT SİNYALLERİ
+• RSI ve Bollinger Bantları gibi teknik göstergelerden hesaplanan sinyaller
+• Sinyaller grafikte üç güç kademesinde gösterilir
+
+RADAR
+• Piyasayı tarar ve dikkat çekici teknik hareketleri olan coinleri listeler
+
+YAPAY ZEKÂ ANALİZİ
+• Hızlı analiz: teknik verilerin kısa bir özeti
+• Derin analiz: teknik verileri coin ile ilgili güncel haber başlıklarıyla birlikte değerlendirir
+• Analizler kredi kullanır; kredi yalnızca analiz başarıyla tamamlanınca düşülür
+• Geçmiş analizlerinize istediğiniz zaman yeniden bakabilirsiniz
+
+TAKİP LİSTESİ VE BİLDİRİMLER
+• Coinleri takip listenize ekleyin, yeni bir sinyal oluştuğunda bildirim alın
+
+FİYAT ALARMI (PRO)
+• Hedef fiyat belirleyin, fiyat bu seviyeye ulaştığında bildirim alın
+
+KREDİLER VE PRO ABONELİK
+• Ücretsiz paket: her ay 10 kredi (e-posta doğrulamasından sonra hoş geldin kredisi)
+• Pro: aylık abonelik (fiyat Google Play'de görünür); her ay 300 kredi ve fiyat alarmları gibi Pro özellikleri
+• Hızlı analiz 2, derin analiz 5 kredi kullanır; tek seferlik kredi paketleri Google Play üzerinden satın alınır
+• Aylık krediler devretmez: yenileme gününde hesabınızdaki aylık kredi paket miktarına tamamlanır, kullanılmayanlar sona erer. Satın alınan kredilerin süresi dolmaz; önce aylık krediler harcanır
+• Kredisi yetmeyen ücretsiz üyeler, isteğe bağlı bir ödüllü reklam izleyerek yalnızca hızlı analiz çalıştırabilir
+
+DİL SEÇENEKLERİ
+• Türkçe, İngilizce ve İspanyolca
+
+GİZLİLİK
+• Ücretsiz üyelere Google AdMob reklamları gösterilir; Pro üyeler reklam görmez
+• Kararlılık için anonim çökme raporları (Firebase Crashlytics) toplanır
+• Hesabınızı istediğiniz zaman uygulama içinden silebilirsiniz
+• Gizlilik politikası: https://www.cryptoanaliz.net/privacy
+
+ÖNEMLİ UYARI
+CryptoAnaliz bir bilgi aracıdır; içerikleri yatırım tavsiyesi değildir. Sinyaller ve analizler otomatik olarak üretilir, hatalı olabilir ve gelecekteki sonuçları garanti etmez. Kripto varlık alım satımı yüksek risk içerir. Yatırım kararları tamamen size aittir. CryptoAnaliz bir borsa veya cüzdan değildir; alım satım işlemi yapmaz ve borsa hesabınıza bağlanmaz. Uygulama 18 yaş ve üzeri kullanıcılar içindir.
+
+Destek: support@cryptoanaliz.net

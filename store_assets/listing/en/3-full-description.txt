@@ -1,0 +1,46 @@
+CryptoAnaliz helps you follow the crypto markets with live charts, technical indicator signals and AI-written analyses, all in one simple app.
+
+LIVE CHARTS
+• Live candlestick charts with public Binance market data
+• Spot and futures pairs
+• Timeframes from 1 minute to 1 week
+
+BUY / SELL SIGNALS
+• Signals calculated from technical indicators such as RSI and Bollinger Bands
+• Signals are shown on the chart in three strength levels
+
+RADAR
+• Scans the market and lists coins with notable technical movements
+
+AI ANALYSIS
+• Quick analysis: a short summary of the technical data
+• Deep analysis: combines the technical data with recent news headlines about the coin
+• Analyses use credits; credits are only deducted when an analysis completes successfully
+• Review your past analyses at any time
+
+WATCHLIST AND NOTIFICATIONS
+• Add coins to your watchlist and get notified when a new signal appears
+
+PRICE ALERTS (PRO)
+• Set a target price and get a notification when the price reaches it
+
+CREDITS AND PRO SUBSCRIPTION
+• Free package: 10 credits every month (welcome credit after e-mail verification)
+• Pro: monthly subscription (price shown in Google Play); 300 credits every month and Pro features such as price alerts
+• A quick analysis uses 2 credits and a deep analysis uses 5; one-time credit packs are available through Google Play
+• Monthly credits do not carry over: on your renewal day the monthly credits left in your account are completed to the package amount and unused ones expire. Purchased credits never expire; monthly credits are spent first
+• Free members whose credits do not cover a quick analysis can watch an optional rewarded ad to run a quick analysis only
+
+LANGUAGES
+• English, Turkish and Spanish
+
+PRIVACY
+• Free members see Google AdMob ads; Pro members see no ads
+• Anonymous crash reports (Firebase Crashlytics) are collected for stability
+• Delete your account at any time from inside the app
+• Privacy policy: https://www.cryptoanaliz.net/privacy
+
+IMPORTANT
+CryptoAnaliz is an information tool and its content is not financial advice. Signals and analyses are generated automatically, can be wrong and do not guarantee future results. Trading crypto assets is highly risky. All investment decisions are your own. CryptoAnaliz is not an exchange or a wallet; it does not place trades and does not connect to your exchange account. The app is intended for users aged 18 and over.
+
+Support: support@cryptoanaliz.net
