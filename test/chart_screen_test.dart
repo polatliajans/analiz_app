@@ -12,6 +12,7 @@ import 'package:kriptoanaliz/models/structured_analysis.dart';
 import 'package:kriptoanaliz/providers/coin_overview_provider.dart';
 import 'package:kriptoanaliz/screens/price_alert_sheet.dart';
 import 'package:kriptoanaliz/utils/price_alert_logic.dart';
+import 'package:kriptoanaliz/widgets/pro_upsell_sheet.dart';
 import 'package:kriptoanaliz/widgets/candlestick_chart.dart';
 import 'package:kriptoanaliz/widgets/chart_tabs/signals_tab.dart';
 
@@ -77,6 +78,17 @@ Finder _tabLabel(String label) => find.descendant(
   matching: find.text(label),
 );
 
+Finder _buttonLabel(String key, String label) =>
+    find.descendant(of: find.byKey(Key(key)), matching: find.text(label));
+
+Finder _costPill(String key, String cost) => find.descendant(
+  of: find.byKey(Key(key)),
+  matching: find.descendant(
+    of: find.byKey(const Key('analysis-cost-pill')),
+    matching: find.text(cost),
+  ),
+);
+
 Future<void> _openTab(WidgetTester tester, String label) async {
   final f = _tabLabel(label);
   await tester.ensureVisible(f);
@@ -97,8 +109,10 @@ void main() {
     ) async {
       await pumpChartScreen(tester);
       expect(find.byType(CandlestickChart), findsOneWidget);
-      expect(find.text('Quick analysis · 2 credits'), findsOneWidget);
-      expect(find.text('Deep analysis · 5 credits'), findsOneWidget);
+      expect(_buttonLabel('quick-analysis-button', 'Quick analysis'), findsOne);
+      expect(_buttonLabel('deep-analysis-button', 'Deep analysis'), findsOne);
+      expect(_costPill('quick-analysis-button', '2'), findsOne);
+      expect(_costPill('deep-analysis-button', '5'), findsOne);
       for (final l in [
         'Summary',
         'My analyses',
@@ -156,15 +170,15 @@ void main() {
           plan: PlanConfig(quickAnalysisCost: 3, deepAnalysisCost: 7),
         ),
       );
-      expect(find.text('Quick analysis · 3 credits'), findsOneWidget);
-      expect(find.text('Deep analysis · 7 credits'), findsOneWidget);
+      expect(_costPill('quick-analysis-button', '3'), findsOne);
+      expect(_costPill('deep-analysis-button', '7'), findsOne);
       await disposeChartScreen(tester);
     });
 
     testWidgets('Turkish labels', (tester) async {
       await pumpChartScreen(tester, locale: 'tr');
-      expect(find.text('Hızlı analiz · 2 kredi'), findsOneWidget);
-      expect(find.text('Derin analiz · 5 kredi'), findsOneWidget);
+      expect(_buttonLabel('quick-analysis-button', 'Hızlı analiz'), findsOne);
+      expect(_buttonLabel('deep-analysis-button', 'Derin analiz'), findsOne);
       expect(_tabLabel('Özet'), findsOneWidget);
       expect(_tabLabel('Analizlerim'), findsOneWidget);
       expect(_tabLabel('Piyasa'), findsOneWidget);
@@ -317,6 +331,108 @@ void main() {
     });
   });
 
+  group('analysis buttons and tab bar', () {
+    for (final locale in ['en', 'tr', 'es']) {
+      testWidgets('buttons sit on one line at 360dp ($locale)', (tester) async {
+        await pumpChartScreen(tester, locale: locale);
+        final quick = tester.getRect(
+          find.byKey(const Key('quick-analysis-button')),
+        );
+        final deep = tester.getRect(
+          find.byKey(const Key('deep-analysis-button')),
+        );
+        // Side by side, each a single line tall (Material button ~40-52dp).
+        expect(quick.top, closeTo(deep.top, 1));
+        expect(quick.height, lessThanOrEqualTo(52));
+        expect(deep.height, lessThanOrEqualTo(52));
+        for (final k in ['quick-analysis-button', 'deep-analysis-button']) {
+          final label = find.descendant(
+            of: find.byKey(Key(k)),
+            matching: find.byWidgetPredicate(
+              (w) =>
+                  w is Text &&
+                  (w.data == 'Quick analysis' ||
+                      w.data == 'Deep analysis' ||
+                      w.data == 'Hızlı analiz' ||
+                      w.data == 'Derin analiz' ||
+                      w.data == 'Análisis rápido' ||
+                      w.data == 'Análisis profundo'),
+            ),
+          );
+          expect(label, findsOneWidget);
+          expect(tester.widget<Text>(label).maxLines, 1, reason: k);
+          // Label and pill share one row.
+          final pill = tester.getRect(
+            find.descendant(
+              of: find.byKey(Key(k)),
+              matching: find.byKey(const Key('analysis-cost-pill')),
+            ),
+          );
+          expect(pill.height, lessThan(30));
+        }
+        expect(tester.takeException(), isNull);
+        await disposeChartScreen(tester);
+      });
+
+      testWidgets('buttons do not overflow at 1.6 text scale ($locale)', (
+        tester,
+      ) async {
+        await pumpChartScreen(tester, locale: locale, textScale: 1.6);
+        expect(find.byKey(const Key('quick-analysis-button')), findsOneWidget);
+        expect(tester.takeException(), isNull);
+        // Large text stacks the buttons.
+        final quick = tester.getRect(
+          find.byKey(const Key('quick-analysis-button')),
+        );
+        final deep = tester.getRect(
+          find.byKey(const Key('deep-analysis-button')),
+        );
+        expect(deep.top, greaterThan(quick.bottom - 1));
+        await disposeChartScreen(tester);
+      });
+    }
+
+    testWidgets('a Pro-locked deep button still fits on one line', (
+      tester,
+    ) async {
+      await pumpChartScreen(tester, locale: 'es');
+      expect(find.byType(ProBadge), findsOneWidget);
+      final deep = tester.getRect(
+        find.byKey(const Key('deep-analysis-button')),
+      );
+      expect(deep.height, lessThanOrEqualTo(52));
+      expect(tester.takeException(), isNull);
+      await disposeChartScreen(tester);
+    });
+
+    for (final locale in ['en', 'tr', 'es']) {
+      testWidgets('last tab is whole or the bar fades ($locale)', (
+        tester,
+      ) async {
+        await pumpChartScreen(tester, locale: locale);
+        final last = {
+          'en': 'Alerts',
+          'tr': 'Alarmlar',
+          'es': 'Alertas',
+        }[locale]!;
+        final right = tester.getTopRight(_tabLabel(last)).dx;
+        final fade = find.byKey(const Key('chart-tab-bar-fade'));
+        expect(
+          right <= 360 || fade.evaluate().isNotEmpty,
+          isTrue,
+          reason: 'last tab ends at $right with no fade',
+        );
+        await disposeChartScreen(tester);
+      });
+    }
+
+    testWidgets('a clipped tab bar shows the edge fade', (tester) async {
+      await pumpChartScreen(tester, size: const Size(300, 800));
+      expect(find.byKey(const Key('chart-tab-bar-fade')), findsOneWidget);
+      await disposeChartScreen(tester);
+    });
+  });
+
   group('Summary tab', () {
     for (final scale in [1.0, 1.6]) {
       testWidgets('four change pills share one row (text scale $scale)', (
@@ -365,6 +481,11 @@ void main() {
         scrollable: find.byType(Scrollable).first,
       );
       expect(find.text('All-time low'), findsOneWidget);
+      // ATH / ATL: currency with separators, readable distance percent.
+      expect(find.text('\$126,000'), findsOneWidget);
+      expect(find.text('\$67.81'), findsOneWidget);
+      expect(find.text('-35.2% from current price'), findsOneWidget);
+      expect(find.text('+120,000% from current price'), findsOneWidget);
       expect(find.text('Layer 1'), findsOneWidget);
       expect(find.text('pow'), findsOneWidget);
       expect(find.text('New listing'), findsNothing);

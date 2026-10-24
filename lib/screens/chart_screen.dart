@@ -607,33 +607,45 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
     bool deepBusy,
   ) {
     final plan = ref.watch(appConfigProvider.select((c) => c.plan));
-    final quick = ElevatedButton(
-      key: const Key('quick-analysis-button'),
-      onPressed: () => _requestAnalysis(coin),
-      child: Text(
-        l10n.quickAnalysisButtonCost(plan.quickAnalysisCost),
-        textAlign: TextAlign.center,
+    final large = isLargeText(context);
+    const compact = ButtonStyle(
+      padding: WidgetStatePropertyAll(
+        EdgeInsets.symmetric(horizontal: 10, vertical: 12),
       ),
     );
-    final deep = ElevatedButton(
-      key: const Key('deep-analysis-button'),
-      onPressed: deepBusy ? null : () => _requestDeepAnalysis(coin),
-      child: Wrap(
-        alignment: WrapAlignment.center,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        spacing: 4,
-        children: [
-          if (!gate.canUseDeepAnalysis)
-            const Icon(Icons.lock_outline, size: 16),
-          Text(
-            l10n.deepAnalysisButtonCost(plan.deepAnalysisCost),
-            textAlign: TextAlign.center,
-          ),
-          if (!gate.canUseDeepAnalysis) const ProBadge(),
-        ],
+    final quick = Semantics(
+      label: l10n.quickAnalysisButtonCost(plan.quickAnalysisCost),
+      excludeSemantics: true,
+      button: true,
+      child: ElevatedButton(
+        key: const Key('quick-analysis-button'),
+        style: compact,
+        onPressed: () => _requestAnalysis(coin),
+        child: _AnalysisButtonLabel(
+          label: l10n.quickAnalysisShort,
+          cost: plan.quickAnalysisCost,
+          stacked: large,
+        ),
       ),
     );
-    if (isLargeText(context)) {
+    final locked = !gate.canUseDeepAnalysis;
+    final deep = Semantics(
+      label: l10n.deepAnalysisButtonCost(plan.deepAnalysisCost),
+      excludeSemantics: true,
+      button: true,
+      child: ElevatedButton(
+        key: const Key('deep-analysis-button'),
+        style: compact,
+        onPressed: deepBusy ? null : () => _requestDeepAnalysis(coin),
+        child: _AnalysisButtonLabel(
+          label: l10n.deepAnalysisShort,
+          cost: plan.deepAnalysisCost,
+          stacked: large,
+          locked: locked,
+        ),
+      ),
+    );
+    if (large) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [quick, const SizedBox(height: 8), deep],
@@ -879,5 +891,66 @@ class _DeepAnalysisWaitingCard extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+/// Label of an analysis button: the (short) name and the credit cost in a
+/// trailing pill. One line at normal text scale (scaled down if a language
+/// is too long); wraps at large text scale.
+class _AnalysisButtonLabel extends StatelessWidget {
+  final String label;
+  final int cost;
+  final bool stacked;
+  final bool locked;
+
+  const _AnalysisButtonLabel({
+    required this.label,
+    required this.cost,
+    required this.stacked,
+    this.locked = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final pill = Container(
+      key: const Key('analysis-cost-pill'),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        border: Border.all(color: scheme.primary.withValues(alpha: 0.5)),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.toll_outlined, size: 13, color: scheme.primary),
+          const SizedBox(width: 3),
+          Text(
+            '$cost',
+            maxLines: 1,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: scheme.primary,
+            ),
+          ),
+        ],
+      ),
+    );
+    final text = Text(
+      label,
+      maxLines: stacked ? 2 : 1,
+      softWrap: stacked,
+      textAlign: TextAlign.center,
+      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+    );
+    final children = <Widget>[
+      if (stacked) Flexible(child: text) else text,
+      const SizedBox(width: 6),
+      pill,
+      if (locked) ...[const SizedBox(width: 4), const ProBadge()],
+    ];
+    final row = Row(mainAxisSize: MainAxisSize.min, children: children);
+    return stacked ? row : FittedBox(fit: BoxFit.scaleDown, child: row);
   }
 }

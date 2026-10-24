@@ -53,11 +53,17 @@ class ChartTabBarDelegate extends SliverPersistentHeaderDelegate {
         children: [
           SizedBox(
             height: kTextTabBarHeight,
-            child: TabBar(
-              controller: controller,
-              isScrollable: true,
-              tabAlignment: TabAlignment.start,
-              tabs: [for (final l in labels) Tab(text: l)],
+            child: _EdgeFade(
+              color: scheme.surface,
+              child: TabBar(
+                controller: controller,
+                isScrollable: true,
+                tabAlignment: TabAlignment.start,
+                // Tighter than the 16dp default so more tabs fit at rest.
+                labelPadding: const EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 6),
+                tabs: [for (final l in labels) Tab(text: l)],
+              ),
             ),
           ),
           Divider(height: 1, color: scheme.outlineVariant),
@@ -152,6 +158,69 @@ class _ChartTabsContentState extends State<ChartTabsContent> {
           child: KeyedSubtree(key: ValueKey(tab), child: _tab(tab)),
         );
       },
+    );
+  }
+}
+
+/// Fades the right edge while the scrollable tab bar has more tabs off
+/// screen, so a partly hidden last tab reads as "scroll for more" rather
+/// than as cut off.
+class _EdgeFade extends StatefulWidget {
+  final Color color;
+  final Widget child;
+  const _EdgeFade({required this.color, required this.child});
+
+  @override
+  State<_EdgeFade> createState() => _EdgeFadeState();
+}
+
+class _EdgeFadeState extends State<_EdgeFade> {
+  bool _more = false;
+
+  void _update(ScrollMetrics m) {
+    final more = m.extentAfter > 1;
+    if (more == _more) return;
+    // Notifications can arrive during layout.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && more != _more) setState(() => _more = more);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        NotificationListener<ScrollMetricsNotification>(
+          onNotification: (n) {
+            _update(n.metrics);
+            return false;
+          },
+          child: NotificationListener<ScrollNotification>(
+            onNotification: (n) {
+              _update(n.metrics);
+              return false;
+            },
+            child: widget.child,
+          ),
+        ),
+        if (_more)
+          Positioned(
+            top: 0,
+            bottom: 0,
+            right: 0,
+            width: 28,
+            child: IgnorePointer(
+              child: DecoratedBox(
+                key: const Key('chart-tab-bar-fade'),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [widget.color.withValues(alpha: 0), widget.color],
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
