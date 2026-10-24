@@ -20,7 +20,12 @@ import 'package:kriptoanaliz/widgets/insufficient_credit_dialog.dart';
 
 import 'helpers/home_fakes.dart';
 
-final _renew = DateTime.now().toUtc().add(const Duration(days: 12, hours: 3));
+// Noon, 12 calendar days ahead in local time: the "N days left" count is calendar-day based, so a
+// time-of-day dependent value (now + 12d 3h) made these tests fail late in the evening.
+final _renew = (() {
+  final n = DateTime.now();
+  return DateTime(n.year, n.month, n.day + 12, 12).toUtc();
+})();
 
 Map<String, dynamic> _memberJson([Map<String, dynamic> extra = const {}]) => {
   'id': 1,
