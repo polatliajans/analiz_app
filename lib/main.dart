@@ -170,6 +170,7 @@ class _KriptoAnalizAppState extends ConsumerState<KriptoAnalizApp> {
     _afterFrame(homeShowing && !auth.isRestoring, auth);
 
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       navigatorKey: _navigatorKey,
       onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
       theme: buildAppTheme(Brightness.light),
