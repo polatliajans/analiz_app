@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="500" viewBox="0 0 1024 500">
+  
+  <defs>
+    <linearGradient id="ring" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#12d6a0"/><stop offset="1" stop-color="#38bdf8"/>
+    </linearGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#14213d"/><stop offset="0.55" stop-color="#0b1220"/><stop offset="1" stop-color="#060a12"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.55" r="0.55">
+      <stop offset="0" stop-color="#12d6a0" stop-opacity="0.28"/><stop offset="1" stop-color="#12d6a0" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <defs>
+    <linearGradient id="fbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0b0f17"/><stop offset="1" stop-color="#101c33"/></linearGradient>
+    <radialGradient id="fglow" cx="0.771875" cy="0.52" r="0.5"><stop offset="0" stop-color="#12d6a0" stop-opacity="0.30"/><stop offset="1" stop-color="#12d6a0" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1024" height="500" fill="url(#fbg)"/>
+  <line x1="0" y1="60" x2="1024" y2="60" stroke="#ffffff" stroke-opacity="0.045" stroke-width="2"/>
+  <line x1="0" y1="140" x2="1024" y2="140" stroke="#ffffff" stroke-opacity="0.045" stroke-width="2"/>
+  <line x1="0" y1="220" x2="1024" y2="220" stroke="#ffffff" stroke-opacity="0.045" stroke-width="2"/>
+  <line x1="0" y1="300" x2="1024" y2="300" stroke="#ffffff" stroke-opacity="0.045" stroke-width="2"/>
+  <line x1="0" y1="380" x2="1024" y2="380" stroke="#ffffff" stroke-opacity="0.045" stroke-width="2"/>
+  <line x1="0" y1="460" x2="1024" y2="460" stroke="#ffffff" stroke-opacity="0.045" stroke-width="2"/>
+  <rect width="1024" height="500" fill="url(#fglow)"/>
+  <g transform="translate(560 19.599999999999994) scale(0.9)">
+  <path d="M 370.9 352.4 A 150 150 0 1 1 370.9 159.6" fill="none" stroke="url(#ring)" stroke-width="42" stroke-linecap="round"/>
+  <line x1="195" y1="268" x2="195" y2="356" stroke="#19c37d" stroke-width="10" stroke-linecap="round"/>
+  <rect x="176" y="290" width="38" height="50" rx="9" fill="#19c37d"/>
+  <line x1="249" y1="218" x2="249" y2="330" stroke="#ef5b5b" stroke-width="10" stroke-linecap="round"/>
+  <rect x="230" y="242" width="38" height="68" rx="9" fill="#ef5b5b"/>
+  <line x1="303" y1="170" x2="303" y2="296" stroke="#19c37d" stroke-width="10" stroke-linecap="round"/>
+  <rect x="284" y="194" width="38" height="82" rx="9" fill="#19c37d"/>
+  <path d="M 390 88 Q 398.36 117.64 428 126 Q 398.36 134.36 390 164 Q 381.64 134.36 352 126 Q 381.64 117.64 390 88 Z" fill="#ffd166"/></g>
+  <text x="63" y="220" font-family="Segoe UI, Arial, sans-serif" font-weight="700" font-size="84" fill="#e8edf5">Crypto<tspan fill="#3ee0b4">Analiz</tspan></text>
+  <text x="63" y="285" font-family="Segoe UI, Arial, sans-serif" font-weight="400" font-size="34" fill="#a7b3c6">Kripto sinyalleri, radar</text><text x="63" y="329" font-family="Segoe UI, Arial, sans-serif" font-weight="400" font-size="34" fill="#a7b3c6">ve yapay zekâ analizi</text>
+  <rect x="63" y="380" width="92" height="8" rx="4" fill="#12d6a0"/>
+</svg>
