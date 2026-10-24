@@ -209,6 +209,8 @@ class LiveChartController extends Notifier<LiveChartState> {
       _setPrice(fetched.isEmpty ? null : fetched.last.close);
       _loading = false;
       _error = null;
+      // Draw the candles right away; signals are merged in when they arrive.
+      _emitNow();
     } catch (e) {
       if (gen != _gen) return;
       _loading = false;
@@ -220,13 +222,13 @@ class LiveChartController extends Notifier<LiveChartState> {
       // Keep showing the previous candles; the stream refreshes them.
     }
 
+    _connect(gen);
+    _startSignalTimer(gen);
+
     final signals = await signalsFuture;
     if (gen != _gen) return;
     if (signals != null) _signals = mergeSignals(_signals, signals);
     _emitNow();
-
-    _connect(gen);
-    _startSignalTimer(gen);
   }
 
   void _stop() {
