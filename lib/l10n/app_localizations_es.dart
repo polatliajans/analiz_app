@@ -1821,4 +1821,20 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get creditTxMonthlyReset => 'Renovación de créditos mensuales';
+
+  @override
+  String get watchlistEmptyHint =>
+      'Toca la estrella en el gráfico de una moneda para añadirla aquí.';
+
+  @override
+  String get marketTypeSpot => 'Spot';
+
+  @override
+  String get marketTypeFutures => 'Futuros';
+
+  @override
+  String get quickAnalysisShort => 'Análisis rápido';
+
+  @override
+  String get deepAnalysisShort => 'Análisis profundo';
 }

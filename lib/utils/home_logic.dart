@@ -180,3 +180,33 @@ String formatVolumeShort(double v, String locale) {
     ..maximumFractionDigits = 0;
   return f.format(v);
 }
+
+/// Quote volume like $1.04B / $41.7M / $512M (about three significant digits;
+/// below one thousand the plain amount without decimals).
+String formatVolumeUsd(double v, String locale) {
+  final abs = v.abs();
+  const steps = <(double, String)>[
+    (1e12, 'T'),
+    (1e9, 'B'),
+    (1e6, 'M'),
+    (1e3, 'K'),
+  ];
+  for (final (size, suffix) in steps) {
+    if (abs >= size) {
+      final scaled = v / size;
+      final digits = scaled.abs() >= 100
+          ? 0
+          : scaled.abs() >= 10
+          ? 1
+          : 2;
+      final f = NumberFormat.decimalPattern(locale)
+        ..minimumFractionDigits = 0
+        ..maximumFractionDigits = digits;
+      return '\$${f.format(scaled)}$suffix';
+    }
+  }
+  final f = NumberFormat.decimalPattern(locale)
+    ..minimumFractionDigits = 0
+    ..maximumFractionDigits = 0;
+  return '\$${f.format(v)}';
+}

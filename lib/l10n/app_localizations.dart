@@ -2979,6 +2979,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Monthly credit renewal'**
   String get creditTxMonthlyReset;
+
+  /// No description provided for @watchlistEmptyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the star on a coin\'s chart to add it here.'**
+  String get watchlistEmptyHint;
+
+  /// No description provided for @marketTypeSpot.
+  ///
+  /// In en, this message translates to:
+  /// **'Spot'**
+  String get marketTypeSpot;
+
+  /// No description provided for @marketTypeFutures.
+  ///
+  /// In en, this message translates to:
+  /// **'Futures'**
+  String get marketTypeFutures;
+
+  /// No description provided for @quickAnalysisShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick analysis'**
+  String get quickAnalysisShort;
+
+  /// No description provided for @deepAnalysisShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Deep analysis'**
+  String get deepAnalysisShort;
 }
 
 class _AppLocalizationsDelegate

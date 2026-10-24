@@ -835,5 +835,10 @@
   "@insufficientRenewsOn": {"placeholders": {"date": {"type": "String"}}},
   "insufficientKeepsPurchased": "Your {count} purchased credits never expire.",
   "@insufficientKeepsPurchased": {"placeholders": {"count": {"type": "int"}}},
-  "creditTxMonthlyReset": "Monthly credit renewal"
+  "creditTxMonthlyReset": "Monthly credit renewal",
+  "watchlistEmptyHint": "Tap the star on a coin's chart to add it here.",
+  "marketTypeSpot": "Spot",
+  "marketTypeFutures": "Futures",
+  "quickAnalysisShort": "Quick analysis",
+  "deepAnalysisShort": "Deep analysis"
 }

@@ -516,5 +516,10 @@
   "planMonthlyNoCarry": "Her ay {count} kredi · devretmez, yenilenme gününde {count} krediye tamamlanır",
   "insufficientRenewsOn": "Aylık kredilerin {date} tarihinde yenilenir.",
   "insufficientKeepsPurchased": "Satın aldığın {count} kredi dolmaz.",
-  "creditTxMonthlyReset": "Aylık kredi yenileme"
+  "creditTxMonthlyReset": "Aylık kredi yenileme",
+  "watchlistEmptyHint": "Eklemek için bir coinin grafiğindeki yıldıza dokun.",
+  "marketTypeSpot": "Spot",
+  "marketTypeFutures": "Vadeli",
+  "quickAnalysisShort": "Hızlı analiz",
+  "deepAnalysisShort": "Derin analiz"
 }

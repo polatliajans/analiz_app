@@ -516,5 +516,10 @@
   "planMonthlyNoCarry": "{count} créditos cada mes · no se acumulan, se completan hasta {count} créditos el día de renovación",
   "insufficientRenewsOn": "Tus créditos mensuales se renuevan el {date}.",
   "insufficientKeepsPurchased": "Tus {count} créditos comprados no caducan.",
-  "creditTxMonthlyReset": "Renovación de créditos mensuales"
+  "creditTxMonthlyReset": "Renovación de créditos mensuales",
+  "watchlistEmptyHint": "Toca la estrella en el gráfico de una moneda para añadirla aquí.",
+  "marketTypeSpot": "Spot",
+  "marketTypeFutures": "Futuros",
+  "quickAnalysisShort": "Análisis rápido",
+  "deepAnalysisShort": "Análisis profundo"
 }

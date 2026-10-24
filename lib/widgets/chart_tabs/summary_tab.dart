@@ -5,8 +5,8 @@ import '../../l10n/app_localizations.dart';
 import '../../models/coin.dart';
 import '../../models/coin_overview.dart';
 import '../../theme/app_theme.dart';
+import '../../utils/home_logic.dart' show formatUsdPrice;
 import '../../utils/overview_format.dart';
-import '../../utils/price_alert_logic.dart';
 import 'overview_body.dart';
 import 'tab_widgets.dart';
 
@@ -350,7 +350,7 @@ class _ExtremeCard extends StatelessWidget {
             ),
             if (e.price != null)
               Text(
-                formatAlertPrice(e.price!),
+                formatUsdPrice(e.price!, locale),
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
@@ -362,7 +362,7 @@ class _ExtremeCard extends StatelessWidget {
               ),
             if (e.distancePct != null)
               Text(
-                l10n.ovFromCurrent(formatSignedPct(e.distancePct!, digits: 1)),
+                l10n.ovFromCurrent(formatDistancePct(e.distancePct!, locale)),
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: trendColor(context, e.distancePct),
                 ),

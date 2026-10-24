@@ -1801,4 +1801,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get creditTxMonthlyReset => 'Monthly credit renewal';
+
+  @override
+  String get watchlistEmptyHint =>
+      'Tap the star on a coin\'s chart to add it here.';
+
+  @override
+  String get marketTypeSpot => 'Spot';
+
+  @override
+  String get marketTypeFutures => 'Futures';
+
+  @override
+  String get quickAnalysisShort => 'Quick analysis';
+
+  @override
+  String get deepAnalysisShort => 'Deep analysis';
 }

@@ -28,6 +28,19 @@ String formatSignedPct(double value, {int digits = 2}) {
   return '${value < 0 ? '-' : '+'}$text%';
 }
 
+/// Distance percent like "-36.2%" / "+2,758%": one decimal below 100, none
+/// above, with grouping; a value that rounds to zero has no sign.
+String formatDistancePct(double value, String locale) {
+  final digits = value.abs() < 100 ? 1 : 0;
+  final f = NumberFormat.decimalPattern(locale)
+    ..minimumFractionDigits = digits
+    ..maximumFractionDigits = digits;
+  final text = f.format(value.abs());
+  final isZero = double.parse(value.abs().toStringAsFixed(digits)) == 0;
+  if (isZero) return '$text%';
+  return '${value < 0 ? '-' : '+'}$text%';
+}
+
 /// Plain percent without a sign: "42%".
 String formatPlainPct(double value, {int digits = 0}) =>
     '${value.toStringAsFixed(digits)}%';

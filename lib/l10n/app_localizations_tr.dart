@@ -1732,4 +1732,20 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get creditTxMonthlyReset => 'Aylık kredi yenileme';
+
+  @override
+  String get watchlistEmptyHint =>
+      'Eklemek için bir coinin grafiğindeki yıldıza dokun.';
+
+  @override
+  String get marketTypeSpot => 'Spot';
+
+  @override
+  String get marketTypeFutures => 'Vadeli';
+
+  @override
+  String get quickAnalysisShort => 'Hızlı analiz';
+
+  @override
+  String get deepAnalysisShort => 'Derin analiz';
 }
