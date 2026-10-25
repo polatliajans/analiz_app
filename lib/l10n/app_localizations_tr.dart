@@ -158,7 +158,8 @@ class AppLocalizationsTr extends AppLocalizations {
   String get noCandleData => 'Mum verisi yok';
 
   @override
-  String get strongSignalsProNote => 'Güçlü (3) kademe sinyaller Pro\'da';
+  String get strongSignalsProNote =>
+      'Pro; en güçlü (3) kademe sinyaller, 1dk/5dk ve alarmlar ekler';
 
   @override
   String creditsSpent(int count) {
@@ -1276,14 +1277,14 @@ class AppLocalizationsTr extends AppLocalizations {
   String get homeOpenGlossary => 'Sözlüğü aç';
 
   @override
-  String get homeProPromoTitle => 'Pro ile daha ileri git';
+  String get homeProPromoTitle => 'Pro\'ya yükselt';
 
   @override
   String get homeProPromoBody =>
       'Derin analiz, fiyat alarmları ve aylık krediler; ihtiyacın olduğunda.';
 
   @override
-  String get homeProPromoAction => 'Pro\'yu incele';
+  String get homeProPromoAction => 'Pro avantajlarını gör';
 
   @override
   String get homeFooterDisclaimer =>
@@ -1794,4 +1795,100 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get subPlansHeading => 'Planını seç';
+
+  @override
+  String get gbTitle => 'Giriş yaptıktan sonra neler yapabilirsin';
+
+  @override
+  String get gbHeroTagline =>
+      'Hesap oluşturmak ücretsiz. İşte kilidini açtıkların.';
+
+  @override
+  String get gbHeading => 'Ücretsiz hesabınla';
+
+  @override
+  String gbCreditsTitle(int count) {
+    return 'Her ay $count ücretsiz kredi';
+  }
+
+  @override
+  String get gbCreditsTitleGeneric => 'Her ay ücretsiz kredi';
+
+  @override
+  String get gbCreditsDesc =>
+      'Yapay zeka analizlerinde harca. Kullanılmayan aylık krediler devretmez; satın aldığın krediler hiç sona ermez.';
+
+  @override
+  String get gbQuickTitle => 'Her coin için yapay zeka analizi';
+
+  @override
+  String gbQuickDesc(int cost) {
+    return 'Hızlı analiz $cost kredi tutar.';
+  }
+
+  @override
+  String get gbDeepTitle => 'Derin analiz';
+
+  @override
+  String get gbDeepDesc =>
+      'Çoklu zaman dilimli ayrıntılı derin analiz, kredi ile.';
+
+  @override
+  String gbSignalsTitle(int level) {
+    return '$level. kademeye kadar grafik sinyalleri';
+  }
+
+  @override
+  String get gbSignalsDesc =>
+      'Alış ve satış sinyallerini grafikte ve Sinyaller sekmesinde gör.';
+
+  @override
+  String get gbWatchlistTitle => 'Takip listen';
+
+  @override
+  String gbWatchlistDescLimit(int count) {
+    return '$count coine kadar takip et ve ana sayfadan göz kulak ol.';
+  }
+
+  @override
+  String get gbWatchlistDescUnlimited =>
+      'Coinlerini takip et ve ana sayfadan göz kulak ol.';
+
+  @override
+  String get gbHistoryTitle => 'Analiz geçmişi';
+
+  @override
+  String get gbHistoryDesc =>
+      'Yaptığın her analiz kaydedilir, istediğin zaman yeniden açabilirsin.';
+
+  @override
+  String get gbAlertsTitle => 'Fiyat alarmları ve bildirimler';
+
+  @override
+  String get gbAlertsDesc => 'Bir fiyat seviyesine ulaşıldığında haberdar ol.';
+
+  @override
+  String get gbProTease =>
+      'Daha fazlası mı? Pro; derin analiz, fiyat alarmları, en güçlü sinyaller ve en hızlı zaman dilimlerini ekler.';
+
+  @override
+  String get homeLockedAction => 'Neler kazandığını gör';
+
+  @override
+  String get homeLockedWatchlist =>
+      'Coin takip etmek ve hareketlerini burada görmek için giriş yap.';
+
+  @override
+  String get homeLockedAnalysis =>
+      'Yapay zeka analizi yapmak ve son analizini burada görmek için giriş yap.';
+
+  @override
+  String get ovGuestHint =>
+      'Bu coinin özetini ve piyasa verilerini görmek için giriş yap';
+
+  @override
+  String get sgGuestHint => 'Bu coinin sinyallerini görmek için giriş yap';
+
+  @override
+  String get signalsGuestNote => 'Sinyalleri görmek için giriş yap';
 }

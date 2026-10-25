@@ -10,6 +10,7 @@ import '../providers/home_provider.dart';
 import '../providers/price_alert_provider.dart';
 import '../providers/store_price_provider.dart';
 import '../providers/subscription_provider.dart';
+import '../widgets/brand_page.dart';
 
 class SubscriptionScreen extends ConsumerStatefulWidget {
   const SubscriptionScreen({super.key});
@@ -260,7 +261,11 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               24 + MediaQuery.paddingOf(context).bottom,
             ),
             children: [
-              _ProHero(tagline: l10n.subTagline),
+              BrandHero(
+                icon: Icons.workspace_premium_rounded,
+                title: 'CryptoAnaliz Pro',
+                tagline: l10n.subTagline,
+              ),
               const SizedBox(height: 20),
               if (isPro) ...[
                 _AlreadyProCard(
@@ -269,32 +274,32 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 ),
                 const SizedBox(height: 20),
               ],
-              _SectionHeading(l10n.proUpsellBenefitsHeading),
+              BrandSectionHeading(l10n.proUpsellBenefitsHeading),
               const SizedBox(height: 8),
-              _BenefitsCard(
+              BrandBenefitsCard(
                 benefits: [
                   if (monthlyCredit > 0)
-                    _Benefit(
+                    BrandBenefit(
                       Icons.toll_rounded,
                       l10n.subBenefitCreditsTitle(monthlyCredit),
                       l10n.subBenefitCreditsDesc,
                     ),
-                  _Benefit(
+                  BrandBenefit(
                     Icons.query_stats_rounded,
                     l10n.proBenefitDeepAnalysis,
                     l10n.subBenefitDeepDesc,
                   ),
-                  _Benefit(
+                  BrandBenefit(
                     Icons.notifications_active_rounded,
                     l10n.proBenefitAlerts,
                     l10n.subBenefitAlertsDesc,
                   ),
-                  _Benefit(
+                  BrandBenefit(
                     Icons.speed_rounded,
                     l10n.proBenefitTimeframes,
                     l10n.subBenefitTimeframesDesc,
                   ),
-                  _Benefit(
+                  BrandBenefit(
                     Icons.block_rounded,
                     l10n.proBenefitNoAds,
                     l10n.subBenefitNoAdsDesc,
@@ -303,7 +308,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               ),
               if (!isPro) ...[
                 const SizedBox(height: 24),
-                _SectionHeading(l10n.subPlansHeading),
+                BrandSectionHeading(l10n.subPlansHeading),
                 const SizedBox(height: 8),
                 for (final plan in plans)
                   _PlanCard(
@@ -335,89 +340,6 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       ),
     );
   }
-}
-
-const _brandTeal = Color(0xFF12D6A0);
-const _brandBlue = Color(0xFF2F6BFF);
-
-class _ProHero extends StatelessWidget {
-  final String tagline;
-  const _ProHero({required this.tagline});
-
-  @override
-  Widget build(BuildContext context) {
-    final text = Theme.of(context).textTheme;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 28),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        // Deepened brand gradient so white text stays readable on it.
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF0A8F70), Color(0xFF1B4FC9)],
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: _brandBlue.withValues(alpha: 0.25),
-            blurRadius: 24,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Container(
-            width: 72,
-            height: 72,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.white.withValues(alpha: 0.18),
-              border: Border.all(color: _brandTeal.withValues(alpha: 0.7)),
-            ),
-            child: const Icon(
-              Icons.workspace_premium_rounded,
-              size: 40,
-              color: Color(0xFFFFD54F),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'CryptoAnaliz Pro',
-            textAlign: TextAlign.center,
-            style: text.headlineSmall?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            tagline,
-            textAlign: TextAlign.center,
-            style: text.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.9),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SectionHeading extends StatelessWidget {
-  final String text;
-  const _SectionHeading(this.text);
-
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 4),
-    child: Text(
-      text,
-      style: Theme.of(
-        context,
-      ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
-    ),
-  );
 }
 
 class _AlreadyProCard extends StatelessWidget {
@@ -466,84 +388,6 @@ class _AlreadyProCard extends StatelessWidget {
   }
 }
 
-class _Benefit {
-  final IconData icon;
-  final String title;
-  final String description;
-  const _Benefit(this.icon, this.title, this.description);
-}
-
-class _BenefitsCard extends StatelessWidget {
-  final List<_Benefit> benefits;
-  const _BenefitsCard({required this.benefits});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: scheme.surfaceContainerHigh,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        children: [
-          for (var i = 0; i < benefits.length; i++) ...[
-            if (i > 0) Divider(height: 1, color: scheme.outlineVariant),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      gradient: const LinearGradient(
-                        colors: [_brandTeal, _brandBlue],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                    ),
-                    child: Icon(
-                      benefits[i].icon,
-                      color: Colors.white,
-                      size: 22,
-                    ),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          benefits[i].title,
-                          style: theme.textTheme.titleSmall?.copyWith(
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          benefits[i].description,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: scheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
 class _PlanCard extends StatelessWidget {
   final SubscriptionPlan plan;
   final String priceText;
@@ -568,10 +412,7 @@ class _PlanCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: scheme.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: _brandTeal.withValues(alpha: 0.6),
-          width: 1.5,
-        ),
+        border: Border.all(color: brandTeal.withValues(alpha: 0.6), width: 1.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -604,9 +445,9 @@ class _PlanCard extends StatelessWidget {
             onPressed: isBusy ? null : onBuy,
             style: FilledButton.styleFrom(
               minimumSize: const Size.fromHeight(52),
-              backgroundColor: _brandTeal,
+              backgroundColor: brandTeal,
               foregroundColor: Colors.black,
-              disabledBackgroundColor: _brandTeal.withValues(alpha: 0.5),
+              disabledBackgroundColor: brandTeal.withValues(alpha: 0.5),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14),
               ),

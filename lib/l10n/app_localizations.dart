@@ -367,7 +367,7 @@ abstract class AppLocalizations {
   /// No description provided for @strongSignalsProNote.
   ///
   /// In en, this message translates to:
-  /// **'Strong (3) signals are Pro'**
+  /// **'Pro adds the strongest (level 3) signals, 1m/5m and alerts'**
   String get strongSignalsProNote;
 
   /// No description provided for @creditsSpent.
@@ -2221,7 +2221,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeProPromoTitle.
   ///
   /// In en, this message translates to:
-  /// **'Go further with Pro'**
+  /// **'Upgrade to Pro'**
   String get homeProPromoTitle;
 
   /// No description provided for @homeProPromoBody.
@@ -2233,7 +2233,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeProPromoAction.
   ///
   /// In en, this message translates to:
-  /// **'See Pro'**
+  /// **'See Pro benefits'**
   String get homeProPromoAction;
 
   /// No description provided for @homeFooterDisclaimer.
@@ -3081,6 +3081,162 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Choose your plan'**
   String get subPlansHeading;
+
+  /// No description provided for @gbTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What you can do after signing in'**
+  String get gbTitle;
+
+  /// No description provided for @gbHeroTagline.
+  ///
+  /// In en, this message translates to:
+  /// **'Creating an account is free. Here is what it unlocks.'**
+  String get gbHeroTagline;
+
+  /// No description provided for @gbHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'With your free account'**
+  String get gbHeading;
+
+  /// No description provided for @gbCreditsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} free credits every month'**
+  String gbCreditsTitle(int count);
+
+  /// No description provided for @gbCreditsTitleGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Free credits every month'**
+  String get gbCreditsTitleGeneric;
+
+  /// No description provided for @gbCreditsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Spend them on AI analyses. Unused monthly credits do not carry over; credits you buy never expire.'**
+  String get gbCreditsDesc;
+
+  /// No description provided for @gbQuickTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI analysis of any coin'**
+  String get gbQuickTitle;
+
+  /// No description provided for @gbQuickDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'A quick analysis costs {cost} credits.'**
+  String gbQuickDesc(int cost);
+
+  /// No description provided for @gbDeepTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Deep analysis'**
+  String get gbDeepTitle;
+
+  /// No description provided for @gbDeepDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Detailed multi-timeframe deep analysis, paid with credits.'**
+  String get gbDeepDesc;
+
+  /// No description provided for @gbSignalsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Chart signals up to level {level}'**
+  String gbSignalsTitle(int level);
+
+  /// No description provided for @gbSignalsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'See buy and sell signals on the chart and in the Signals tab.'**
+  String get gbSignalsDesc;
+
+  /// No description provided for @gbWatchlistTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your watchlist'**
+  String get gbWatchlistTitle;
+
+  /// No description provided for @gbWatchlistDescLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow up to {count} coins and keep an eye on them from the home page.'**
+  String gbWatchlistDescLimit(int count);
+
+  /// No description provided for @gbWatchlistDescUnlimited.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow your coins and keep an eye on them from the home page.'**
+  String get gbWatchlistDescUnlimited;
+
+  /// No description provided for @gbHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Analysis history'**
+  String get gbHistoryTitle;
+
+  /// No description provided for @gbHistoryDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Every analysis you run is saved, so you can reopen it any time.'**
+  String get gbHistoryDesc;
+
+  /// No description provided for @gbAlertsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Price alerts and notifications'**
+  String get gbAlertsTitle;
+
+  /// No description provided for @gbAlertsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Get notified when a price level is reached.'**
+  String get gbAlertsDesc;
+
+  /// No description provided for @gbProTease.
+  ///
+  /// In en, this message translates to:
+  /// **'Want even more? Pro adds deep analysis, price alerts, the strongest signals and the fastest timeframes.'**
+  String get gbProTease;
+
+  /// No description provided for @homeLockedAction.
+  ///
+  /// In en, this message translates to:
+  /// **'See what you get'**
+  String get homeLockedAction;
+
+  /// No description provided for @homeLockedWatchlist.
+  ///
+  /// In en, this message translates to:
+  /// **'Log in to follow coins and see their moves here.'**
+  String get homeLockedWatchlist;
+
+  /// No description provided for @homeLockedAnalysis.
+  ///
+  /// In en, this message translates to:
+  /// **'Log in to run AI analyses and find your latest one here.'**
+  String get homeLockedAnalysis;
+
+  /// No description provided for @ovGuestHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Log in to see this coin\'s summary and market data'**
+  String get ovGuestHint;
+
+  /// No description provided for @sgGuestHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Log in to see this coin\'s signals'**
+  String get sgGuestHint;
+
+  /// No description provided for @signalsGuestNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to see signals'**
+  String get signalsGuestNote;
 }
 
 class _AppLocalizationsDelegate

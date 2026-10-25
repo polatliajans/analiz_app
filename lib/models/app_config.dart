@@ -21,6 +21,10 @@ class PlanConfig {
   final int quickAnalysisCost;
   final int deepAnalysisCost;
 
+  /// Credits a Free member is topped up to every month, when the server
+  /// exposes it (`free_monthly_credits`); null when unknown.
+  final int? freeMonthlyCredits;
+
   const PlanConfig({
     this.role = 'guest',
     this.freeWatchlistMax = 10,
@@ -30,6 +34,7 @@ class PlanConfig {
     this.alertsRequirePro = true,
     this.quickAnalysisCost = defaultQuickAnalysisCost,
     this.deepAnalysisCost = defaultDeepAnalysisCost,
+    this.freeMonthlyCredits,
   });
 
   /// Safe behaviour used offline / on error before any value was cached.
@@ -61,7 +66,15 @@ class PlanConfig {
         json['deep_analysis_cost'] ?? _costGroup(json)?['deep'],
         d.deepAnalysisCost,
       ),
+      freeMonthlyCredits: _positive(
+        json['free_monthly_credits'] ?? json['free_monthly_credit_amount'],
+      ),
     );
+  }
+
+  static int? _positive(Object? v) {
+    final n = v is num ? v.toInt() : int.tryParse('${v ?? ''}');
+    return n != null && n > 0 ? n : null;
   }
 
   static Map<String, dynamic>? _costGroup(Map<String, dynamic> json) {
@@ -77,7 +90,7 @@ class PlanConfig {
     return n != null && n >= 0 ? n : fallback;
   }
 
-  PlanConfig withCosts({int? quick, int? deep}) => PlanConfig(
+  PlanConfig withCosts({int? quick, int? deep, int? freeMonthly}) => PlanConfig(
     role: role,
     freeWatchlistMax: freeWatchlistMax,
     deepAnalysisRequiresPro: deepAnalysisRequiresPro,
@@ -86,6 +99,7 @@ class PlanConfig {
     alertsRequirePro: alertsRequirePro,
     quickAnalysisCost: quick ?? quickAnalysisCost,
     deepAnalysisCost: deep ?? deepAnalysisCost,
+    freeMonthlyCredits: freeMonthlyCredits ?? freeMonthly,
   );
 
   Map<String, dynamic> toJson() => {
@@ -97,6 +111,7 @@ class PlanConfig {
     'alerts_require_pro': alertsRequirePro,
     'quick_analysis_cost': quickAnalysisCost,
     'deep_analysis_cost': deepAnalysisCost,
+    if (freeMonthlyCredits != null) 'free_monthly_credits': freeMonthlyCredits,
   };
 }
 
@@ -145,7 +160,8 @@ class RewardedConfig {
     enabled: json['enabled'] as bool? ?? false,
     // The server serves the rewarded unit for ad-funded quick analyses as
     // `analysis_unit_id`; the legacy `unit_id` is null once credit rewards are off.
-    unitId: (json['analysis_unit_id'] as String?) ?? (json['unit_id'] as String?),
+    unitId:
+        (json['analysis_unit_id'] as String?) ?? (json['unit_id'] as String?),
     amount: (json['amount'] as num?)?.toInt() ?? 0,
     dailyCap: (json['daily_cap'] as num?)?.toInt() ?? 0,
     remainingToday: (json['remaining_today'] as num?)?.toInt(),
@@ -224,10 +240,11 @@ class AppConfig {
             PlanConfig._costGroup(plan) != null);
     return AppConfig(
       plan: planHasCosts
-          ? parsedPlan
+          ? parsedPlan.withCosts(freeMonthly: topCosts.freeMonthlyCredits)
           : parsedPlan.withCosts(
               quick: topCosts.quickAnalysisCost,
               deep: topCosts.deepAnalysisCost,
+              freeMonthly: topCosts.freeMonthlyCredits,
             ),
       ads: ads is Map<String, dynamic>
           ? AdsConfig.fromJson(ads)

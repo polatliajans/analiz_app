@@ -158,7 +158,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noCandleData => 'No candle data';
 
   @override
-  String get strongSignalsProNote => 'Strong (3) signals are Pro';
+  String get strongSignalsProNote =>
+      'Pro adds the strongest (level 3) signals, 1m/5m and alerts';
 
   @override
   String creditsSpent(int count) {
@@ -1315,14 +1316,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeOpenGlossary => 'Open glossary';
 
   @override
-  String get homeProPromoTitle => 'Go further with Pro';
+  String get homeProPromoTitle => 'Upgrade to Pro';
 
   @override
   String get homeProPromoBody =>
       'Deep analysis, price alerts and monthly credits, whenever you feel like it.';
 
   @override
-  String get homeProPromoAction => 'See Pro';
+  String get homeProPromoAction => 'See Pro benefits';
 
   @override
   String get homeFooterDisclaimer =>
@@ -1861,4 +1862,100 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get subPlansHeading => 'Choose your plan';
+
+  @override
+  String get gbTitle => 'What you can do after signing in';
+
+  @override
+  String get gbHeroTagline =>
+      'Creating an account is free. Here is what it unlocks.';
+
+  @override
+  String get gbHeading => 'With your free account';
+
+  @override
+  String gbCreditsTitle(int count) {
+    return '$count free credits every month';
+  }
+
+  @override
+  String get gbCreditsTitleGeneric => 'Free credits every month';
+
+  @override
+  String get gbCreditsDesc =>
+      'Spend them on AI analyses. Unused monthly credits do not carry over; credits you buy never expire.';
+
+  @override
+  String get gbQuickTitle => 'AI analysis of any coin';
+
+  @override
+  String gbQuickDesc(int cost) {
+    return 'A quick analysis costs $cost credits.';
+  }
+
+  @override
+  String get gbDeepTitle => 'Deep analysis';
+
+  @override
+  String get gbDeepDesc =>
+      'Detailed multi-timeframe deep analysis, paid with credits.';
+
+  @override
+  String gbSignalsTitle(int level) {
+    return 'Chart signals up to level $level';
+  }
+
+  @override
+  String get gbSignalsDesc =>
+      'See buy and sell signals on the chart and in the Signals tab.';
+
+  @override
+  String get gbWatchlistTitle => 'Your watchlist';
+
+  @override
+  String gbWatchlistDescLimit(int count) {
+    return 'Follow up to $count coins and keep an eye on them from the home page.';
+  }
+
+  @override
+  String get gbWatchlistDescUnlimited =>
+      'Follow your coins and keep an eye on them from the home page.';
+
+  @override
+  String get gbHistoryTitle => 'Analysis history';
+
+  @override
+  String get gbHistoryDesc =>
+      'Every analysis you run is saved, so you can reopen it any time.';
+
+  @override
+  String get gbAlertsTitle => 'Price alerts and notifications';
+
+  @override
+  String get gbAlertsDesc => 'Get notified when a price level is reached.';
+
+  @override
+  String get gbProTease =>
+      'Want even more? Pro adds deep analysis, price alerts, the strongest signals and the fastest timeframes.';
+
+  @override
+  String get homeLockedAction => 'See what you get';
+
+  @override
+  String get homeLockedWatchlist =>
+      'Log in to follow coins and see their moves here.';
+
+  @override
+  String get homeLockedAnalysis =>
+      'Log in to run AI analyses and find your latest one here.';
+
+  @override
+  String get ovGuestHint =>
+      'Log in to see this coin\'s summary and market data';
+
+  @override
+  String get sgGuestHint => 'Log in to see this coin\'s signals';
+
+  @override
+  String get signalsGuestNote => 'Sign in to see signals';
 }

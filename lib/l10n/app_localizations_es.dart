@@ -158,7 +158,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get noCandleData => 'Sin datos de velas';
 
   @override
-  String get strongSignalsProNote => 'Las señales fuertes (3) son Pro';
+  String get strongSignalsProNote =>
+      'Pro añade las señales más fuertes (nivel 3), 1m/5m y alertas';
 
   @override
   String creditsSpent(int count) {
@@ -1329,14 +1330,14 @@ class AppLocalizationsEs extends AppLocalizations {
   String get homeOpenGlossary => 'Abrir glosario';
 
   @override
-  String get homeProPromoTitle => 'Ve más allá con Pro';
+  String get homeProPromoTitle => 'Mejora a Pro';
 
   @override
   String get homeProPromoBody =>
       'Análisis profundo, alertas de precio y créditos mensuales, cuando lo necesites.';
 
   @override
-  String get homeProPromoAction => 'Ver Pro';
+  String get homeProPromoAction => 'Ver ventajas de Pro';
 
   @override
   String get homeFooterDisclaimer =>
@@ -1882,4 +1883,101 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get subPlansHeading => 'Elige tu plan';
+
+  @override
+  String get gbTitle => 'Qué puedes hacer al iniciar sesión';
+
+  @override
+  String get gbHeroTagline =>
+      'Crear una cuenta es gratis. Esto es lo que desbloquea.';
+
+  @override
+  String get gbHeading => 'Con tu cuenta gratuita';
+
+  @override
+  String gbCreditsTitle(int count) {
+    return '$count créditos gratis cada mes';
+  }
+
+  @override
+  String get gbCreditsTitleGeneric => 'Créditos gratis cada mes';
+
+  @override
+  String get gbCreditsDesc =>
+      'Úsalos en análisis con IA. Los créditos mensuales sin usar no se acumulan; los que compras nunca caducan.';
+
+  @override
+  String get gbQuickTitle => 'Análisis con IA de cualquier moneda';
+
+  @override
+  String gbQuickDesc(int cost) {
+    return 'Un análisis rápido cuesta $cost créditos.';
+  }
+
+  @override
+  String get gbDeepTitle => 'Análisis profundo';
+
+  @override
+  String get gbDeepDesc =>
+      'Análisis profundo detallado en varios plazos, pagado con créditos.';
+
+  @override
+  String gbSignalsTitle(int level) {
+    return 'Señales del gráfico hasta el nivel $level';
+  }
+
+  @override
+  String get gbSignalsDesc =>
+      'Ve las señales de compra y venta en el gráfico y en la pestaña Señales.';
+
+  @override
+  String get gbWatchlistTitle => 'Tu lista de seguimiento';
+
+  @override
+  String gbWatchlistDescLimit(int count) {
+    return 'Sigue hasta $count monedas y vigílalas desde la página de inicio.';
+  }
+
+  @override
+  String get gbWatchlistDescUnlimited =>
+      'Sigue tus monedas y vigílalas desde la página de inicio.';
+
+  @override
+  String get gbHistoryTitle => 'Historial de análisis';
+
+  @override
+  String get gbHistoryDesc =>
+      'Cada análisis que haces se guarda para que puedas reabrirlo cuando quieras.';
+
+  @override
+  String get gbAlertsTitle => 'Alertas de precio y notificaciones';
+
+  @override
+  String get gbAlertsDesc =>
+      'Recibe un aviso cuando se alcance un nivel de precio.';
+
+  @override
+  String get gbProTease =>
+      '¿Quieres más? Pro añade análisis profundo, alertas de precio, las señales más fuertes y los plazos más rápidos.';
+
+  @override
+  String get homeLockedAction => 'Ver qué obtienes';
+
+  @override
+  String get homeLockedWatchlist =>
+      'Inicia sesión para seguir monedas y ver aquí sus movimientos.';
+
+  @override
+  String get homeLockedAnalysis =>
+      'Inicia sesión para hacer análisis con IA y ver aquí el último.';
+
+  @override
+  String get ovGuestHint =>
+      'Inicia sesión para ver el resumen y los datos de mercado de esta moneda';
+
+  @override
+  String get sgGuestHint => 'Inicia sesión para ver las señales de esta moneda';
+
+  @override
+  String get signalsGuestNote => 'Inicia sesión para ver las señales';
 }
