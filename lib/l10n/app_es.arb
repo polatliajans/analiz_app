@@ -521,5 +521,18 @@
   "marketTypeSpot": "Spot",
   "marketTypeFutures": "Futuros",
   "quickAnalysisShort": "Análisis rápido",
-  "deepAnalysisShort": "Análisis profundo"
+  "deepAnalysisShort": "Análisis profundo",
+  "subTagline": "Señales más rápidas, análisis más profundo, cero anuncios.",
+  "subBenefitCreditsTitle": "{count} créditos cada mes",
+  "@subBenefitCreditsTitle": {"placeholders": {"count": {"type": "int"}}},
+  "subBenefitCreditsDesc": "Se completan en cada renovación. Los créditos mensuales sin usar no se acumulan; los créditos que compras nunca caducan.",
+  "subBenefitDeepDesc": "Análisis profundo detallado y multimarco para cualquier moneda.",
+  "subBenefitAlertsDesc": "Crea alertas de precio y recibe notificaciones push de nuevas señales de tu lista de seguimiento.",
+  "subBenefitTimeframesDesc": "Desbloquea los gráficos rápidos de 1m y 5m y las señales más fuertes de nivel 3.",
+  "subBenefitNoAdsDesc": "Usa toda la aplicación sin anuncios.",
+  "subscribe": "Suscribirse",
+  "subCancelNote": "Cancela cuando quieras en Google Play.",
+  "subAlreadyProTitle": "Eres miembro Pro",
+  "subAlreadyProBody": "¡Gracias por tu apoyo! Puedes gestionar o cancelar tu suscripción en cualquier momento en Google Play.",
+  "subPlansHeading": "Elige tu plan"
 }

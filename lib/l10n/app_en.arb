@@ -840,5 +840,18 @@
   "marketTypeSpot": "Spot",
   "marketTypeFutures": "Futures",
   "quickAnalysisShort": "Quick analysis",
-  "deepAnalysisShort": "Deep analysis"
+  "deepAnalysisShort": "Deep analysis",
+  "subTagline": "Faster signals, deeper analysis, zero ads.",
+  "subBenefitCreditsTitle": "{count} credits every month",
+  "@subBenefitCreditsTitle": {"placeholders": {"count": {"type": "int"}}},
+  "subBenefitCreditsDesc": "Topped up on each renewal. Unused monthly credits do not carry over; credits you buy never expire.",
+  "subBenefitDeepDesc": "Detailed multi-timeframe deep analysis for any coin.",
+  "subBenefitAlertsDesc": "Set price alerts and get push notifications for new signals on your watchlist.",
+  "subBenefitTimeframesDesc": "Unlock the fastest 1m and 5m charts and the strongest level 3 signals.",
+  "subBenefitNoAdsDesc": "Use the whole app without advertisements.",
+  "subscribe": "Subscribe",
+  "subCancelNote": "Cancel anytime in Google Play.",
+  "subAlreadyProTitle": "You are a Pro member",
+  "subAlreadyProBody": "Thank you for your support! You can manage or cancel your subscription anytime in Google Play.",
+  "subPlansHeading": "Choose your plan"
 }

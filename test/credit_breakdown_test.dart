@@ -306,10 +306,10 @@ void main() {
           ),
         ],
       );
+      await t.scrollUntilVisible(find.text('Her ay 300 kredi'), 100);
+      expect(find.text('Her ay 300 kredi'), findsOneWidget);
       expect(
-        find.textContaining(
-          'Her ay 300 kredi · devretmez, yenilenme gününde 300 krediye tamamlanır',
-        ),
+        find.textContaining('Kullanılmayan aylık krediler devretmez'),
         findsOneWidget,
       );
       expect(t.takeException(), isNull);

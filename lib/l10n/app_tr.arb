@@ -521,5 +521,18 @@
   "marketTypeSpot": "Spot",
   "marketTypeFutures": "Vadeli",
   "quickAnalysisShort": "Hızlı analiz",
-  "deepAnalysisShort": "Derin analiz"
+  "deepAnalysisShort": "Derin analiz",
+  "subTagline": "Daha hızlı sinyaller, daha derin analiz, sıfır reklam.",
+  "subBenefitCreditsTitle": "Her ay {count} kredi",
+  "@subBenefitCreditsTitle": {"placeholders": {"count": {"type": "int"}}},
+  "subBenefitCreditsDesc": "Her yenilenmede tamamlanır. Kullanılmayan aylık krediler devretmez; satın aldığınız krediler asla silinmez.",
+  "subBenefitDeepDesc": "Her coin için ayrıntılı, çok periyotlu derin analiz.",
+  "subBenefitAlertsDesc": "Fiyat alarmı kurun ve takip listenizdeki yeni sinyaller için push bildirimi alın.",
+  "subBenefitTimeframesDesc": "En hızlı 1m ve 5m grafiklerinin ve en güçlü 3. kademe sinyallerin kilidini açın.",
+  "subBenefitNoAdsDesc": "Uygulamayı hiç reklam görmeden kullanın.",
+  "subscribe": "Abone ol",
+  "subCancelNote": "Google Play'den istediğiniz zaman iptal edebilirsiniz.",
+  "subAlreadyProTitle": "Pro üyesisiniz",
+  "subAlreadyProBody": "Desteğiniz için teşekkürler! Aboneliğinizi istediğiniz zaman Google Play'den yönetebilir veya iptal edebilirsiniz.",
+  "subPlansHeading": "Planını seç"
 }

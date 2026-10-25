@@ -1748,4 +1748,49 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get deepAnalysisShort => 'Derin analiz';
+
+  @override
+  String get subTagline =>
+      'Daha hızlı sinyaller, daha derin analiz, sıfır reklam.';
+
+  @override
+  String subBenefitCreditsTitle(int count) {
+    return 'Her ay $count kredi';
+  }
+
+  @override
+  String get subBenefitCreditsDesc =>
+      'Her yenilenmede tamamlanır. Kullanılmayan aylık krediler devretmez; satın aldığınız krediler asla silinmez.';
+
+  @override
+  String get subBenefitDeepDesc =>
+      'Her coin için ayrıntılı, çok periyotlu derin analiz.';
+
+  @override
+  String get subBenefitAlertsDesc =>
+      'Fiyat alarmı kurun ve takip listenizdeki yeni sinyaller için push bildirimi alın.';
+
+  @override
+  String get subBenefitTimeframesDesc =>
+      'En hızlı 1m ve 5m grafiklerinin ve en güçlü 3. kademe sinyallerin kilidini açın.';
+
+  @override
+  String get subBenefitNoAdsDesc => 'Uygulamayı hiç reklam görmeden kullanın.';
+
+  @override
+  String get subscribe => 'Abone ol';
+
+  @override
+  String get subCancelNote =>
+      'Google Play\'den istediğiniz zaman iptal edebilirsiniz.';
+
+  @override
+  String get subAlreadyProTitle => 'Pro üyesisiniz';
+
+  @override
+  String get subAlreadyProBody =>
+      'Desteğiniz için teşekkürler! Aboneliğinizi istediğiniz zaman Google Play\'den yönetebilir veya iptal edebilirsiniz.';
+
+  @override
+  String get subPlansHeading => 'Planını seç';
 }

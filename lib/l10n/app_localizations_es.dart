@@ -1837,4 +1837,48 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get deepAnalysisShort => 'Análisis profundo';
+
+  @override
+  String get subTagline =>
+      'Señales más rápidas, análisis más profundo, cero anuncios.';
+
+  @override
+  String subBenefitCreditsTitle(int count) {
+    return '$count créditos cada mes';
+  }
+
+  @override
+  String get subBenefitCreditsDesc =>
+      'Se completan en cada renovación. Los créditos mensuales sin usar no se acumulan; los créditos que compras nunca caducan.';
+
+  @override
+  String get subBenefitDeepDesc =>
+      'Análisis profundo detallado y multimarco para cualquier moneda.';
+
+  @override
+  String get subBenefitAlertsDesc =>
+      'Crea alertas de precio y recibe notificaciones push de nuevas señales de tu lista de seguimiento.';
+
+  @override
+  String get subBenefitTimeframesDesc =>
+      'Desbloquea los gráficos rápidos de 1m y 5m y las señales más fuertes de nivel 3.';
+
+  @override
+  String get subBenefitNoAdsDesc => 'Usa toda la aplicación sin anuncios.';
+
+  @override
+  String get subscribe => 'Suscribirse';
+
+  @override
+  String get subCancelNote => 'Cancela cuando quieras en Google Play.';
+
+  @override
+  String get subAlreadyProTitle => 'Eres miembro Pro';
+
+  @override
+  String get subAlreadyProBody =>
+      '¡Gracias por tu apoyo! Puedes gestionar o cancelar tu suscripción en cualquier momento en Google Play.';
+
+  @override
+  String get subPlansHeading => 'Elige tu plan';
 }

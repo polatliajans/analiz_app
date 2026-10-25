@@ -3009,6 +3009,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Deep analysis'**
   String get deepAnalysisShort;
+
+  /// No description provided for @subTagline.
+  ///
+  /// In en, this message translates to:
+  /// **'Faster signals, deeper analysis, zero ads.'**
+  String get subTagline;
+
+  /// No description provided for @subBenefitCreditsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} credits every month'**
+  String subBenefitCreditsTitle(int count);
+
+  /// No description provided for @subBenefitCreditsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Topped up on each renewal. Unused monthly credits do not carry over; credits you buy never expire.'**
+  String get subBenefitCreditsDesc;
+
+  /// No description provided for @subBenefitDeepDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Detailed multi-timeframe deep analysis for any coin.'**
+  String get subBenefitDeepDesc;
+
+  /// No description provided for @subBenefitAlertsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Set price alerts and get push notifications for new signals on your watchlist.'**
+  String get subBenefitAlertsDesc;
+
+  /// No description provided for @subBenefitTimeframesDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock the fastest 1m and 5m charts and the strongest level 3 signals.'**
+  String get subBenefitTimeframesDesc;
+
+  /// No description provided for @subBenefitNoAdsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the whole app without advertisements.'**
+  String get subBenefitNoAdsDesc;
+
+  /// No description provided for @subscribe.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscribe'**
+  String get subscribe;
+
+  /// No description provided for @subCancelNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel anytime in Google Play.'**
+  String get subCancelNote;
+
+  /// No description provided for @subAlreadyProTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You are a Pro member'**
+  String get subAlreadyProTitle;
+
+  /// No description provided for @subAlreadyProBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you for your support! You can manage or cancel your subscription anytime in Google Play.'**
+  String get subAlreadyProBody;
+
+  /// No description provided for @subPlansHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your plan'**
+  String get subPlansHeading;
 }
 
 class _AppLocalizationsDelegate

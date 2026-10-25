@@ -1817,4 +1817,47 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deepAnalysisShort => 'Deep analysis';
+
+  @override
+  String get subTagline => 'Faster signals, deeper analysis, zero ads.';
+
+  @override
+  String subBenefitCreditsTitle(int count) {
+    return '$count credits every month';
+  }
+
+  @override
+  String get subBenefitCreditsDesc =>
+      'Topped up on each renewal. Unused monthly credits do not carry over; credits you buy never expire.';
+
+  @override
+  String get subBenefitDeepDesc =>
+      'Detailed multi-timeframe deep analysis for any coin.';
+
+  @override
+  String get subBenefitAlertsDesc =>
+      'Set price alerts and get push notifications for new signals on your watchlist.';
+
+  @override
+  String get subBenefitTimeframesDesc =>
+      'Unlock the fastest 1m and 5m charts and the strongest level 3 signals.';
+
+  @override
+  String get subBenefitNoAdsDesc => 'Use the whole app without advertisements.';
+
+  @override
+  String get subscribe => 'Subscribe';
+
+  @override
+  String get subCancelNote => 'Cancel anytime in Google Play.';
+
+  @override
+  String get subAlreadyProTitle => 'You are a Pro member';
+
+  @override
+  String get subAlreadyProBody =>
+      'Thank you for your support! You can manage or cancel your subscription anytime in Google Play.';
+
+  @override
+  String get subPlansHeading => 'Choose your plan';
 }
