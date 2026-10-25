@@ -62,6 +62,38 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
+  Future<void> _pickLanguage(
+    BuildContext context,
+    WidgetRef ref,
+    List<(Locale, String)> options,
+    Locale selected,
+  ) {
+    return showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (ctx) => SafeArea(
+        child: SingleChildScrollView(
+          child: RadioGroup<Locale>(
+            groupValue: Locale(selected.languageCode),
+            onChanged: (l) {
+              if (l == null) return;
+              Navigator.of(ctx).pop();
+              _select(ref, l);
+            },
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (final (locale, name) in options)
+                  RadioListTile<Locale>(value: locale, title: Text(name)),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
@@ -76,82 +108,51 @@ class SettingsScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(l10n.settings)),
       body: ListView(
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-            child: Text(
-              l10n.language,
-              style: Theme.of(context).textTheme.titleMedium,
+          ListTile(
+            leading: const Icon(Icons.language),
+            title: Text(l10n.language),
+            subtitle: Text(
+              options
+                  .firstWhere(
+                    (o) => o.$1.languageCode == selected.languageCode,
+                    orElse: () => options.first,
+                  )
+                  .$2,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => _pickLanguage(context, ref, options, selected),
           ),
-          RadioGroup<Locale>(
-            groupValue: selected,
-            onChanged: (l) {
-              if (l != null) _select(ref, l);
-            },
-            child: Column(
-              children: [
-                for (final (locale, name) in options)
-                  RadioListTile<Locale>(value: locale, title: Text(name)),
-              ],
-            ),
+          const Divider(height: 1),
+          _SegmentedSetting<ThemeMode>(
+            title: l10n.themeTitle,
+            selected: ref.watch(themeModeProvider),
+            onChanged: (v) => ref.read(themeModeProvider.notifier).select(v),
+            options: [
+              (ThemeMode.dark, Icons.dark_mode_outlined, l10n.themeDark),
+              (ThemeMode.light, Icons.light_mode_outlined, l10n.themeLight),
+              (
+                ThemeMode.system,
+                Icons.brightness_auto_outlined,
+                l10n.themeSystem,
+              ),
+            ],
           ),
-          const Divider(),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-            child: Text(
-              l10n.themeTitle,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
+          _SegmentedSetting<StartupTab>(
+            title: l10n.startupPageTitle,
+            selected: ref.watch(startupTabProvider),
+            onChanged: (v) => ref.read(startupTabProvider.notifier).select(v),
+            options: [
+              (StartupTab.home, Icons.home_outlined, l10n.tabHome),
+              (
+                StartupTab.chart,
+                Icons.candlestick_chart_outlined,
+                l10n.tabChart,
+              ),
+            ],
           ),
-          RadioGroup<ThemeMode>(
-            groupValue: ref.watch(themeModeProvider),
-            onChanged: (v) {
-              if (v != null) ref.read(themeModeProvider.notifier).select(v);
-            },
-            child: Column(
-              children: [
-                RadioListTile<ThemeMode>(
-                  value: ThemeMode.dark,
-                  title: Text(l10n.themeDark),
-                ),
-                RadioListTile<ThemeMode>(
-                  value: ThemeMode.light,
-                  title: Text(l10n.themeLight),
-                ),
-                RadioListTile<ThemeMode>(
-                  value: ThemeMode.system,
-                  title: Text(l10n.themeSystem),
-                ),
-              ],
-            ),
-          ),
-          const Divider(),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-            child: Text(
-              l10n.startupPageTitle,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-          ),
-          RadioGroup<StartupTab>(
-            groupValue: ref.watch(startupTabProvider),
-            onChanged: (v) {
-              if (v != null) ref.read(startupTabProvider.notifier).select(v);
-            },
-            child: Column(
-              children: [
-                RadioListTile<StartupTab>(
-                  value: StartupTab.home,
-                  title: Text(l10n.tabHome),
-                ),
-                RadioListTile<StartupTab>(
-                  value: StartupTab.chart,
-                  title: Text(l10n.tabChart),
-                ),
-              ],
-            ),
-          ),
-          const Divider(),
+          const Divider(height: 1),
           const NotificationSettingsSection(),
           ListTile(
             title: Text(l10n.replayIntro),
@@ -233,6 +234,54 @@ class SettingsScreen extends ConsumerWidget {
                     data: (p) => '${p.version} (${p.buildNumber})',
                     orElse: () => '',
                   ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SegmentedSetting<T> extends StatelessWidget {
+  const _SegmentedSetting({
+    required this.title,
+    required this.selected,
+    required this.onChanged,
+    required this.options,
+  });
+
+  final String title;
+  final T selected;
+  final ValueChanged<T> onChanged;
+  final List<(T, IconData, String)> options;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 8),
+          SizedBox(
+            width: double.infinity,
+            child: SegmentedButton<T>(
+              showSelectedIcon: false,
+              segments: [
+                for (final (value, icon, label) in options)
+                  ButtonSegment<T>(
+                    value: value,
+                    icon: Icon(icon, size: 18),
+                    label: Text(
+                      label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+              ],
+              selected: {selected},
+              onSelectionChanged: (s) => onChanged(s.first),
             ),
           ),
         ],

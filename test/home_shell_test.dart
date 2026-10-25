@@ -127,13 +127,23 @@ void main() {
     await tester.pump();
     expect(find.text('Start page'), findsOneWidget);
 
-    // "Chart" radio under "Start page" (second of the two radio rows).
-    await tester.tap(find.widgetWithText(RadioListTile<StartupTab>, 'Chart'));
+    // "Chart" segment under "Start page".
+    await tester.tap(
+      find.descendant(
+        of: find.byType(SegmentedButton<StartupTab>),
+        matching: find.text('Chart'),
+      ),
+    );
     await tester.pump();
     expect(c.read(startupTabProvider), StartupTab.chart);
     expect(c.read(sharedPreferencesProvider).getString(startupTabKey), 'chart');
 
-    await tester.tap(find.widgetWithText(RadioListTile<StartupTab>, 'Home'));
+    await tester.tap(
+      find.descendant(
+        of: find.byType(SegmentedButton<StartupTab>),
+        matching: find.text('Home'),
+      ),
+    );
     await tester.pump();
     expect(c.read(startupTabProvider), StartupTab.home);
   });
