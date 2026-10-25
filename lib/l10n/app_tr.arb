@@ -92,7 +92,44 @@
   "radarInfoTooltip": "Radar nasıl çalışır",
   "radarHowTitle": "Radar nasıl çalışır",
   "radarHowOversold": "Radar, aşırı satımda görünen coinleri listeler: RSI aşırı satım eşiğinin altında ve fiyat alt Bollinger bandının altına inmiştir. Düşüşün aşırı uzamış olabileceğine işaret edebilir.",
-  "radarHowScore": "Skor (0-100) coinin ne kadar aşırı satımda olduğunu gösterir: {strong}+ Güçlü, {good}-{goodMax} İyi, {watch}-{watchMax} İzle, {watch} altı Düşük. 70 üzeri skorlar nadirdir.",
+  "radarHowScore": "Skor (0-100) aşırı satım kurulumunun ne kadar güçlü olduğunu gösterir: {strong}+ Güçlü, {good}-{goodMax} İyi, {watch}-{watchMax} İzle, {watch} altı Düşük.",
+  "@radarHowScore": {
+    "placeholders": {
+      "strong": {"type": "int"},
+      "good": {"type": "int"},
+      "goodMax": {"type": "int"},
+      "watch": {"type": "int"},
+      "watchMax": {"type": "int"}
+    }
+  },
+  "radarHowFactors": "Skor; aşırı satım derinliği, Bollinger sapması, üst zaman dilimi trendi, hacim, dönüş işaretleri ve desteğe yakınlığı birleştirir; likidite koruması ince piyasaların skorunu sınırlar.",
+  "radarTermLocked": "{term} kilitli",
+  "@radarTermLocked": {
+    "placeholders": {
+      "term": {"type": "String"}
+    }
+  },
+  "radarUpsellGuest": "Daha fazlasını görmek için giriş yap",
+  "radarUpsellFree": "Pro ile tüm vadeler, 20 fırsata kadar liste, yapay zeka notları ve radar bildirimleri açılır",
+  "radarAiNote": "Yapay zeka notu",
+  "radarAiNoteHint": "Otomatik yorumdur, yatırım tavsiyesi değildir.",
+  "radarFactorsTitle": "Skor etkenleri",
+  "radarFactorOversold": "Aşırı satım",
+  "radarFactorBollinger": "Bollinger",
+  "radarFactorTrend": "Trend",
+  "radarFactorVolume": "Hacim",
+  "radarFactorReversal": "Dönüş",
+  "radarFactorSupport": "Destek",
+  "radarTrendUp": "Yükseliş trendi",
+  "radarTrendDown": "Düşüş trendi",
+  "radarVolumeRatio": "Hacim x{v}",
+  "@radarVolumeRatio": {
+    "placeholders": {
+      "v": {"type": "String"}
+    }
+  },
+  "radarDetailsTooltip": "Ayrıntıları göster",
+  "radarHideDetailsTooltip": "Ayrıntıları gizle",
   "radarHowTerms": "Kısa, orta ve uzun vade farklı grafik zaman dilimleri kullanır. Vadene uygun olanı seç.",
   "radarHowDisclaimer": "Radar teknik bir tarama aracıdır, yatırım tavsiyesi değildir. Aşırı satımdaki bir coin düşmeye devam edebilir; kendi araştırmanı yap.",
   "radarRsi": "RSI {v}",

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
-/// Radar score tiers. Calibrated to real server data: short term ~30-59,
-/// medium 33-70, long 30-65, so scores above 70 are rare.
-const int radarStrongMin = 60;
-const int radarGoodMin = 45;
-const int radarWatchMin = 35;
+/// Radar score tiers, calibrated to the multi-factor score distribution
+/// (oversold depth, Bollinger stretch, trend, volume, reversal, support):
+/// Strong >= 65, Good 50-64, Watch 38-49, Low < 38.
+const int radarStrongMin = 65;
+const int radarGoodMin = 50;
+const int radarWatchMin = 38;
 
 enum RadarTier { strong, good, watch, weak }
 
@@ -79,3 +80,15 @@ RadarTierStyle radarTierStyle(RadarTier tier, Brightness brightness) {
       );
   }
 }
+
+/// Who is looking at the radar; decides which terms may be requested.
+enum RadarAccess { guest, free, pro }
+
+/// Terms the server serves to [access]: Pro gets all, everyone else short.
+List<String> radarAllowedTerms(RadarAccess access) => access == RadarAccess.pro
+    ? const ['short', 'medium', 'long']
+    : const ['short'];
+
+bool radarTermAllowed(RadarAccess access, String? term) => term == null
+    ? access == RadarAccess.pro
+    : radarAllowedTerms(access).contains(term);

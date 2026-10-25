@@ -92,7 +92,44 @@
   "radarInfoTooltip": "Cómo funciona el radar",
   "radarHowTitle": "Cómo funciona el radar",
   "radarHowOversold": "El radar lista monedas que parecen sobrevendidas: el RSI está bajo el umbral de sobreventa y el precio cayó bajo la banda de Bollinger inferior. Puede indicar que la caída está muy estirada.",
-  "radarHowScore": "La puntuación (0-100) mide qué tan sobrevendida está una moneda: {strong}+ Fuerte, {good}-{goodMax} Buena, {watch}-{watchMax} Vigilar, menos de {watch} Baja. Las puntuaciones sobre 70 son raras.",
+  "radarHowScore": "La puntuación (0-100) mide la fuerza de la configuración de sobreventa: {strong}+ Fuerte, {good}-{goodMax} Buena, {watch}-{watchMax} Vigilar, menos de {watch} Baja.",
+  "@radarHowScore": {
+    "placeholders": {
+      "strong": {"type": "int"},
+      "good": {"type": "int"},
+      "goodMax": {"type": "int"},
+      "watch": {"type": "int"},
+      "watchMax": {"type": "int"}
+    }
+  },
+  "radarHowFactors": "La puntuación combina profundidad de sobreventa, extensión de Bollinger, tendencia de marco mayor, volumen, señales de reversión y cercanía al soporte, con una protección de liquidez que limita los mercados poco profundos.",
+  "radarTermLocked": "{term} está bloqueado",
+  "@radarTermLocked": {
+    "placeholders": {
+      "term": {"type": "String"}
+    }
+  },
+  "radarUpsellGuest": "Inicia sesión para ver más",
+  "radarUpsellFree": "Pro desbloquea todos los plazos, hasta 20 oportunidades, notas de IA y alertas del radar",
+  "radarAiNote": "Nota de IA",
+  "radarAiNoteHint": "Comentario automático, no es asesoría financiera.",
+  "radarFactorsTitle": "Factores de la puntuación",
+  "radarFactorOversold": "Sobreventa",
+  "radarFactorBollinger": "Bollinger",
+  "radarFactorTrend": "Tendencia",
+  "radarFactorVolume": "Volumen",
+  "radarFactorReversal": "Reversión",
+  "radarFactorSupport": "Soporte",
+  "radarTrendUp": "Tendencia alcista",
+  "radarTrendDown": "Tendencia bajista",
+  "radarVolumeRatio": "Vol x{v}",
+  "@radarVolumeRatio": {
+    "placeholders": {
+      "v": {"type": "String"}
+    }
+  },
+  "radarDetailsTooltip": "Ver detalles",
+  "radarHideDetailsTooltip": "Ocultar detalles",
   "radarHowTerms": "El corto, medio y largo plazo usan distintos marcos temporales. Elige el que encaje con tu horizonte.",
   "radarHowDisclaimer": "El radar es una herramienta de filtrado técnico, no asesoría financiera. Una moneda sobrevendida puede seguir cayendo; investiga por tu cuenta.",
   "radarRsi": "RSI {v}",

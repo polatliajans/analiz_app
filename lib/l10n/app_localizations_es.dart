@@ -349,8 +349,69 @@ class AppLocalizationsEs extends AppLocalizations {
     int watch,
     int watchMax,
   ) {
-    return 'La puntuación (0-100) mide qué tan sobrevendida está una moneda: $strong+ Fuerte, $good-$goodMax Buena, $watch-$watchMax Vigilar, menos de $watch Baja. Las puntuaciones sobre 70 son raras.';
+    return 'La puntuación (0-100) mide la fuerza de la configuración de sobreventa: $strong+ Fuerte, $good-$goodMax Buena, $watch-$watchMax Vigilar, menos de $watch Baja.';
   }
+
+  @override
+  String get radarHowFactors =>
+      'La puntuación combina profundidad de sobreventa, extensión de Bollinger, tendencia de marco mayor, volumen, señales de reversión y cercanía al soporte, con una protección de liquidez que limita los mercados poco profundos.';
+
+  @override
+  String radarTermLocked(String term) {
+    return '$term está bloqueado';
+  }
+
+  @override
+  String get radarUpsellGuest => 'Inicia sesión para ver más';
+
+  @override
+  String get radarUpsellFree =>
+      'Pro desbloquea todos los plazos, hasta 20 oportunidades, notas de IA y alertas del radar';
+
+  @override
+  String get radarAiNote => 'Nota de IA';
+
+  @override
+  String get radarAiNoteHint =>
+      'Comentario automático, no es asesoría financiera.';
+
+  @override
+  String get radarFactorsTitle => 'Factores de la puntuación';
+
+  @override
+  String get radarFactorOversold => 'Sobreventa';
+
+  @override
+  String get radarFactorBollinger => 'Bollinger';
+
+  @override
+  String get radarFactorTrend => 'Tendencia';
+
+  @override
+  String get radarFactorVolume => 'Volumen';
+
+  @override
+  String get radarFactorReversal => 'Reversión';
+
+  @override
+  String get radarFactorSupport => 'Soporte';
+
+  @override
+  String get radarTrendUp => 'Tendencia alcista';
+
+  @override
+  String get radarTrendDown => 'Tendencia bajista';
+
+  @override
+  String radarVolumeRatio(String v) {
+    return 'Vol x$v';
+  }
+
+  @override
+  String get radarDetailsTooltip => 'Ver detalles';
+
+  @override
+  String get radarHideDetailsTooltip => 'Ocultar detalles';
 
   @override
   String get radarHowTerms =>

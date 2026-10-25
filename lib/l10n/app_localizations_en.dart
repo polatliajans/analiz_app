@@ -349,8 +349,68 @@ class AppLocalizationsEn extends AppLocalizations {
     int watch,
     int watchMax,
   ) {
-    return 'The score (0-100) rates how oversold a coin is: $strong+ Strong, $good-$goodMax Good, $watch-$watchMax Watch, below $watch Low. Scores above 70 are rare.';
+    return 'The score (0-100) rates how strong the oversold setup is: $strong+ Strong, $good-$goodMax Good, $watch-$watchMax Watch, below $watch Low.';
   }
+
+  @override
+  String get radarHowFactors =>
+      'The score combines oversold depth, Bollinger stretch, higher-timeframe trend, volume, reversal evidence and support proximity, with a liquidity guard that caps thin markets.';
+
+  @override
+  String radarTermLocked(String term) {
+    return '$term is locked';
+  }
+
+  @override
+  String get radarUpsellGuest => 'Sign in to see more';
+
+  @override
+  String get radarUpsellFree =>
+      'Pro unlocks all terms, up to 20 opportunities, AI notes and radar alerts';
+
+  @override
+  String get radarAiNote => 'AI note';
+
+  @override
+  String get radarAiNoteHint => 'Automated commentary, not financial advice.';
+
+  @override
+  String get radarFactorsTitle => 'Score factors';
+
+  @override
+  String get radarFactorOversold => 'Oversold';
+
+  @override
+  String get radarFactorBollinger => 'Bollinger';
+
+  @override
+  String get radarFactorTrend => 'Trend';
+
+  @override
+  String get radarFactorVolume => 'Volume';
+
+  @override
+  String get radarFactorReversal => 'Reversal';
+
+  @override
+  String get radarFactorSupport => 'Support';
+
+  @override
+  String get radarTrendUp => 'Uptrend';
+
+  @override
+  String get radarTrendDown => 'Downtrend';
+
+  @override
+  String radarVolumeRatio(String v) {
+    return 'Vol x$v';
+  }
+
+  @override
+  String get radarDetailsTooltip => 'Show details';
+
+  @override
+  String get radarHideDetailsTooltip => 'Hide details';
 
   @override
   String get radarHowTerms =>

@@ -197,14 +197,32 @@ String _signedPct(double v) => '${v >= 0 ? '+' : ''}${v.toStringAsFixed(2)}%';
 
 /// Regular list card; Strong cards get a gradient border, glow and a bigger
 /// ring.
-class RadarTile extends StatelessWidget {
+class RadarTile extends StatefulWidget {
   final RadarItem item;
   final VoidCallback onTap;
 
-  const RadarTile({super.key, required this.item, required this.onTap});
+  /// Pro members get trend / volume chips and an expandable detail block.
+  final bool pro;
+
+  const RadarTile({
+    super.key,
+    required this.item,
+    required this.onTap,
+    this.pro = false,
+  });
+
+  @override
+  State<RadarTile> createState() => _RadarTileState();
+}
+
+class _RadarTileState extends State<RadarTile> {
+  bool _expanded = false;
 
   @override
   Widget build(BuildContext context) {
+    final item = widget.item;
+    final onTap = widget.onTap;
+    final showDetails = widget.pro && item.hasProDetails;
     final theme = Theme.of(context);
     final b = theme.brightness;
     final l10n = AppLocalizations.of(context)!;
@@ -249,6 +267,8 @@ class RadarTile extends StatelessWidget {
                           style: TextStyle(fontSize: 12, color: muted),
                         ),
                         RadarTierPill(tier: tier),
+                        if (widget.pro)
+                          ...radarSignalChips(context, item, dark: false),
                       ],
                     ),
                     const SizedBox(height: 4),
@@ -273,6 +293,42 @@ class RadarTile extends StatelessWidget {
       ),
     );
 
+    final Widget card = showDetails
+        ? Material(
+            color: theme.colorScheme.surface,
+            borderRadius: BorderRadius.circular(strong ? 15 : 14),
+            clipBehavior: Clip.antiAlias,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                inner,
+                Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: IconButton(
+                    key: const Key('radar_expand'),
+                    visualDensity: VisualDensity.compact,
+                    iconSize: 22,
+                    tooltip: _expanded
+                        ? l10n.radarHideDetailsTooltip
+                        : l10n.radarDetailsTooltip,
+                    icon: Icon(
+                      _expanded
+                          ? Icons.expand_less_rounded
+                          : Icons.expand_more_rounded,
+                    ),
+                    onPressed: () => setState(() => _expanded = !_expanded),
+                  ),
+                ),
+                if (_expanded)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(14, 0, 14, 12),
+                    child: RadarProDetails(item: item, dark: false),
+                  ),
+              ],
+            ),
+          )
+        : inner;
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
@@ -293,7 +349,7 @@ class RadarTile extends StatelessWidget {
             : null,
       ),
       padding: strong ? const EdgeInsets.all(1.5) : null,
-      child: inner,
+      child: card,
     );
   }
 }
@@ -303,7 +359,15 @@ class RadarTopPickCard extends StatelessWidget {
   final RadarItem item;
   final VoidCallback onTap;
 
-  const RadarTopPickCard({super.key, required this.item, required this.onTap});
+  /// Pro members also see trend / volume chips, the AI note and the factors.
+  final bool pro;
+
+  const RadarTopPickCard({
+    super.key,
+    required this.item,
+    required this.onTap,
+    this.pro = false,
+  });
 
   static const _bgA = Color(0xFF062A24);
   static const _bgB = Color(0xFF0D3B33);
@@ -419,8 +483,14 @@ class RadarTopPickCard extends StatelessWidget {
                                   ? const Color(0xFF4DE3A0)
                                   : const Color(0xFFFF8A98),
                             ),
+                          if (pro)
+                            ...radarSignalChips(context, item, dark: true),
                         ],
                       ),
+                      if (pro && item.hasProDetails) ...[
+                        const SizedBox(height: 12),
+                        RadarProDetails(item: item, dark: true),
+                      ],
                     ],
                   ),
                 ),
@@ -452,12 +522,22 @@ class RadarTermSelector extends StatelessWidget {
   final Map<String?, String> hints;
   final ValueChanged<String?> onSelected;
 
+  /// Hide the "All" chip (non-Pro members only ever see the short term).
+  final bool showAll;
+
+  /// Terms shown with a lock; tapping one calls [onLocked] instead.
+  final Set<String> locked;
+  final ValueChanged<String>? onLocked;
+
   const RadarTermSelector({
     super.key,
     required this.selected,
     required this.counts,
     required this.hints,
     required this.onSelected,
+    this.showAll = true,
+    this.locked = const {},
+    this.onLocked,
   });
 
   @override
@@ -465,7 +545,7 @@ class RadarTermSelector extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final terms = <(String?, String)>[
-      (null, l10n.termAll),
+      if (showAll) (null, l10n.termAll),
       ('short', l10n.termShort),
       ('medium', l10n.termMedium),
       ('long', l10n.termLong),
@@ -474,18 +554,32 @@ class RadarTermSelector extends StatelessWidget {
       spacing: 8,
       runSpacing: 8,
       children: [
-        for (final t in terms) _chip(theme, t.$1, t.$2, selected == t.$1),
+        for (final t in terms)
+          _chip(context, theme, t.$1, t.$2, selected == t.$1),
       ],
     );
   }
 
-  Widget _chip(ThemeData theme, String? key, String label, bool sel) {
-    final color = radarTermColor(key, theme.brightness);
-    final count = counts[key];
-    final hint = hints[key];
+  Widget _chip(
+    BuildContext context,
+    ThemeData theme,
+    String? key,
+    String label,
+    bool sel,
+  ) {
+    final isLocked = key != null && locked.contains(key);
+    final color = isLocked
+        ? theme.colorScheme.onSurfaceVariant
+        : radarTermColor(key, theme.brightness);
+    final count = isLocked ? null : counts[key];
+    final hint = isLocked ? null : hints[key];
     return Semantics(
       button: true,
       selected: sel,
+      label: isLocked
+          ? AppLocalizations.of(context)!.radarTermLocked(label)
+          : null,
+      excludeSemantics: isLocked,
       child: Material(
         color: sel ? color.withValues(alpha: 0.16) : Colors.transparent,
         shape: StadiumBorder(
@@ -496,7 +590,13 @@ class RadarTermSelector extends StatelessWidget {
         ),
         child: InkWell(
           customBorder: const StadiumBorder(),
-          onTap: () => onSelected(key),
+          onTap: () {
+            if (isLocked) {
+              onLocked?.call(key);
+            } else {
+              onSelected(key);
+            }
+          },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
             child: Column(
@@ -505,6 +605,10 @@ class RadarTermSelector extends StatelessWidget {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    if (isLocked) ...[
+                      Icon(Icons.lock_rounded, size: 14, color: color),
+                      const SizedBox(width: 4),
+                    ],
                     Text(
                       label,
                       style: TextStyle(
@@ -656,6 +760,7 @@ void showRadarInfoSheet(BuildContext context) {
                   radarGoodMin - 1,
                 ),
               ),
+              para(Icons.tune_rounded, l10n.radarHowFactors),
               para(Icons.schedule_rounded, l10n.radarHowTerms),
               para(Icons.info_outline_rounded, l10n.radarHowDisclaimer),
             ],
@@ -664,4 +769,308 @@ void showRadarInfoSheet(BuildContext context) {
       );
     },
   );
+}
+
+const _factorOrder = [
+  'oversold',
+  'bollinger',
+  'trend',
+  'volume',
+  'reversal',
+  'support',
+];
+
+String? _factorLabel(AppLocalizations l10n, String key) {
+  switch (key) {
+    case 'oversold':
+      return l10n.radarFactorOversold;
+    case 'bollinger':
+      return l10n.radarFactorBollinger;
+    case 'trend':
+      return l10n.radarFactorTrend;
+    case 'volume':
+      return l10n.radarFactorVolume;
+    case 'reversal':
+      return l10n.radarFactorReversal;
+    case 'support':
+      return l10n.radarFactorSupport;
+  }
+  return null;
+}
+
+/// Trend arrow and volume ratio chips (empty when the server sent neither).
+List<Widget> radarSignalChips(
+  BuildContext context,
+  RadarItem item, {
+  required bool dark,
+}) {
+  final l10n = AppLocalizations.of(context)!;
+  final theme = Theme.of(context);
+  Widget chip(Key key, IconData? icon, String text, Color color) => Container(
+    key: key,
+    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+    decoration: BoxDecoration(
+      color: dark
+          ? Colors.white.withValues(alpha: 0.10)
+          : color.withValues(alpha: 0.12),
+      borderRadius: BorderRadius.circular(20),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (icon != null) ...[
+          Icon(icon, size: 13, color: color),
+          const SizedBox(width: 2),
+        ],
+        Flexible(
+          child: Text(
+            text,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+  final muted = dark
+      ? Colors.white.withValues(alpha: 0.82)
+      : theme.colorScheme.onSurfaceVariant;
+  final upColor = dark ? const Color(0xFF4DE3A0) : const Color(0xFF05674D);
+  final downColor = dark ? const Color(0xFFFF8A98) : const Color(0xFFB3261E);
+  return [
+    if (item.trend == 'up')
+      chip(
+        const Key('radar_trend_chip'),
+        Icons.trending_up_rounded,
+        l10n.radarTrendUp,
+        upColor,
+      ),
+    if (item.trend == 'down')
+      chip(
+        const Key('radar_trend_chip'),
+        Icons.trending_down_rounded,
+        l10n.radarTrendDown,
+        downColor,
+      ),
+    if (item.volumeRatio != null)
+      chip(
+        const Key('radar_volume_chip'),
+        null,
+        l10n.radarVolumeRatio(item.volumeRatio!.toStringAsFixed(1)),
+        muted,
+      ),
+  ];
+}
+
+/// Known factors of [item]'s breakdown, in display order (missing ones hidden).
+List<(String, double)> radarVisibleFactors(RadarItem item) => [
+  for (final k in _factorOrder)
+    if (item.scoreBreakdown?[k] != null) (k, item.scoreBreakdown![k]!),
+];
+
+/// Pro-only block: the AI note and the compact score-factor bars. Renders
+/// nothing for parts the server did not send.
+class RadarProDetails extends StatelessWidget {
+  final RadarItem item;
+  final bool dark;
+
+  const RadarProDetails({super.key, required this.item, required this.dark});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final fg = dark ? Colors.white : theme.colorScheme.onSurface;
+    final soft = dark
+        ? Colors.white.withValues(alpha: 0.7)
+        : theme.colorScheme.onSurfaceVariant;
+    final panel = dark
+        ? Colors.white.withValues(alpha: 0.08)
+        : theme.colorScheme.onSurface.withValues(alpha: 0.05);
+    final accent = dark
+        ? radarTeal
+        : radarTierStyle(
+            radarTierFor(item.technicalScore),
+            theme.brightness,
+          ).accent;
+
+    final factors = radarVisibleFactors(item);
+    final maxAbs = factors.fold<double>(
+      1,
+      (m, f) => f.$2.abs() > m ? f.$2.abs() : m,
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (item.aiComment != null)
+          Container(
+            key: const Key('radar_ai_note'),
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: panel,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.auto_awesome_rounded, size: 14, color: accent),
+                    const SizedBox(width: 6),
+                    Flexible(
+                      child: Text(
+                        l10n.radarAiNote,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: accent,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  item.aiComment!,
+                  style: TextStyle(fontSize: 13, color: fg),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  l10n.radarAiNoteHint,
+                  style: TextStyle(fontSize: 11, color: soft),
+                ),
+              ],
+            ),
+          ),
+        if (item.aiComment != null && factors.isNotEmpty)
+          const SizedBox(height: 10),
+        if (factors.isNotEmpty)
+          Column(
+            key: const Key('radar_breakdown'),
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                l10n.radarFactorsTitle,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: soft,
+                ),
+              ),
+              const SizedBox(height: 6),
+              for (final f in factors)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 5),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 4,
+                        child: Text(
+                          _factorLabel(l10n, f.$1)!,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontSize: 12, color: fg),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 5,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(4),
+                          child: LinearProgressIndicator(
+                            value: (f.$2.abs() / maxAbs).clamp(0.0, 1.0),
+                            minHeight: 6,
+                            backgroundColor: panel,
+                            color: f.$2 < 0 ? const Color(0xFFE5677A) : accent,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 34,
+                        child: Text(
+                          f.$2.toStringAsFixed(0),
+                          textAlign: TextAlign.end,
+                          maxLines: 1,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: fg,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+      ],
+    );
+  }
+}
+
+/// One compact row under the short list that points guests / free members to
+/// what the next level unlocks. Pro never sees it.
+class RadarUpsellRow extends StatelessWidget {
+  final RadarAccess access;
+  final VoidCallback onTap;
+
+  const RadarUpsellRow({super.key, required this.access, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final guest = access == RadarAccess.guest;
+    final color = guest
+        ? radarTermColor('medium', theme.brightness)
+        : radarGold;
+    return Container(
+      margin: const EdgeInsets.fromLTRB(12, 8, 12, 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: color.withValues(alpha: 0.4)),
+      ),
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
+          key: const Key('radar_upsell'),
+          borderRadius: BorderRadius.circular(14),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            child: Row(
+              children: [
+                Icon(
+                  guest ? Icons.login_rounded : Icons.workspace_premium_rounded,
+                  size: 20,
+                  color: color,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    guest ? l10n.radarUpsellGuest : l10n.radarUpsellFree,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                Icon(
+                  Icons.chevron_right_rounded,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }

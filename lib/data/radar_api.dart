@@ -16,14 +16,17 @@ class RadarException implements Exception {
 }
 
 class RadarApi {
-  Future<List<RadarItem>> fetch({String? term}) async {
+  Future<List<RadarItem>> fetch({String? term, String? token}) async {
     final uri = Uri.parse(
       '${ApiConfig.baseUrl}/radar',
     ).replace(queryParameters: term != null ? {'term': term} : null);
 
     final http.Response response;
     try {
-      response = await ApiHttp.get(uri).timeout(const Duration(seconds: 15));
+      response = await ApiHttp.get(
+        uri,
+        headers: token != null ? {'Authorization': 'Bearer $token'} : null,
+      ).timeout(const Duration(seconds: 15));
     } catch (e) {
       throw RadarException(AppL10n.current.errorRadarFailed('$e'));
     }

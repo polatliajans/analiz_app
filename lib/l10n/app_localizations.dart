@@ -613,7 +613,7 @@ abstract class AppLocalizations {
   /// No description provided for @radarHowScore.
   ///
   /// In en, this message translates to:
-  /// **'The score (0-100) rates how oversold a coin is: {strong}+ Strong, {good}-{goodMax} Good, {watch}-{watchMax} Watch, below {watch} Low. Scores above 70 are rare.'**
+  /// **'The score (0-100) rates how strong the oversold setup is: {strong}+ Strong, {good}-{goodMax} Good, {watch}-{watchMax} Watch, below {watch} Low.'**
   String radarHowScore(
     int strong,
     int good,
@@ -621,6 +621,114 @@ abstract class AppLocalizations {
     int watch,
     int watchMax,
   );
+
+  /// No description provided for @radarHowFactors.
+  ///
+  /// In en, this message translates to:
+  /// **'The score combines oversold depth, Bollinger stretch, higher-timeframe trend, volume, reversal evidence and support proximity, with a liquidity guard that caps thin markets.'**
+  String get radarHowFactors;
+
+  /// No description provided for @radarTermLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'{term} is locked'**
+  String radarTermLocked(String term);
+
+  /// No description provided for @radarUpsellGuest.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to see more'**
+  String get radarUpsellGuest;
+
+  /// No description provided for @radarUpsellFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Pro unlocks all terms, up to 20 opportunities, AI notes and radar alerts'**
+  String get radarUpsellFree;
+
+  /// No description provided for @radarAiNote.
+  ///
+  /// In en, this message translates to:
+  /// **'AI note'**
+  String get radarAiNote;
+
+  /// No description provided for @radarAiNoteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Automated commentary, not financial advice.'**
+  String get radarAiNoteHint;
+
+  /// No description provided for @radarFactorsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Score factors'**
+  String get radarFactorsTitle;
+
+  /// No description provided for @radarFactorOversold.
+  ///
+  /// In en, this message translates to:
+  /// **'Oversold'**
+  String get radarFactorOversold;
+
+  /// No description provided for @radarFactorBollinger.
+  ///
+  /// In en, this message translates to:
+  /// **'Bollinger'**
+  String get radarFactorBollinger;
+
+  /// No description provided for @radarFactorTrend.
+  ///
+  /// In en, this message translates to:
+  /// **'Trend'**
+  String get radarFactorTrend;
+
+  /// No description provided for @radarFactorVolume.
+  ///
+  /// In en, this message translates to:
+  /// **'Volume'**
+  String get radarFactorVolume;
+
+  /// No description provided for @radarFactorReversal.
+  ///
+  /// In en, this message translates to:
+  /// **'Reversal'**
+  String get radarFactorReversal;
+
+  /// No description provided for @radarFactorSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get radarFactorSupport;
+
+  /// No description provided for @radarTrendUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Uptrend'**
+  String get radarTrendUp;
+
+  /// No description provided for @radarTrendDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Downtrend'**
+  String get radarTrendDown;
+
+  /// No description provided for @radarVolumeRatio.
+  ///
+  /// In en, this message translates to:
+  /// **'Vol x{v}'**
+  String radarVolumeRatio(String v);
+
+  /// No description provided for @radarDetailsTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Show details'**
+  String get radarDetailsTooltip;
+
+  /// No description provided for @radarHideDetailsTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide details'**
+  String get radarHideDetailsTooltip;
 
   /// No description provided for @radarHowTerms.
   ///

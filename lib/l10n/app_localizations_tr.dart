@@ -317,8 +317,69 @@ class AppLocalizationsTr extends AppLocalizations {
     int watch,
     int watchMax,
   ) {
-    return 'Skor (0-100) coinin ne kadar aşırı satımda olduğunu gösterir: $strong+ Güçlü, $good-$goodMax İyi, $watch-$watchMax İzle, $watch altı Düşük. 70 üzeri skorlar nadirdir.';
+    return 'Skor (0-100) aşırı satım kurulumunun ne kadar güçlü olduğunu gösterir: $strong+ Güçlü, $good-$goodMax İyi, $watch-$watchMax İzle, $watch altı Düşük.';
   }
+
+  @override
+  String get radarHowFactors =>
+      'Skor; aşırı satım derinliği, Bollinger sapması, üst zaman dilimi trendi, hacim, dönüş işaretleri ve desteğe yakınlığı birleştirir; likidite koruması ince piyasaların skorunu sınırlar.';
+
+  @override
+  String radarTermLocked(String term) {
+    return '$term kilitli';
+  }
+
+  @override
+  String get radarUpsellGuest => 'Daha fazlasını görmek için giriş yap';
+
+  @override
+  String get radarUpsellFree =>
+      'Pro ile tüm vadeler, 20 fırsata kadar liste, yapay zeka notları ve radar bildirimleri açılır';
+
+  @override
+  String get radarAiNote => 'Yapay zeka notu';
+
+  @override
+  String get radarAiNoteHint =>
+      'Otomatik yorumdur, yatırım tavsiyesi değildir.';
+
+  @override
+  String get radarFactorsTitle => 'Skor etkenleri';
+
+  @override
+  String get radarFactorOversold => 'Aşırı satım';
+
+  @override
+  String get radarFactorBollinger => 'Bollinger';
+
+  @override
+  String get radarFactorTrend => 'Trend';
+
+  @override
+  String get radarFactorVolume => 'Hacim';
+
+  @override
+  String get radarFactorReversal => 'Dönüş';
+
+  @override
+  String get radarFactorSupport => 'Destek';
+
+  @override
+  String get radarTrendUp => 'Yükseliş trendi';
+
+  @override
+  String get radarTrendDown => 'Düşüş trendi';
+
+  @override
+  String radarVolumeRatio(String v) {
+    return 'Hacim x$v';
+  }
+
+  @override
+  String get radarDetailsTooltip => 'Ayrıntıları göster';
+
+  @override
+  String get radarHideDetailsTooltip => 'Ayrıntıları gizle';
 
   @override
   String get radarHowTerms =>
