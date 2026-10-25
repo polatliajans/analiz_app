@@ -8,6 +8,7 @@ import 'package:kriptoanaliz/l10n/app_localizations.dart';
 import 'package:kriptoanaliz/models/member.dart';
 import 'package:kriptoanaliz/providers/auth_provider.dart';
 import 'package:kriptoanaliz/providers/coin_list_provider.dart';
+import 'package:kriptoanaliz/providers/guest_market_provider.dart';
 import 'package:kriptoanaliz/providers/home_provider.dart';
 import 'package:kriptoanaliz/providers/locale_provider.dart';
 import 'package:kriptoanaliz/screens/home_screen.dart';
@@ -59,6 +60,7 @@ Future<HomeHarness> pumpHome(
       sharedPreferencesProvider.overrideWithValue(p),
       authProvider.overrideWith(() => FakeAuth(member)),
       homeApiProvider.overrideWithValue(api),
+      guestMarketProvider.overrideWith((ref) async => null),
       homeClockProvider.overrideWithValue(() => homeTestNow),
       coinApiProvider.overrideWithValue(
         FakeCoinApi([testCoin(1, 'BTCUSDT'), testCoin(7, 'ETHUSDT')]),

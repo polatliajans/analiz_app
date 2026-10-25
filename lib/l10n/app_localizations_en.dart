@@ -520,6 +520,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Log in to run AI analyses, follow coins and get notified. You can also browse as a guest.';
 
   @override
+  String get authWelcomeSubtitleNoGuest =>
+      'Log in to run AI analyses, follow coins and get notified.';
+
+  @override
   String get continueWithGoogle => 'Continue with Google';
 
   @override
@@ -1161,11 +1165,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeStaleNoTime => 'Not up to date';
 
   @override
-  String get homeGuestTitle => 'See your overview';
-
-  @override
-  String get homeGuestBody =>
-      'Log in to see the market pulse, your watchlist, radar signals and your latest analysis in one place.';
+  String get homeGuestUnlock =>
+      'Sign in to unlock analysis, watchlist and alerts';
 
   @override
   String get homeErrorTitle => 'Could not load the overview';

@@ -39,6 +39,7 @@ class AccountScreen extends ConsumerWidget {
     final navigator = Navigator.of(context);
     final auth = ref.read(authProvider.notifier);
     final promptDone = ref.read(authPromptDoneProvider.notifier);
+    final tabs = ref.read(homeTabProvider.notifier);
 
     final warnings = deleteAccountWarnings(
       role: member.role,
@@ -60,6 +61,24 @@ class AccountScreen extends ConsumerWidget {
     // Back to the root, then re-open the first-run sign-in screen.
     navigator.popUntil((route) => route.isFirst);
     await promptDone.reset();
+    tabs.select(homeTabIndex);
+  }
+
+  /// Signs out and returns to the root sign-in screen (with "Continue as
+  /// guest"): no pushed routes are left over and the next session starts on
+  /// the Home tab.
+  Future<void> _logOut(BuildContext context, WidgetRef ref) async {
+    final navigator = Navigator.of(context);
+    final promptDone = ref.read(authPromptDoneProvider.notifier);
+    final tabs = ref.read(homeTabProvider.notifier);
+    final auth = ref.read(authProvider.notifier);
+    navigator.popUntil((route) => route.isFirst);
+    tabs.select(homeTabIndex);
+    // Reset first: while still signed in the shell stays up, and the moment
+    // the session is gone the root switches straight to the sign-in screen
+    // instead of flashing a guest home.
+    await promptDone.reset();
+    await auth.logout();
   }
 
   @override
@@ -132,7 +151,7 @@ class AccountScreen extends ConsumerWidget {
                             l10n.logOut,
                             style: TextStyle(color: scheme.error),
                           ),
-                          onTap: () => ref.read(authProvider.notifier).logout(),
+                          onTap: () => _logOut(context, ref),
                         ),
                         const Divider(height: 1),
                         ListTile(

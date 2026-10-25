@@ -525,6 +525,10 @@ class AppLocalizationsEs extends AppLocalizations {
       'Inicia sesión para ejecutar análisis con IA, seguir monedas y recibir notificaciones. También puedes explorar como invitado.';
 
   @override
+  String get authWelcomeSubtitleNoGuest =>
+      'Inicia sesión para ejecutar análisis con IA, seguir monedas y recibir notificaciones.';
+
+  @override
   String get continueWithGoogle => 'Continuar con Google';
 
   @override
@@ -1174,11 +1178,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get homeStaleNoTime => 'No actualizado';
 
   @override
-  String get homeGuestTitle => 'Mira tu resumen';
-
-  @override
-  String get homeGuestBody =>
-      'Inicia sesión para ver el pulso del mercado, tu lista, las señales del radar y tu último análisis en un solo lugar.';
+  String get homeGuestUnlock =>
+      'Inicia sesión para desbloquear análisis, lista de seguimiento y alertas';
 
   @override
   String get homeErrorTitle => 'No se pudo cargar el resumen';

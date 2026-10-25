@@ -99,7 +99,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  l10n.authWelcomeSubtitle,
+                  widget.showGuest
+                      ? l10n.authWelcomeSubtitle
+                      : l10n.authWelcomeSubtitleNoGuest,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),

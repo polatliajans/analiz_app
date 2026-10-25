@@ -10,7 +10,14 @@ class TickerQuote {
   final double lastPrice;
   final double changePercent;
 
-  const TickerQuote({required this.lastPrice, required this.changePercent});
+  /// 24h turnover in the quote currency (0 when the feed did not send it).
+  final double quoteVolume;
+
+  const TickerQuote({
+    required this.lastPrice,
+    required this.changePercent,
+    this.quoteVolume = 0,
+  });
 }
 
 /// Parses the bulk 24h ticker array into a symbol -> quote map. Malformed
@@ -31,7 +38,11 @@ Map<String, TickerQuote> parseTickerMap(String body) {
     final price = double.tryParse('${row['lastPrice']}');
     final change = double.tryParse('${row['priceChangePercent']}');
     if (symbol is! String || price == null || change == null) continue;
-    out[symbol] = TickerQuote(lastPrice: price, changePercent: change);
+    out[symbol] = TickerQuote(
+      lastPrice: price,
+      changePercent: change,
+      quoteVolume: double.tryParse('${row['quoteVolume']}') ?? 0,
+    );
   }
   return out;
 }

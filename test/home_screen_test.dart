@@ -11,6 +11,7 @@ import 'package:kriptoanaliz/models/member.dart';
 import 'package:kriptoanaliz/providers/analysis_history_provider.dart';
 import 'package:kriptoanaliz/providers/auth_provider.dart';
 import 'package:kriptoanaliz/providers/coin_list_provider.dart';
+import 'package:kriptoanaliz/providers/guest_market_provider.dart';
 import 'package:kriptoanaliz/providers/home_provider.dart';
 import 'package:kriptoanaliz/providers/home_tab_provider.dart';
 import 'package:kriptoanaliz/providers/locale_provider.dart';
@@ -52,6 +53,7 @@ Future<_Harness> _pump(
       sharedPreferencesProvider.overrideWithValue(p),
       authProvider.overrideWith(() => FakeAuth(member)),
       homeApiProvider.overrideWithValue(api),
+      guestMarketProvider.overrideWith((ref) async => null),
       homeAutoRefreshProvider.overrideWithValue(autoRefresh),
       homeClockProvider.overrideWithValue(clock?.call ?? () => homeTestNow),
       coinApiProvider.overrideWithValue(
@@ -299,7 +301,10 @@ void main() {
     tester,
   ) async {
     final h = await _pump(tester, handler: _ok(fullHomeJson()), member: null);
-    expect(find.text('See your overview'), findsOneWidget);
+    expect(
+      find.text('Sign in to unlock analysis, watchlist and alerts'),
+      findsOneWidget,
+    );
     expect(find.text('Log in / Sign up'), findsOneWidget);
     expect(find.text('Fear & Greed'), findsNothing);
     expect(find.text('Learn'), findsOneWidget);

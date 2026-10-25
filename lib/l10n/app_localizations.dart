@@ -880,6 +880,12 @@ abstract class AppLocalizations {
   /// **'Log in to run AI analyses, follow coins and get notified. You can also browse as a guest.'**
   String get authWelcomeSubtitle;
 
+  /// No description provided for @authWelcomeSubtitleNoGuest.
+  ///
+  /// In en, this message translates to:
+  /// **'Log in to run AI analyses, follow coins and get notified.'**
+  String get authWelcomeSubtitleNoGuest;
+
   /// No description provided for @continueWithGoogle.
   ///
   /// In en, this message translates to:
@@ -1960,17 +1966,11 @@ abstract class AppLocalizations {
   /// **'Not up to date'**
   String get homeStaleNoTime;
 
-  /// No description provided for @homeGuestTitle.
+  /// No description provided for @homeGuestUnlock.
   ///
   /// In en, this message translates to:
-  /// **'See your overview'**
-  String get homeGuestTitle;
-
-  /// No description provided for @homeGuestBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Log in to see the market pulse, your watchlist, radar signals and your latest analysis in one place.'**
-  String get homeGuestBody;
+  /// **'Sign in to unlock analysis, watchlist and alerts'**
+  String get homeGuestUnlock;
 
   /// No description provided for @homeErrorTitle.
   ///

@@ -8,6 +8,7 @@ import '../models/home_data.dart';
 import '../providers/analysis_history_provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/home_provider.dart';
+import '../providers/guest_market_provider.dart';
 import '../providers/home_tab_provider.dart';
 import '../providers/price_alert_provider.dart';
 import '../services/chart_navigation.dart';
@@ -127,6 +128,41 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     return l10n.homeStaleNote(relativeAgo(l10n, at, now));
   }
 
+  /// Restricted guest home: sign-in prompt, public market data, learn card.
+  void _addGuestSections(List<Widget> children, DateTime now) {
+    const gap = SizedBox(height: 12);
+    final market = ref.watch(guestMarketProvider);
+    children
+      ..add(HomeGuestCard(onLogin: () => openAuthScreen(context)))
+      ..add(gap);
+    market.when(
+      loading: () => children.add(const HomeSkeleton()),
+      error: (_, _) => children.add(
+        HomeErrorCard(onRetry: () => ref.invalidate(guestMarketProvider)),
+      ),
+      data: (data) {
+        children
+          ..add(MarketPulseRow(market: data?.market))
+          ..add(gap);
+        final mm = data?.marketMovers;
+        if (mm != null && !mm.isEmpty) {
+          children
+            ..add(
+              MarketMoversCard(
+                movers: mm,
+                onTap: (m) => _openChart(
+                  coinId: m.coinId,
+                  symbol: m.symbol,
+                  marketType: m.marketType,
+                ),
+              ),
+            )
+            ..add(gap);
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -147,11 +183,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     final credits = data?.credits?.balance ?? member?.creditBalance;
     final isPro = data?.credits?.isPro ?? isProRole;
 
+    final isGuest = !state.signedIn && !state.loading;
     final children = <Widget>[];
     void gap() => children.add(const SizedBox(height: 12));
 
-    if (!state.signedIn && !state.loading) {
-      children.add(HomeGuestCard(onLogin: () => openAuthScreen(context)));
+    if (isGuest) {
+      _addGuestSections(children, now);
     } else {
       children.add(
         HomeHeader(
@@ -166,7 +203,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     }
     gap();
 
-    if (state.signedIn) {
+    if (!isGuest && state.signedIn) {
       children.add(
         HomeQuickActions(
           actions: [
@@ -202,7 +239,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       gap();
     }
 
-    if (state.showSkeleton) {
+    if (isGuest) {
+      // Guest sections were added above; nothing member-specific below.
+    } else if (state.showSkeleton) {
       children.add(const HomeSkeleton());
     } else if (data == null && state.signedIn) {
       children.add(
@@ -298,7 +337,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       body: SafeArea(
         bottom: false,
         child: RefreshIndicator(
-          onRefresh: () => ref.read(homeProvider.notifier).refresh(force: true),
+          onRefresh: () {
+            if (isGuest) {
+              ref.invalidate(guestMarketProvider);
+              return ref
+                  .read(guestMarketProvider.future)
+                  .then((_) {}, onError: (_) {});
+            }
+            return ref.read(homeProvider.notifier).refresh(force: true);
+          },
           child: ListView(
             physics: const AlwaysScrollableScrollPhysics(),
             padding: EdgeInsets.fromLTRB(

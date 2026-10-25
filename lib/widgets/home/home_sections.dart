@@ -297,16 +297,37 @@ class HomeGuestCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return HomeCard(
-      title: l10n.homeGuestTitle,
-      icon: Icons.dashboard_outlined,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _MutedText(l10n.homeGuestBody),
-          const SizedBox(height: 12),
-          FilledButton(onPressed: onLogin, child: Text(l10n.logInOrSignUp)),
-        ],
+    final theme = Theme.of(context);
+    return Card(
+      margin: EdgeInsets.zero,
+      color: theme.colorScheme.primaryContainer,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.lock_open_outlined,
+                  size: 22,
+                  color: theme.colorScheme.onPrimaryContainer,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    l10n.homeGuestUnlock,
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      color: theme.colorScheme.onPrimaryContainer,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            FilledButton(onPressed: onLogin, child: Text(l10n.logInOrSignUp)),
+          ],
+        ),
       ),
     );
   }

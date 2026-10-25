@@ -487,6 +487,10 @@ class AppLocalizationsTr extends AppLocalizations {
       'AI analizi yapmak, coin takip etmek ve bildirim almak için giriş yap. Misafir olarak da göz atabilirsin.';
 
   @override
+  String get authWelcomeSubtitleNoGuest =>
+      'AI analizi yapmak, coin takip etmek ve bildirim almak için giriş yap.';
+
+  @override
   String get continueWithGoogle => 'Google ile devam et';
 
   @override
@@ -1128,11 +1132,8 @@ class AppLocalizationsTr extends AppLocalizations {
   String get homeStaleNoTime => 'Güncel değil';
 
   @override
-  String get homeGuestTitle => 'Özetini gör';
-
-  @override
-  String get homeGuestBody =>
-      'Giriş yap; piyasa nabzı, takip listen, radar sinyalleri ve son analizin tek yerde olsun.';
+  String get homeGuestUnlock =>
+      'Analiz, takip listesi ve alarmların kilidini açmak için giriş yap';
 
   @override
   String get homeErrorTitle => 'Özet yüklenemedi';
