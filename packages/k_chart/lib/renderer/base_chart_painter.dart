@@ -193,13 +193,20 @@ abstract class BaseChartPainter extends CustomPainter {
     setTranslateXFromScrollX(scrollX);
     mStartIndex = indexOfTranslateX(xToTranslateX(0));
     mStopIndex = indexOfTranslateX(xToTranslateX(mWidth));
+    mMainMaxValue = double.minPositive;
+    mMainMinValue = double.maxFinite;
     for (int i = mStartIndex; i <= mStopIndex; i++) {
       var item = datas![i];
       getMainMaxMinValue(item, i);
       getVolMaxMinValue(item);
       getSecondaryMaxMinValue(item);
     }
+    adjustMainRange();
   }
+
+  /// Hook for subclasses to widen [mMainMaxValue]/[mMainMinValue] after the
+  /// visible range has been computed (e.g. to make room for markers).
+  void adjustMainRange() {}
 
   void getMainMaxMinValue(KLineEntity item, int i) {
     double maxPrice, minPrice;

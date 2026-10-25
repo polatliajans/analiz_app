@@ -10,6 +10,7 @@ import '../utils/date_format_util.dart';
 import 'base_chart_painter.dart';
 import 'base_chart_renderer.dart';
 import 'main_renderer.dart';
+import 'marker_geometry.dart';
 import 'secondary_renderer.dart';
 import 'vol_renderer.dart';
 
@@ -231,21 +232,53 @@ class ChartPainter extends BaseChartPainter {
     }
   }
 
+  @override
+  void adjustMainRange() {
+    if (markers.isEmpty || datas == null) return;
+    final buys = <MarkerPoint>[];
+    final sells = <MarkerPoint>[];
+    for (final m in markers) {
+      if (m.index < mStartIndex || m.index > mStopIndex) continue;
+      if (m.index < 0 || m.index >= datas!.length) continue;
+      final e = datas![m.index];
+      if (m.isBuy) {
+        buys.add(MarkerPoint(e.low, m.strength));
+      } else {
+        sells.add(MarkerPoint(e.high, m.strength));
+      }
+    }
+    if (buys.isEmpty && sells.isEmpty) return;
+    final h = mMainRect.height;
+    final pad = MarkerGeometry.neededPadding(
+        min: mMainMinValue,
+        max: mMainMaxValue,
+        heightPx: h,
+        buys: buys,
+        sells: sells);
+    final r = MarkerGeometry.expandRange(
+        min: mMainMinValue,
+        max: mMainMaxValue,
+        heightPx: h,
+        belowPx: pad.below,
+        abovePx: pad.above);
+    mMainMinValue = r.min;
+    mMainMaxValue = r.max;
+  }
+
   void _drawMarkerArrow(
       Canvas canvas, double x, double y, bool isBuy, int strength) {
-    final level = strength < 1 ? 1 : (strength > 3 ? 3 : strength);
-    // Strength 1: small and faint; strength 3: large and solid.
-    final double sizeFactor = const [0.8, 1.0, 1.3][level - 1];
-    final double opacity = const [0.45, 0.75, 1.0][level - 1];
+    final level = MarkerGeometry.clampLevel(strength);
+    // Arrow size grows with strength; the badge below/above carries the digit.
+    final double opacity = const [0.7, 0.85, 1.0][level - 1];
     final baseColor = isBuy ? chartColors.upColor : chartColors.dnColor;
     final paint = Paint()
       ..style = PaintingStyle.fill
       ..isAntiAlias = true
       ..color = baseColor.withOpacity(opacity);
 
-    final double arrowHalfWidth = 4.5 * sizeFactor;
-    final double arrowLength = 8.0 * sizeFactor;
-    const double gap = 6.0; // distance between wick end and arrow tip
+    final double arrowHalfWidth = MarkerGeometry.arrowHalfWidth(level);
+    final double arrowLength = MarkerGeometry.arrowLength(level);
+    const double gap = MarkerGeometry.gap;
 
     canvas.save();
     // Undo the horizontal scale for the marker only, so it isn't stretched
@@ -253,41 +286,37 @@ class ChartPainter extends BaseChartPainter {
     canvas.translate(x, y);
     canvas.scale(1 / scaleX, 1.0);
 
-    final path = Path();
-    if (isBuy) {
-      // Upward-pointing triangle sitting below the candle's low.
-      final tipY = gap;
-      final baseY = gap + arrowLength;
-      path.moveTo(0, tipY);
-      path.lineTo(-arrowHalfWidth, baseY);
-      path.lineTo(arrowHalfWidth, baseY);
-      path.close();
-    } else {
-      // Downward-pointing triangle sitting above the candle's high.
-      final tipY = -gap;
-      final baseY = -gap - arrowLength;
-      path.moveTo(0, tipY);
-      path.lineTo(-arrowHalfWidth, baseY);
-      path.lineTo(arrowHalfWidth, baseY);
-      path.close();
-    }
+    final sign = isBuy ? 1.0 : -1.0;
+    final path = Path()
+      ..moveTo(0, sign * gap)
+      ..lineTo(-arrowHalfWidth, sign * (gap + arrowLength))
+      ..lineTo(arrowHalfWidth, sign * (gap + arrowLength))
+      ..close();
     canvas.drawPath(path, paint);
 
-    // Strength digit badge beyond the arrow base (away from the candle).
-    final tp = TextPainter(
+    // Strength badge: filled pill with the level digit, white text on the
+    // signal color, so it reads on light and dark backgrounds alike.
+    final text = TextPainter(
       text: TextSpan(
         text: '$level',
-        style: TextStyle(
-          fontSize: 9.0 + level,
-          fontWeight: FontWeight.bold,
-          color: baseColor.withOpacity(opacity),
+        style: const TextStyle(
+          fontSize: 10.0,
+          fontWeight: FontWeight.w800,
+          color: Color(0xFFFFFFFF),
+          height: 1.0,
         ),
       ),
       textDirection: TextDirection.ltr,
     )..layout();
-    final badgeOffset = gap + arrowLength + 1.0;
-    final dy = isBuy ? badgeOffset : -badgeOffset - tp.height;
-    tp.paint(canvas, Offset(-tp.width / 2, dy));
+    final rect = MarkerGeometry.badgeRect(
+        isBuy: isBuy, strength: level, textWidth: text.width);
+    canvas.drawRRect(
+        RRect.fromRectAndRadius(rect, const Radius.circular(7)),
+        Paint()
+          ..isAntiAlias = true
+          ..color = baseColor);
+    text.paint(canvas,
+        Offset(rect.center.dx - text.width / 2, rect.center.dy - text.height / 2));
     canvas.restore();
   }
 
