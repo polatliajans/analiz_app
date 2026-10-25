@@ -6,6 +6,7 @@ import 'package:in_app_purchase/in_app_purchase.dart';
 import '../l10n/app_localizations.dart';
 import '../models/subscription_plan.dart';
 import '../providers/auth_provider.dart';
+import '../providers/home_provider.dart';
 import '../providers/store_price_provider.dart';
 import '../providers/subscription_provider.dart';
 
@@ -113,6 +114,8 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 purchaseToken: purchase.verificationData.serverVerificationData,
               );
           await ref.read(authProvider.notifier).refreshMember();
+          // Home shows the balance/Pro state from its own cached payload; refresh it too.
+          ref.read(homeProvider.notifier).refresh(force: true);
 
           // Only complete/consume the purchase once the server has actually
           // confirmed and activated it. If verification throws below, we skip

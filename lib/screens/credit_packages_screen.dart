@@ -7,6 +7,7 @@ import '../l10n/app_localizations.dart';
 import '../models/credit_package.dart';
 import '../providers/auth_provider.dart';
 import '../providers/credit_package_provider.dart';
+import '../providers/home_provider.dart';
 import '../providers/store_price_provider.dart';
 import '../widgets/credit_summary.dart';
 
@@ -115,6 +116,8 @@ class _CreditPackagesScreenState extends ConsumerState<CreditPackagesScreen> {
                 purchaseToken: purchase.verificationData.serverVerificationData,
               );
           await ref.read(authProvider.notifier).refreshMember();
+          // Home shows the balance from its own cached payload; refresh it too.
+          ref.read(homeProvider.notifier).refresh(force: true);
 
           // Only complete/consume the purchase once the server has actually
           // confirmed and credited it. If verification throws below, we skip
