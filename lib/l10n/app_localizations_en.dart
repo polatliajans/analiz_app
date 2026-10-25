@@ -314,6 +314,63 @@ class AppLocalizationsEn extends AppLocalizations {
       'Score 0-100: shows how oversold it is. Tap an opportunity for an AI-powered deep analysis.';
 
   @override
+  String get radarTopPick => 'Top pick';
+
+  @override
+  String get radarTierStrong => 'Strong';
+
+  @override
+  String get radarTierGood => 'Good';
+
+  @override
+  String get radarTierWatch => 'Watch';
+
+  @override
+  String get radarTierWeak => 'Low';
+
+  @override
+  String get radarEmptyTitle => 'No oversold coins right now';
+
+  @override
+  String get radarInfoTooltip => 'How radar works';
+
+  @override
+  String get radarHowTitle => 'How radar works';
+
+  @override
+  String get radarHowOversold =>
+      'Radar lists coins that look oversold: RSI is below the oversold threshold and the price has dropped under the lower Bollinger band. It can hint that a fall is stretched.';
+
+  @override
+  String radarHowScore(
+    int strong,
+    int good,
+    int goodMax,
+    int watch,
+    int watchMax,
+  ) {
+    return 'The score (0-100) rates how oversold a coin is: $strong+ Strong, $good-$goodMax Good, $watch-$watchMax Watch, below $watch Low. Scores above 70 are rare.';
+  }
+
+  @override
+  String get radarHowTerms =>
+      'Short, medium and long term use different chart timeframes. Pick the one that fits your horizon.';
+
+  @override
+  String get radarHowDisclaimer =>
+      'Radar is a technical screening tool, not financial advice. An oversold coin can keep falling, so always do your own research.';
+
+  @override
+  String radarRsi(String v) {
+    return 'RSI $v';
+  }
+
+  @override
+  String radarScoreSemantics(int score, String tier) {
+    return 'Score $score of 100, $tier';
+  }
+
+  @override
   String get watchlistEmpty => 'You are not following any coins yet';
 
   @override

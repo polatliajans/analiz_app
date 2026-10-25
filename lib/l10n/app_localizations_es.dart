@@ -314,6 +314,63 @@ class AppLocalizationsEs extends AppLocalizations {
       'Puntuación 0-100: indica qué tan sobrevendido está. Toca una oportunidad para un análisis profundo con IA.';
 
   @override
+  String get radarTopPick => 'Mejor opción';
+
+  @override
+  String get radarTierStrong => 'Fuerte';
+
+  @override
+  String get radarTierGood => 'Buena';
+
+  @override
+  String get radarTierWatch => 'Vigilar';
+
+  @override
+  String get radarTierWeak => 'Baja';
+
+  @override
+  String get radarEmptyTitle => 'Ahora no hay monedas sobrevendidas';
+
+  @override
+  String get radarInfoTooltip => 'Cómo funciona el radar';
+
+  @override
+  String get radarHowTitle => 'Cómo funciona el radar';
+
+  @override
+  String get radarHowOversold =>
+      'El radar lista monedas que parecen sobrevendidas: el RSI está bajo el umbral de sobreventa y el precio cayó bajo la banda de Bollinger inferior. Puede indicar que la caída está muy estirada.';
+
+  @override
+  String radarHowScore(
+    int strong,
+    int good,
+    int goodMax,
+    int watch,
+    int watchMax,
+  ) {
+    return 'La puntuación (0-100) mide qué tan sobrevendida está una moneda: $strong+ Fuerte, $good-$goodMax Buena, $watch-$watchMax Vigilar, menos de $watch Baja. Las puntuaciones sobre 70 son raras.';
+  }
+
+  @override
+  String get radarHowTerms =>
+      'El corto, medio y largo plazo usan distintos marcos temporales. Elige el que encaje con tu horizonte.';
+
+  @override
+  String get radarHowDisclaimer =>
+      'El radar es una herramienta de filtrado técnico, no asesoría financiera. Una moneda sobrevendida puede seguir cayendo; investiga por tu cuenta.';
+
+  @override
+  String radarRsi(String v) {
+    return 'RSI $v';
+  }
+
+  @override
+  String radarScoreSemantics(int score, String tier) {
+    return 'Puntuación $score de 100, $tier';
+  }
+
+  @override
   String get watchlistEmpty => 'Aún no sigues ninguna moneda';
 
   @override

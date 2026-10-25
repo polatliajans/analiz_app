@@ -9,6 +9,7 @@ import '../models/radar_item.dart';
 import '../providers/home_tab_provider.dart';
 import '../providers/radar_provider.dart';
 import '../providers/selected_coin_provider.dart';
+import '../widgets/radar/radar_widgets.dart';
 
 class RadarScreen extends ConsumerStatefulWidget {
   const RadarScreen({super.key});
@@ -24,59 +25,47 @@ class _RadarScreenState extends ConsumerState<RadarScreen>
   @override
   String get nativePlacementKey => AdPlacementKeys.nativeRadar;
 
-  static List<(String?, String)> _terms(AppLocalizations l10n) => [
-    (null, l10n.termAll),
-    ('short', l10n.termShort),
-    ('medium', l10n.termMedium),
-    ('long', l10n.termLong),
-  ];
-
-  static String _termLabel(AppLocalizations l10n, String term) {
-    switch (term) {
-      case 'short':
-        return l10n.termShortLabel;
-      case 'medium':
-        return l10n.termMediumLabel;
-      case 'long':
-        return l10n.termLongLabel;
-      default:
-        return term;
-    }
-  }
-
-  static String _ago(AppLocalizations l10n, DateTime t) {
-    final diff = DateTime.now().difference(t.toLocal());
-    if (diff.inMinutes < 1) return l10n.agoNow;
-    if (diff.inMinutes < 60) return l10n.agoMinutes(diff.inMinutes);
-    if (diff.inHours < 24) return l10n.agoHours(diff.inHours);
-    return l10n.agoDays(diff.inDays);
-  }
-
   @override
   Widget build(BuildContext context) {
     final radarAsync = ref.watch(radarProvider(_term));
     final l10n = AppLocalizations.of(context)!;
     final nativeAds = watchNativeAds();
 
+    final allItems = ref.watch(radarProvider(null)).asData?.value;
+    final counts = <String?, int>{};
+    final hints = <String?, String>{};
+    if (allItems != null) {
+      counts[null] = allItems.length;
+      for (final t in ['short', 'medium', 'long']) {
+        final of = allItems.where((i) => i.term == t);
+        counts[t] = of.length;
+        final tfs = of.map((i) => i.timeframe).toSet().take(2).toList();
+        if (tfs.isNotEmpty) hints[t] = tfs.join(' · ');
+      }
+    }
+
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.radar)),
+      appBar: AppBar(
+        title: Text(l10n.radar),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.info_outline_rounded),
+            tooltip: l10n.radarInfoTooltip,
+            onPressed: () => showRadarInfoSheet(context),
+          ),
+        ],
+      ),
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
             child: Align(
               alignment: Alignment.centerLeft,
-              child: Wrap(
-                spacing: 8,
-                children: _terms(l10n)
-                    .map(
-                      (t) => ChoiceChip(
-                        label: Text(t.$2),
-                        selected: _term == t.$1,
-                        onSelected: (_) => setState(() => _term = t.$1),
-                      ),
-                    )
-                    .toList(),
+              child: RadarTermSelector(
+                selected: _term,
+                counts: counts,
+                hints: hints,
+                onSelected: (t) => setState(() => _term = t),
               ),
             ),
           ),
@@ -96,15 +85,15 @@ class _RadarScreenState extends ConsumerState<RadarScreen>
                   ],
                 ),
               ),
-              data: (items) {
-                if (items.isEmpty) {
-                  return Center(child: Text(l10n.radarEmpty));
-                }
-                return RefreshIndicator(
-                  onRefresh: () => ref.refresh(radarProvider(_term).future),
-                  child: _buildList(context, items, nativeAds),
-                );
-              },
+              data: (items) => RefreshIndicator(
+                onRefresh: () => ref.refresh(radarProvider(_term).future),
+                child: items.isEmpty
+                    ? ListView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        children: const [RadarEmptyState()],
+                      )
+                    : _buildList(context, items, nativeAds),
+              ),
             ),
           ),
           Padding(
@@ -127,39 +116,38 @@ class _RadarScreenState extends ConsumerState<RadarScreen>
     );
   }
 
+  void _open(RadarItem item) {
+    ref.read(selectedCoinProvider.notifier).select(item.coin);
+    ref.read(homeTabProvider.notifier).select(chartTabIndex);
+  }
+
   Widget _buildList(
     BuildContext context,
     List<RadarItem> items,
     ({NativeAdPool pool, int frequency})? nativeAds,
   ) {
+    var top = items.first;
+    for (final i in items) {
+      if (i.technicalScore > top.technicalScore) top = i;
+    }
+    final rest = items.where((i) => !identical(i, top)).toList();
     final n = nativeAds?.frequency ?? 0;
     bool isAd(int i) => nativeAds != null && shouldShowNativeAt(i, n);
-    return ListView.separated(
+    return ListView.builder(
       physics: const AlwaysScrollableScrollPhysics(),
-      itemCount: itemCountWithAds(items.length, n),
-      // The ad row draws its own background instead of dividers.
-      separatorBuilder: (_, i) => isAd(i) || isAd(i + 1)
-          ? const SizedBox.shrink()
-          : const Divider(height: 1),
-      itemBuilder: (context, index) => isAd(index)
-          ? NativeAdRow(pool: nativeAds!.pool, slot: nativeSlotNumber(index, n))
-          : _buildTile(context, items[contentIndexAt(index, n)]),
-    );
-  }
-
-  Widget _buildTile(BuildContext context, RadarItem item) {
-    final l10n = AppLocalizations.of(context)!;
-    return ListTile(
-      title: Text(
-        '${item.coin.symbol}  ·  ${item.coin.marketType == 'futures' ? 'Futures' : 'Spot'}',
-      ),
-      subtitle: Text(
-        '${_termLabel(l10n, item.term)} (${item.timeframe})  ·  RSI ${item.rsi?.toStringAsFixed(1) ?? '-'}  ·  ${_ago(l10n, item.detectedAt)}',
-      ),
-      trailing: Chip(label: Text('${item.technicalScore}')),
-      onTap: () {
-        ref.read(selectedCoinProvider.notifier).select(item.coin);
-        ref.read(homeTabProvider.notifier).select(chartTabIndex);
+      padding: const EdgeInsets.only(bottom: 8),
+      itemCount: 1 + itemCountWithAds(rest.length, n),
+      itemBuilder: (context, index) {
+        if (index == 0) {
+          return RadarTopPickCard(item: top, onTap: () => _open(top));
+        }
+        final i = index - 1;
+        return isAd(i)
+            ? NativeAdRow(pool: nativeAds!.pool, slot: nativeSlotNumber(i, n))
+            : RadarTile(
+                item: rest[contentIndexAt(i, n)],
+                onTap: () => _open(rest[contentIndexAt(i, n)]),
+              );
       },
     );
   }

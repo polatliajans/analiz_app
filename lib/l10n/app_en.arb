@@ -202,6 +202,40 @@
   },
   "radarEmpty": "No opportunities meet the technical criteria right now.",
   "radarFooter": "Score 0-100: shows how oversold it is. Tap an opportunity for an AI-powered deep analysis.",
+  "radarTopPick": "Top pick",
+  "radarTierStrong": "Strong",
+  "radarTierGood": "Good",
+  "radarTierWatch": "Watch",
+  "radarTierWeak": "Low",
+  "radarEmptyTitle": "No oversold coins right now",
+  "radarInfoTooltip": "How radar works",
+  "radarHowTitle": "How radar works",
+  "radarHowOversold": "Radar lists coins that look oversold: RSI is below the oversold threshold and the price has dropped under the lower Bollinger band. It can hint that a fall is stretched.",
+  "radarHowScore": "The score (0-100) rates how oversold a coin is: {strong}+ Strong, {good}-{goodMax} Good, {watch}-{watchMax} Watch, below {watch} Low. Scores above 70 are rare.",
+  "@radarHowScore": {
+    "placeholders": {
+      "strong": {"type": "int"},
+      "good": {"type": "int"},
+      "goodMax": {"type": "int"},
+      "watch": {"type": "int"},
+      "watchMax": {"type": "int"}
+    }
+  },
+  "radarHowTerms": "Short, medium and long term use different chart timeframes. Pick the one that fits your horizon.",
+  "radarHowDisclaimer": "Radar is a technical screening tool, not financial advice. An oversold coin can keep falling, so always do your own research.",
+  "radarRsi": "RSI {v}",
+  "@radarRsi": {
+    "placeholders": {
+      "v": {"type": "String"}
+    }
+  },
+  "radarScoreSemantics": "Score {score} of 100, {tier}",
+  "@radarScoreSemantics": {
+    "placeholders": {
+      "score": {"type": "int"},
+      "tier": {"type": "String"}
+    }
+  },
   "watchlistEmpty": "You are not following any coins yet",
   "errorServer": "Server error: {status}",
   "@errorServer": {

@@ -556,6 +556,96 @@ abstract class AppLocalizations {
   /// **'Score 0-100: shows how oversold it is. Tap an opportunity for an AI-powered deep analysis.'**
   String get radarFooter;
 
+  /// No description provided for @radarTopPick.
+  ///
+  /// In en, this message translates to:
+  /// **'Top pick'**
+  String get radarTopPick;
+
+  /// No description provided for @radarTierStrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong'**
+  String get radarTierStrong;
+
+  /// No description provided for @radarTierGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Good'**
+  String get radarTierGood;
+
+  /// No description provided for @radarTierWatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch'**
+  String get radarTierWatch;
+
+  /// No description provided for @radarTierWeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get radarTierWeak;
+
+  /// No description provided for @radarEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No oversold coins right now'**
+  String get radarEmptyTitle;
+
+  /// No description provided for @radarInfoTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'How radar works'**
+  String get radarInfoTooltip;
+
+  /// No description provided for @radarHowTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How radar works'**
+  String get radarHowTitle;
+
+  /// No description provided for @radarHowOversold.
+  ///
+  /// In en, this message translates to:
+  /// **'Radar lists coins that look oversold: RSI is below the oversold threshold and the price has dropped under the lower Bollinger band. It can hint that a fall is stretched.'**
+  String get radarHowOversold;
+
+  /// No description provided for @radarHowScore.
+  ///
+  /// In en, this message translates to:
+  /// **'The score (0-100) rates how oversold a coin is: {strong}+ Strong, {good}-{goodMax} Good, {watch}-{watchMax} Watch, below {watch} Low. Scores above 70 are rare.'**
+  String radarHowScore(
+    int strong,
+    int good,
+    int goodMax,
+    int watch,
+    int watchMax,
+  );
+
+  /// No description provided for @radarHowTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'Short, medium and long term use different chart timeframes. Pick the one that fits your horizon.'**
+  String get radarHowTerms;
+
+  /// No description provided for @radarHowDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Radar is a technical screening tool, not financial advice. An oversold coin can keep falling, so always do your own research.'**
+  String get radarHowDisclaimer;
+
+  /// No description provided for @radarRsi.
+  ///
+  /// In en, this message translates to:
+  /// **'RSI {v}'**
+  String radarRsi(String v);
+
+  /// No description provided for @radarScoreSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Score {score} of 100, {tier}'**
+  String radarScoreSemantics(int score, String tier);
+
   /// No description provided for @watchlistEmpty.
   ///
   /// In en, this message translates to:

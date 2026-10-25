@@ -282,6 +282,63 @@ class AppLocalizationsTr extends AppLocalizations {
       'Skor 0-100: ne kadar aşırı satımda olduğunu gösterir. Yapay zeka destekli derin analiz için bir fırsata dokunun.';
 
   @override
+  String get radarTopPick => 'Günün fırsatı';
+
+  @override
+  String get radarTierStrong => 'Güçlü';
+
+  @override
+  String get radarTierGood => 'İyi';
+
+  @override
+  String get radarTierWatch => 'İzle';
+
+  @override
+  String get radarTierWeak => 'Düşük';
+
+  @override
+  String get radarEmptyTitle => 'Şu an aşırı satımda coin yok';
+
+  @override
+  String get radarInfoTooltip => 'Radar nasıl çalışır';
+
+  @override
+  String get radarHowTitle => 'Radar nasıl çalışır';
+
+  @override
+  String get radarHowOversold =>
+      'Radar, aşırı satımda görünen coinleri listeler: RSI aşırı satım eşiğinin altında ve fiyat alt Bollinger bandının altına inmiştir. Düşüşün aşırı uzamış olabileceğine işaret edebilir.';
+
+  @override
+  String radarHowScore(
+    int strong,
+    int good,
+    int goodMax,
+    int watch,
+    int watchMax,
+  ) {
+    return 'Skor (0-100) coinin ne kadar aşırı satımda olduğunu gösterir: $strong+ Güçlü, $good-$goodMax İyi, $watch-$watchMax İzle, $watch altı Düşük. 70 üzeri skorlar nadirdir.';
+  }
+
+  @override
+  String get radarHowTerms =>
+      'Kısa, orta ve uzun vade farklı grafik zaman dilimleri kullanır. Vadene uygun olanı seç.';
+
+  @override
+  String get radarHowDisclaimer =>
+      'Radar teknik bir tarama aracıdır, yatırım tavsiyesi değildir. Aşırı satımdaki bir coin düşmeye devam edebilir; kendi araştırmanı yap.';
+
+  @override
+  String radarRsi(String v) {
+    return 'RSI $v';
+  }
+
+  @override
+  String radarScoreSemantics(int score, String tier) {
+    return 'Skor $score / 100, $tier';
+  }
+
+  @override
   String get watchlistEmpty => 'Henüz takip ettiğin bir coin yok';
 
   @override
