@@ -12,7 +12,7 @@ import '../providers/live_chart_provider.dart';
 import '../providers/price_alert_provider.dart';
 import '../utils/price_alert_logic.dart';
 import '../widgets/pro_upsell_sheet.dart';
-import 'auth_screen.dart';
+import 'guest_benefits_screen.dart';
 import 'subscription_screen.dart';
 
 /// Explains that price alerts are a Pro feature and offers the upgrade.
@@ -29,7 +29,7 @@ Future<void> openPriceAlertFlow(
 }) async {
   final auth = ref.read(authProvider);
   if (!auth.isLoggedIn) {
-    showLoginRequiredSnackBar(context);
+    openGuestBenefits(context);
     return;
   }
   if (auth.member?.role != 'pro') {

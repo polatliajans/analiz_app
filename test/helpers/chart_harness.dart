@@ -115,15 +115,19 @@ class FakeKlines extends BinanceKlinesApi {
   }
 }
 
-class _FakeSignals extends ChartSignalApi {
+class FakeSignals extends ChartSignalApi {
   List<ChartSignal> data = chartTestSignals();
+  int calls = 0;
 
   @override
   Future<List<ChartSignal>> fetchSignals({
     required int coinId,
     required String timeframe,
     String? token,
-  }) async => data;
+  }) async {
+    calls++;
+    return data;
+  }
 }
 
 class FakeStream implements KlineStream {
@@ -215,6 +219,7 @@ class ChartHarness {
   final FakeAlertsApi alerts;
   final FakeStream stream;
   final FakeKlines klines;
+  final FakeSignals signals;
   ChartHarness(
     this.container,
     this.overview,
@@ -222,6 +227,7 @@ class ChartHarness {
     this.alerts,
     this.stream,
     this.klines,
+    this.signals,
   );
 }
 
@@ -252,6 +258,7 @@ Future<ChartHarness> pumpChartScreen(
   final alertsApi = FakeAlertsApi(alerts ?? () async => const PriceAlertList());
   final stream = FakeStream();
   final klines = FakeKlines();
+  final signalsApi = FakeSignals();
 
   final container = ProviderContainer(
     // No automatic retries: error states must stay put in tests.
@@ -261,7 +268,7 @@ Future<ChartHarness> pumpChartScreen(
       authProvider.overrideWith(() => _FakeAuthChart(member)),
       selectedCoinProvider.overrideWith(() => _FakeSelectedCoin(coin)),
       binanceKlinesApiProvider.overrideWithValue(klines),
-      chartSignalApiProvider.overrideWithValue(_FakeSignals()),
+      chartSignalApiProvider.overrideWithValue(signalsApi),
       klineStreamProvider.overrideWithValue(stream),
       coinOverviewApiProvider.overrideWithValue(overviewApi),
       analysisHistoryApiProvider.overrideWithValue(historyApi),
@@ -304,6 +311,7 @@ Future<ChartHarness> pumpChartScreen(
     alertsApi,
     stream,
     klines,
+    signalsApi,
   );
 }
 

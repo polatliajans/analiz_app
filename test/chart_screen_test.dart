@@ -10,6 +10,7 @@ import 'package:kriptoanaliz/models/coin_overview.dart';
 import 'package:kriptoanaliz/models/price_alert.dart';
 import 'package:kriptoanaliz/models/structured_analysis.dart';
 import 'package:kriptoanaliz/providers/coin_overview_provider.dart';
+import 'package:kriptoanaliz/screens/guest_benefits_screen.dart';
 import 'package:kriptoanaliz/screens/price_alert_sheet.dart';
 import 'package:kriptoanaliz/utils/price_alert_logic.dart';
 import 'package:kriptoanaliz/widgets/pro_upsell_sheet.dart';
@@ -190,19 +191,23 @@ void main() {
   });
 
   group('analysis buttons keep working', () {
-    testWidgets('guest quick analysis asks to log in', (tester) async {
+    testWidgets('guest quick analysis opens the sign-in benefits', (
+      tester,
+    ) async {
       await pumpChartScreen(tester, member: null);
       await tester.tap(find.byKey(const Key('quick-analysis-button')));
-      await tester.pump();
-      expect(find.text('You need to log in'), findsOneWidget);
+      await tester.pumpAndSettle();
+      expect(find.byType(GuestBenefitsScreen), findsOneWidget);
       await disposeChartScreen(tester);
     });
 
-    testWidgets('guest deep analysis asks to log in', (tester) async {
+    testWidgets('guest deep analysis opens the sign-in benefits', (
+      tester,
+    ) async {
       await pumpChartScreen(tester, member: null);
       await tester.tap(find.byKey(const Key('deep-analysis-button')));
-      await tester.pump();
-      expect(find.text('You need to log in'), findsOneWidget);
+      await tester.pumpAndSettle();
+      expect(find.byType(GuestBenefitsScreen), findsOneWidget);
       await disposeChartScreen(tester);
     });
 

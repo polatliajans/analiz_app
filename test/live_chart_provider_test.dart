@@ -82,9 +82,18 @@ class _FakeSignals extends ChartSignalApi {
   }
 }
 
+/// Whether new [_Setup]s start with a signed-in free member (guests never
+/// request signals).
+bool _startSignedIn = true;
+
 class _FakeAuth extends AuthNotifier {
   @override
-  AuthState build() => const AuthState();
+  AuthState build() => _startSignedIn
+      ? const AuthState(
+          token: 't-user',
+          member: Member(id: 1, email: 'a@b.c', role: 'user', creditBalance: 0),
+        )
+      : const AuthState();
 
   void signIn(String role) => state = AuthState(
     token: 't-$role',
@@ -124,7 +133,8 @@ class _Setup {
   final stream = _FakeStream();
   late final ProviderContainer container;
 
-  _Setup() {
+  _Setup({bool signedIn = true}) {
+    _startSignedIn = signedIn;
     container = ProviderContainer(
       overrides: [
         binanceKlinesApiProvider.overrideWithValue(klines),
@@ -174,7 +184,7 @@ void main() {
     expect(s.state.price, 11);
     expect(s.stream.connects, 1);
     expect(s.signals.calls, 1);
-    expect(s.state.signals.length, 1);
+    expect(s.state.signals.length, 2);
 
     s.stream.current!.add(_u(60, 12));
     await tester.pump();
@@ -207,8 +217,8 @@ void main() {
     final s = _Setup();
     await tester.pump();
     await tester.pump();
-    expect(s.signals.lastToken, isNull);
-    expect(s.state.signals.length, 1);
+    expect(s.signals.lastToken, 't-user');
+    expect(s.state.signals.length, 2);
 
     final auth = s.container.read(authProvider.notifier) as _FakeAuth;
     auth.signIn('pro');
@@ -217,11 +227,24 @@ void main() {
     expect(s.signals.lastToken, 't-pro');
     expect(s.state.signals.map((x) => x.strength), contains(3));
 
+    final callsSignedIn = s.signals.calls;
     auth.signOut();
     await tester.pump();
     await tester.pump();
-    expect(s.signals.lastToken, isNull);
-    expect(s.state.signals.map((x) => x.strength), isNot(contains(3)));
+    expect(s.signals.calls, callsSignedIn, reason: 'guests never call');
+    expect(s.state.signals, isEmpty);
+    s.container.dispose();
+  });
+
+  testWidgets('guests never request signals', (tester) async {
+    final s = _Setup(signedIn: false);
+    await tester.pump();
+    await tester.pump();
+    expect(s.state.candles, isNotEmpty);
+    expect(s.signals.calls, 0);
+    expect(s.state.signals, isEmpty);
+    await tester.pump(signalRefreshInterval);
+    expect(s.signals.calls, 0);
     s.container.dispose();
   });
 
@@ -294,7 +317,7 @@ void main() {
     s.signals.fail = true;
     await tester.pump(signalRefreshInterval);
     expect(s.signals.calls, 2);
-    expect(s.state.signals.length, 1);
+    expect(s.state.signals.length, 2);
     s.container.dispose();
   });
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../screens/glossary_screen.dart';
+import '../../screens/guest_benefits_screen.dart';
 import '../../theme/app_theme.dart';
 
 /// True when the user's text scale makes side-by-side layouts too tight.
@@ -110,6 +111,33 @@ class TabMessage extends StatelessWidget {
           ],
           if (action != null) ...[const SizedBox(height: 12), action!],
         ],
+      ),
+    );
+  }
+}
+
+/// Clean locked state of a tab that needs an account: one line and a sign-in
+/// button that opens the "what you can do after signing in" page.
+class GuestLockedTab extends StatelessWidget {
+  final IconData icon;
+  final String title;
+
+  const GuestLockedTab({
+    super.key,
+    this.icon = Icons.lock_outline,
+    required this.title,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return TabMessage(
+      key: const Key('guest-locked-tab'),
+      icon: icon,
+      title: title,
+      action: FilledButton(
+        onPressed: () => openGuestBenefits(context),
+        child: Text(l10n.logIn),
       ),
     );
   }

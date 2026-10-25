@@ -394,6 +394,8 @@ class LiveChartController extends Notifier<LiveChartState> {
 
   Future<List<ChartSignal>?> _fetchSignals() async {
     if (!supportsSignals(params.timeframe)) return const [];
+    // Signals are a member feature: guests never call the endpoint.
+    if (ref.read(authProvider).token == null) return const [];
     try {
       return await ref
           .read(chartSignalApiProvider)

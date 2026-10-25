@@ -7,7 +7,6 @@ import '../../models/price_alert.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/chart_data_provider.dart';
 import '../../providers/price_alert_provider.dart';
-import '../../screens/auth_screen.dart';
 import '../../screens/price_alert_sheet.dart';
 import 'tab_widgets.dart';
 
@@ -26,13 +25,9 @@ class AlertsTab extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final auth = ref.watch(authProvider);
     if (!auth.isLoggedIn) {
-      return TabMessage(
+      return GuestLockedTab(
         icon: Icons.notifications_none,
         title: l10n.alTabLoginHint,
-        action: FilledButton(
-          onPressed: () => openAuthScreen(context),
-          child: Text(l10n.logIn),
-        ),
       );
     }
     if (!ref.watch(isProProvider)) {

@@ -7,7 +7,6 @@ import '../../models/coin.dart';
 import '../../providers/analysis_history_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/coin_overview_provider.dart';
-import '../../screens/auth_screen.dart';
 import '../../utils/overview_format.dart';
 import '../../utils/structured_analysis_logic.dart';
 import '../analysis_card.dart';
@@ -43,14 +42,7 @@ class AnalysesTab extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final loggedIn = ref.watch(authProvider.select((s) => s.isLoggedIn));
     if (!loggedIn) {
-      return TabMessage(
-        icon: Icons.lock_outline,
-        title: l10n.coAnalysesLoginHint,
-        action: FilledButton(
-          onPressed: () => openAuthScreen(context),
-          child: Text(l10n.logIn),
-        ),
-      );
+      return GuestLockedTab(title: l10n.coAnalysesLoginHint);
     }
     final async = ref.watch(analysisHistoryProvider(coin.id));
     final records = async.value;

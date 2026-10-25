@@ -6,6 +6,7 @@ import '../../l10n/app_localizations.dart';
 import '../../models/candle.dart';
 import '../../models/chart_signal.dart';
 import '../../providers/app_config_provider.dart';
+import '../../providers/auth_provider.dart';
 import '../../providers/chart_data_provider.dart';
 import '../../providers/live_chart_provider.dart';
 import '../../theme/app_theme.dart';
@@ -47,6 +48,9 @@ class SignalsTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
+    if (!ref.watch(authProvider.select((a) => a.isLoggedIn))) {
+      return GuestLockedTab(icon: Icons.show_chart, title: l10n.sgGuestHint);
+    }
     if (!supportsSignals(params.timeframe)) {
       return TabMessage(icon: Icons.show_chart, title: l10n.sgUnsupported);
     }

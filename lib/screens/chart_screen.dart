@@ -34,9 +34,10 @@ import '../widgets/chart_tabs/tab_widgets.dart';
 import '../widgets/email_verification_banner.dart';
 import '../widgets/insufficient_credit_dialog.dart';
 import '../widgets/pro_upsell_sheet.dart';
-import 'auth_screen.dart';
 import 'coin_picker_sheet.dart';
+import 'guest_benefits_screen.dart';
 import 'price_alert_sheet.dart';
+import 'subscription_screen.dart';
 
 /// Home chart tab: shows the coin held by [selectedCoinProvider].
 class ChartScreen extends ConsumerStatefulWidget {
@@ -159,7 +160,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
     final l10n = AppLocalizations.of(context)!;
     final auth = ref.read(authProvider);
     if (!auth.isLoggedIn) {
-      showLoginRequiredSnackBar(context);
+      openGuestBenefits(context);
       return;
     }
 
@@ -235,7 +236,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
     final l10n = AppLocalizations.of(context)!;
     final auth = ref.read(authProvider);
     if (!auth.isLoggedIn) {
-      showLoginRequiredSnackBar(context);
+      openGuestBenefits(context);
       return;
     }
     final gate = ref.read(featureGateProvider);
@@ -329,7 +330,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
     final l10n = AppLocalizations.of(context)!;
     final auth = ref.read(authProvider);
     if (!auth.isLoggedIn) {
-      showLoginRequiredSnackBar(context);
+      openGuestBenefits(context);
       return;
     }
     if (ref.read(deepAnalysisProvider).isBusy) return;
@@ -418,6 +419,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
     }
 
     final gate = ref.watch(featureGateProvider);
+    final loggedIn = ref.watch(authProvider.select((a) => a.isLoggedIn));
     final timeframe = gate.effectiveTimeframe(ref.watch(timeframeProvider));
     final params = ChartDataParams(coin: coin, timeframe: timeframe);
     final textTheme = Theme.of(context).textTheme;
@@ -501,7 +503,12 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
                           padding: const EdgeInsets.symmetric(horizontal: 2),
                           selected: tf == timeframe,
                           onSelected: (_) => locked
-                              ? showProUpsell(context, ProFeature.timeframe)
+                              ? (loggedIn
+                                    ? showProUpsell(
+                                        context,
+                                        ProFeature.timeframe,
+                                      )
+                                    : openGuestBenefits(context))
                               : ref.read(timeframeProvider.notifier).select(tf),
                         );
                       },
@@ -512,8 +519,13 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
                     height: chartHeight,
                     child: _LiveChart(params: params),
                   ),
-                  if (supportsSignals(timeframe) && gate.showStrongSignalsNote)
-                    _buildStrongSignalsNote(l10n, textTheme),
+                  _buildSignalsInfoRow(
+                    l10n,
+                    textTheme,
+                    gate: gate,
+                    loggedIn: loggedIn,
+                    timeframe: timeframe,
+                  ),
                 ],
               ),
             ),
@@ -565,6 +577,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
     switch (ChartTab.values[_tabs.index]) {
       case ChartTab.summary:
       case ChartTab.market:
+        if (!ref.read(authProvider).isLoggedIn) return;
         await ref
             .read(coinOverviewProvider(coin.id).notifier)
             .load(force: true);
@@ -663,25 +676,55 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
     );
   }
 
-  Widget _buildStrongSignalsNote(AppLocalizations l10n, TextTheme textTheme) {
+  /// One line BELOW the chart (never on the canvas) that explains what the
+  /// signals need: guests are pointed at signing in, Free members at Pro, Pro
+  /// members see nothing.
+  Widget _buildSignalsInfoRow(
+    AppLocalizations l10n,
+    TextTheme textTheme, {
+    required FeatureGate gate,
+    required bool loggedIn,
+    required String timeframe,
+  }) {
+    final String text;
+    final VoidCallback onTap;
+    if (!loggedIn) {
+      if (!supportsSignals(timeframe)) return const SizedBox.shrink();
+      text = l10n.signalsGuestNote;
+      onTap = () => openGuestBenefits(context);
+    } else if (gate.isPro || !gate.showStrongSignalsNote) {
+      return const SizedBox.shrink();
+    } else {
+      text = l10n.strongSignalsProNote;
+      onTap = () => Navigator.of(
+        context,
+      ).push(MaterialPageRoute(builder: (_) => const SubscriptionScreen()));
+    }
     final muted = Theme.of(context).colorScheme.onSurfaceVariant;
     return InkWell(
-      onTap: () => showProUpsell(context, ProFeature.strongSignals),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.lock_outline, size: 12, color: muted),
-            const SizedBox(width: 4),
-            Flexible(
-              child: Text(
-                l10n.strongSignalsProNote,
-                style: textTheme.labelSmall?.copyWith(color: muted),
-                overflow: TextOverflow.ellipsis,
+      key: const Key('signals-info-row'),
+      onTap: onTap,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 32),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.info_outline, size: 14, color: muted),
+              const SizedBox(width: 6),
+              Flexible(
+                child: Text(
+                  text,
+                  style: textTheme.labelSmall?.copyWith(color: muted),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-            ),
-          ],
+              Icon(Icons.chevron_right, size: 16, color: muted),
+            ],
+          ),
         ),
       ),
     );
@@ -719,7 +762,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
       icon: Icon(isFollowed ? Icons.star : Icons.star_border),
       onPressed: () async {
         if (!auth.isLoggedIn) {
-          showLoginRequiredSnackBar(context);
+          openGuestBenefits(context);
           return;
         }
         final gate = ref.read(featureGateProvider);
@@ -837,9 +880,14 @@ class _LiveChart extends ConsumerWidget {
       }
     }
 
+    // Nothing about signals is ever drawn for guests; Free members get exactly
+    // the (capped) signals the server returned.
+    final loggedIn = ref.watch(authProvider.select((a) => a.isLoggedIn));
     return CandlestickChart(
       candles: live.candles,
-      signals: ref.watch(featureGateProvider).visibleSignals(live.signals),
+      signals: loggedIn
+          ? ref.watch(featureGateProvider).visibleSignals(live.signals)
+          : const [],
       timeframeMs: timeframeMs[params.timeframe]!,
     );
   }

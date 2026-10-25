@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../models/coin_overview.dart';
+import '../../providers/auth_provider.dart';
 import '../../providers/coin_overview_provider.dart';
 import 'tab_widgets.dart';
 
@@ -24,7 +25,8 @@ class _OverviewBodyState extends ConsumerState<OverviewBody> {
   void initState() {
     super.initState();
     Future.microtask(() {
-      if (mounted) {
+      // The overview endpoint is member-only: guests never request it.
+      if (mounted && ref.read(authProvider).isLoggedIn) {
         ref.read(coinOverviewProvider(widget.coinId).notifier).load();
       }
     });
@@ -32,6 +34,12 @@ class _OverviewBodyState extends ConsumerState<OverviewBody> {
 
   @override
   Widget build(BuildContext context) {
+    if (!ref.watch(authProvider.select((a) => a.isLoggedIn))) {
+      return GuestLockedTab(
+        icon: Icons.insights_outlined,
+        title: AppLocalizations.of(context)!.ovGuestHint,
+      );
+    }
     final state = ref.watch(coinOverviewProvider(widget.coinId));
     final notifier = ref.read(coinOverviewProvider(widget.coinId).notifier);
     if (state.isFatalError) return TabError(onRetry: notifier.retry);
