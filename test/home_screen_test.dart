@@ -182,7 +182,7 @@ void main() {
     expect(find.text('CPI release'), findsOneWidget);
 
     expect(find.text('Term of the day'), findsOneWidget);
-    expect(find.text('Go further with Pro'), findsOneWidget);
+    expect(find.text('Upgrade to Pro'), findsOneWidget);
     expect(find.textContaining('not investment advice'), findsOneWidget);
     expect(find.textContaining('Alternative.me'), findsOneWidget);
     expect(find.text(fredDisclaimer), findsOneWidget);
@@ -199,6 +199,7 @@ void main() {
     double y(String t) => tester.getTopLeft(find.text(t)).dy;
     final order = [
       y('Ayse'),
+      y('Upgrade to Pro'),
       y('Fear & Greed'),
       y('Market'),
       y('My watchlist'),
@@ -206,7 +207,6 @@ void main() {
       y('Your latest deep analysis'),
       y('Upcoming events'),
       y('Learn'),
-      y('Go further with Pro'),
     ];
     final sorted = [...order]..sort();
     expect(order, sorted);
@@ -217,7 +217,7 @@ void main() {
     await _pump(tester, handler: _ok(json));
     expect(find.text('Pro'), findsOneWidget);
     expect(find.text('300 credits'), findsOneWidget);
-    expect(find.text('Go further with Pro'), findsNothing);
+    expect(find.text('Upgrade to Pro'), findsNothing);
   });
 
   testWidgets('empty data shows friendly empty states and hides events', (
@@ -306,9 +306,11 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('Log in / Sign up'), findsOneWidget);
-    expect(find.text('Fear & Greed'), findsNothing);
+    // Public data, not the token-bound request.
+    expect(find.text('Fear & Greed'), findsOneWidget);
     expect(find.text('Learn'), findsOneWidget);
     expect(h.api.calls, 0);
+    expect(h.api.publicCalls, 1);
   });
 
   group('navigation', () {

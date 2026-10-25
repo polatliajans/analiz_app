@@ -292,7 +292,12 @@ class _BandChip extends StatelessWidget {
 
 class HomeGuestCard extends StatelessWidget {
   final VoidCallback onLogin;
-  const HomeGuestCard({super.key, required this.onLogin});
+  final VoidCallback onBenefits;
+  const HomeGuestCard({
+    super.key,
+    required this.onLogin,
+    required this.onBenefits,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -326,6 +331,14 @@ class HomeGuestCard extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             FilledButton(onPressed: onLogin, child: Text(l10n.logInOrSignUp)),
+            TextButton(
+              key: const ValueKey('guest-card-benefits'),
+              onPressed: onBenefits,
+              style: TextButton.styleFrom(
+                foregroundColor: theme.colorScheme.onPrimaryContainer,
+              ),
+              child: Text(l10n.homeLockedAction, textAlign: TextAlign.center),
+            ),
           ],
         ),
       ),
@@ -877,6 +890,82 @@ class LearnCard extends StatelessWidget {
   }
 }
 
+// ---------------------------------------------------------------- Locked
+
+/// A member-only section shown to guests in place of its content: same card
+/// frame as the real section, a one-line explanation and a tap target that
+/// leads to the "what you can do after signing in" page.
+class HomeLockedCard extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final String message;
+  final VoidCallback onTap;
+
+  const HomeLockedCard({
+    super.key,
+    required this.title,
+    required this.icon,
+    required this.message,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    return Semantics(
+      button: true,
+      label: '$title, $message',
+      excludeSemantics: true,
+      onTap: onTap,
+      child: Card(
+        margin: EdgeInsets.zero,
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(icon, size: 20, color: theme.colorScheme.primary),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    Icon(
+                      Icons.lock_outline,
+                      size: 18,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                _MutedText(message),
+                const SizedBox(height: 6),
+                Text(
+                  l10n.homeLockedAction,
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    color: theme.colorScheme.primary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 // ----------------------------------------------------------------- Promo
 
 class ProPromoCard extends StatelessWidget {
@@ -887,38 +976,82 @@ class ProPromoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-    return Card(
-      margin: EdgeInsets.zero,
-      color: scheme.primaryContainer,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Semantics(
-              header: true,
-              child: Text(
-                l10n.homeProPromoTitle,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: scheme.onPrimaryContainer,
-                ),
+    return Semantics(
+      button: true,
+      label: '${l10n.homeProPromoTitle}. ${l10n.homeProPromoAction}',
+      excludeSemantics: true,
+      onTap: onTap,
+      child: Material(
+        borderRadius: BorderRadius.circular(16),
+        clipBehavior: Clip.antiAlias,
+        child: Ink(
+          // Same deepened brand gradient as the Pro page hero.
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFF0A8F70), Color(0xFF1B4FC9)],
+            ),
+          ),
+          child: InkWell(
+            onTap: onTap,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(
+                    Icons.workspace_premium_rounded,
+                    size: 32,
+                    color: Color(0xFFFFD54F),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.homeProPromoTitle,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          l10n.homeProPromoBody,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: Colors.white.withValues(alpha: 0.92),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                l10n.homeProPromoAction,
+                                style: theme.textTheme.labelLarge?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            const Icon(
+                              Icons.arrow_forward_rounded,
+                              size: 18,
+                              color: Colors.white,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 6),
-            Text(
-              l10n.homeProPromoBody,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: scheme.onPrimaryContainer,
-              ),
-            ),
-            const SizedBox(height: 12),
-            FilledButton.tonal(
-              onPressed: onTap,
-              child: Text(l10n.homeProPromoAction),
-            ),
-          ],
+          ),
         ),
       ),
     );

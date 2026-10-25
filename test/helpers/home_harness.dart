@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kriptoanaliz/data/home_api.dart';
 import 'package:kriptoanaliz/l10n/app_localizations.dart';
@@ -47,6 +48,8 @@ Future<HomeHarness> pumpHome(
   Size size = const Size(360, 3600),
   EdgeInsets padding = EdgeInsets.zero,
   EdgeInsets viewInsets = EdgeInsets.zero,
+  List<Override> extraOverrides = const [],
+  Override? guestMarket,
 }) async {
   SharedPreferences.setMockInitialValues(prefs);
   final p = await SharedPreferences.getInstance();
@@ -60,11 +63,12 @@ Future<HomeHarness> pumpHome(
       sharedPreferencesProvider.overrideWithValue(p),
       authProvider.overrideWith(() => FakeAuth(member)),
       homeApiProvider.overrideWithValue(api),
-      guestMarketProvider.overrideWith((ref) async => null),
+      guestMarket ?? guestMarketProvider.overrideWith((ref) async => null),
       homeClockProvider.overrideWithValue(() => homeTestNow),
       coinApiProvider.overrideWithValue(
         FakeCoinApi([testCoin(1, 'BTCUSDT'), testCoin(7, 'ETHUSDT')]),
       ),
+      ...extraOverrides,
     ],
   );
   addTearDown(container.dispose);

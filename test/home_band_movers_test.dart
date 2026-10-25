@@ -235,9 +235,26 @@ void main() {
       expect(h.container.read(homeTabProvider), chartTabIndex);
     });
 
-    testWidgets('not shown to guests', (tester) async {
+    testWidgets('guests get them too, account-only ones locked', (
+      tester,
+    ) async {
       await pumpHome(tester, handler: okHome(fullHomeJson()), member: null);
-      expect(find.byKey(const ValueKey('quick-radar')), findsNothing);
+      expect(find.byKey(const ValueKey('quick-radar')), findsOneWidget);
+      expect(find.byKey(const ValueKey('quick-glossary')), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('quick-deep')),
+          matching: find.byIcon(Icons.lock_outline),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('quick-radar')),
+          matching: find.byIcon(Icons.lock_outline),
+        ),
+        findsNothing,
+      );
     });
   });
 

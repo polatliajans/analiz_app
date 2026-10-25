@@ -292,11 +292,15 @@ class HomeQuickAction {
   final VoidCallback onTap;
   final Key? key;
 
+  /// Needs an account: drawn with a small lock for guests.
+  final bool locked;
+
   const HomeQuickAction({
     required this.icon,
     required this.label,
     required this.onTap,
     this.key,
+    this.locked = false,
   });
 }
 
@@ -338,18 +342,42 @@ class HomeQuickActions extends StatelessWidget {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Container(
-                              width: 44,
-                              height: 44,
-                              decoration: BoxDecoration(
-                                color: theme.colorScheme.secondaryContainer,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                actions[i].icon,
-                                size: 22,
-                                color: theme.colorScheme.onSecondaryContainer,
-                              ),
+                            Stack(
+                              clipBehavior: Clip.none,
+                              children: [
+                                Container(
+                                  width: 44,
+                                  height: 44,
+                                  decoration: BoxDecoration(
+                                    color: theme.colorScheme.secondaryContainer,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    actions[i].icon,
+                                    size: 22,
+                                    color:
+                                        theme.colorScheme.onSecondaryContainer,
+                                  ),
+                                ),
+                                if (actions[i].locked)
+                                  Positioned(
+                                    right: -2,
+                                    bottom: -2,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(3),
+                                      decoration: BoxDecoration(
+                                        color: theme.colorScheme.surface,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Icon(
+                                        Icons.lock_outline,
+                                        size: 12,
+                                        color:
+                                            theme.colorScheme.onSurfaceVariant,
+                                      ),
+                                    ),
+                                  ),
+                              ],
                             ),
                             const SizedBox(height: 4),
                             Text(

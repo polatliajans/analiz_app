@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/ticker_api.dart';
 import '../models/home_data.dart';
 import '../utils/stable_pairs.dart';
+import 'home_provider.dart';
 import 'live_tickers_provider.dart';
 
 /// Pairs below this 24h USDT turnover are ignored for the gainers / losers
@@ -56,8 +57,29 @@ HomeData? buildGuestMarket(Map<String, TickerQuote> quotes) {
   return HomeData(market: market, marketMovers: movers.isEmpty ? null : movers);
 }
 
-/// Market data for the guest home. Throws when the ticker cannot be fetched
-/// so the screen can offer a retry.
+/// Whether a public `/home` payload has something worth showing.
+bool hasPublicHomeContent(HomeData d) =>
+    d.market != null ||
+    d.radar.isNotEmpty ||
+    d.events.isNotEmpty ||
+    !(d.marketMovers?.isEmpty ?? true);
+
+/// Data for the guest home: the public `/home` endpoint (same sections as the
+/// signed-in page), falling back to the exchange ticker when the endpoint is
+/// unavailable (old server answering 401, offline, empty payload). Throws only
+/// when both fail so the screen can offer a retry.
+final guestHomeProvider = FutureProvider.autoDispose<HomeData?>((ref) async {
+  try {
+    final r = await ref.read(homeApiProvider).fetchPublic();
+    if (hasPublicHomeContent(r.data)) return r.data;
+  } catch (_) {
+    // Fall through to the ticker.
+  }
+  return ref.read(guestMarketProvider.future);
+}, retry: (_, _) => null);
+
+/// Market data built from the Binance ticker: the automatic fallback of
+/// [guestHomeProvider]. Throws when the ticker cannot be fetched.
 final guestMarketProvider = FutureProvider.autoDispose<HomeData?>(
   (ref) async {
     final quotes = await ref.read(tickerApiProvider).fetchAll('spot');

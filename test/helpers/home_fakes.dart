@@ -150,11 +150,21 @@ class FakeHomeApi extends HomeApi {
 
   FakeHomeApi(this.handler);
 
+  /// Calls of the public (token-less) variant used by guests.
+  int publicCalls = 0;
+  Future<HomeResponse> Function()? publicHandler;
+
   @override
   Future<HomeResponse> fetch(String token) {
     calls++;
     lastToken = token;
     return handler();
+  }
+
+  @override
+  Future<HomeResponse> fetchPublic() {
+    publicCalls++;
+    return (publicHandler ?? handler)();
   }
 }
 

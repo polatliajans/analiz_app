@@ -20,11 +20,21 @@ class HomeResponse {
 }
 
 class HomeApi {
-  Future<HomeResponse> fetch(String token) async {
+  Future<HomeResponse> fetch(String token) => _get(token);
+
+  /// The public variant of the page (no token): market, events, radar and
+  /// market movers are filled, the member-only parts are empty. An old server
+  /// answers 401, which callers treat as "not available".
+  Future<HomeResponse> fetchPublic() => _get(null);
+
+  Future<HomeResponse> _get(String? token) async {
     final uri = Uri.parse('${ApiConfig.baseUrl}/home');
     final response = await ApiHttp.get(
       uri,
-      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
+      headers: {
+        'Accept': 'application/json',
+        if (token != null) 'Authorization': 'Bearer $token',
+      },
     ).timeout(const Duration(seconds: 15));
 
     if (response.statusCode != 200) {

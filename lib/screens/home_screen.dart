@@ -19,6 +19,7 @@ import '../widgets/home/market_movers_card.dart';
 import '../widgets/home/market_pulse_row.dart';
 import 'alarms_screen.dart';
 import 'auth_screen.dart';
+import 'guest_benefits_screen.dart';
 import 'credit_packages_screen.dart';
 import 'glossary_screen.dart';
 import 'subscription_screen.dart';
@@ -47,6 +48,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         // Only while the app is in the foreground and this tab is the visible one.
         if (!mounted || !_appResumed) return;
         if (ref.read(homeTabProvider) != homeTabIndex) return;
+        if (!ref.read(authProvider).isLoggedIn) {
+          ref.invalidate(guestHomeProvider);
+          return;
+        }
         ref.read(homeProvider.notifier).refresh();
       });
     }
@@ -128,39 +133,90 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     return l10n.homeStaleNote(relativeAgo(l10n, at, now));
   }
 
-  /// Restricted guest home: sign-in prompt, public market data, learn card.
-  void _addGuestSections(List<Widget> children, DateTime now) {
+  void _openBenefits() => openGuestBenefits(context);
+
+  /// The data-driven sections, in the same order for members and guests.
+  /// For guests the member-only ones (watchlist, last analysis) are replaced
+  /// by locked cards that lead to the benefits page.
+  void _addDataSections(
+    List<Widget> children,
+    AppLocalizations l10n,
+    HomeData data,
+    DateTime now, {
+    required bool guest,
+  }) {
     const gap = SizedBox(height: 12);
-    final market = ref.watch(guestMarketProvider);
-    children
-      ..add(HomeGuestCard(onLogin: () => openAuthScreen(context)))
-      ..add(gap);
-    market.when(
-      loading: () => children.add(const HomeSkeleton()),
-      error: (_, _) => children.add(
-        HomeErrorCard(onRetry: () => ref.invalidate(guestMarketProvider)),
-      ),
-      data: (data) {
-        children
-          ..add(MarketPulseRow(market: data?.market))
-          ..add(gap);
-        final mm = data?.marketMovers;
-        if (mm != null && !mm.isEmpty) {
-          children
-            ..add(
-              MarketMoversCard(
-                movers: mm,
-                onTap: (m) => _openChart(
-                  coinId: m.coinId,
-                  symbol: m.symbol,
-                  marketType: m.marketType,
-                ),
-              ),
-            )
-            ..add(gap);
-        }
-      },
+    void open(m) => _openChart(
+      coinId: m.coinId,
+      symbol: m.symbol,
+      marketType: m.marketType,
     );
+    children
+      ..add(MarketPulseRow(market: data.market))
+      ..add(gap);
+    final mm = data.marketMovers;
+    if (mm != null && !mm.isEmpty) {
+      children
+        ..add(MarketMoversCard(movers: mm, onTap: open))
+        ..add(gap);
+    }
+    children
+      ..add(
+        guest
+            ? HomeLockedCard(
+                key: const ValueKey('locked-watchlist'),
+                title: l10n.homeMoversTitle,
+                icon: Icons.star_outline,
+                message: l10n.homeLockedWatchlist,
+                onTap: _openBenefits,
+              )
+            : MoversCard(
+                movers: data.movers,
+                onTap: open,
+                onOpenWatchlist: () => ref
+                    .read(homeTabProvider.notifier)
+                    .select(watchlistTabIndex),
+              ),
+      )
+      ..add(gap)
+      ..add(
+        RadarCard(
+          signals: data.radar,
+          now: now,
+          onTap: (s) => _openChart(
+            coinId: s.coinId,
+            symbol: s.symbol,
+            marketType: s.marketType,
+            timeframe: s.timeframe,
+          ),
+        ),
+      )
+      ..add(gap)
+      ..add(
+        guest
+            ? HomeLockedCard(
+                key: const ValueKey('locked-analysis'),
+                title: l10n.homeAnalysisTitle,
+                icon: Icons.psychology_outlined,
+                message: l10n.homeLockedAnalysis,
+                onTap: _openBenefits,
+              )
+            : LastAnalysisCard(
+                analysis: data.lastAnalysis,
+                now: now,
+                onOpen: () {
+                  final a = data.lastAnalysis;
+                  if (a != null) _openLastAnalysis(a);
+                },
+                onNew: () =>
+                    ref.read(homeTabProvider.notifier).select(chartTabIndex),
+              ),
+      );
+    if (data.events.isNotEmpty) {
+      children
+        ..add(gap)
+        ..add(EventsCard(events: data.events, now: now));
+    }
   }
 
   @override
@@ -188,7 +244,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     void gap() => children.add(const SizedBox(height: 12));
 
     if (isGuest) {
-      _addGuestSections(children, now);
+      children.add(
+        HomeGuestCard(
+          onLogin: () => openAuthScreen(context),
+          onBenefits: _openBenefits,
+        ),
+      );
     } else {
       children.add(
         HomeHeader(
@@ -200,10 +261,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           onPro: () => _push(const SubscriptionScreen()),
         ),
       );
+      if (state.signedIn && !isPro) {
+        // Free members: a visible way to the Pro page, right below the band.
+        gap();
+        children.add(
+          ProPromoCard(
+            key: const ValueKey('home-pro-promo'),
+            onTap: () => _push(const SubscriptionScreen()),
+          ),
+        );
+      }
     }
     gap();
 
-    if (!isGuest && state.signedIn) {
+    if (isGuest || state.signedIn) {
       children.add(
         HomeQuickActions(
           actions: [
@@ -211,8 +282,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               key: const ValueKey('quick-deep'),
               icon: Icons.psychology_outlined,
               label: l10n.homeQuickDeep,
-              onTap: () =>
-                  ref.read(homeTabProvider.notifier).select(chartTabIndex),
+              locked: isGuest,
+              onTap: isGuest
+                  ? _openBenefits
+                  : () => ref
+                        .read(homeTabProvider.notifier)
+                        .select(chartTabIndex),
             ),
             HomeQuickAction(
               key: const ValueKey('quick-radar'),
@@ -225,7 +300,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               key: const ValueKey('quick-alerts'),
               icon: Icons.notifications_active_outlined,
               label: l10n.homeQuickAlerts,
-              onTap: () => _push(const AlarmsScreen()),
+              locked: isGuest,
+              onTap: isGuest
+                  ? _openBenefits
+                  : () => _push(const AlarmsScreen()),
             ),
             HomeQuickAction(
               key: const ValueKey('quick-glossary'),
@@ -240,7 +318,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     }
 
     if (isGuest) {
-      // Guest sections were added above; nothing member-specific below.
+      ref
+          .watch(guestHomeProvider)
+          .when(
+            loading: () => children.add(const HomeSkeleton()),
+            error: (_, _) => children.add(
+              HomeErrorCard(onRetry: () => ref.invalidate(guestHomeProvider)),
+            ),
+            data: (d) => _addDataSections(
+              children,
+              l10n,
+              d ?? HomeData.empty,
+              now,
+              guest: true,
+            ),
+          );
     } else if (state.showSkeleton) {
       children.add(const HomeSkeleton());
     } else if (data == null && state.signedIn) {
@@ -250,68 +342,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         ),
       );
     } else if (data != null) {
-      children
-        ..add(MarketPulseRow(market: data.market))
-        ..add(const SizedBox(height: 12));
-      final mm = data.marketMovers;
-      if (mm != null && !mm.isEmpty) {
-        children
-          ..add(
-            MarketMoversCard(
-              movers: mm,
-              onTap: (m) => _openChart(
-                coinId: m.coinId,
-                symbol: m.symbol,
-                marketType: m.marketType,
-              ),
-            ),
-          )
-          ..add(const SizedBox(height: 12));
-      }
-      children
-        ..add(
-          MoversCard(
-            movers: data.movers,
-            onTap: (m) => _openChart(
-              coinId: m.coinId,
-              symbol: m.symbol,
-              marketType: m.marketType,
-            ),
-            onOpenWatchlist: () =>
-                ref.read(homeTabProvider.notifier).select(watchlistTabIndex),
-          ),
-        )
-        ..add(const SizedBox(height: 12))
-        ..add(
-          RadarCard(
-            signals: data.radar,
-            now: now,
-            onTap: (s) => _openChart(
-              coinId: s.coinId,
-              symbol: s.symbol,
-              marketType: s.marketType,
-              timeframe: s.timeframe,
-            ),
-          ),
-        )
-        ..add(const SizedBox(height: 12))
-        ..add(
-          LastAnalysisCard(
-            analysis: data.lastAnalysis,
-            now: now,
-            onOpen: () {
-              final a = data.lastAnalysis;
-              if (a != null) _openLastAnalysis(a);
-            },
-            onNew: () =>
-                ref.read(homeTabProvider.notifier).select(chartTabIndex),
-          ),
-        );
-      if (data.events.isNotEmpty) {
-        children
-          ..add(const SizedBox(height: 12))
-          ..add(EventsCard(events: data.events, now: now));
-      }
+      _addDataSections(children, l10n, data, now, guest: false);
     }
 
     gap();
@@ -321,12 +352,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         onTap: () => openGlossary(context, termId: termOfTheDay(now).id),
       ),
     );
-    if (state.signedIn && !isPro) {
-      gap();
-      children.add(
-        ProPromoCard(onTap: () => _push(const SubscriptionScreen())),
-      );
-    }
     gap();
     children.add(const HomeFooter());
 
@@ -339,9 +364,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         child: RefreshIndicator(
           onRefresh: () {
             if (isGuest) {
-              ref.invalidate(guestMarketProvider);
+              ref.invalidate(guestHomeProvider);
               return ref
-                  .read(guestMarketProvider.future)
+                  .read(guestHomeProvider.future)
                   .then((_) {}, onError: (_) {});
             }
             return ref.read(homeProvider.notifier).refresh(force: true);

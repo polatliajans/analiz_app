@@ -25,6 +25,9 @@ class _LogoutAuth extends FakeAuth {
   Future<void> logout() async => state = const AuthState();
 }
 
+FakeHomeApi _oldServer() =>
+    FakeHomeApi(() => Future.error(Exception('HTTP 401')));
+
 Map<String, TickerQuote> _quotes() => {
   'BTCUSDT': const TickerQuote(
     lastPrice: 82000,
@@ -120,6 +123,8 @@ void main() {
         extra: [
           authProvider.overrideWith(() => FakeAuth(null)),
           homeAutoRefreshProvider.overrideWithValue(null),
+          // Old server: the public /home answers 401 -> ticker fallback.
+          homeApiProvider.overrideWithValue(_oldServer()),
           guestMarketProvider.overrideWith(
             (ref) async => buildGuestMarket(_quotes()),
           ),
@@ -140,8 +145,8 @@ void main() {
         findsWidgets,
         reason: 'movers visible',
       );
-      // No member-only clutter.
-      expect(find.byKey(const ValueKey('quick-deep')), findsNothing);
+      // Account-only parts are locked placeholders, not real content.
+      expect(find.byKey(const ValueKey('quick-deep')), findsOneWidget);
 
       await tester.drag(find.byType(ListView), const Offset(0, -4000));
       await tester.pumpAndSettle();
@@ -157,6 +162,7 @@ void main() {
       extra: [
         authProvider.overrideWith(() => FakeAuth(null)),
         homeAutoRefreshProvider.overrideWithValue(null),
+        homeApiProvider.overrideWithValue(_oldServer()),
         guestMarketProvider.overrideWith((ref) async => throw Exception('x')),
       ],
     );
