@@ -1358,16 +1358,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeMarketUnavailable => 'Market data is unavailable right now.';
 
   @override
-  String get homeMoversTitle => 'My watchlist';
-
-  @override
-  String get homeMoversEmpty =>
-      'Follow coins to see their biggest 24h moves here.';
-
-  @override
-  String get homeMoversEmptyAction => 'Open my watchlist';
-
-  @override
   String get homeRadarTitle => 'Latest signals from Radar';
 
   @override
@@ -2067,10 +2057,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeLockedAction => 'See what you get';
 
   @override
-  String get homeLockedWatchlist =>
-      'Log in to follow coins and see their moves here.';
-
-  @override
   String get homeLockedAnalysis =>
       'Log in to run AI analyses and find your latest one here.';
 
@@ -2083,4 +2069,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get signalsGuestNote => 'Sign in to see signals';
+
+  @override
+  String get adPrivacyOptions => 'Ad privacy options';
 }

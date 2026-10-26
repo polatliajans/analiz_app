@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../ads/native_home_slot.dart';
 import '../l10n/app_localizations.dart';
 import '../models/home_data.dart';
 import '../providers/analysis_history_provider.dart';
@@ -136,7 +137,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   void _openBenefits() => openGuestBenefits(context);
 
   /// The data-driven sections, in the same order for members and guests.
-  /// For guests the member-only ones (watchlist, last analysis) are replaced
+  /// For guests the member-only ones (last analysis) are replaced
   /// by locked cards that lead to the benefits page.
   void _addDataSections(
     List<Widget> children,
@@ -161,24 +162,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         ..add(gap);
     }
     children
-      ..add(
-        guest
-            ? HomeLockedCard(
-                key: const ValueKey('locked-watchlist'),
-                title: l10n.homeMoversTitle,
-                icon: Icons.star_outline,
-                message: l10n.homeLockedWatchlist,
-                onTap: _openBenefits,
-              )
-            : MoversCard(
-                movers: data.movers,
-                onTap: open,
-                onOpenWatchlist: () => ref
-                    .read(homeTabProvider.notifier)
-                    .select(watchlistTabIndex),
-              ),
-      )
-      ..add(gap)
+      ..add(const HomeNativeAdSlot())
       ..add(
         RadarCard(
           signals: data.radar,

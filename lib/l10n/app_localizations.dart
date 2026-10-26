@@ -2296,24 +2296,6 @@ abstract class AppLocalizations {
   /// **'Market data is unavailable right now.'**
   String get homeMarketUnavailable;
 
-  /// No description provided for @homeMoversTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'My watchlist'**
-  String get homeMoversTitle;
-
-  /// No description provided for @homeMoversEmpty.
-  ///
-  /// In en, this message translates to:
-  /// **'Follow coins to see their biggest 24h moves here.'**
-  String get homeMoversEmpty;
-
-  /// No description provided for @homeMoversEmptyAction.
-  ///
-  /// In en, this message translates to:
-  /// **'Open my watchlist'**
-  String get homeMoversEmptyAction;
-
   /// No description provided for @homeRadarTitle.
   ///
   /// In en, this message translates to:
@@ -3418,12 +3400,6 @@ abstract class AppLocalizations {
   /// **'See what you get'**
   String get homeLockedAction;
 
-  /// No description provided for @homeLockedWatchlist.
-  ///
-  /// In en, this message translates to:
-  /// **'Log in to follow coins and see their moves here.'**
-  String get homeLockedWatchlist;
-
   /// No description provided for @homeLockedAnalysis.
   ///
   /// In en, this message translates to:
@@ -3447,6 +3423,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sign in to see signals'**
   String get signalsGuestNote;
+
+  /// No description provided for @adPrivacyOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Ad privacy options'**
+  String get adPrivacyOptions;
 }
 
 class _AppLocalizationsDelegate

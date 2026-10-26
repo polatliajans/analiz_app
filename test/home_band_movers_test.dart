@@ -169,7 +169,7 @@ void main() {
       final json = fullHomeJson()..remove('market_movers');
       await pumpHome(tester, handler: okHome(json));
       expect(find.text('Gainers'), findsNothing);
-      expect(find.text('My watchlist'), findsOneWidget);
+      expect(find.text('My watchlist'), findsNothing);
       expect(tester.takeException(), isNull);
     });
 

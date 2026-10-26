@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -138,13 +136,9 @@ mixin NativeAdPoolHost<T extends ConsumerStatefulWidget> on ConsumerState<T> {
       _poolUnit = null;
       return null;
     }
-    // Never denser than the default, whatever the server asks for.
-    final frequency = math.max(
-      effectiveFrequency(
-        config.placement(nativePlacementKey)?.frequency,
-        defaultNativeFrequency,
-      ),
-      defaultNativeFrequency,
+    // Server value honored exactly (see nativeFrequencyFor).
+    final frequency = nativeFrequencyFor(
+      config.placement(nativePlacementKey)?.frequency,
     );
     final size = nativePoolSizeFor(frequency);
     if (_pool == null ||
@@ -169,7 +163,15 @@ class NativeAdRow extends StatelessWidget {
   final NativeAdPool pool;
   final int slot;
 
-  const NativeAdRow({super.key, required this.pool, required this.slot});
+  /// Space below the row, only while an ad is shown (none when collapsed).
+  final double bottomGap;
+
+  const NativeAdRow({
+    super.key,
+    required this.pool,
+    required this.slot,
+    this.bottomGap = 0,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -179,7 +181,7 @@ class NativeAdRow extends StatelessWidget {
         final ad = pool.adFor(slot);
         if (ad == null) return const SizedBox.shrink();
         final scheme = Theme.of(context).colorScheme;
-        return Container(
+        final row = Container(
           color: scheme.surfaceContainerLow,
           padding: const EdgeInsets.fromLTRB(12, 6, 12, 8),
           child: Column(
@@ -204,6 +206,12 @@ class NativeAdRow extends StatelessWidget {
             ],
           ),
         );
+        return bottomGap > 0
+            ? Padding(
+                padding: EdgeInsets.only(bottom: bottomGap),
+                child: row,
+              )
+            : row;
       },
     );
   }

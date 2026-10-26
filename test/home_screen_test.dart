@@ -161,9 +161,7 @@ void main() {
     expect(find.text('Bull'), findsOneWidget);
     expect(find.text('+1.02%'), findsWidgets);
 
-    expect(find.text('My watchlist'), findsOneWidget);
-    expect(find.text('DOGEUSDT'), findsOneWidget);
-    expect(find.text('-4.50%'), findsOneWidget);
+    expect(find.text('My watchlist'), findsNothing);
 
     expect(find.text('Latest signals from Radar'), findsOneWidget);
     expect(find.text('ETHUSDT'), findsOneWidget);
@@ -202,7 +200,6 @@ void main() {
       y('Upgrade to Pro'),
       y('Fear & Greed'),
       y('Market'),
-      y('My watchlist'),
       y('Latest signals from Radar'),
       y('Your latest deep analysis'),
       y('Upcoming events'),
@@ -225,11 +222,7 @@ void main() {
   ) async {
     await _pump(tester, handler: _ok(emptyHomeJson()));
     expect(find.text('Market data is unavailable right now.'), findsOneWidget);
-    expect(
-      find.text('Follow coins to see their biggest 24h moves here.'),
-      findsOneWidget,
-    );
-    expect(find.text('Open my watchlist'), findsOneWidget);
+    expect(find.text('Open my watchlist'), findsNothing);
     expect(find.text('No new radar signals right now.'), findsOneWidget);
     expect(
       find.textContaining('You have not run a deep analysis yet'),
@@ -340,25 +333,29 @@ void main() {
       expect(h.container.read(timeframeProvider), '1h');
     });
 
-    testWidgets('mover row opens chart and keeps the timeframe', (
+    testWidgets('radar row opens chart with the signal timeframe', (
       tester,
     ) async {
-      final h = await _pump(
-        tester,
-        handler: _ok(fullHomeJson()),
-        prefs: {lastTimeframeKey: '1d'},
-      );
-      await tester.tap(find.text('DOGEUSDT'));
+      final h = await _pump(tester, handler: _ok(fullHomeJson()));
+      await tester.tap(find.text('ETHUSDT'));
       await tester.pumpAndSettle();
       expect(h.container.read(homeTabProvider), chartTabIndex);
-      expect(h.container.read(selectedCoinProvider).value!.symbol, 'DOGEUSDT');
-      expect(h.container.read(timeframeProvider), '1d');
+      expect(h.container.read(selectedCoinProvider).value!.symbol, 'ETHUSDT');
+      expect(h.container.read(timeframeProvider), '4h');
     });
 
     testWidgets('unknown coin falls back to a bare coin', (tester) async {
       final json = fullHomeJson();
-      json['movers'] = [
-        {'coin_id': 555, 'symbol': 'NEWUSDT', 'market_type': 'spot'},
+      json['radar'] = [
+        {
+          'coin_id': 555,
+          'symbol': 'NEWUSDT',
+          'market_type': 'spot',
+          'timeframe': '4h',
+          'direction': 'buy',
+          'strength': 2,
+          'at': '2026-10-21T09:30:00Z',
+        },
       ];
       final h = await _pump(tester, handler: _ok(json));
       await tester.tap(find.text('NEWUSDT'));
@@ -374,13 +371,6 @@ void main() {
       await tester.tap(find.text('New analysis'));
       await tester.pumpAndSettle();
       expect(h.container.read(homeTabProvider), chartTabIndex);
-    });
-
-    testWidgets('empty movers action opens the watchlist tab', (tester) async {
-      final h = await _pump(tester, handler: _ok(emptyHomeJson()));
-      await tester.tap(find.text('Open my watchlist'));
-      await tester.pumpAndSettle();
-      expect(h.container.read(homeTabProvider), watchlistTabIndex);
     });
 
     testWidgets('last analysis opens the stored result', (tester) async {

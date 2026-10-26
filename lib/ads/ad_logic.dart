@@ -11,12 +11,14 @@ abstract final class AdPlacementKeys {
   static const bannerRadar = 'banner_radar';
   static const bannerWatchlist = 'banner_watchlist';
   static const nativeRadar = 'native_radar';
+  static const nativeHome = 'native_home';
   static const interstitialAnalysis = 'interstitial_analysis';
 
   static const all = [
     bannerRadar,
     bannerWatchlist,
     nativeRadar,
+    nativeHome,
     interstitialAnalysis,
   ];
 
@@ -29,6 +31,9 @@ abstract final class AdPlacementKeys {
 
 /// Content rows between native ads in the radar list.
 const defaultNativeFrequency = 10;
+
+/// Lowest radar native frequency honored (guards against nonsense values).
+const minNativeFrequency = 2;
 const defaultInterstitialFrequency = 3;
 const defaultInterstitialCooldownMinutes = 5;
 
@@ -67,6 +72,13 @@ String? activeUnitId(
 
 int effectiveFrequency(int? configured, int fallback) =>
     configured == null || configured <= 0 ? fallback : configured;
+
+/// Radar native ad frequency: the server value exactly (admin-managed), the
+/// default when it sends nothing, and never below [minNativeFrequency].
+int nativeFrequencyFor(int? configured) {
+  final f = effectiveFrequency(configured, defaultNativeFrequency);
+  return f < minNativeFrequency ? minNativeFrequency : f;
+}
 
 int effectiveCooldownMinutes(int? configured) =>
     configured == null || configured < 0

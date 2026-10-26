@@ -1326,16 +1326,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get homeMarketUnavailable => 'Piyasa verisi şu an alınamıyor.';
 
   @override
-  String get homeMoversTitle => 'Takip listem';
-
-  @override
-  String get homeMoversEmpty =>
-      'Coin takip et; 24 saatteki en büyük hareketler burada görünsün.';
-
-  @override
-  String get homeMoversEmptyAction => 'Takip listeme git';
-
-  @override
   String get homeRadarTitle => 'Radar\'dan son sinyaller';
 
   @override
@@ -2001,10 +1991,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get homeLockedAction => 'Neler kazandığını gör';
 
   @override
-  String get homeLockedWatchlist =>
-      'Coin takip etmek ve hareketlerini burada görmek için giriş yap.';
-
-  @override
   String get homeLockedAnalysis =>
       'Yapay zeka analizi yapmak ve son analizini burada görmek için giriş yap.';
 
@@ -2017,4 +2003,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get signalsGuestNote => 'Sinyalleri görmek için giriş yap';
+
+  @override
+  String get adPrivacyOptions => 'Reklam gizliliği seçenekleri';
 }

@@ -403,9 +403,6 @@
   "homeRegimeSideways": "Lateral",
   "homeRegimeUnknown": "Incierto",
   "homeMarketUnavailable": "Los datos del mercado no están disponibles ahora.",
-  "homeMoversTitle": "Mi lista",
-  "homeMoversEmpty": "Sigue monedas para ver aquí sus mayores movimientos de 24 h.",
-  "homeMoversEmptyAction": "Ir a mi lista",
   "homeRadarTitle": "Últimas señales del Radar",
   "homeRadarEmpty": "No hay señales nuevas en el radar ahora.",
   "homeSignalBuy": "Comprar",
@@ -614,9 +611,9 @@
   "gbAlertsDesc": "Recibe un aviso cuando se alcance un nivel de precio.",
   "gbProTease": "¿Quieres más? Pro añade análisis profundo, alertas de precio, las señales más fuertes y los plazos más rápidos.",
   "homeLockedAction": "Ver qué obtienes",
-  "homeLockedWatchlist": "Inicia sesión para seguir monedas y ver aquí sus movimientos.",
   "homeLockedAnalysis": "Inicia sesión para hacer análisis con IA y ver aquí el último.",
   "ovGuestHint": "Inicia sesión para ver el resumen y los datos de mercado de esta moneda",
   "sgGuestHint": "Inicia sesión para ver las señales de esta moneda",
-  "signalsGuestNote": "Inicia sesión para ver las señales"
+  "signalsGuestNote": "Inicia sesión para ver las señales",
+  "adPrivacyOptions": "Opciones de privacidad de anuncios"
 }

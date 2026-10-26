@@ -1373,16 +1373,6 @@ class AppLocalizationsEs extends AppLocalizations {
       'Los datos del mercado no están disponibles ahora.';
 
   @override
-  String get homeMoversTitle => 'Mi lista';
-
-  @override
-  String get homeMoversEmpty =>
-      'Sigue monedas para ver aquí sus mayores movimientos de 24 h.';
-
-  @override
-  String get homeMoversEmptyAction => 'Ir a mi lista';
-
-  @override
   String get homeRadarTitle => 'Últimas señales del Radar';
 
   @override
@@ -2090,10 +2080,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get homeLockedAction => 'Ver qué obtienes';
 
   @override
-  String get homeLockedWatchlist =>
-      'Inicia sesión para seguir monedas y ver aquí sus movimientos.';
-
-  @override
   String get homeLockedAnalysis =>
       'Inicia sesión para hacer análisis con IA y ver aquí el último.';
 
@@ -2106,4 +2092,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get signalsGuestNote => 'Inicia sesión para ver las señales';
+
+  @override
+  String get adPrivacyOptions => 'Opciones de privacidad de anuncios';
 }

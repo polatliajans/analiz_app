@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../ads/privacy_options.dart';
 import '../config/legal_links.dart';
 import '../data/auth_api.dart';
 import '../l10n/app_localizations.dart';
@@ -195,6 +196,13 @@ class SettingsScreen extends ConsumerWidget {
               LegalLinks.page(LegalLinks.termsPath, selected.languageCode),
             ),
           ),
+          if (ref.watch(privacyOptionsRequiredProvider).value ?? false)
+            ListTile(
+              leading: const Icon(Icons.ads_click_outlined),
+              title: Text(l10n.adPrivacyOptions),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => ref.read(privacyOptionsProvider).show(),
+            ),
           ListTile(
             leading: const Icon(Icons.person_remove_outlined),
             title: Text(l10n.deleteAccountPage),

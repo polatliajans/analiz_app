@@ -64,6 +64,76 @@ void main() {
     });
   });
 
+  group('radar native frequency (server honored)', () {
+    test('server value used exactly, floor of 2, default 10', () {
+      expect(nativeFrequencyFor(5), 5);
+      expect(nativeFrequencyFor(3), 3);
+      expect(nativeFrequencyFor(2), 2);
+      expect(nativeFrequencyFor(25), 25);
+      expect(nativeFrequencyFor(1), minNativeFrequency);
+      expect(nativeFrequencyFor(null), defaultNativeFrequency);
+      expect(nativeFrequencyFor(0), defaultNativeFrequency);
+      expect(nativeFrequencyFor(-4), defaultNativeFrequency);
+    });
+
+    test('frequency 5 puts an ad after every 5th content row', () {
+      final f = nativeFrequencyFor(5);
+      final slots = [
+        for (var i = 0; i < 18; i++)
+          if (shouldShowNativeAt(i, f)) i,
+      ];
+      expect(slots, [5, 11, 17]);
+      expect(itemCountWithAds(10, f), 11);
+      expect(nativePoolSizeFor(f), greaterThan(2));
+    });
+
+    test('native_home is a native placement served to everyone but Pro', () {
+      expect(AdPlacementKeys.typeOf(AdPlacementKeys.nativeHome), 'native');
+      expect(AdPlacementKeys.all, contains(AdPlacementKeys.nativeHome));
+      const ads = AdsConfig(
+        enabled: true,
+        reduced: true,
+        placements: [
+          AdPlacement(key: 'native_home', type: 'native', unitId: 'nh'),
+        ],
+      );
+      final reduced = effectiveAdsConfig(
+        ads,
+        isPro: false,
+        forceTestAds: false,
+      );
+      expect(
+        activeUnitId(
+          reduced,
+          AdPlacementKeys.nativeHome,
+          AdFormat.native,
+          isDebug: false,
+        ),
+        'nh',
+      );
+      final pro = effectiveAdsConfig(ads, isPro: true, forceTestAds: false);
+      expect(
+        activeUnitId(
+          pro,
+          AdPlacementKeys.nativeHome,
+          AdFormat.native,
+          isDebug: true,
+        ),
+        isNull,
+      );
+      // Missing / disabled placement: no unit, so the slot collapses.
+      expect(
+        activeUnitId(
+          const AdsConfig(enabled: true),
+          AdPlacementKeys.nativeHome,
+          AdFormat.native,
+          isDebug: false,
+        ),
+        isNull,
+      );
+    });
+  });
+
   group('frequency defaults', () {
     test('missing or non-positive values fall back', () {
       expect(effectiveFrequency(null, defaultNativeFrequency), 10);
@@ -305,8 +375,11 @@ void main() {
 
       test('Pro stays ad-free even when reduced', () {
         expect(
-          effectiveAdsConfig(reducedServer, isPro: true, forceTestAds: false)
-              .enabled,
+          effectiveAdsConfig(
+            reducedServer,
+            isPro: true,
+            forceTestAds: false,
+          ).enabled,
           isFalse,
         );
       });

@@ -62,7 +62,7 @@ void main() {
       expect(find.text('Upcoming events'), findsOneWidget);
       expect(find.text('Term of the day'), findsOneWidget);
       // Member-only sections are locked, not rendered.
-      expect(find.byKey(const ValueKey('locked-watchlist')), findsOneWidget);
+      expect(find.byKey(const ValueKey('locked-watchlist')), findsNothing);
       expect(find.byKey(const ValueKey('locked-analysis')), findsOneWidget);
       expect(find.text('Your latest deep analysis'), findsOneWidget);
       expect(find.text('Open my watchlist'), findsNothing);
@@ -83,7 +83,6 @@ void main() {
         y('Sign in to unlock analysis, watchlist and alerts'),
         y('Fear & Greed'),
         y('Market'),
-        y('My watchlist'),
         y('Latest signals from Radar'),
         y('Your latest deep analysis'),
         y('Upcoming events'),
@@ -94,7 +93,6 @@ void main() {
     });
 
     for (final locked in [
-      const ValueKey('locked-watchlist'),
       const ValueKey('locked-analysis'),
       const ValueKey('quick-deep'),
       const ValueKey('quick-alerts'),
@@ -136,7 +134,7 @@ void main() {
       );
       expect(h.api.publicCalls, 1);
       expect(find.textContaining('ETH'), findsWidgets);
-      expect(find.byKey(const ValueKey('locked-watchlist')), findsOneWidget);
+      expect(find.byKey(const ValueKey('locked-analysis')), findsOneWidget);
       expect(find.byType(HomeErrorCard), findsNothing);
     });
 
