@@ -520,6 +520,18 @@ abstract class AppLocalizations {
   /// **'Long term'**
   String get termLongLabel;
 
+  /// No description provided for @agoYesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'yesterday'**
+  String get agoYesterday;
+
+  /// No description provided for @radarDetectedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Detected {dateTime}'**
+  String radarDetectedAt(String dateTime);
+
   /// No description provided for @agoNow.
   ///
   /// In en, this message translates to:

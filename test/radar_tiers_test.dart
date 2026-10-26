@@ -45,6 +45,7 @@ RadarItem _item(
   double? volumeRatio,
   String? aiComment,
   Map<String, double>? breakdown,
+  bool detected = true,
 }) => RadarItem(
   id: id,
   term: term,
@@ -52,7 +53,9 @@ RadarItem _item(
   technicalScore: score,
   rsi: 24.5,
   lastClose: 1,
-  detectedAt: DateTime.now().subtract(const Duration(minutes: 5)),
+  detectedAt: detected
+      ? DateTime.now().subtract(const Duration(minutes: 5))
+      : null,
   trend: trend,
   volumeRatio: volumeRatio,
   aiComment: aiComment,
@@ -454,6 +457,36 @@ void main() {
     await tester.tap(find.byKey(const Key('radar_expand')));
     await tester.pump();
     expect(find.text('Tile note here.'), findsOneWidget);
+  });
+
+  testWidgets('detected-time label on hero and tiles, tooltip has exact time', (
+    tester,
+  ) async {
+    await _pump(tester, [_item(1, 'TOPUSDT', 80), _item(2, 'TILEUSDT', 52)]);
+    expect(find.text('5 min ago'), findsNWidgets(2));
+    expect(find.byIcon(Icons.schedule_rounded), findsNWidgets(2));
+    final tips = tester
+        .widgetList<Tooltip>(find.byType(Tooltip))
+        .map((t) => t.message ?? '')
+        .where((m) => m.startsWith('Detected '));
+    expect(tips.length, 2);
+  });
+
+  testWidgets('detected-time label hidden when detectedAt is null', (
+    tester,
+  ) async {
+    await _pump(tester, [
+      _item(1, 'TOPUSDT', 80, detected: false),
+      _item(2, 'TILEUSDT', 52, detected: false),
+    ]);
+    expect(find.byIcon(Icons.schedule_rounded), findsNothing);
+    expect(find.textContaining('min ago'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('detected-time label localizes (tr)', (tester) async {
+    await _pump(tester, [_item(1, 'TOPUSDT', 80)], locale: const Locale('tr'));
+    expect(find.text('5 dk önce'), findsOneWidget);
   });
 
   testWidgets('pro: old-server payload (no new fields) renders plainly', (

@@ -7,7 +7,9 @@ class RadarItem {
   final int technicalScore;
   final double? rsi;
   final double? lastClose;
-  final DateTime detectedAt;
+
+  /// When the server detected the opportunity; null if missing/unparseable.
+  final DateTime? detectedAt;
   final Coin coin;
 
   /// Higher-timeframe trend: 'up' | 'down' | null (old server / unknown).
@@ -31,7 +33,7 @@ class RadarItem {
     required this.technicalScore,
     required this.rsi,
     required this.lastClose,
-    required this.detectedAt,
+    this.detectedAt,
     required this.coin,
     this.trend,
     this.volumeRatio,
@@ -61,7 +63,7 @@ class RadarItem {
       technicalScore: json['technical_score'] as int,
       rsi: (json['rsi'] as num?)?.toDouble(),
       lastClose: (json['last_close'] as num?)?.toDouble(),
-      detectedAt: DateTime.parse(json['detected_at'] as String),
+      detectedAt: _parseTime(json['detected_at']),
       coin: Coin.fromJson(json['coin'] as Map<String, dynamic>),
       trend: _parseTrend(json['trend']),
       volumeRatio: _parseNum(json['volume_ratio']),
@@ -69,6 +71,9 @@ class RadarItem {
       scoreBreakdown: _parseBreakdown(json['score_breakdown']),
     );
   }
+
+  static DateTime? _parseTime(Object? v) =>
+      v is String ? DateTime.tryParse(v) : null;
 
   static String? _parseTrend(Object? v) =>
       v == 'up' || v == 'down' ? v as String : null;

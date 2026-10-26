@@ -1,10 +1,12 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../models/radar_item.dart';
 import '../../utils/radar_tiers.dart';
+import '../../utils/radar_time.dart';
 
 String radarTierLabel(AppLocalizations l10n, RadarTier tier) {
   switch (tier) {
@@ -32,12 +34,72 @@ String radarTermLabel(AppLocalizations l10n, String term) {
   }
 }
 
-String radarAgo(AppLocalizations l10n, DateTime t) {
-  final diff = DateTime.now().difference(t.toLocal());
-  if (diff.inMinutes < 1) return l10n.agoNow;
-  if (diff.inMinutes < 60) return l10n.agoMinutes(diff.inMinutes);
-  if (diff.inHours < 24) return l10n.agoHours(diff.inHours);
-  return l10n.agoDays(diff.inDays);
+String radarAgoText(AppLocalizations l10n, RadarAgo ago) {
+  switch (ago.kind) {
+    case RadarAgoKind.now:
+      return l10n.agoNow;
+    case RadarAgoKind.minutes:
+      return l10n.agoMinutes(ago.n);
+    case RadarAgoKind.hours:
+      return l10n.agoHours(ago.n);
+    case RadarAgoKind.yesterday:
+      return l10n.agoYesterday;
+    case RadarAgoKind.days:
+      return l10n.agoDays(ago.n);
+  }
+}
+
+/// Small clock + relative time ("12 min ago"); the exact local date-time is
+/// the tooltip and semantics label. Renders nothing when [detectedAt] is null.
+class RadarDetectedLabel extends StatelessWidget {
+  final DateTime? detectedAt;
+  final Color color;
+  final double fontSize;
+
+  /// Injectable clock for tests.
+  final DateTime? now;
+
+  const RadarDetectedLabel({
+    super.key,
+    required this.detectedAt,
+    required this.color,
+    this.fontSize = 11.5,
+    this.now,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final ago = radarAgoOf(detectedAt, now ?? DateTime.now());
+    if (ago == null) return const SizedBox.shrink();
+    final l10n = AppLocalizations.of(context)!;
+    final locale = Localizations.localeOf(context).toString();
+    final exact = l10n.radarDetectedAt(
+      DateFormat.yMMMd(locale).add_Hm().format(detectedAt!.toLocal()),
+    );
+    final text = radarAgoText(l10n, ago);
+    return Tooltip(
+      message: exact,
+      child: Semantics(
+        label: '$exact ($text)',
+        excludeSemantics: true,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.schedule_rounded, size: fontSize + 1.5, color: color),
+            const SizedBox(width: 4),
+            Flexible(
+              child: Text(
+                text,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: fontSize, color: color),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 /// Colour of a term (null = all terms) for the selector chips.
@@ -274,10 +336,17 @@ class _RadarTileState extends State<RadarTile> {
                     const SizedBox(height: 4),
                     Text(
                       '${radarTermLabel(l10n, item.term)} (${item.timeframe})  ·  '
-                      '${l10n.radarRsi(item.rsi?.toStringAsFixed(1) ?? '-')}  ·  '
-                      '${radarAgo(l10n, item.detectedAt)}',
+                      '${l10n.radarRsi(item.rsi?.toStringAsFixed(1) ?? '-')}',
                       style: TextStyle(fontSize: 12, color: muted),
                     ),
+                    if (item.detectedAt != null) ...[
+                      const SizedBox(height: 3),
+                      RadarDetectedLabel(
+                        detectedAt: item.detectedAt,
+                        color: muted.withValues(alpha: 0.85),
+                        fontSize: 11,
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -465,6 +534,13 @@ class RadarTopPickCard extends StatelessWidget {
                           color: Colors.white,
                         ),
                       ),
+                      if (item.detectedAt != null) ...[
+                        const SizedBox(height: 4),
+                        RadarDetectedLabel(
+                          detectedAt: item.detectedAt,
+                          color: soft,
+                        ),
+                      ],
                       const SizedBox(height: 8),
                       Wrap(
                         spacing: 6,

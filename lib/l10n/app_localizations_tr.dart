@@ -257,6 +257,14 @@ class AppLocalizationsTr extends AppLocalizations {
   String get termLongLabel => 'Uzun vade';
 
   @override
+  String get agoYesterday => 'dün';
+
+  @override
+  String radarDetectedAt(String dateTime) {
+    return 'Tespit: $dateTime';
+  }
+
+  @override
   String get agoNow => 'şimdi';
 
   @override

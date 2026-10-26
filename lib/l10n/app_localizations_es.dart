@@ -282,6 +282,14 @@ class AppLocalizationsEs extends AppLocalizations {
   String get termLongLabel => 'Largo plazo';
 
   @override
+  String get agoYesterday => 'ayer';
+
+  @override
+  String radarDetectedAt(String dateTime) {
+    return 'Detectada: $dateTime';
+  }
+
+  @override
   String get agoNow => 'ahora';
 
   @override

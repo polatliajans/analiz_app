@@ -175,6 +175,9 @@
   "termShortLabel": "Short term",
   "termMediumLabel": "Medium term",
   "termLongLabel": "Long term",
+  "agoYesterday": "yesterday",
+  "radarDetectedAt": "Detected {dateTime}",
+  "@radarDetectedAt": {"placeholders": {"dateTime": {"type": "String"}}},
   "agoNow": "just now",
   "agoMinutes": "{n} min ago",
   "@agoMinutes": {
