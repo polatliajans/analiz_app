@@ -122,12 +122,21 @@ class AdPlacement {
   final int? frequency;
   final int? cooldownMinutes;
 
+  /// Max shows per day; null with [hasDailyCap] means unlimited.
+  final int? dailyCap;
+
+  /// The server sent a `daily_cap` key (even if null = unlimited). Absent
+  /// means "use the app default".
+  final bool hasDailyCap;
+
   const AdPlacement({
     required this.key,
     required this.type,
     this.unitId,
     this.frequency,
     this.cooldownMinutes,
+    this.dailyCap,
+    this.hasDailyCap = false,
   });
 
   factory AdPlacement.fromJson(Map<String, dynamic> json) => AdPlacement(
@@ -136,6 +145,8 @@ class AdPlacement {
     unitId: json['unit_id'] as String?,
     frequency: (json['frequency'] as num?)?.toInt(),
     cooldownMinutes: (json['cooldown_minutes'] as num?)?.toInt(),
+    dailyCap: (json['daily_cap'] as num?)?.toInt(),
+    hasDailyCap: json.containsKey('daily_cap'),
   );
 }
 

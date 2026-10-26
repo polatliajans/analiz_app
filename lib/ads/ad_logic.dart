@@ -13,6 +13,7 @@ abstract final class AdPlacementKeys {
   static const nativeRadar = 'native_radar';
   static const nativeHome = 'native_home';
   static const interstitialAnalysis = 'interstitial_analysis';
+  static const interstitialNavigation = 'interstitial_navigation';
 
   static const all = [
     bannerRadar,
@@ -20,6 +21,7 @@ abstract final class AdPlacementKeys {
     nativeRadar,
     nativeHome,
     interstitialAnalysis,
+    interstitialNavigation,
   ];
 
   static String typeOf(String key) {
@@ -35,6 +37,11 @@ const defaultNativeFrequency = 10;
 /// Lowest radar native frequency honored (guards against nonsense values).
 const minNativeFrequency = 2;
 const defaultInterstitialFrequency = 3;
+const defaultNavigationFrequency = 4;
+const defaultNavigationDailyCap = 6;
+
+/// No navigation interstitial this soon after the app was opened.
+const navigationGracePeriod = Duration(seconds: 60);
 const defaultInterstitialCooldownMinutes = 5;
 
 /// Google's public test ad units (safe to click, never billed).
@@ -125,9 +132,39 @@ bool shouldShowInterstitial({
   return now.difference(lastShownAt) >= Duration(minutes: cooldownMinutes);
 }
 
+/// Daily cap for a navigation interstitial: the server value when it sent
+/// the key (null = unlimited), the default otherwise. Values <= 0 mean 0.
+int? navigationDailyCap(AdPlacement p) =>
+    p.hasDailyCap ? p.dailyCap : defaultNavigationDailyCap;
+
+/// Whether to show the interstitial after leaving the chart. [visitCount]
+/// includes the visit just finished. Cooldown is shared with every other
+/// interstitial through [lastShownAt].
+bool shouldShowNavigationInterstitial({
+  required int visitCount,
+  required int frequency,
+  required DateTime? lastShownAt,
+  required DateTime now,
+  required int cooldownMinutes,
+  required int shownToday,
+  required int? dailyCap,
+  required DateTime appStartedAt,
+}) {
+  if (frequency <= 0 || visitCount <= 0 || visitCount % frequency != 0) {
+    return false;
+  }
+  if (now.difference(appStartedAt) < navigationGracePeriod) return false;
+  if (dailyCap != null && shownToday >= dailyCap) return false;
+  if (lastShownAt != null &&
+      now.difference(lastShownAt) < Duration(minutes: cooldownMinutes)) {
+    return false;
+  }
+  return true;
+}
+
 /// Ads actually used by the app. Pro never sees ads. A [AdsConfig.reduced]
-/// config (free member holding purchased credits) keeps banner and native
-/// placements but drops interstitials. [forceTestAds] (debug only) enables
+/// config (free member holding purchased credits) keeps banner, native and
+/// navigation interstitials but drops the analysis interstitial. [forceTestAds] (debug only) enables
 /// every placement with Google test units so ads can be checked before AdMob
 /// units are configured on the server.
 AdsConfig effectiveAdsConfig(
@@ -153,9 +190,7 @@ AdsConfig effectiveAdsConfig(
     enabled: base.enabled,
     placements: [
       for (final p in base.placements)
-        if (p.type != 'interstitial' &&
-            AdPlacementKeys.typeOf(p.key) != 'interstitial')
-          p,
+        if (p.key != AdPlacementKeys.interstitialAnalysis) p,
     ],
     rewarded: base.rewarded,
     reduced: true,

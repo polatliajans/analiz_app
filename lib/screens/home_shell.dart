@@ -22,6 +22,12 @@ class HomeShell extends ConsumerWidget {
     // Ad SDK lifecycle (consent + init only when ads are enabled; never Pro).
     ref.watch(adsControllerProvider);
     final index = ref.watch(homeTabProvider);
+    // Leaving the chart tab counts as a chart visit for the interstitial.
+    ref.listen<int>(homeTabProvider, (previous, next) {
+      if (previous == chartTabIndex && next != chartTabIndex) {
+        ref.read(adsControllerProvider.notifier).onChartLeft();
+      }
+    });
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(

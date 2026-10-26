@@ -37,6 +37,10 @@ final adAnalysisWantedProvider = Provider<bool>(
       ref.watch(appConfigProvider.select((c) => c.adAnalysisEnabled)),
 );
 
+/// When this app process started; no navigation interstitial right after.
+final appStartedAtProvider = Provider<DateTime>((ref) => _processStart);
+final _processStart = DateTime.now();
+
 final adCountersProvider = Provider<AdCounters>(
   (ref) => AdCounters(ref.watch(sharedPreferencesProvider)),
 );
@@ -65,6 +69,8 @@ class AdsController extends Notifier<AdsState> {
 
   InterstitialAd? _interstitial;
   bool _interstitialLoading = false;
+  InterstitialAd? _navInterstitial;
+  bool _navLoading = false;
   RewardedAd? _rewarded;
   bool _rewardedLoading = false;
   bool _showingFullScreen = false;
@@ -104,6 +110,7 @@ class AdsController extends Notifier<AdsState> {
     }
     if (!state.sdkReady) state = state.copyWith(sdkReady: true);
     _loadInterstitial();
+    _loadNavInterstitial();
     _loadRewarded();
   }
 
@@ -138,6 +145,8 @@ class AdsController extends Notifier<AdsState> {
   void _disposeFullScreenAds() {
     _interstitial?.dispose();
     _interstitial = null;
+    _navInterstitial?.dispose();
+    _navInterstitial = null;
     _rewarded?.dispose();
     _rewarded = null;
   }
@@ -171,6 +180,92 @@ class AdsController extends Notifier<AdsState> {
         onAdFailedToLoad: (_) => _interstitialLoading = false,
       ),
     );
+  }
+
+  String? get _navUnit => activeUnitId(
+    _config,
+    AdPlacementKeys.interstitialNavigation,
+    AdFormat.interstitial,
+    isDebug: kDebugMode,
+  );
+
+  void _loadNavInterstitial() {
+    final unit = _navUnit;
+    if (!state.sdkReady || unit == null) return;
+    if (_navInterstitial != null || _navLoading) return;
+    _navLoading = true;
+    InterstitialAd.load(
+      adUnitId: unit,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          _navLoading = false;
+          if (!state.sdkReady) {
+            ad.dispose();
+            return;
+          }
+          _navInterstitial = ad;
+        },
+        onAdFailedToLoad: (_) => _navLoading = false,
+      ),
+    );
+  }
+
+  /// Call when the user leaves the chart (back to another tab/screen). Counts
+  /// the visit and, on every N-th one, shows the navigation interstitial if
+  /// cooldown, daily cap and the startup grace period allow and an ad is
+  /// ready. Never waits: if no ad is loaded it just starts loading one.
+  Future<void> onChartLeft() async {
+    final placement = _config.placement(AdPlacementKeys.interstitialNavigation);
+    if (placement == null || _navUnit == null) return;
+    final counters = ref.read(adCountersProvider);
+    final visits = await counters.incrementChartVisits();
+    if (!ref.mounted || !state.sdkReady || _showingFullScreen) return;
+    final now = DateTime.now();
+    final show = shouldShowNavigationInterstitial(
+      visitCount: visits,
+      frequency: effectiveFrequency(
+        placement.frequency,
+        defaultNavigationFrequency,
+      ),
+      lastShownAt: counters.lastInterstitialAt,
+      now: now,
+      cooldownMinutes: effectiveCooldownMinutes(placement.cooldownMinutes),
+      shownToday: counters.navigationShownToday(now),
+      dailyCap: navigationDailyCap(placement),
+      appStartedAt: ref.read(appStartedAtProvider),
+    );
+    if (!show) {
+      _loadNavInterstitial();
+      return;
+    }
+    final ad = _navInterstitial;
+    if (ad == null) {
+      _loadNavInterstitial();
+      return;
+    }
+    _navInterstitial = null;
+    _showingFullScreen = true;
+    ad.fullScreenContentCallback = FullScreenContentCallback(
+      onAdShowedFullScreenContent: (_) =>
+          counters.recordNavigationShown(DateTime.now()),
+      onAdDismissedFullScreenContent: (a) {
+        _showingFullScreen = false;
+        a.dispose();
+        _loadNavInterstitial();
+      },
+      onAdFailedToShowFullScreenContent: (a, _) {
+        _showingFullScreen = false;
+        a.dispose();
+        _loadNavInterstitial();
+      },
+    );
+    try {
+      await ad.show();
+    } catch (_) {
+      _showingFullScreen = false;
+      ad.dispose();
+    }
   }
 
   /// Call once per successful (quick or deep) analysis.

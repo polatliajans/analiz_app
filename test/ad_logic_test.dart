@@ -134,6 +134,129 @@ void main() {
     });
   });
 
+  group('navigation interstitial decision', () {
+    final start = DateTime(2026, 10, 17, 12);
+    final now = start.add(const Duration(minutes: 30));
+
+    bool show({
+      int visits = 4,
+      int frequency = 4,
+      DateTime? last,
+      DateTime? at,
+      int cooldown = 5,
+      int today = 0,
+      int? cap = 6,
+      DateTime? started,
+    }) => shouldShowNavigationInterstitial(
+      visitCount: visits,
+      frequency: frequency,
+      lastShownAt: last,
+      now: at ?? now,
+      cooldownMinutes: cooldown,
+      shownToday: today,
+      dailyCap: cap,
+      appStartedAt: started ?? start,
+    );
+
+    test('every N-th visit only', () {
+      expect(show(visits: 4), isTrue);
+      expect(show(visits: 8), isTrue);
+      expect(show(visits: 1), isFalse);
+      expect(show(visits: 3), isFalse);
+      expect(show(visits: 5), isFalse);
+      expect(show(visits: 0), isFalse);
+      expect(show(frequency: 0), isFalse);
+    });
+
+    test('cooldown is shared with any interstitial', () {
+      expect(show(last: now.subtract(const Duration(minutes: 4))), isFalse);
+      expect(show(last: now.subtract(const Duration(minutes: 5))), isTrue);
+      expect(show(last: now.subtract(const Duration(hours: 2))), isTrue);
+    });
+
+    test('daily cap', () {
+      expect(show(today: 5), isTrue);
+      expect(show(today: 6), isFalse);
+      expect(show(today: 99, cap: null), isTrue);
+      expect(show(today: 0, cap: 0), isFalse);
+    });
+
+    test('never in the first 60 seconds after launch', () {
+      expect(show(at: start.add(const Duration(seconds: 59))), isFalse);
+      expect(show(at: start.add(const Duration(seconds: 60))), isTrue);
+    });
+
+    test('defaults and daily cap parsing', () {
+      expect(defaultNavigationFrequency, 4);
+      final absent = AdPlacement.fromJson(const {
+        'key': 'interstitial_navigation',
+        'type': 'interstitial',
+      });
+      expect(navigationDailyCap(absent), 6);
+      final unlimited = AdPlacement.fromJson(const {
+        'key': 'interstitial_navigation',
+        'type': 'interstitial',
+        'daily_cap': null,
+      });
+      expect(navigationDailyCap(unlimited), isNull);
+      final ten = AdPlacement.fromJson(const {
+        'key': 'interstitial_navigation',
+        'type': 'interstitial',
+        'daily_cap': 10,
+        'frequency': 2,
+      });
+      expect(navigationDailyCap(ten), 10);
+      expect(ten.frequency, 2);
+    });
+
+    test('Pro and missing unit id yield no placement to show', () {
+      const ads = AdsConfig(
+        enabled: true,
+        placements: [
+          AdPlacement(key: 'interstitial_navigation', type: 'interstitial'),
+        ],
+      );
+      expect(
+        activeUnitId(
+          effectiveAdsConfig(ads, isPro: false, forceTestAds: false),
+          AdPlacementKeys.interstitialNavigation,
+          AdFormat.interstitial,
+          isDebug: false,
+        ),
+        isNull,
+      );
+      expect(
+        effectiveAdsConfig(
+          ads,
+          isPro: true,
+          forceTestAds: false,
+        ).placement(AdPlacementKeys.interstitialNavigation),
+        isNull,
+      );
+    });
+
+    test(
+      'counters persist visits and reset the daily count on a new day',
+      () async {
+        SharedPreferences.setMockInitialValues({});
+        final c = AdCounters(await SharedPreferences.getInstance());
+        expect(await c.incrementChartVisits(), 1);
+        expect(await c.incrementChartVisits(), 2);
+        final d1 = DateTime(2026, 10, 17, 23, 59);
+        expect(c.navigationShownToday(d1), 0);
+        await c.recordNavigationShown(d1);
+        await c.recordNavigationShown(d1);
+        expect(c.navigationShownToday(d1), 2);
+        expect(c.lastInterstitialAt, d1);
+        final d2 = DateTime(2026, 10, 18, 0, 1);
+        expect(c.navigationShownToday(d2), 0);
+        await c.recordNavigationShown(d2);
+        expect(c.navigationShownToday(d2), 1);
+        expect(c.chartVisitCount, 2);
+      },
+    );
+  });
+
   group('frequency defaults', () {
     test('missing or non-positive values fall back', () {
       expect(effectiveFrequency(null, defaultNativeFrequency), 10);
@@ -329,8 +452,31 @@ void main() {
             type: 'interstitial',
             unitId: 'i',
           ),
+          AdPlacement(
+            key: 'interstitial_navigation',
+            type: 'interstitial',
+            unitId: 'nav',
+          ),
         ],
       );
+
+      test('reduced keeps navigation interstitial, drops only analysis', () {
+        final c = effectiveAdsConfig(
+          reducedServer,
+          isPro: false,
+          forceTestAds: false,
+        );
+        expect(
+          activeUnitId(
+            c,
+            AdPlacementKeys.interstitialNavigation,
+            AdFormat.interstitial,
+            isDebug: false,
+          ),
+          'nav',
+        );
+        expect(c.placement(AdPlacementKeys.interstitialAnalysis), isNull);
+      });
 
       test('reduced drops interstitials, keeps banner and native', () {
         final c = effectiveAdsConfig(
