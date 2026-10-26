@@ -66,7 +66,7 @@ void main() {
 
   group('frequency defaults', () {
     test('missing or non-positive values fall back', () {
-      expect(effectiveFrequency(null, defaultNativeFrequency), 8);
+      expect(effectiveFrequency(null, defaultNativeFrequency), 10);
       expect(effectiveFrequency(0, defaultInterstitialFrequency), 3);
       expect(effectiveFrequency(-2, 3), 3);
       expect(effectiveFrequency(5, 3), 5);
@@ -159,7 +159,7 @@ void main() {
         enabled: true,
         placements: [
           AdPlacement(key: 'banner_radar', type: 'banner', unitId: 'u1'),
-          AdPlacement(key: 'banner_profile', type: 'banner'),
+          AdPlacement(key: 'banner_watchlist', type: 'banner'),
         ],
       );
       expect(
@@ -174,7 +174,7 @@ void main() {
       expect(
         activeUnitId(
           ads,
-          AdPlacementKeys.bannerProfile,
+          AdPlacementKeys.bannerWatchlist,
           AdFormat.banner,
           isDebug: false,
         ),
@@ -183,8 +183,8 @@ void main() {
       expect(
         activeUnitId(
           ads,
-          AdPlacementKeys.bannerWatchlist,
-          AdFormat.banner,
+          AdPlacementKeys.nativeRadar,
+          AdFormat.native,
           isDebug: true,
         ),
         isNull,
@@ -211,7 +211,7 @@ void main() {
       placements: [
         AdPlacement(key: 'native_radar', type: 'native', frequency: 6),
       ],
-      rewarded: RewardedConfig(enabled: true, amount: 3, remainingToday: 1),
+      rewarded: RewardedConfig(enabled: true, unitId: 'rw'),
     );
 
     test('Pro never gets ads, even in forced test mode', () {
@@ -241,13 +241,97 @@ void main() {
       for (final key in AdPlacementKeys.all) {
         expect(c.placement(key), isNotNull, reason: key);
       }
-      expect(c.rewarded.enabled, isTrue);
-      expect(c.rewarded.amount, 3);
-      expect(c.rewarded.remainingToday, 3);
 
       final kept = effectiveAdsConfig(server, isPro: false, forceTestAds: true);
       expect(kept.placement('native_radar')!.frequency, 6);
-      expect(kept.rewarded.remainingToday, 1);
+      expect(kept.rewarded.unitId, 'rw');
+    });
+
+    group('reduced ads tier', () {
+      const reducedServer = AdsConfig(
+        enabled: true,
+        reduced: true,
+        placements: [
+          AdPlacement(key: 'banner_radar', type: 'banner', unitId: 'b'),
+          AdPlacement(key: 'native_radar', type: 'native', unitId: 'n'),
+          AdPlacement(
+            key: 'interstitial_analysis',
+            type: 'interstitial',
+            unitId: 'i',
+          ),
+        ],
+      );
+
+      test('reduced drops interstitials, keeps banner and native', () {
+        final c = effectiveAdsConfig(
+          reducedServer,
+          isPro: false,
+          forceTestAds: false,
+        );
+        expect(c.enabled, isTrue);
+        expect(c.placement(AdPlacementKeys.interstitialAnalysis), isNull);
+        expect(c.placement(AdPlacementKeys.bannerRadar), isNotNull);
+        expect(c.placement(AdPlacementKeys.nativeRadar), isNotNull);
+        expect(
+          activeUnitId(
+            c,
+            AdPlacementKeys.interstitialAnalysis,
+            AdFormat.interstitial,
+            isDebug: true,
+          ),
+          isNull,
+        );
+      });
+
+      test('reduced also holds in forced test mode', () {
+        final c = effectiveAdsConfig(
+          reducedServer,
+          isPro: false,
+          forceTestAds: true,
+        );
+        expect(c.placement(AdPlacementKeys.interstitialAnalysis), isNull);
+        expect(c.placement(AdPlacementKeys.bannerRadar), isNotNull);
+      });
+
+      test('not reduced keeps the interstitial', () {
+        final full = AdsConfig(
+          enabled: true,
+          placements: reducedServer.placements,
+        );
+        final c = effectiveAdsConfig(full, isPro: false, forceTestAds: false);
+        expect(identical(c, full), isTrue);
+        expect(c.placement(AdPlacementKeys.interstitialAnalysis), isNotNull);
+      });
+
+      test('Pro stays ad-free even when reduced', () {
+        expect(
+          effectiveAdsConfig(reducedServer, isPro: true, forceTestAds: false)
+              .enabled,
+          isFalse,
+        );
+      });
+
+      test('reduced parses from JSON and defaults to false', () {
+        expect(
+          AppConfig.fromJson(const {
+            'ads': {'enabled': true, 'reduced': true},
+          }).ads.reduced,
+          isTrue,
+        );
+        expect(
+          AppConfig.fromJson(const {
+            'ads': {'enabled': true},
+          }).ads.reduced,
+          isFalse,
+        );
+        expect(AppConfig.fromJson(const {}).ads.reduced, isFalse);
+        expect(
+          AppConfig.fromJson(const {
+            'ads': {'reduced': 'yes'},
+          }).ads.reduced,
+          isFalse,
+        );
+      });
     });
   });
 
@@ -257,7 +341,6 @@ void main() {
       expect(c.ads.enabled, isFalse);
       expect(c.ads.placements, isEmpty);
       expect(c.ads.rewarded.enabled, isFalse);
-      expect(c.ads.rewarded.remainingToday, isNull);
     });
 
     test('placement without frequency/cooldown uses defaults', () {
@@ -285,7 +368,6 @@ void main() {
       final p = c.ads.placement(AdPlacementKeys.interstitialAnalysis)!;
       expect(effectiveFrequency(p.frequency, defaultInterstitialFrequency), 3);
       expect(effectiveCooldownMinutes(p.cooldownMinutes), 5);
-      expect(c.ads.rewarded.remainingToday, 2);
       expect(c.ads.rewarded.unitId, isNull);
     });
   });

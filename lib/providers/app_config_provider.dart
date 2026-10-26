@@ -27,6 +27,11 @@ class AppConfigNotifier extends Notifier<AppConfig> {
       authProvider.select((s) => (s.token, s.member?.role)),
       (_, _) => refresh(),
     );
+    // The ads tier depends on whether the member holds purchased credits, so
+    // re-fetch when the balance changes (purchase or analysis consumption).
+    ref.listen(authProvider.select((s) => s.member?.creditBalance), (prev, _) {
+      if (prev != null) refresh();
+    });
     Future.microtask(refresh);
     return AppConfig(plan: _readCachedPlan());
   }

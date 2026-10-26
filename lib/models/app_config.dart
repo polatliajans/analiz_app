@@ -142,19 +142,8 @@ class AdPlacement {
 class RewardedConfig {
   final bool enabled;
   final String? unitId;
-  final int amount;
-  final int dailyCap;
 
-  /// Rewards the member can still earn today; null for guests.
-  final int? remainingToday;
-
-  const RewardedConfig({
-    this.enabled = false,
-    this.unitId,
-    this.amount = 0,
-    this.dailyCap = 0,
-    this.remainingToday,
-  });
+  const RewardedConfig({this.enabled = false, this.unitId});
 
   factory RewardedConfig.fromJson(Map<String, dynamic> json) => RewardedConfig(
     enabled: json['enabled'] as bool? ?? false,
@@ -162,9 +151,6 @@ class RewardedConfig {
     // `analysis_unit_id`; the legacy `unit_id` is null once credit rewards are off.
     unitId:
         (json['analysis_unit_id'] as String?) ?? (json['unit_id'] as String?),
-    amount: (json['amount'] as num?)?.toInt() ?? 0,
-    dailyCap: (json['daily_cap'] as num?)?.toInt() ?? 0,
-    remainingToday: (json['remaining_today'] as num?)?.toInt(),
   );
 }
 
@@ -174,10 +160,15 @@ class AdsConfig {
   final List<AdPlacement> placements;
   final RewardedConfig rewarded;
 
+  /// Free member who holds purchased credits: banners and native ads only,
+  /// no interstitials. Absent from the server payload means false.
+  final bool reduced;
+
   const AdsConfig({
     this.enabled = false,
     this.placements = const [],
     this.rewarded = const RewardedConfig(),
+    this.reduced = false,
   });
 
   static const none = AdsConfig();
@@ -196,6 +187,7 @@ class AdsConfig {
       rewarded: rewarded is Map<String, dynamic>
           ? RewardedConfig.fromJson(rewarded)
           : const RewardedConfig(),
+      reduced: json['reduced'] == true,
     );
   }
 

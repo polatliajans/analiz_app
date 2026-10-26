@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../ads/ad_logic.dart';
-import '../ads/banner_ad_slot.dart';
 import '../l10n/app_localizations.dart';
 import '../models/member.dart';
 import '../providers/auth_prompt_provider.dart';
@@ -171,10 +169,6 @@ class AccountScreen extends ConsumerWidget {
                 ),
               ],
             ),
-          ),
-          const BannerAdSlot(
-            placementKey: AdPlacementKeys.bannerProfile,
-            tabIndex: profileTabIndex,
           ),
         ],
       ),

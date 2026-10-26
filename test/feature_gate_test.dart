@@ -130,7 +130,6 @@ void main() {
       expect(c.ads.placements, hasLength(2));
       expect(c.ads.placement('interstitial_analysis')!.frequency, 3);
       expect(c.ads.placement('interstitial_analysis')!.cooldownMinutes, 5);
-      expect(c.ads.rewarded.remainingToday, 2);
     });
 
     test('null free_watchlist_max means unlimited', () {

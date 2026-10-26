@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../ads/ad_logic.dart';
-import '../ads/native_ads.dart';
 import '../data/ticker_api.dart';
 import '../l10n/app_localizations.dart';
 import '../models/coin.dart';
@@ -175,43 +173,22 @@ class _CoinList extends ConsumerWidget {
   }
 }
 
-class _CoinListView extends ConsumerStatefulWidget {
+class _CoinListView extends ConsumerWidget {
   final List<Coin> coins;
 
   const _CoinListView({required this.coins});
 
   @override
-  ConsumerState<_CoinListView> createState() => _CoinListViewState();
-}
-
-class _CoinListViewState extends ConsumerState<_CoinListView>
-    with NativeAdPoolHost<_CoinListView> {
-  @override
-  String get nativePlacementKey => AdPlacementKeys.nativeCoinPicker;
-
-  @override
-  Widget build(BuildContext context) {
-    final coins = widget.coins;
+  Widget build(BuildContext context, WidgetRef ref) {
     final tickers = ref.watch(liveTickersProvider);
-    final nativeAds = watchNativeAds();
-    final n = nativeAds?.frequency ?? 0;
-    bool isAd(int i) => nativeAds != null && shouldShowNativeAt(i, n);
     return ListView.separated(
       padding: EdgeInsets.only(
         bottom: MediaQuery.viewPaddingOf(context).bottom,
       ),
-      itemCount: itemCountWithAds(coins.length, n),
-      separatorBuilder: (_, i) => isAd(i) || isAd(i + 1)
-          ? const SizedBox.shrink()
-          : const Divider(height: 1),
+      itemCount: coins.length,
+      separatorBuilder: (_, _) => const Divider(height: 1),
       itemBuilder: (context, index) {
-        if (isAd(index)) {
-          return NativeAdRow(
-            pool: nativeAds!.pool,
-            slot: nativeSlotNumber(index, n),
-          );
-        }
-        final server = coins[contentIndexAt(index, n)];
+        final server = coins[index];
         final coin = applyQuote(
           server,
           tickers[server.marketType]?[server.symbol],

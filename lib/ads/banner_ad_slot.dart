@@ -13,6 +13,9 @@ import 'ads_controller.dart';
 ///
 /// [tabIndex] is the home tab hosting the screen: while shown inside the
 /// shell, the banner is requested only once that tab has been opened.
+/// Space kept between a banner and whatever sits below it (the nav bar).
+const bannerBottomGap = 16.0;
+
 class BannerAdSlot extends ConsumerStatefulWidget {
   final String placementKey;
   final int tabIndex;
@@ -130,10 +133,15 @@ class _BannerAdSlotState extends ConsumerState<BannerAdSlot> {
           child: ad != null && _loaded
               ? SafeArea(
                   top: false,
-                  child: SizedBox(
-                    width: ad.size.width.toDouble(),
-                    height: ad.size.height.toDouble(),
-                    child: AdWidget(ad: ad),
+                  // Clear gap above the bottom nav bar so a tap meant for a
+                  // tab cannot land on the ad.
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: bannerBottomGap),
+                    child: SizedBox(
+                      width: ad.size.width.toDouble(),
+                      height: ad.size.height.toDouble(),
+                      child: AdWidget(ad: ad),
+                    ),
                   ),
                 )
               : const SizedBox(width: double.infinity),

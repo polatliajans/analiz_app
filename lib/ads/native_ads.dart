@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -136,8 +138,12 @@ mixin NativeAdPoolHost<T extends ConsumerStatefulWidget> on ConsumerState<T> {
       _poolUnit = null;
       return null;
     }
-    final frequency = effectiveFrequency(
-      config.placement(nativePlacementKey)?.frequency,
+    // Never denser than the default, whatever the server asks for.
+    final frequency = math.max(
+      effectiveFrequency(
+        config.placement(nativePlacementKey)?.frequency,
+        defaultNativeFrequency,
+      ),
       defaultNativeFrequency,
     );
     final size = nativePoolSizeFor(frequency);

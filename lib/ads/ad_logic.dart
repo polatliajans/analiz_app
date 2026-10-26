@@ -10,17 +10,13 @@ enum RewardedOutcome { earned, dismissed, unavailable, failed }
 abstract final class AdPlacementKeys {
   static const bannerRadar = 'banner_radar';
   static const bannerWatchlist = 'banner_watchlist';
-  static const bannerProfile = 'banner_profile';
   static const nativeRadar = 'native_radar';
-  static const nativeCoinPicker = 'native_coin_picker';
   static const interstitialAnalysis = 'interstitial_analysis';
 
   static const all = [
     bannerRadar,
     bannerWatchlist,
-    bannerProfile,
     nativeRadar,
-    nativeCoinPicker,
     interstitialAnalysis,
   ];
 
@@ -31,11 +27,10 @@ abstract final class AdPlacementKeys {
   }
 }
 
-const defaultNativeFrequency = 8;
+/// Content rows between native ads in the radar list.
+const defaultNativeFrequency = 10;
 const defaultInterstitialFrequency = 3;
 const defaultInterstitialCooldownMinutes = 5;
-const defaultRewardedAmount = 3;
-const defaultRewardedDailyCap = 3;
 
 /// Google's public test ad units (safe to click, never billed).
 const testUnitIds = <AdFormat, String>{
@@ -118,31 +113,39 @@ bool shouldShowInterstitial({
   return now.difference(lastShownAt) >= Duration(minutes: cooldownMinutes);
 }
 
-/// Ads actually used by the app. Pro never sees ads. [forceTestAds] (debug
-/// only) enables every placement with Google test units so ads can be checked
-/// before AdMob units are configured on the server.
+/// Ads actually used by the app. Pro never sees ads. A [AdsConfig.reduced]
+/// config (free member holding purchased credits) keeps banner and native
+/// placements but drops interstitials. [forceTestAds] (debug only) enables
+/// every placement with Google test units so ads can be checked before AdMob
+/// units are configured on the server.
 AdsConfig effectiveAdsConfig(
   AdsConfig server, {
   required bool isPro,
   required bool forceTestAds,
 }) {
   if (isPro) return AdsConfig.none;
-  if (!forceTestAds) return server;
-  final r = server.rewarded;
-  final cap = r.dailyCap > 0 ? r.dailyCap : defaultRewardedDailyCap;
+  final base = forceTestAds
+      ? AdsConfig(
+          enabled: true,
+          placements: [
+            for (final key in AdPlacementKeys.all)
+              server.placement(key) ??
+                  AdPlacement(key: key, type: AdPlacementKeys.typeOf(key)),
+          ],
+          rewarded: server.rewarded,
+          reduced: server.reduced,
+        )
+      : server;
+  if (!base.reduced) return base;
   return AdsConfig(
-    enabled: true,
+    enabled: base.enabled,
     placements: [
-      for (final key in AdPlacementKeys.all)
-        server.placement(key) ??
-            AdPlacement(key: key, type: AdPlacementKeys.typeOf(key)),
+      for (final p in base.placements)
+        if (p.type != 'interstitial' &&
+            AdPlacementKeys.typeOf(p.key) != 'interstitial')
+          p,
     ],
-    rewarded: RewardedConfig(
-      enabled: true,
-      unitId: r.unitId,
-      amount: r.amount > 0 ? r.amount : defaultRewardedAmount,
-      dailyCap: cap,
-      remainingToday: r.remainingToday ?? cap,
-    ),
+    rewarded: base.rewarded,
+    reduced: true,
   );
 }
