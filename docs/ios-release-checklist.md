@@ -22,21 +22,20 @@ in the Apple / Firebase / AdMob / Codemagic consoles. Secrets are never committe
 2. **Keys**: create
    - an **APNs Auth Key** (`.p8`, Apple Push Notifications service), needed by Firebase;
    - a **Sign in with Apple key** (`.p8`, with its Key ID), needed by Firebase to revoke the Apple token on account deletion;
-   - an **App Store Connect API key** (Users and Access > Integrations, role App Manager or Admin) for Codemagic.
+   - an **App Store Connect API key** (Users and Access > Integrations > App Store Connect API, role App Manager or Admin) for Codemagic;
+   - an **In-App Purchase key** (App Store Connect > Users and Access > Integrations > In-App Purchase, `.p8`): note the **Issuer ID** (shown on that page), the **Key ID**, and download the `.p8` once (it cannot be downloaded again). The server uses it to verify purchases with the App Store Server API.
 3. Note your **Team ID**.
 
 ## 2. App Store Connect (YOU)
 
 1. My Apps > **New App**: iOS, name `CryptoAnaliz`, bundle id `com.polatliajans.kriptoanaliz`. Note the numeric **Apple ID** (App Information > General); it is the Codemagic variable `APP_STORE_APPLE_ID`.
 2. **Agreements, Tax, and Banking**: accept the Paid Apps agreement and fill in bank/tax info (required for IAP).
-3. **In-App Purchases / Subscriptions**: create products whose ids equal the `apple_product_id` values stored in the Laravel admin:
-   - credit packs are **Consumable** products;
-   - Pro is an **Auto-Renewable Subscription** inside a subscription group (price, localized names tr/en/es, review screenshot).
-4. Give the server agent whichever verification secret it uses: the App-Specific Shared Secret, or an App Store Server API (In-App Purchase) key.
-5. **App Privacy** questionnaire: answer it consistently with `ios/Runner/PrivacyInfo.xcprivacy` (email, user id, device id, advertising data, purchase history, crash data, product interaction; tracking = yes because of ads).
+3. **In-App Purchases**: create the credit packs as **Consumable** products (price, localized names tr/en/es, review screenshot). Enter each product id in the **iOS product id** field of the matching credit package in the Laravel admin (it is stored as `apple_product_id`). **Pro is NOT sold on iOS in v1**: do not create an auto-renewable subscription or a subscription group; the server rejects iOS subscription purchases with `422 subscription_not_supported_ios`, and the app hides every Pro purchase surface on iOS (members who already are Pro, e.g. bought on Android, keep their Pro status and benefits).
+4. **Server configuration** (Laravel admin > Settings > "Apple App Store Ayarları"): enter the In-App Purchase key from step 1.2: `apple_issuer_id` (Issuer ID), `apple_key_id` (Key ID), `apple_private_key` (contents of the `.p8`) and `apple_bundle_id` (`com.polatliajans.kriptoanaliz`). The legacy App-Specific Shared Secret is not used.
+5. **App Privacy** questionnaire: answer it consistently with `ios/Runner/PrivacyInfo.xcprivacy` (name, email, user id, device id, advertising data, purchase history, crash data, performance data, product interaction; tracking = yes because of ads).
 6. Age rating, category, support URL, **Privacy Policy URL** (`https://www.cryptoanaliz.net/privacy`), screenshots (6.9" and 6.5" iPhone; the app is iPhone-only).
 7. **App Review information**: a demo account (email + password) and a note such as "Crypto market analysis, no trading, not financial advice".
-8. Put the Terms of Use link (`https://www.cryptoanaliz.net/terms`) into the app description (the app also links it on the Pro screen).
+8. Put the Terms of Use link (`https://www.cryptoanaliz.net/terms`) into the app description (the app also links it on the login screen and the legal links row).
 
 ## 3. Firebase console (YOU)
 
@@ -69,7 +68,7 @@ in the Apple / Firebase / AdMob / Codemagic consoles. Secrets are never committe
 
 ## 6. First device test via TestFlight (YOU)
 
-Install the build on a real iPhone and verify: Google login; **Continue with Apple** (visible on iOS only); push permission and receiving a push (FCM token registered with platform `ios`); the ATT prompt appears after the consent form; test ads; sandbox purchase of a credit pack and of Pro; **Restore purchases**; account deletion (Apple users get a re-authorization prompt to revoke the token); Privacy/Terms links on the login and Pro screens.
+Install the build on a real iPhone and verify: Google login; **Continue with Apple** (visible on iOS only); push permission and receiving a push (FCM token registered with platform `ios`); the ATT prompt appears after the consent form; test ads; sandbox purchase of a credit pack (incl. killing the app mid-purchase and relaunching: the pending transaction must be credited at launch); no Pro price, plan card, buy or restore button anywhere on iOS (a free account sees only the credit packs); account deletion (Apple users get a re-authorization prompt to revoke the token); Privacy/Terms links on the login screen.
 
 ## 7. Limits of the Windows-only verification (assumptions)
 
@@ -78,4 +77,5 @@ Install the build on a real iPhone and verify: Google login; **Continue with App
 - The SKAdNetwork list (50 ids) comes from the AdMob iOS quick-start page on the day of implementation; Google updates it periodically.
 - `aps-environment` is `development` in `Runner.entitlements`; the App Store export re-signs with the distribution profile (production APNs).
 - iPad is not targeted (`TARGETED_DEVICE_FAMILY = 1`, portrait only), so no iPad screenshots are required.
-- Restore purchases is shown only on the Pro screen (credit packs are consumables and cannot be restored).
+- Credit packs are consumables and cannot be restored; a Restore button exists only in the (currently iOS-hidden) Pro screen. When iOS subscriptions are built, flip `proPurchaseAvailableFor` in `lib/utils/pro_purchase.dart` and add the Pro product, the subscription group and the Restore flow back to this checklist.
+- Binance market data falls back to `data-api.binance.vision` / `data-stream.binance.vision` when the main hosts answer HTTP 451/403 (US IPs, e.g. App Review). Futures-only data has no such fallback and degrades gracefully.
