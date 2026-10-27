@@ -1,0 +1,100 @@
+# Codemagic CI/CD for the iOS app (com.polatliajans.kriptoanaliz).
+#
+# One-time setup lives in docs/ios-release-checklist.md. Secrets are NEVER in
+# this file; only the names of Codemagic variables / integrations appear here:
+#
+#   Integration  codemagic_asc          App Store Connect API key (Teams > Integrations)
+#   Group        ios_release            GOOGLE_SERVICE_INFO_PLIST  (secure, base64 of GoogleService-Info.plist)
+#                                       ADMOB_IOS_APP_ID           (AdMob iOS APP id, ca-app-pub-...~...)
+#                                       APP_STORE_APPLE_ID         (numeric Apple ID of the app in App Store Connect)
+#   ios-ci uses no variable group: it builds with a stub GoogleService-Info.plist (compile check only).
+#
+# Flutter is pinned to the version used locally (flutter --version = 3.38.7).
+
+workflows:
+  ios-release:
+    name: iOS Release (TestFlight)
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    integrations:
+      app_store_connect: codemagic_asc
+    environment:
+      flutter: 3.38.7
+      xcode: latest
+      cocoapods: default
+      groups:
+        - ios_release
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.polatliajans.kriptoanaliz
+      vars:
+        BUNDLE_ID: com.polatliajans.kriptoanaliz
+    scripts:
+      - name: Write GoogleService-Info.plist and Secrets.xcconfig
+        script: |
+          bash tool/ios_prepare_secrets.sh --require-admob
+      - name: Get Flutter packages
+        script: flutter pub get
+      - name: Install CocoaPods dependencies
+        script: |
+          cd ios
+          pod install
+      - name: Analyze
+        script: flutter analyze
+      - name: Run tests
+        script: flutter test
+      - name: Set up code signing settings on Xcode project
+        script: xcode-project use-profiles
+      - name: Build signed IPA
+        script: |
+          # Next build number = latest uploaded to App Store Connect + 1.
+          LATEST_BUILD_NUMBER=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID" || true)
+          LATEST_BUILD_NUMBER=${LATEST_BUILD_NUMBER:-0}
+          BUILD_NUMBER=$(($LATEST_BUILD_NUMBER + 1))
+          echo "Building with build number $BUILD_NUMBER"
+          flutter build ipa --release \
+            --build-number=$BUILD_NUMBER \
+            --export-options-plist=/Users/builder/export_options.plist
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - build/ios/archive/Runner.xcarchive/dSYMs/**
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      app_store_connect:
+        auth: integration
+        # Uploads to App Store Connect (processing) without sending to beta review.
+        submit_to_testflight: false
+        submit_to_app_store: false
+
+  ios-ci:
+    name: iOS CI (analyze, test, debug build)
+    instance_type: mac_mini_m2
+    max_build_duration: 45
+    environment:
+      flutter: 3.38.7
+      xcode: latest
+      cocoapods: default
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: '*'
+          include: true
+          source: true
+      cancel_previous_builds: true
+    scripts:
+      - name: Write GoogleService-Info.plist and Secrets.xcconfig (stub allowed)
+        script: |
+          bash tool/ios_prepare_secrets.sh --allow-stub
+      - name: Get Flutter packages
+        script: flutter pub get
+      - name: Install CocoaPods dependencies
+        script: |
+          cd ios
+          pod install
+      - name: Analyze
+        script: flutter analyze
+      - name: Run tests
+        script: flutter test
+      - name: Debug build without code signing
+        script: flutter build ios --debug --no-codesign

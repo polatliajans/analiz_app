@@ -1,0 +1,5 @@
+# Scripts and Xcode files must keep LF endings (they run on macOS CI).
+*.sh text eol=lf
+*.xcconfig text eol=lf
+*.pbxproj text eol=lf
+Podfile text eol=lf
