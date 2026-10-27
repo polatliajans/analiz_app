@@ -972,5 +972,9 @@
   "insufficientCreditBodyWithAdIos": "You don't have enough credits for this analysis. Watch a short ad to run this one quick analysis, or buy credits.",
   "insufficientCreditDeepBodyIos": "You don't have enough credits for a deep analysis. You can buy credits to continue.",
   "adAnalysisCapReachedIos": "You've used all of today's ad-funded analyses: you can buy credits to continue.",
-  "purchaseProofMissing": "Your purchase is still being confirmed by the store. It will be credited automatically once it is confirmed; if it does not show up, reopen the app."
+  "purchaseProofMissing": "Your purchase is still being confirmed by the store. It will be credited automatically once it is confirmed; if it does not show up, reopen the app.",
+  "analysisInfoDisclaimer": "AI analysis is for information only. It is not financial or investment advice.",
+  "reportAnalysis": "Report this analysis",
+  "reportAnalysisSubject": "Analysis report",
+  "reportAnalysisBody": "Please describe the problem with this analysis:\n\n"
 }

@@ -642,5 +642,9 @@
   "insufficientCreditBodyWithAdIos": "No tienes créditos suficientes para este análisis. Mira un anuncio corto para hacer este análisis rápido o compra créditos.",
   "insufficientCreditDeepBodyIos": "No tienes créditos suficientes para un análisis profundo. Puedes comprar créditos para continuar.",
   "adAnalysisCapReachedIos": "Has agotado los análisis con anuncios de hoy: puedes comprar créditos para continuar.",
-  "purchaseProofMissing": "La tienda aún está confirmando tu compra. Se acreditará automáticamente al confirmarse; si no aparece, vuelve a abrir la app."
+  "purchaseProofMissing": "La tienda aún está confirmando tu compra. Se acreditará automáticamente al confirmarse; si no aparece, vuelve a abrir la app.",
+  "analysisInfoDisclaimer": "El análisis de IA es solo informativo. No es asesoramiento financiero ni de inversión.",
+  "reportAnalysis": "Informar sobre este análisis",
+  "reportAnalysisSubject": "Informe de análisis",
+  "reportAnalysisBody": "Describe el problema con este análisis:\n\n"
 }

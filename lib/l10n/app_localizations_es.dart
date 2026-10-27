@@ -2178,4 +2178,18 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get purchaseProofMissing =>
       'La tienda aún está confirmando tu compra. Se acreditará automáticamente al confirmarse; si no aparece, vuelve a abrir la app.';
+
+  @override
+  String get analysisInfoDisclaimer =>
+      'El análisis de IA es solo informativo. No es asesoramiento financiero ni de inversión.';
+
+  @override
+  String get reportAnalysis => 'Informar sobre este análisis';
+
+  @override
+  String get reportAnalysisSubject => 'Informe de análisis';
+
+  @override
+  String get reportAnalysisBody =>
+      'Describe el problema con este análisis:\n\n';
 }

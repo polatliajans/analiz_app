@@ -146,6 +146,14 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   ),
                 ],
                 const SizedBox(height: 8),
+                Text(
+                  l10n.analysisInfoDisclaimer,
+                  key: const Key('auth-disclaimer'),
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
                 const LegalLinksRow(),
               ],
             ),

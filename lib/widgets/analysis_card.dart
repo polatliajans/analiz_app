@@ -5,6 +5,7 @@ import '../l10n/app_localizations.dart';
 import '../models/analysis_record.dart';
 import '../models/structured_analysis.dart';
 import '../utils/structured_analysis_logic.dart';
+import 'report_analysis_button.dart';
 import 'structured_analysis_view.dart';
 
 String formatAnalysisDate(BuildContext context, DateTime dt) {
@@ -66,9 +67,18 @@ Future<void> showAnalysisSheet(
             Text(result),
             const SizedBox(height: 8),
             Text(
+              l10n.analysisInfoDisclaimer,
+              style: Theme.of(sheetContext).textTheme.bodySmall?.copyWith(
+                color: Theme.of(sheetContext).colorScheme.onSurfaceVariant,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
               l10n.creditsSpent(creditCost),
               style: Theme.of(sheetContext).textTheme.bodySmall,
             ),
+            const ReportAnalysisButton(),
           ],
         ),
       ),

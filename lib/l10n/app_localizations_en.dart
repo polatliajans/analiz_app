@@ -2154,4 +2154,18 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get purchaseProofMissing =>
       'Your purchase is still being confirmed by the store. It will be credited automatically once it is confirmed; if it does not show up, reopen the app.';
+
+  @override
+  String get analysisInfoDisclaimer =>
+      'AI analysis is for information only. It is not financial or investment advice.';
+
+  @override
+  String get reportAnalysis => 'Report this analysis';
+
+  @override
+  String get reportAnalysisSubject => 'Analysis report';
+
+  @override
+  String get reportAnalysisBody =>
+      'Please describe the problem with this analysis:\n\n';
 }

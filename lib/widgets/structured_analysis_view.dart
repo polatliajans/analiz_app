@@ -8,6 +8,7 @@ import '../models/structured_analysis.dart';
 import '../screens/glossary_screen.dart';
 import '../utils/analysis_age.dart';
 import '../utils/structured_analysis_logic.dart';
+import 'report_analysis_button.dart';
 
 const _bullColor = Color(0xFF2E9E5B);
 const _bearColor = Color(0xFFD64545);
@@ -299,6 +300,12 @@ class StructuredAnalysisView extends StatelessWidget {
         ],
         const SizedBox(height: 8),
         Text(l10n.creditsSpent(creditCost), style: textTheme.bodySmall),
+        ReportAnalysisButton(
+          subjectDetail: [
+            data.symbol,
+            data.timeframe,
+          ].whereType<String>().join(' '),
+        ),
       ],
     );
   }

@@ -94,6 +94,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             itemBuilder: (context, i) => _SlidePage(
               slide: slides[i],
               fallbackIcon: _fallbackIcons[i % _fallbackIcons.length],
+              footnote: l10n.analysisInfoDisclaimer,
             ),
           ),
         ),
@@ -137,7 +138,13 @@ class _SlidePage extends StatelessWidget {
   final OnboardingSlide slide;
   final IconData fallbackIcon;
 
-  const _SlidePage({required this.slide, required this.fallbackIcon});
+  final String footnote;
+
+  const _SlidePage({
+    required this.slide,
+    required this.fallbackIcon,
+    required this.footnote,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -183,6 +190,15 @@ class _SlidePage extends StatelessWidget {
                 slide.body,
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodyLarge,
+              ),
+              const SizedBox(height: 24),
+              Text(
+                footnote,
+                key: const Key('onboarding-disclaimer'),
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
               ),
             ],
           ),

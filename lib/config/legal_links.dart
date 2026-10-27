@@ -18,4 +18,12 @@ class LegalLinks {
   }
 
   static Uri get supportMailto => Uri(scheme: 'mailto', path: supportEmail);
+
+  /// `mailto:` to support with a prefilled subject/body (percent-encoded, so
+  /// spaces stay spaces in every mail app).
+  static Uri supportMailtoWith({required String subject, String body = ''}) =>
+      Uri.parse(
+        'mailto:$supportEmail?subject=${Uri.encodeComponent(subject)}'
+        '&body=${Uri.encodeComponent(body)}',
+      );
 }

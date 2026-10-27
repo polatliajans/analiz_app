@@ -3573,6 +3573,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your purchase is still being confirmed by the store. It will be credited automatically once it is confirmed; if it does not show up, reopen the app.'**
   String get purchaseProofMissing;
+
+  /// No description provided for @analysisInfoDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'AI analysis is for information only. It is not financial or investment advice.'**
+  String get analysisInfoDisclaimer;
+
+  /// No description provided for @reportAnalysis.
+  ///
+  /// In en, this message translates to:
+  /// **'Report this analysis'**
+  String get reportAnalysis;
+
+  /// No description provided for @reportAnalysisSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'Analysis report'**
+  String get reportAnalysisSubject;
+
+  /// No description provided for @reportAnalysisBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Please describe the problem with this analysis:\n\n'**
+  String get reportAnalysisBody;
 }
 
 class _AppLocalizationsDelegate

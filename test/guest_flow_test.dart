@@ -186,6 +186,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Continue as guest'), findsOneWidget);
     expect(find.textContaining('browse as a guest'), findsOneWidget);
+    expect(find.byKey(const Key('auth-disclaimer')), findsOneWidget);
 
     await tester.pumpWidget(
       _app(container, const AuthScreen(showGuest: false)),

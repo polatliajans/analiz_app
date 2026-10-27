@@ -2095,4 +2095,17 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get purchaseProofMissing =>
       'Satın alımın mağaza tarafından hâlâ onaylanıyor. Onaylanınca otomatik olarak eklenecek; görünmezse uygulamayı yeniden aç.';
+
+  @override
+  String get analysisInfoDisclaimer =>
+      'Yapay zekâ analizi yalnızca bilgilendirme amaçlıdır. Finansal veya yatırım tavsiyesi değildir.';
+
+  @override
+  String get reportAnalysis => 'Bu analizi bildir';
+
+  @override
+  String get reportAnalysisSubject => 'Analiz bildirimi';
+
+  @override
+  String get reportAnalysisBody => 'Lütfen bu analizdeki sorunu açıklayın:\n\n';
 }
