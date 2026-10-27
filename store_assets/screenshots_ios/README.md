@@ -1,13 +1,15 @@
 # App Store screenshots (iPhone 6.9")
 
 Branded 1320x2868 PNG phone screenshots (no alpha) per listing language: `en/`,
-`tr/`, `es/` (`01-home` ... `08-glossary`, same order and captions as the Play
+`tr/`, `es/` (`01-home` ... `09-pro`, same order and captions as the Play
 set in `../screenshots/`, see its README for the caption table).
 
-iOS specifics: rendered with `proPurchaseAvailableProvider` overridden to
-`false` (as on iOS), so the home screen shows the full-width credit card and no
-Pro promo card; no Pro prices/CTAs and no Android UI appear. Captions mention
-no other platform and no Pro.
+iOS specifics: Pro purchase is available on iOS (same as Android), so the home
+screen shows the Pro promo card next to the credit card (no provider override).
+`09-pro` is the Pro / subscription screen with iOS wording and demo plan data
+(price `$9.99`, auto-renew note, App Store terms, manage / restore, legal
+links; scrolled to the plan card). It exists only in the iOS set. No Android UI
+appears and captions mention no other platform.
 
 Pipeline (`sh tool/store_screenshots_ios.sh`):
 
@@ -21,5 +23,5 @@ Pipeline (`sh tool/store_screenshots_ios.sh`):
    flattens to RGB.
 
 Apple rules checked: PNG, no alpha, 1320x2868 (6.9" Dynamic Island, the single
-set App Store Connect scales down). Verified programmatically: 24 files, all
+set App Store Connect scales down). Verified programmatically: 27 files, all
 1320x2868 RGB. See docs/release/appstore-screenshots.md in binance_analiz.

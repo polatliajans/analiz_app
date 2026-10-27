@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:kriptoanaliz/ads/ads_controller.dart';
 import 'package:kriptoanaliz/data/app_config_api.dart';
 import 'package:kriptoanaliz/data/binance_klines_api.dart';
@@ -23,6 +24,7 @@ import 'package:kriptoanaliz/models/chart_signal.dart';
 import 'package:kriptoanaliz/models/coin.dart';
 import 'package:kriptoanaliz/models/coin_overview.dart';
 import 'package:kriptoanaliz/models/member.dart';
+import 'package:kriptoanaliz/models/subscription_plan.dart';
 import 'package:kriptoanaliz/models/price_alert.dart';
 import 'package:kriptoanaliz/models/radar_item.dart';
 import 'package:kriptoanaliz/models/structured_analysis.dart';
@@ -39,14 +41,18 @@ import 'package:kriptoanaliz/providers/live_chart_provider.dart';
 import 'package:kriptoanaliz/providers/locale_provider.dart';
 import 'package:kriptoanaliz/providers/price_alert_provider.dart';
 import 'package:kriptoanaliz/providers/radar_provider.dart';
+import 'package:kriptoanaliz/providers/credit_purchase_provider.dart';
 import 'package:kriptoanaliz/providers/selected_coin_provider.dart';
+import 'package:kriptoanaliz/providers/store_price_provider.dart';
+import 'package:kriptoanaliz/providers/store_product_provider.dart';
+import 'package:kriptoanaliz/providers/subscription_provider.dart';
 import 'package:kriptoanaliz/providers/watchlist_provider.dart';
 import 'package:kriptoanaliz/utils/price_alert_logic.dart';
-import 'package:kriptoanaliz/utils/pro_purchase.dart';
 import 'package:kriptoanaliz/screens/chart_screen.dart';
 import 'package:kriptoanaliz/screens/glossary_screen.dart';
 import 'package:kriptoanaliz/screens/home_screen.dart';
 import 'package:kriptoanaliz/screens/radar_screen.dart';
+import 'package:kriptoanaliz/screens/subscription_screen.dart';
 import 'package:kriptoanaliz/screens/watchlist_screen.dart';
 import 'package:kriptoanaliz/widgets/analysis_card.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -91,8 +97,6 @@ Future<ProviderContainer> makeContainer(
       sharedPreferencesProvider.overrideWithValue(prefs),
       adsControllerProvider.overrideWith(_NoAds.new),
       authProvider.overrideWith(() => FakeAuth(member)),
-      // iOS profile: the app hides every Pro purchase surface on iOS.
-      if (iosProfile) proPurchaseAvailableProvider.overrideWithValue(false),
       ...extra,
     ],
   );
@@ -453,9 +457,57 @@ void main() {
         await _settle(tester, 10);
         await savePng(tester, lang, '08-glossary');
       }, skip: skip);
+
+      // App Store set only: the Pro / subscription screen (iOS wording, store
+      // price and auto-renew terms) with demo plan data.
+      testWidgets('09-pro', (tester) async {
+        usePhoneSurface(tester);
+        final c = await makeContainer(
+          tester,
+          extra: [
+            purchaseIsIosProvider.overrideWithValue(true),
+            inAppPurchaseProvider.overrideWithValue(_NoStore()),
+            subscriptionPlanListProvider.overrideWith(
+              (ref) async => const [demoProPlan],
+            ),
+            storePricesProvider.overrideWith(
+              (ref, ids) async => const {'ios_pro_monthly': '\$9.99'},
+            ),
+            storeProductsProvider.overrideWith((ref, ids) async => {}),
+          ],
+        );
+        await tester.pumpWidget(
+          shotApp(lang: lang, home: const SubscriptionScreen(), container: c),
+        );
+        await _settle(tester, 10);
+        // The page is longer than the phone: scroll to the end so the plan
+        // card, price, auto-renew note, terms and restore button are visible.
+        await tester.drag(find.byType(ListView).first, const Offset(0, -380));
+        await _settle(tester, 10);
+        await savePng(tester, lang, '09-pro');
+      }, skip: skip || !iosProfile);
     });
   }
 }
+
+/// Inert store plugin: no platform channels, no purchase events.
+class _NoStore implements InAppPurchase {
+  @override
+  Stream<List<PurchaseDetails>> get purchaseStream => const Stream.empty();
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+const demoProPlan = SubscriptionPlan(
+  id: 1,
+  name: 'CryptoAnaliz Pro',
+  price: '9.99',
+  durationDays: 30,
+  storeProductIdAndroid: 'pro_monthly',
+  appleProductId: 'ios_pro_monthly',
+  monthlyCredit: 300,
+);
 
 /// Unmounts the chart and disposes the container so the live chart's timers
 /// are cancelled before the test ends.

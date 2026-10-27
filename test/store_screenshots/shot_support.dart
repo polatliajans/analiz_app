@@ -62,8 +62,8 @@ Future<void> loadStoreFonts() async {
 }
 
 /// Profile: `STORE_SHOT_PROFILE=ios` renders the App Store set (iPhone 6.9",
-/// 440x956 logical at 3x = 1320x2868, Dynamic Island insets, no Pro purchase
-/// surfaces); anything else is the Play Store phone (1080x2400).
+/// 440x956 logical at 3x = 1320x2868, Dynamic Island insets, adds the
+/// 09-pro screen); anything else is the Play Store phone (1080x2400).
 final bool iosProfile = Platform.environment['STORE_SHOT_PROFILE'] == 'ios';
 
 /// Insets of the capture (Play: status bar 32dp, nav bar 44dp; iOS: Dynamic

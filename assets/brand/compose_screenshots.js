@@ -12,6 +12,7 @@ const CAPTIONS = {
   '06-radar':         { en: ['Radar spots', 'oversold setups'],      tr: ['Radar aşırı satım', 'fırsatlarını tarar'], es: ['El radar detecta', 'sobreventas'] },
   '07-watchlist':     { en: ['Watchlist &', 'price alerts'],         tr: ['Takip listesi ve', 'fiyat alarmları'],   es: ['Lista de seguimiento', 'y alertas de precio'] },
   '08-glossary':      { en: ['Every term,', 'clearly explained'],    tr: ['Her terim,', 'açıkça anlatılır'],        es: ['Cada término,', 'bien explicado'] },
+  '09-pro':           { en: ['Pro plan with', 'monthly credits'],      tr: ['Aylık kredili', 'Pro abonelik'],          es: ['Plan Pro con', 'créditos mensuales'] },
   '01-home':     { en: ['Market pulse', 'at a glance'],        tr: ['Piyasa nabzı', 'tek bakışta'],          es: ['El pulso del mercado', 'de un vistazo'] },
   '02-chart':    { en: ['Live charts &', 'indicator signals'], tr: ['Canlı grafikler ve', 'gösterge sinyalleri'], es: ['Gráficos en vivo y', 'señales de indicadores'] },
   '03-deep':     { en: ['Deep analysis in', 'plain language'],  tr: ['Derin analiz,', 'sade bir dille'],      es: ['Análisis profundo', 'en lenguaje sencillo'] },
