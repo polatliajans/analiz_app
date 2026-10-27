@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
+import '../utils/platform_info.dart';
 import '../providers/home_tab_provider.dart';
 import 'ad_logic.dart';
 import 'ads_controller.dart';
@@ -104,6 +105,7 @@ class _BannerAdSlotState extends ConsumerState<BannerAdSlot> {
             widget.placementKey,
             AdFormat.banner,
             isDebug: kDebugMode,
+            ios: isIOS,
           )
         : null;
     final inShell = ModalRoute.of(context)?.isFirst ?? true;

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
+import '../utils/platform_info.dart';
 import '../models/app_config.dart';
 import '../providers/app_config_provider.dart';
 import '../providers/auth_provider.dart';
@@ -11,6 +12,7 @@ import '../providers/locale_provider.dart';
 import '../providers/price_alert_provider.dart';
 import 'ad_analysis_flow.dart';
 import 'ad_counters.dart';
+import 'consent_flow.dart';
 import 'ad_logic.dart';
 
 /// Debug-only switch (`--dart-define=ADS_FORCE_TEST=true`): shows every
@@ -118,23 +120,30 @@ class AdsController extends Notifier<AdsState> {
   /// requested only if `canRequestAds()` allows it.
   static Future<bool> _obtainConsentAndInitialize() async {
     try {
-      final done = Completer<void>();
-      void finish([Object? _]) {
-        if (!done.isCompleted) done.complete();
-      }
+      final ok = await runConsentFlow(
+        ConsentFlowSteps(
+          ios: isIOS,
+          ump: () async {
+            final done = Completer<void>();
+            void finish([Object? _]) {
+              if (!done.isCompleted) done.complete();
+            }
 
-      ConsentInformation.instance.requestConsentInfoUpdate(
-        ConsentRequestParameters(),
-        () => ConsentForm.loadAndShowConsentFormIfRequired(finish),
-        finish,
+            ConsentInformation.instance.requestConsentInfoUpdate(
+              ConsentRequestParameters(),
+              () => ConsentForm.loadAndShowConsentFormIfRequired(finish),
+              finish,
+            );
+            await done.future;
+          },
+          canRequestAds: () => ConsentInformation.instance.canRequestAds(),
+          requestTracking: requestTrackingAuthorizationIfNeeded,
+          initialize: () => MobileAds.instance.initialize(),
+        ),
       );
-      await done.future;
-      if (!await ConsentInformation.instance.canRequestAds()) {
-        _consentAndInit = null; // ask again on the next launch/config change
-        return false;
-      }
-      await MobileAds.instance.initialize();
-      return true;
+      // Ask again on the next launch/config change.
+      if (!ok) _consentAndInit = null;
+      return ok;
     } catch (_) {
       _consentAndInit = null;
       return false;
@@ -158,6 +167,7 @@ class AdsController extends Notifier<AdsState> {
     AdPlacementKeys.interstitialAnalysis,
     AdFormat.interstitial,
     isDebug: kDebugMode,
+    ios: isIOS,
   );
 
   void _loadInterstitial() {
@@ -187,6 +197,7 @@ class AdsController extends Notifier<AdsState> {
     AdPlacementKeys.interstitialNavigation,
     AdFormat.interstitial,
     isDebug: kDebugMode,
+    ios: isIOS,
   );
 
   void _loadNavInterstitial() {
@@ -332,6 +343,7 @@ class AdsController extends Notifier<AdsState> {
       _config.rewarded.unitId,
       AdFormat.rewarded,
       isDebug: kDebugMode,
+      ios: isIOS,
     );
     if (unit == null) return;
     _rewardedLoading = true;

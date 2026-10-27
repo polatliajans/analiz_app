@@ -52,16 +52,30 @@ const testUnitIds = <AdFormat, String>{
   AdFormat.rewarded: 'ca-app-pub-3940256099942544/5224354917',
 };
 
-/// The server unit id when set; otherwise Google's test unit in debug builds
+/// Google's public iOS test ad units (safe to click, never billed).
+const iosTestUnitIds = <AdFormat, String>{
+  AdFormat.banner: 'ca-app-pub-3940256099942544/2435281174',
+  AdFormat.interstitial: 'ca-app-pub-3940256099942544/4411468910',
+  AdFormat.native: 'ca-app-pub-3940256099942544/3986624511',
+  AdFormat.rewarded: 'ca-app-pub-3940256099942544/1712485313',
+};
+
+/// The public test unit of [format] for the platform ([ios] or Android).
+String? testUnitIdFor(AdFormat format, {bool ios = false}) =>
+    (ios ? iosTestUnitIds : testUnitIds)[format];
+
+/// The server unit id when set (the server already returns the unit for this
+/// platform); otherwise Google's test unit for this platform in debug builds
 /// and null (= placement not shown) in release builds.
 String? resolveUnitId(
   String? serverUnitId,
   AdFormat format, {
   required bool isDebug,
+  bool ios = false,
 }) {
   final id = serverUnitId?.trim() ?? '';
   if (id.isNotEmpty) return id;
-  return isDebug ? testUnitIds[format] : null;
+  return isDebug ? testUnitIdFor(format, ios: ios) : null;
 }
 
 /// Unit id for an enabled placement, or null when it must not be shown.
@@ -70,11 +84,12 @@ String? activeUnitId(
   String key,
   AdFormat format, {
   required bool isDebug,
+  bool ios = false,
 }) {
   if (!ads.enabled) return null;
   final placement = ads.placement(key);
   if (placement == null) return null;
-  return resolveUnitId(placement.unitId, format, isDebug: isDebug);
+  return resolveUnitId(placement.unitId, format, isDebug: isDebug, ios: ios);
 }
 
 int effectiveFrequency(int? configured, int fallback) =>

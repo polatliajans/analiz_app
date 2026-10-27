@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../utils/platform_info.dart';
 import 'ad_logic.dart';
 import 'ads_controller.dart';
 import 'native_ads.dart';
@@ -46,6 +47,7 @@ class _HomeNativeAdSlotState extends ConsumerState<HomeNativeAdSlot> {
             AdPlacementKeys.nativeHome,
             AdFormat.native,
             isDebug: kDebugMode,
+            ios: isIOS,
           )
         : null;
     final theme = Theme.of(context);

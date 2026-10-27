@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
+import '../utils/platform_info.dart';
 import '../l10n/app_localizations.dart';
 import 'ad_logic.dart';
 import 'ads_controller.dart';
@@ -127,6 +128,7 @@ mixin NativeAdPoolHost<T extends ConsumerStatefulWidget> on ConsumerState<T> {
             nativePlacementKey,
             AdFormat.native,
             isDebug: kDebugMode,
+            ios: isIOS,
           )
         : null;
     final theme = Theme.of(context);
