@@ -2134,4 +2134,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get restorePurchasesFailed => 'Could not restore purchases.';
+
+  @override
+  String get featureNotAvailable =>
+      'This feature is not available on your account right now.';
+
+  @override
+  String get insufficientCreditBodyWithAdIos =>
+      'You don\'t have enough credits for this analysis. Watch a short ad to run this one quick analysis, or buy credits.';
+
+  @override
+  String get insufficientCreditDeepBodyIos =>
+      'You don\'t have enough credits for a deep analysis. You can buy credits to continue.';
+
+  @override
+  String get adAnalysisCapReachedIos =>
+      'You\'ve used all of today\'s ad-funded analyses: you can buy credits to continue.';
 }

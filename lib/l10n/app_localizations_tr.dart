@@ -2075,4 +2075,20 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get restorePurchasesFailed => 'Satın alımlar geri yüklenemedi.';
+
+  @override
+  String get featureNotAvailable =>
+      'Bu özellik şu anda hesabında kullanılamıyor.';
+
+  @override
+  String get insufficientCreditBodyWithAdIos =>
+      'Bu analiz için yeterli kredin yok. Kısa bir reklam izleyerek bu hızlı analizi yapabilir ya da kredi alabilirsin.';
+
+  @override
+  String get insufficientCreditDeepBodyIos =>
+      'Derin analiz için yeterli kredin yok. Devam etmek için kredi alabilirsin.';
+
+  @override
+  String get adAnalysisCapReachedIos =>
+      'Bugünkü reklamlı analiz hakkın doldu: devam etmek için kredi alabilirsin.';
 }

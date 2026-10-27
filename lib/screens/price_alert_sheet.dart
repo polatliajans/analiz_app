@@ -13,7 +13,7 @@ import '../providers/price_alert_provider.dart';
 import '../utils/price_alert_logic.dart';
 import '../widgets/pro_upsell_sheet.dart';
 import 'guest_benefits_screen.dart';
-import 'subscription_screen.dart';
+import '../utils/pro_purchase.dart';
 
 /// Explains that price alerts are a Pro feature and offers the upgrade.
 Future<void> showProAlertPromo(BuildContext context) =>
@@ -269,7 +269,8 @@ class _PriceAlertSheetState extends ConsumerState<PriceAlertSheet> {
                 ),
                 if (_error is PriceAlertException &&
                     (_error as PriceAlertException).kind ==
-                        PriceAlertErrorKind.proRequired)
+                        PriceAlertErrorKind.proRequired &&
+                    ref.watch(proPurchaseAvailableProvider))
                   Align(
                     alignment: AlignmentDirectional.centerStart,
                     child: TextButton(
@@ -278,7 +279,7 @@ class _PriceAlertSheetState extends ConsumerState<PriceAlertSheet> {
                         navigator.pop();
                         navigator.push(
                           MaterialPageRoute(
-                            builder: (_) => const SubscriptionScreen(),
+                            builder: (_) => proUpgradeScreen(available: true),
                           ),
                         );
                       },

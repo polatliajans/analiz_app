@@ -37,7 +37,7 @@ import '../widgets/pro_upsell_sheet.dart';
 import 'coin_picker_sheet.dart';
 import 'guest_benefits_screen.dart';
 import 'price_alert_sheet.dart';
-import 'subscription_screen.dart';
+import '../utils/pro_purchase.dart';
 
 /// Home chart tab: shows the coin held by [selectedCoinProvider].
 class ChartScreen extends ConsumerStatefulWidget {
@@ -302,7 +302,11 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
           say(l10n.analysisFailed('$e'));
         }
       default:
-        final text = adFlowMessage(l10n, result.outcome);
+        final text = adFlowMessage(
+          l10n,
+          result.outcome,
+          proAvailable: ref.read(proPurchaseAvailableProvider),
+        );
         if (text != null) say(text);
         if (result.outcome == AdFlowOutcome.capReached ||
             result.outcome == AdFlowOutcome.notFree ||
@@ -692,13 +696,13 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
       if (!supportsSignals(timeframe)) return const SizedBox.shrink();
       text = l10n.signalsGuestNote;
       onTap = () => openGuestBenefits(context);
-    } else if (gate.isPro || !gate.showStrongSignalsNote) {
+    } else if (gate.isPro ||
+        !gate.showStrongSignalsNote ||
+        !ref.watch(proPurchaseAvailableProvider)) {
       return const SizedBox.shrink();
     } else {
       text = l10n.strongSignalsProNote;
-      onTap = () => Navigator.of(
-        context,
-      ).push(MaterialPageRoute(builder: (_) => const SubscriptionScreen()));
+      onTap = () => openProUpgrade(context);
     }
     final muted = Theme.of(context).colorScheme.onSurfaceVariant;
     return InkWell(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../l10n/app_localizations.dart';
+import '../utils/pro_purchase.dart';
 import '../models/app_config.dart';
 import '../providers/app_config_provider.dart';
 import '../providers/auth_prompt_provider.dart';
@@ -147,33 +148,35 @@ class _GuestBenefitsScreenState extends ConsumerState<GuestBenefitsScreen> {
                   key: const Key('guest-benefits-list'),
                   benefits: guestBenefitsFor(l10n, plan),
                 ),
-                const SizedBox(height: 16),
-                Container(
-                  key: const Key('guest-pro-tease'),
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: scheme.primaryContainer,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(
-                        Icons.workspace_premium_rounded,
-                        color: scheme.onPrimaryContainer,
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          l10n.gbProTease,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: scheme.onPrimaryContainer,
+                if (ref.watch(proPurchaseAvailableProvider)) ...[
+                  const SizedBox(height: 16),
+                  Container(
+                    key: const Key('guest-pro-tease'),
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: scheme.primaryContainer,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.workspace_premium_rounded,
+                          color: scheme.onPrimaryContainer,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            l10n.gbProTease,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: scheme.onPrimaryContainer,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
+                ],
               ],
             ),
           ),

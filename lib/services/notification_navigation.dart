@@ -9,7 +9,7 @@ import '../providers/price_alert_provider.dart';
 import '../providers/selected_coin_provider.dart';
 import '../screens/alarms_screen.dart';
 import '../screens/credit_packages_screen.dart';
-import '../screens/subscription_screen.dart';
+import '../utils/pro_purchase.dart';
 import '../widgets/pro_upsell_sheet.dart';
 import 'notification_logic.dart';
 
@@ -54,7 +54,11 @@ Future<void> applyNotificationTarget(
     case NotificationScreen.subscription:
       tabs.select(profileTabIndex);
       navigator.push(
-        MaterialPageRoute(builder: (_) => const SubscriptionScreen()),
+        MaterialPageRoute(
+          builder: (_) => proUpgradeScreen(
+            available: ref.read(proPurchaseAvailableProvider),
+          ),
+        ),
       );
     case NotificationScreen.alarms:
       tabs.select(profileTabIndex);

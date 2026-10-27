@@ -12,7 +12,8 @@ import '../providers/selected_coin_provider.dart';
 import '../utils/radar_tiers.dart';
 import '../widgets/radar/radar_widgets.dart';
 import 'guest_benefits_screen.dart';
-import 'subscription_screen.dart';
+import '../utils/pro_purchase.dart';
+import '../widgets/pro_upsell_sheet.dart';
 
 class RadarScreen extends ConsumerStatefulWidget {
   const RadarScreen({super.key});
@@ -135,15 +136,21 @@ class _RadarScreenState extends ConsumerState<RadarScreen>
   void _openUpgrade(RadarAccess access) {
     if (access == RadarAccess.guest) {
       openGuestBenefits(context);
+    } else if (ref.read(proPurchaseAvailableProvider)) {
+      openProUpgrade(context);
     } else {
-      Navigator.of(
-        context,
-      ).push(MaterialPageRoute(builder: (_) => const SubscriptionScreen()));
+      showProUpsell(context, ProFeature.generic);
     }
   }
 
-  Widget _upsellRow(RadarAccess access) =>
-      RadarUpsellRow(access: access, onTap: () => _openUpgrade(access));
+  Widget _upsellRow(RadarAccess access) {
+    // Free members have nothing to upgrade to where Pro cannot be bought.
+    if (access != RadarAccess.guest &&
+        !ref.watch(proPurchaseAvailableProvider)) {
+      return const SizedBox.shrink();
+    }
+    return RadarUpsellRow(access: access, onTap: () => _openUpgrade(access));
+  }
 
   void _open(RadarItem item) {
     ref.read(selectedCoinProvider.notifier).select(item.coin);

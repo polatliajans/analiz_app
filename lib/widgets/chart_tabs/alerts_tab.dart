@@ -5,6 +5,7 @@ import '../../l10n/app_localizations.dart';
 import '../../models/coin.dart';
 import '../../models/price_alert.dart';
 import '../../providers/auth_provider.dart';
+import '../../utils/pro_purchase.dart';
 import '../../providers/chart_data_provider.dart';
 import '../../providers/price_alert_provider.dart';
 import '../../screens/price_alert_sheet.dart';
@@ -31,6 +32,13 @@ class AlertsTab extends ConsumerWidget {
       );
     }
     if (!ref.watch(isProProvider)) {
+      if (!ref.watch(proPurchaseAvailableProvider)) {
+        return TabMessage(
+          key: const Key('alerts-unavailable'),
+          icon: Icons.notifications_off_outlined,
+          title: l10n.featureNotAvailable,
+        );
+      }
       return TabMessage(
         key: const Key('alerts-pro-upsell'),
         icon: Icons.notifications_active_outlined,

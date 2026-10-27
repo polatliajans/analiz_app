@@ -637,5 +637,9 @@
   "subCancelNoteIos": "Ödeme, satın alma onaylandığında Apple Kimliğinizden tahsil edilir. Abonelik, mevcut dönemin bitiminden en az 24 saat önce iptal edilmezse otomatik olarak yenilenir. Aboneliğinizi istediğiniz zaman Ayarlar > Apple Kimliği > Abonelikler bölümünden yönetebilir veya iptal edebilirsiniz.",
   "subAlreadyProBodyIos": "Desteğiniz için teşekkürler! Aboneliğinizi istediğiniz zaman Apple Kimliği abonelik ayarlarından yönetebilir veya iptal edebilirsiniz.",
   "restorePurchases": "Satın alımları geri yükle",
-  "restorePurchasesFailed": "Satın alımlar geri yüklenemedi."
+  "restorePurchasesFailed": "Satın alımlar geri yüklenemedi.",
+  "featureNotAvailable": "Bu özellik şu anda hesabında kullanılamıyor.",
+  "insufficientCreditBodyWithAdIos": "Bu analiz için yeterli kredin yok. Kısa bir reklam izleyerek bu hızlı analizi yapabilir ya da kredi alabilirsin.",
+  "insufficientCreditDeepBodyIos": "Derin analiz için yeterli kredin yok. Devam etmek için kredi alabilirsin.",
+  "adAnalysisCapReachedIos": "Bugünkü reklamlı analiz hakkın doldu: devam etmek için kredi alabilirsin."
 }

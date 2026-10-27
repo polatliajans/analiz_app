@@ -2158,4 +2158,20 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get restorePurchasesFailed => 'No se pudieron restaurar las compras.';
+
+  @override
+  String get featureNotAvailable =>
+      'Esta función no está disponible en tu cuenta en este momento.';
+
+  @override
+  String get insufficientCreditBodyWithAdIos =>
+      'No tienes créditos suficientes para este análisis. Mira un anuncio corto para hacer este análisis rápido o compra créditos.';
+
+  @override
+  String get insufficientCreditDeepBodyIos =>
+      'No tienes créditos suficientes para un análisis profundo. Puedes comprar créditos para continuar.';
+
+  @override
+  String get adAnalysisCapReachedIos =>
+      'Has agotado los análisis con anuncios de hoy: puedes comprar créditos para continuar.';
 }

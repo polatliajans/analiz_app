@@ -5,6 +5,7 @@ import '../l10n/app_localizations.dart';
 import '../providers/auth_provider.dart';
 import '../screens/auth_screen.dart';
 import '../screens/subscription_screen.dart';
+import '../utils/pro_purchase.dart';
 
 /// The Pro-only feature that triggered the upsell.
 enum ProFeature {
@@ -25,6 +26,16 @@ Future<void> showProUpsell(
   int? count,
   int? limit,
 }) {
+  if (!proPurchaseAvailable(context)) {
+    // Pro cannot be bought on this platform (iOS v1): no upsell, no price, no
+    // CTA, just a neutral note that the feature is not available.
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(AppLocalizations.of(context)!.featureNotAvailable),
+      ),
+    );
+    return Future<void>.value();
+  }
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
@@ -153,11 +164,15 @@ class _ProUpsellSheet extends ConsumerWidget {
 }
 
 /// Small "Pro" badge shown next to locked items.
-class ProBadge extends StatelessWidget {
+class ProBadge extends ConsumerWidget {
   const ProBadge({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // No "Pro" hint next to locked items where Pro cannot be bought.
+    if (!ref.watch(proPurchaseAvailableProvider)) {
+      return const SizedBox.shrink();
+    }
     final l10n = AppLocalizations.of(context)!;
     final scheme = Theme.of(context).colorScheme;
     return Tooltip(

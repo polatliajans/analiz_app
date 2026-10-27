@@ -14,6 +14,7 @@ import '../providers/price_alert_provider.dart';
 import '../providers/store_price_provider.dart';
 import '../providers/subscription_provider.dart';
 import '../utils/platform_info.dart';
+import '../utils/pro_purchase.dart';
 import '../widgets/brand_page.dart';
 import '../widgets/legal_links_row.dart';
 
@@ -38,6 +39,8 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
   @override
   void initState() {
     super.initState();
+    // Status view only where Pro cannot be bought: nothing to listen to.
+    if (!ref.read(proPurchaseAvailableProvider)) return;
     _subscription = _iap.purchaseStream.listen(
       _onPurchaseUpdate,
       onError: (_) {},
@@ -270,7 +273,13 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final plansAsync = ref.watch(subscriptionPlanListProvider);
+    // Where Pro cannot be bought (iOS v1) this page is only a status view for
+    // members who are already Pro: no plans are fetched, no price, no buy or
+    // restore button.
+    final canBuy = ref.watch(proPurchaseAvailableProvider);
+    final plansAsync = canBuy
+        ? ref.watch(subscriptionPlanListProvider)
+        : const AsyncData<List<SubscriptionPlan>>([]);
     final isPro = ref.watch(isProProvider);
 
     return Scaffold(
@@ -362,7 +371,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                   ),
                 ],
               ),
-              if (!isPro) ...[
+              if (!isPro && canBuy) ...[
                 const SizedBox(height: 24),
                 BrandSectionHeading(l10n.subPlansHeading),
                 const SizedBox(height: 8),
@@ -383,14 +392,15 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                   ),
               ],
               const SizedBox(height: 8),
-              Text(
-                isIOS ? l10n.subCancelNoteIos : l10n.subCancelNote,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+              if (canBuy || isPro)
+                Text(
+                  isIOS ? l10n.subCancelNoteIos : l10n.subCancelNote,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
-              ),
-              if (isIOS)
+              if (isIOS && canBuy)
                 TextButton(
                   key: const Key('restore-purchases'),
                   onPressed: _restore,

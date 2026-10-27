@@ -3543,6 +3543,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not restore purchases.'**
   String get restorePurchasesFailed;
+
+  /// No description provided for @featureNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This feature is not available on your account right now.'**
+  String get featureNotAvailable;
+
+  /// No description provided for @insufficientCreditBodyWithAdIos.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have enough credits for this analysis. Watch a short ad to run this one quick analysis, or buy credits.'**
+  String get insufficientCreditBodyWithAdIos;
+
+  /// No description provided for @insufficientCreditDeepBodyIos.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have enough credits for a deep analysis. You can buy credits to continue.'**
+  String get insufficientCreditDeepBodyIos;
+
+  /// No description provided for @adAnalysisCapReachedIos.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve used all of today\'s ad-funded analyses: you can buy credits to continue.'**
+  String get adAnalysisCapReachedIos;
 }
 
 class _AppLocalizationsDelegate

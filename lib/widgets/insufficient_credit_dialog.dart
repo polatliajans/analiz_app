@@ -10,7 +10,7 @@ import '../providers/app_config_provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/price_alert_provider.dart';
 import '../screens/credit_packages_screen.dart';
-import '../screens/subscription_screen.dart';
+import '../utils/pro_purchase.dart';
 import 'credit_summary.dart';
 
 enum AnalysisKind { quick, deep }
@@ -103,10 +103,15 @@ class _InsufficientCreditDialogState
       status: status,
     );
 
+    final proAvailable = ref.watch(proPurchaseAvailableProvider);
     final body = !quick
-        ? l10n.insufficientCreditDeepBody
+        ? (proAvailable
+              ? l10n.insufficientCreditDeepBody
+              : l10n.insufficientCreditDeepBodyIos)
         : offer == AdOffer.available
-        ? l10n.insufficientCreditBodyWithAd
+        ? (proAvailable
+              ? l10n.insufficientCreditBodyWithAd
+              : l10n.insufficientCreditBodyWithAdIos)
         : l10n.insufficientCreditBody;
 
     return AlertDialog(
@@ -150,7 +155,11 @@ class _InsufficientCreditDialogState
           ],
           if (offer == AdOffer.capReached) ...[
             const SizedBox(height: 12),
-            Text(l10n.adAnalysisCapReached),
+            Text(
+              proAvailable
+                  ? l10n.adAnalysisCapReached
+                  : l10n.adAnalysisCapReachedIos,
+            ),
           ],
           if (offer == AdOffer.emailUnverified) ...[
             const SizedBox(height: 12),
@@ -164,14 +173,14 @@ class _InsufficientCreditDialogState
           onPressed: () => navigator.pop(false),
           child: Text(l10n.cancel),
         ),
-        if (!isPro)
+        if (!isPro && proAvailable)
           OutlinedButton(
             key: const Key('goProButton'),
             onPressed: () {
               navigator.pop(false);
               navigator.push(
                 MaterialPageRoute<void>(
-                  builder: (_) => const SubscriptionScreen(),
+                  builder: (_) => proUpgradeScreen(available: true),
                 ),
               );
             },

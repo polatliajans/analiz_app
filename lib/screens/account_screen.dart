@@ -17,6 +17,7 @@ import 'auth_screen.dart';
 import '../widgets/credit_summary.dart';
 import 'credit_packages_screen.dart';
 import 'settings_screen.dart';
+import '../utils/pro_purchase.dart';
 import 'subscription_screen.dart';
 import 'watchlist_screen.dart';
 
@@ -104,7 +105,9 @@ class AccountScreen extends ConsumerWidget {
                   _CreditCard(
                     member: member,
                     onBuy: () => _push(context, const CreditPackagesScreen()),
-                    onUpgrade: () => _push(context, const SubscriptionScreen()),
+                    onUpgrade: ref.watch(proPurchaseAvailableProvider)
+                        ? () => _push(context, const SubscriptionScreen())
+                        : null,
                   ),
                 ],
                 const SizedBox(height: 12),
@@ -285,11 +288,11 @@ class _HeaderCard extends StatelessWidget {
 class _CreditCard extends StatelessWidget {
   final Member member;
   final VoidCallback onBuy;
-  final VoidCallback onUpgrade;
+  final VoidCallback? onUpgrade;
   const _CreditCard({
     required this.member,
     required this.onBuy,
-    required this.onUpgrade,
+    this.onUpgrade,
   });
 
   @override
@@ -335,7 +338,7 @@ class _CreditCard extends StatelessWidget {
                   icon: const Icon(Icons.add_card),
                   label: Text(l10n.buyCredits),
                 ),
-                if (member.role == 'free')
+                if (member.role == 'free' && onUpgrade != null)
                   OutlinedButton.icon(
                     onPressed: onUpgrade,
                     icon: const Icon(Icons.workspace_premium_outlined),

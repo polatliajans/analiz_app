@@ -8,6 +8,7 @@ import '../l10n/app_localizations.dart';
 import '../models/coin.dart';
 import '../models/price_alert.dart';
 import '../providers/auth_provider.dart';
+import '../utils/pro_purchase.dart';
 import '../providers/coin_list_provider.dart';
 import '../providers/home_tab_provider.dart';
 import '../providers/price_alert_provider.dart';
@@ -127,7 +128,8 @@ class _AlarmsScreenState extends ConsumerState<AlarmsScreen> {
         ),
         body: Column(
           children: [
-            if (!isPro) _ProBanner(onUpgrade: () => showProAlertPromo(context)),
+            if (!isPro && ref.watch(proPurchaseAvailableProvider))
+              _ProBanner(onUpgrade: () => showProAlertPromo(context)),
             Expanded(
               child: data == null
                   ? (async.hasError

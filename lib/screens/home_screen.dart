@@ -23,7 +23,7 @@ import 'auth_screen.dart';
 import 'guest_benefits_screen.dart';
 import 'credit_packages_screen.dart';
 import 'glossary_screen.dart';
-import 'subscription_screen.dart';
+import '../utils/pro_purchase.dart';
 
 /// First tab: a calm overview of the market, the member's own state and
 /// shortcuts into the rest of the app.
@@ -223,6 +223,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     final member = auth.member;
     final credits = data?.credits?.balance ?? member?.creditBalance;
     final isPro = data?.credits?.isPro ?? isProRole;
+    final proAvailable = ref.watch(proPurchaseAvailableProvider);
 
     final isGuest = !state.signedIn && !state.loading;
     final children = <Widget>[];
@@ -241,7 +242,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           name: member?.name,
           isPro: isPro,
           staleNote: _staleNote(l10n, state, now),
-          onPro: () => _push(const SubscriptionScreen()),
+          // Pro members always see their Pro page; others only where Pro can
+          // be bought (iOS: the credit packs instead).
+          onPro: () =>
+              _push(proUpgradeScreen(available: isPro || proAvailable)),
         ),
       );
     }
@@ -252,11 +256,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       // Guests are sent to the benefits page like other account-only actions.
       children.add(
         HomeTopCards(
-          showPro: isGuest || !isPro,
+          showPro: proAvailable && (isGuest || !isPro),
           credits: isGuest ? null : credits,
           onPro: isGuest
               ? _openBenefits
-              : () => _push(const SubscriptionScreen()),
+              : () => _push(proUpgradeScreen(available: true)),
           onCredits: isGuest
               ? _openBenefits
               : () => _push(const CreditPackagesScreen()),

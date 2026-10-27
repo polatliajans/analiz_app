@@ -967,5 +967,9 @@
   "subCancelNoteIos": "Payment is charged to your Apple ID at confirmation of purchase. The subscription renews automatically unless canceled at least 24 hours before the end of the current period. Manage or cancel anytime in Settings > Apple ID > Subscriptions.",
   "subAlreadyProBodyIos": "Thank you for your support! You can manage or cancel your subscription anytime in your Apple ID subscription settings.",
   "restorePurchases": "Restore purchases",
-  "restorePurchasesFailed": "Could not restore purchases."
+  "restorePurchasesFailed": "Could not restore purchases.",
+  "featureNotAvailable": "This feature is not available on your account right now.",
+  "insufficientCreditBodyWithAdIos": "You don't have enough credits for this analysis. Watch a short ad to run this one quick analysis, or buy credits.",
+  "insufficientCreditDeepBodyIos": "You don't have enough credits for a deep analysis. You can buy credits to continue.",
+  "adAnalysisCapReachedIos": "You've used all of today's ad-funded analyses: you can buy credits to continue."
 }
