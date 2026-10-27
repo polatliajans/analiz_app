@@ -302,11 +302,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
           say(l10n.analysisFailed('$e'));
         }
       default:
-        final text = adFlowMessage(
-          l10n,
-          result.outcome,
-          proAvailable: ref.read(proPurchaseAvailableProvider),
-        );
+        final text = adFlowMessage(l10n, result.outcome);
         if (text != null) say(text);
         if (result.outcome == AdFlowOutcome.capReached ||
             result.outcome == AdFlowOutcome.notFree ||

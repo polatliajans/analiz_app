@@ -5,14 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../screens/credit_packages_screen.dart';
 import '../screens/subscription_screen.dart';
 
-/// Whether the Pro subscription can be bought on [platform].
-///
-/// iOS v1 sells credit packs only (the server answers iOS subscription
-/// purchases with 422 `subscription_not_supported_ios`). Flip this single
-/// switch back on when iOS subscriptions are built. Members who are already
-/// Pro (e.g. bought on Android) keep their status and benefits everywhere.
-bool proPurchaseAvailableFor(TargetPlatform platform) =>
-    platform != TargetPlatform.iOS;
+/// Whether the Pro subscription can be bought on [platform]: Google Play
+/// (Android) and the App Store (iOS) both sell it. Kept as one switch so every
+/// purchase surface (and the tests) can still turn Pro purchase off centrally.
+bool proPurchaseAvailableFor(TargetPlatform platform) => true;
 
 /// Central, overridable switch for every Pro purchase surface (plan cards,
 /// buy/restore buttons, upsell CTAs, promo cards). Tests override it.

@@ -27,7 +27,7 @@ Future<void> showProUpsell(
   int? limit,
 }) {
   if (!proPurchaseAvailable(context)) {
-    // Pro cannot be bought on this platform (iOS v1): no upsell, no price, no
+    // Pro cannot be bought on this platform (central switch off): no upsell, no price, no
     // CTA, just a neutral note that the feature is not available.
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

@@ -105,13 +105,9 @@ class _InsufficientCreditDialogState
 
     final proAvailable = ref.watch(proPurchaseAvailableProvider);
     final body = !quick
-        ? (proAvailable
-              ? l10n.insufficientCreditDeepBody
-              : l10n.insufficientCreditDeepBodyIos)
+        ? l10n.insufficientCreditDeepBody
         : offer == AdOffer.available
-        ? (proAvailable
-              ? l10n.insufficientCreditBodyWithAd
-              : l10n.insufficientCreditBodyWithAdIos)
+        ? l10n.insufficientCreditBodyWithAd
         : l10n.insufficientCreditBody;
 
     return AlertDialog(
@@ -155,11 +151,7 @@ class _InsufficientCreditDialogState
           ],
           if (offer == AdOffer.capReached) ...[
             const SizedBox(height: 12),
-            Text(
-              proAvailable
-                  ? l10n.adAnalysisCapReached
-                  : l10n.adAnalysisCapReachedIos,
-            ),
+            Text(l10n.adAnalysisCapReached),
           ],
           if (offer == AdOffer.emailUnverified) ...[
             const SizedBox(height: 12),
