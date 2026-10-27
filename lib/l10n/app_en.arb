@@ -113,7 +113,6 @@
   },
   "quickAnalysisButton": "Quick Analysis",
   "deepAnalysisButton": "Deep Analysis",
-  "creditsCount": "{count, plural, =1{1 credit} other{{count} credits}}",
   "@creditsCount": {
     "placeholders": {
       "count": {
@@ -744,8 +743,7 @@
   "homeTermOfDay": "Term of the day",
   "homeOpenGlossary": "Open glossary",
   "homeProPromoTitle": "Upgrade to Pro",
-  "homeProPromoBody": "Deep analysis, price alerts and monthly credits, whenever you feel like it.",
-  "homeProPromoAction": "See Pro benefits",
+  "homeProPromoAction": "See benefits",
   "homeFooterDisclaimer": "For information only; not investment advice.",
   "homeFooterSources": "Data sources: Binance, CoinMarketCap, Alternative.me (Fear & Greed Index), FRED.",
   "startupPageTitle": "Start page",
@@ -757,9 +755,6 @@
   "homeMktLess": "Show less",
   "homeMktVolumeShort": "Vol {amount}",
   "@homeMktVolumeShort": {"placeholders": {"amount": {"type": "String"}}},
-  "homeQuickDeep": "Deep analysis",
-  "homeQuickAlerts": "Alerts",
-  "homeQuickGlossary": "Glossary",
   "themeTitle": "Theme",
   "themeDark": "Dark",
   "themeLight": "Light",
@@ -948,6 +943,8 @@
   "adPrivacyOptions": "Ad privacy options",
   "homeBuyCredits": "Buy credits",
   "homeBuyCreditsBalance": "Balance: {count}",
+  "homeCreditUnit": "credits",
+  "homeBuyCreditsShort": "View packs",
   "@homeBuyCreditsBalance": {"placeholders": {"count": {"type": "int"}}},
   "creditsUnit": "credits",
   "creditsChoosePack": "Choose a pack",

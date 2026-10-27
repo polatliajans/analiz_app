@@ -146,7 +146,7 @@ void main() {
         reason: 'movers visible',
       );
       // Account-only parts are locked placeholders, not real content.
-      expect(find.byKey(const ValueKey('quick-deep')), findsOneWidget);
+      expect(find.byKey(const ValueKey('home-credit-card')), findsOneWidget);
 
       await tester.drag(find.byType(ListView), const Offset(0, -4000));
       await tester.pumpAndSettle();

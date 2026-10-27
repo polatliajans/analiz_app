@@ -152,7 +152,8 @@ void main() {
     await _pump(tester, handler: _ok(fullHomeJson()));
 
     expect(find.text('Ayse'), findsOneWidget);
-    expect(find.text('80 credits'), findsOneWidget);
+    expect(find.text('80 credits'), findsNothing);
+    expect(find.text('80'), findsOneWidget);
     expect(find.text('Where you left off'), findsNothing);
 
     expect(find.text('Fear & Greed'), findsOneWidget);
@@ -213,7 +214,7 @@ void main() {
     final json = fullHomeJson()..['credits'] = {'balance': 300, 'is_pro': true};
     await _pump(tester, handler: _ok(json));
     expect(find.text('Pro'), findsOneWidget);
-    expect(find.text('300 credits'), findsOneWidget);
+    expect(find.text('300'), findsOneWidget);
     expect(find.text('Upgrade to Pro'), findsNothing);
   });
 

@@ -400,12 +400,6 @@ abstract class AppLocalizations {
   /// **'Deep Analysis'**
   String get deepAnalysisButton;
 
-  /// No description provided for @creditsCount.
-  ///
-  /// In en, this message translates to:
-  /// **'{count, plural, =1{1 credit} other{{count} credits}}'**
-  String creditsCount(int count);
-
   /// No description provided for @proSubscription.
   ///
   /// In en, this message translates to:
@@ -2416,16 +2410,10 @@ abstract class AppLocalizations {
   /// **'Upgrade to Pro'**
   String get homeProPromoTitle;
 
-  /// No description provided for @homeProPromoBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Deep analysis, price alerts and monthly credits, whenever you feel like it.'**
-  String get homeProPromoBody;
-
   /// No description provided for @homeProPromoAction.
   ///
   /// In en, this message translates to:
-  /// **'See Pro benefits'**
+  /// **'See benefits'**
   String get homeProPromoAction;
 
   /// No description provided for @homeFooterDisclaimer.
@@ -2487,24 +2475,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Vol {amount}'**
   String homeMktVolumeShort(String amount);
-
-  /// No description provided for @homeQuickDeep.
-  ///
-  /// In en, this message translates to:
-  /// **'Deep analysis'**
-  String get homeQuickDeep;
-
-  /// No description provided for @homeQuickAlerts.
-  ///
-  /// In en, this message translates to:
-  /// **'Alerts'**
-  String get homeQuickAlerts;
-
-  /// No description provided for @homeQuickGlossary.
-  ///
-  /// In en, this message translates to:
-  /// **'Glossary'**
-  String get homeQuickGlossary;
 
   /// No description provided for @themeTitle.
   ///
@@ -3441,6 +3411,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Balance: {count}'**
   String homeBuyCreditsBalance(int count);
+
+  /// No description provided for @homeCreditUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'credits'**
+  String get homeCreditUnit;
+
+  /// No description provided for @homeBuyCreditsShort.
+  ///
+  /// In en, this message translates to:
+  /// **'View packs'**
+  String get homeBuyCreditsShort;
 
   /// No description provided for @creditsUnit.
   ///

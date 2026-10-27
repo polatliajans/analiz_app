@@ -9,6 +9,8 @@ import 'package:kriptoanaliz/screens/guest_benefits_screen.dart';
 import 'package:kriptoanaliz/models/member.dart';
 import 'package:kriptoanaliz/providers/home_tab_provider.dart';
 import 'package:kriptoanaliz/providers/selected_coin_provider.dart';
+import 'package:kriptoanaliz/ads/native_home_slot.dart';
+import 'package:kriptoanaliz/widgets/home/market_movers_card.dart';
 import 'package:kriptoanaliz/widgets/home/market_pulse_row.dart';
 
 import 'helpers/home_fakes.dart';
@@ -21,19 +23,17 @@ Finder _pulseCards() => find.descendant(
 
 void main() {
   group('top band', () {
-    testWidgets('shows name, credits and plan chips; no greeting or title', (
+    testWidgets('shows name and plan chip; no greeting, title or credit chip', (
       tester,
     ) async {
       await pumpHome(tester, handler: okHome(fullHomeJson()));
       expect(find.text('Ayse'), findsOneWidget);
-      expect(find.byKey(const ValueKey('home-credits-chip')), findsOneWidget);
-      expect(find.text('80 credits'), findsOneWidget);
+      expect(find.byKey(const ValueKey('home-credits-chip')), findsNothing);
+      expect(find.text('80 credits'), findsNothing);
       expect(find.text('Free'), findsOneWidget);
       expect(find.textContaining('Hello'), findsNothing);
       expect(find.byType(AppBar), findsNothing);
-      final chip = tester.getRect(
-        find.byKey(const ValueKey('home-credits-chip')),
-      );
+      final chip = tester.getRect(find.byKey(const ValueKey('home-plan-chip')));
       expect(chip.height, lessThanOrEqualTo(40));
       final nameRect = tester.getRect(find.text('Ayse'));
       expect(chip.center.dy, closeTo(nameRect.center.dy, 8));
@@ -225,109 +225,75 @@ void main() {
     });
   });
 
-  group('quick actions', () {
-    testWidgets('deep analysis shortcut opens the chart tab', (tester) async {
-      final h = await pumpHome(tester, handler: okHome(fullHomeJson()));
-      await tester.tap(find.byKey(const ValueKey('quick-deep')));
-      await tester.pumpAndSettle();
-      expect(h.container.read(homeTabProvider), chartTabIndex);
-    });
-
-    testWidgets('guests get them too, account-only ones locked', (
-      tester,
-    ) async {
-      await pumpHome(tester, handler: okHome(fullHomeJson()), member: null);
-      expect(find.byKey(const ValueKey('quick-radar')), findsNothing);
-      expect(find.byKey(const ValueKey('quick-buy-credits')), findsOneWidget);
-      expect(find.byKey(const ValueKey('quick-glossary')), findsOneWidget);
-      expect(
-        find.descendant(
-          of: find.byKey(const ValueKey('quick-deep')),
-          matching: find.byIcon(Icons.lock_outline),
-        ),
-        findsOneWidget,
-      );
-      expect(
-        find.descendant(
-          of: find.byKey(const ValueKey('quick-buy-credits')),
-          matching: find.byIcon(Icons.lock_outline),
-        ),
-        findsNothing,
-      );
-    });
+  group('removed shortcut row', () {
+    for (final guest in [false, true]) {
+      testWidgets('no quick actions (guest: $guest)', (tester) async {
+        await pumpHome(
+          tester,
+          handler: okHome(fullHomeJson()),
+          member: guest ? null : testMember,
+        );
+        for (final k in [
+          'quick-deep',
+          'quick-buy-credits',
+          'quick-alerts',
+          'quick-glossary',
+          'quick-radar',
+        ]) {
+          expect(find.byKey(ValueKey(k)), findsNothing);
+        }
+      });
+    }
   });
 
-  group('buy credits tile', () {
+  group('top cards (Pro + credits)', () {
     final packageOverrides = [
       creditPackageListProvider.overrideWith(
         (ref) async => const <CreditPackage>[],
       ),
       storePricesProvider.overrideWith((ref, ids) async => {}),
     ];
+    final pro = find.byKey(const ValueKey('home-pro-promo'));
+    final credit = find.byKey(const ValueKey('home-credit-card'));
 
-    testWidgets('replaces radar, shows label and balance', (tester) async {
-      await pumpHome(tester, handler: okHome(fullHomeJson()));
-      final tile = find.byKey(const ValueKey('quick-buy-credits'));
-      expect(tile, findsOneWidget);
-      expect(find.byKey(const ValueKey('quick-radar')), findsNothing);
-      expect(
-        find.descendant(of: tile, matching: find.text('Buy credits')),
-        findsOneWidget,
-      );
-      expect(
-        find.descendant(of: tile, matching: find.text('Balance: 80')),
-        findsOneWidget,
-      );
-      // The tile is the wide one in the row.
-      final circle = tester.getRect(find.byKey(const ValueKey('quick-alerts')));
-      expect(tester.getRect(tile).width, greaterThan(circle.width));
-      // The small credit chip is still there.
-      expect(find.byKey(const ValueKey('home-credits-chip')), findsOneWidget);
-    });
-
-    testWidgets('tap opens the credit packages screen', (tester) async {
-      await pumpHome(
-        tester,
-        handler: okHome(fullHomeJson()),
-        extraOverrides: packageOverrides,
-      );
-      await tester.tap(find.byKey(const ValueKey('quick-buy-credits')));
-      await tester.pumpAndSettle();
-      expect(find.byType(CreditPackagesScreen), findsOneWidget);
-    });
-
-    testWidgets('credit chip still opens the credit packages screen', (
+    testWidgets('free member: side by side, equal height, balance shown', (
       tester,
     ) async {
-      await pumpHome(
-        tester,
-        handler: okHome(fullHomeJson()),
-        extraOverrides: packageOverrides,
+      await pumpHome(tester, handler: okHome(fullHomeJson()));
+      expect(pro, findsOneWidget);
+      expect(credit, findsOneWidget);
+      final p = tester.getRect(pro);
+      final c = tester.getRect(credit);
+      expect(p.top, closeTo(c.top, 0.5));
+      expect(p.height, closeTo(c.height, 0.5));
+      expect(p.right, lessThan(c.left));
+      expect(p.height, lessThan(100), reason: 'compact');
+      // Very top: above the market sections.
+      expect(p.top, lessThan(tester.getTopLeft(find.text('Fear & Greed')).dy));
+      expect(
+        find.descendant(
+          of: credit,
+          matching: find.byKey(const ValueKey('home-credit-balance')),
+        ),
+        findsOneWidget,
       );
-      await tester.tap(find.byKey(const ValueKey('home-credits-chip')));
-      await tester.pumpAndSettle();
-      expect(find.byType(CreditPackagesScreen), findsOneWidget);
-    });
-
-    testWidgets('pro members keep the tile', (tester) async {
-      final json = fullHomeJson()
-        ..['credits'] = {'balance': 300, 'is_pro': true};
-      await pumpHome(tester, handler: okHome(json));
-      expect(find.byKey(const ValueKey('quick-buy-credits')), findsOneWidget);
-      expect(find.text('Balance: 300'), findsOneWidget);
-    });
-
-    testWidgets('guest tap goes to the benefits page', (tester) async {
-      await pumpHome(tester, handler: okHome(fullHomeJson()), member: null);
-      expect(find.text('Balance: 80'), findsNothing);
-      await tester.tap(find.byKey(const ValueKey('quick-buy-credits')));
-      await tester.pumpAndSettle();
-      expect(find.byType(GuestBenefitsScreen), findsOneWidget);
-      expect(find.byType(CreditPackagesScreen), findsNothing);
+      expect(
+        find.descendant(of: credit, matching: find.text('80')),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(of: credit, matching: find.text('credits')),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(of: credit, matching: find.text('+ Buy credits')),
+        findsOneWidget,
+      );
+      expect(find.text('Upgrade to Pro'), findsOneWidget);
     });
 
     for (final w in [320.0, 360.0, 800.0]) {
-      testWidgets('row lays out without overflow at ${w}dp (tr, 1.3x)', (
+      testWidgets('equal height without overflow at ${w}dp (tr, 1.3x)', (
         tester,
       ) async {
         await pumpHome(
@@ -338,23 +304,103 @@ void main() {
           size: Size(w, 3600),
         );
         expect(tester.takeException(), isNull);
-        expect(find.text('Kredi Al'), findsOneWidget);
+        final p = tester.getRect(pro);
+        final c = tester.getRect(credit);
+        expect(p.height, closeTo(c.height, 0.5));
+        expect(p.top, closeTo(c.top, 0.5));
+        expect(c.right, lessThanOrEqualTo(w - 16 + 0.5));
+        expect(find.text("Pro'ya yükselt"), findsOneWidget);
       });
     }
 
-    testWidgets('fits the row at 360dp without scrolling (1.0x)', (
+    testWidgets('large balance still fits at 360dp / 1.3x', (tester) async {
+      final json = fullHomeJson()
+        ..['credits'] = {'balance': 1234567, 'is_pro': false};
+      await pumpHome(
+        tester,
+        handler: okHome(json),
+        textScale: 1.3,
+        size: const Size(360, 3600),
+      );
+      expect(tester.takeException(), isNull);
+      expect(find.text('1234567'), findsOneWidget);
+    });
+
+    testWidgets('pro member: only the credit card, full width, compact', (
       tester,
     ) async {
-      await pumpHome(tester, handler: okHome(fullHomeJson()));
-      final r = tester.getRect(find.byKey(const ValueKey('quick-buy-credits')));
-      expect(r.right, lessThanOrEqualTo(360 - 16 + 0.5));
+      final json = fullHomeJson()
+        ..['credits'] = {'balance': 300, 'is_pro': true};
+      await pumpHome(tester, handler: okHome(json));
+      expect(pro, findsNothing);
+      expect(credit, findsOneWidget);
+      expect(find.text('300'), findsOneWidget);
+      final c = tester.getRect(credit);
+      expect(c.width, closeTo(360 - 32, 0.5));
+      expect(c.height, lessThan(100));
     });
+
+    testWidgets('credit card tap opens the credit packages screen', (
+      tester,
+    ) async {
+      await pumpHome(
+        tester,
+        handler: okHome(fullHomeJson()),
+        extraOverrides: packageOverrides,
+      );
+      await tester.tap(credit);
+      await tester.pumpAndSettle();
+      expect(find.byType(CreditPackagesScreen), findsOneWidget);
+    });
+
+    for (final key in ['home-pro-promo', 'home-credit-card']) {
+      testWidgets('guest: both cards, no balance, $key goes to benefits', (
+        tester,
+      ) async {
+        await pumpHome(tester, handler: okHome(fullHomeJson()), member: null);
+        expect(pro, findsOneWidget);
+        expect(credit, findsOneWidget);
+        expect(find.byKey(const ValueKey('home-credit-balance')), findsNothing);
+        expect(find.text('Balance: 80'), findsNothing);
+        expect(
+          tester.getRect(pro).height,
+          closeTo(tester.getRect(credit).height, 0.5),
+        );
+        await tester.tap(find.byKey(ValueKey(key)));
+        await tester.pumpAndSettle();
+        expect(find.byType(GuestBenefitsScreen), findsOneWidget);
+        expect(find.byType(CreditPackagesScreen), findsNothing);
+      });
+    }
 
     testWidgets('the one-time shine finishes (no endless animation)', (
       tester,
     ) async {
       await pumpHome(tester, handler: okHome(fullHomeJson()));
       expect(tester.hasRunningAnimations, isFalse);
+    });
+  });
+
+  group('native ad slot position', () {
+    testWidgets('sits between the pulse row and the market card', (
+      tester,
+    ) async {
+      await pumpHome(tester, handler: okHome(fullHomeJson()));
+      final slot = find.byType(HomeNativeAdSlot);
+      expect(slot, findsOneWidget);
+      final slotY = tester.getTopLeft(slot).dy;
+      expect(
+        slotY,
+        greaterThanOrEqualTo(
+          tester.getBottomLeft(find.byType(MarketPulseRow)).dy,
+        ),
+      );
+      expect(
+        slotY,
+        lessThanOrEqualTo(tester.getTopLeft(find.byType(MarketMoversCard)).dy),
+      );
+      // Collapsed while there is no ad: no extra gap above the market card.
+      expect(tester.getSize(slot).height, 0);
     });
   });
 

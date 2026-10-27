@@ -67,12 +67,12 @@ void main() {
       expect(find.text('Your latest deep analysis'), findsOneWidget);
       expect(find.text('Open my watchlist'), findsNothing);
       expect(find.text('Short-term pressure remains downward.'), findsNothing);
-      // Quick actions exist, account-only ones carry a lock.
-      expect(find.byKey(const ValueKey('quick-deep')), findsOneWidget);
-      expect(find.byKey(const ValueKey('quick-alerts')), findsOneWidget);
+      // Pro + credit cards are shown; the shortcut row is gone.
+      expect(find.byKey(const ValueKey('home-pro-promo')), findsOneWidget);
+      expect(find.byKey(const ValueKey('home-credit-card')), findsOneWidget);
+      expect(find.byKey(const ValueKey('quick-deep')), findsNothing);
+      expect(find.byKey(const ValueKey('quick-alerts')), findsNothing);
       expect(find.byIcon(Icons.lock_outline), findsWidgets);
-      // No Pro upsell for guests.
-      expect(find.byKey(const ValueKey('home-pro-promo')), findsNothing);
       expect(tester.takeException(), isNull);
     });
 
@@ -94,8 +94,8 @@ void main() {
 
     for (final locked in [
       const ValueKey('locked-analysis'),
-      const ValueKey('quick-deep'),
-      const ValueKey('quick-alerts'),
+      const ValueKey('home-pro-promo'),
+      const ValueKey('home-credit-card'),
       const ValueKey('guest-card-benefits'),
     ]) {
       testWidgets('tapping $locked opens the benefits page', (tester) async {
@@ -213,12 +213,13 @@ void main() {
       final promo = find.byKey(const ValueKey('home-pro-promo'));
       expect(promo, findsOneWidget);
       expect(find.text('Upgrade to Pro'), findsOneWidget);
-      expect(find.text('See Pro benefits'), findsOneWidget);
+      expect(find.text('See benefits'), findsOneWidget);
       // Below the band, above the market sections.
       expect(
-        tester.getTopLeft(find.byKey(const ValueKey('home-credits-chip'))).dy,
+        tester.getTopLeft(find.byKey(const ValueKey('home-plan-chip'))).dy,
         lessThan(tester.getTopLeft(promo).dy),
       );
+      expect(find.byKey(const ValueKey('home-credits-chip')), findsNothing);
       expect(
         tester.getTopLeft(promo).dy,
         lessThan(tester.getTopLeft(find.text('Fear & Greed')).dy),
@@ -239,9 +240,9 @@ void main() {
       expect(find.text('Upgrade to Pro'), findsNothing);
     });
 
-    testWidgets('guest sees the sign-in prompt instead', (tester) async {
+    testWidgets('guest sees it below the sign-in prompt', (tester) async {
       await pumpHome(tester, member: null, handler: okHome(publicHomeJson()));
-      expect(find.byKey(const ValueKey('home-pro-promo')), findsNothing);
+      expect(find.byKey(const ValueKey('home-pro-promo')), findsOneWidget);
       expect(find.text('Log in / Sign up'), findsOneWidget);
     });
 

@@ -189,17 +189,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deepAnalysisButton => 'Deep Analysis';
 
   @override
-  String creditsCount(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count credits',
-      one: '1 credit',
-    );
-    return '$_temp0';
-  }
-
-  @override
   String get proSubscription => 'Pro Subscription';
 
   @override
@@ -1434,11 +1423,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeProPromoTitle => 'Upgrade to Pro';
 
   @override
-  String get homeProPromoBody =>
-      'Deep analysis, price alerts and monthly credits, whenever you feel like it.';
-
-  @override
-  String get homeProPromoAction => 'See Pro benefits';
+  String get homeProPromoAction => 'See benefits';
 
   @override
   String get homeFooterDisclaimer =>
@@ -1473,15 +1458,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String homeMktVolumeShort(String amount) {
     return 'Vol $amount';
   }
-
-  @override
-  String get homeQuickDeep => 'Deep analysis';
-
-  @override
-  String get homeQuickAlerts => 'Alerts';
-
-  @override
-  String get homeQuickGlossary => 'Glossary';
 
   @override
   String get themeTitle => 'Theme';
@@ -2080,6 +2056,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String homeBuyCreditsBalance(int count) {
     return 'Balance: $count';
   }
+
+  @override
+  String get homeCreditUnit => 'credits';
+
+  @override
+  String get homeBuyCreditsShort => 'View packs';
 
   @override
   String get creditsUnit => 'credits';

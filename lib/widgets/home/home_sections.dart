@@ -120,23 +120,19 @@ class _MutedText extends StatelessWidget {
 
 // ---------------------------------------------------------------- Header
 
-/// One slim top band: member name on the left, credit balance and plan chips
-/// on the right. It sits below the status bar (the screen adds that inset).
+/// One slim top band: member name on the left, plan chip on the right.
+/// It sits below the status bar (the screen adds that inset).
 class HomeHeader extends StatelessWidget {
   final String? name;
-  final int? credits;
   final bool isPro;
   final String? staleNote;
-  final VoidCallback onCredits;
   final VoidCallback onPro;
 
   const HomeHeader({
     super.key,
     required this.name,
-    required this.credits,
     required this.isPro,
     required this.staleNote,
-    required this.onCredits,
     required this.onPro,
   });
 
@@ -173,15 +169,6 @@ class HomeHeader extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (credits != null) ...[
-                      _BandChip(
-                        key: const ValueKey('home-credits-chip'),
-                        icon: Icons.toll_outlined,
-                        label: l10n.creditsCount(credits!),
-                        onTap: onCredits,
-                      ),
-                      const SizedBox(width: 8),
-                    ],
                     _BandChip(
                       key: const ValueKey('home-plan-chip'),
                       icon: isPro
@@ -878,98 +865,6 @@ class HomeLockedCard extends StatelessWidget {
                   ),
                 ),
               ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ----------------------------------------------------------------- Promo
-
-class ProPromoCard extends StatelessWidget {
-  final VoidCallback onTap;
-  const ProPromoCard({super.key, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
-    return Semantics(
-      button: true,
-      label: '${l10n.homeProPromoTitle}. ${l10n.homeProPromoAction}',
-      excludeSemantics: true,
-      onTap: onTap,
-      child: Material(
-        borderRadius: BorderRadius.circular(16),
-        clipBehavior: Clip.antiAlias,
-        child: Ink(
-          // Same deepened brand gradient as the Pro page hero.
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFF0A8F70), Color(0xFF1B4FC9)],
-            ),
-          ),
-          child: InkWell(
-            onTap: onTap,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Icon(
-                    Icons.workspace_premium_rounded,
-                    size: 32,
-                    color: Color(0xFFFFD54F),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          l10n.homeProPromoTitle,
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          l10n.homeProPromoBody,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: Colors.white.withValues(alpha: 0.92),
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Flexible(
-                              child: Text(
-                                l10n.homeProPromoAction,
-                                style: theme.textTheme.labelLarge?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            const Icon(
-                              Icons.arrow_forward_rounded,
-                              size: 18,
-                              color: Colors.white,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
             ),
           ),
         ),

@@ -183,11 +183,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get deepAnalysisButton => 'Derin Analiz';
 
   @override
-  String creditsCount(int count) {
-    return '$count kredi';
-  }
-
-  @override
   String get proSubscription => 'Pro Abonelik';
 
   @override
@@ -1396,11 +1391,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get homeProPromoTitle => 'Pro\'ya yükselt';
 
   @override
-  String get homeProPromoBody =>
-      'Derin analiz, fiyat alarmları ve aylık krediler; ihtiyacın olduğunda.';
-
-  @override
-  String get homeProPromoAction => 'Pro avantajlarını gör';
+  String get homeProPromoAction => 'Avantajları gör';
 
   @override
   String get homeFooterDisclaimer =>
@@ -1435,15 +1426,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String homeMktVolumeShort(String amount) {
     return 'Hacim $amount';
   }
-
-  @override
-  String get homeQuickDeep => 'Derin analiz';
-
-  @override
-  String get homeQuickAlerts => 'Alarmlar';
-
-  @override
-  String get homeQuickGlossary => 'Sözlük';
 
   @override
   String get themeTitle => 'Tema';
@@ -2014,6 +1996,12 @@ class AppLocalizationsTr extends AppLocalizations {
   String homeBuyCreditsBalance(int count) {
     return 'Bakiye: $count';
   }
+
+  @override
+  String get homeCreditUnit => 'kredi';
+
+  @override
+  String get homeBuyCreditsShort => 'Paketleri gör';
 
   @override
   String get creditsUnit => 'kredi';

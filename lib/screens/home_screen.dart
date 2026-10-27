@@ -17,8 +17,8 @@ import '../utils/home_logic.dart';
 import '../widgets/analysis_card.dart';
 import '../widgets/home/home_sections.dart';
 import '../widgets/home/market_movers_card.dart';
+import '../widgets/home/home_top_cards.dart';
 import '../widgets/home/market_pulse_row.dart';
-import 'alarms_screen.dart';
 import 'auth_screen.dart';
 import 'guest_benefits_screen.dart';
 import 'credit_packages_screen.dart';
@@ -155,6 +155,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     children
       ..add(MarketPulseRow(market: data.market))
       ..add(gap);
+    // Native ad sits right above the market card (collapses when empty).
+    children.add(const HomeNativeAdSlot());
     final mm = data.marketMovers;
     if (mm != null && !mm.isEmpty) {
       children
@@ -162,7 +164,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         ..add(gap);
     }
     children
-      ..add(const HomeNativeAdSlot())
       ..add(
         RadarCard(
           signals: data.radar,
@@ -238,70 +239,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       children.add(
         HomeHeader(
           name: member?.name,
-          credits: credits,
           isPro: isPro,
           staleNote: _staleNote(l10n, state, now),
-          onCredits: () => _push(const CreditPackagesScreen()),
           onPro: () => _push(const SubscriptionScreen()),
         ),
       );
-      if (state.signedIn && !isPro) {
-        // Free members: a visible way to the Pro page, right below the band.
-        gap();
-        children.add(
-          ProPromoCard(
-            key: const ValueKey('home-pro-promo'),
-            onTap: () => _push(const SubscriptionScreen()),
-          ),
-        );
-      }
     }
     gap();
 
     if (isGuest || state.signedIn) {
+      // Compact Pro + credit cards (Pro members only get the credit card).
+      // Guests are sent to the benefits page like other account-only actions.
       children.add(
-        HomeQuickActions(
-          actions: [
-            HomeQuickAction(
-              key: const ValueKey('quick-deep'),
-              icon: Icons.psychology_outlined,
-              label: l10n.homeQuickDeep,
-              locked: isGuest,
-              onTap: isGuest
-                  ? _openBenefits
-                  : () => ref
-                        .read(homeTabProvider.notifier)
-                        .select(chartTabIndex),
-            ),
-            HomeQuickAction(
-              key: const ValueKey('quick-buy-credits'),
-              icon: Icons.toll_rounded,
-              label: l10n.homeBuyCredits,
-              featured: true,
-              subtitle: credits == null
-                  ? null
-                  : l10n.homeBuyCreditsBalance(credits),
-              // Guests are sent to the benefits page like other account-only actions.
-              onTap: isGuest
-                  ? _openBenefits
-                  : () => _push(const CreditPackagesScreen()),
-            ),
-            HomeQuickAction(
-              key: const ValueKey('quick-alerts'),
-              icon: Icons.notifications_active_outlined,
-              label: l10n.homeQuickAlerts,
-              locked: isGuest,
-              onTap: isGuest
-                  ? _openBenefits
-                  : () => _push(const AlarmsScreen()),
-            ),
-            HomeQuickAction(
-              key: const ValueKey('quick-glossary'),
-              icon: Icons.menu_book_outlined,
-              label: l10n.homeQuickGlossary,
-              onTap: () => openGlossary(context),
-            ),
-          ],
+        HomeTopCards(
+          showPro: isGuest || !isPro,
+          credits: isGuest ? null : credits,
+          onPro: isGuest
+              ? _openBenefits
+              : () => _push(const SubscriptionScreen()),
+          onCredits: isGuest
+              ? _openBenefits
+              : () => _push(const CreditPackagesScreen()),
         ),
       );
       gap();
