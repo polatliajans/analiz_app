@@ -29,6 +29,10 @@ workflows:
         bundle_identifier: com.polatliajans.kriptoanaliz
       vars:
         BUNDLE_ID: com.polatliajans.kriptoanaliz
+    cache:
+      cache_paths:
+        - $FLUTTER_ROOT/.pub-cache
+        - $HOME/Library/Caches/CocoaPods
     scripts:
       - name: Write GoogleService-Info.plist and Secrets.xcconfig
         script: |
@@ -47,11 +51,27 @@ workflows:
         script: xcode-project use-profiles
       - name: Build signed IPA
         script: |
-          # Next build number = latest uploaded to App Store Connect + 1.
-          LATEST_BUILD_NUMBER=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID" || true)
+          set -euo pipefail
+          # Build number = max(latest TestFlight build, pubspec build number) + 1.
+          # `get-latest-testflight-build-number` (Codemagic CLI, uses the
+          # codemagic_asc integration) covers every build App Store Connect
+          # has processed, including ones never sent to review.
+          PUBSPEC_BUILD_NUMBER=$(sed -n 's/^version: *[0-9.]*+\([0-9][0-9]*\).*/\1/p' pubspec.yaml | head -n 1)
+          PUBSPEC_BUILD_NUMBER=${PUBSPEC_BUILD_NUMBER:-0}
+          # A genuine failure (auth, network) fails the build here; an app
+          # with no builds yet prints nothing, which counts as 0.
+          LATEST_BUILD_NUMBER=$(app-store-connect get-latest-testflight-build-number "$APP_STORE_APPLE_ID")
+          LATEST_BUILD_NUMBER=$(printf '%s' "$LATEST_BUILD_NUMBER" | tail -n 1 | tr -dc '0-9')
           LATEST_BUILD_NUMBER=${LATEST_BUILD_NUMBER:-0}
-          BUILD_NUMBER=$(($LATEST_BUILD_NUMBER + 1))
-          echo "Building with build number $BUILD_NUMBER"
+          if [ "$LATEST_BUILD_NUMBER" -gt "$PUBSPEC_BUILD_NUMBER" ]; then
+            BASE=$LATEST_BUILD_NUMBER
+          else
+            BASE=$PUBSPEC_BUILD_NUMBER
+          fi
+          BUILD_NUMBER=$((BASE + 1))
+          echo "Latest TestFlight build number: $LATEST_BUILD_NUMBER"
+          echo "pubspec build number:           $PUBSPEC_BUILD_NUMBER"
+          echo "Building with build number:     $BUILD_NUMBER"
           flutter build ipa --release \
             --build-number=$BUILD_NUMBER \
             --export-options-plist=/Users/builder/export_options.plist
@@ -74,6 +94,10 @@ workflows:
       flutter: 3.38.7
       xcode: latest
       cocoapods: default
+    cache:
+      cache_paths:
+        - $FLUTTER_ROOT/.pub-cache
+        - $HOME/Library/Caches/CocoaPods
     triggering:
       events:
         - push

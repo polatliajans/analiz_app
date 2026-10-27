@@ -10,7 +10,7 @@ in the Apple / Firebase / AdMob / Codemagic consoles. Secrets are never committe
 | `GoogleService-Info.plist` | Codemagic secure var `GOOGLE_SERVICE_INFO_PLIST` (base64). `tool/ios_prepare_secrets.sh` writes `ios/Runner/GoogleService-Info.plist` (git-ignored). The Xcode project lists it as a bundle resource, so a build **fails** without it. |
 | Google Sign-In URL scheme | The same script reads `REVERSED_CLIENT_ID` from the plist and writes `GOOGLE_REVERSED_CLIENT_ID` into `ios/Flutter/Secrets.xcconfig` (git-ignored). It feeds `Info.plist` `CFBundleURLTypes`. |
 | AdMob iOS **app** id | Codemagic var `ADMOB_IOS_APP_ID` goes into the same `Secrets.xcconfig` and then `Info.plist` `GADApplicationIdentifier`. The default in `ios/Flutter/AppConfig.xcconfig` is Google's test app id. |
-| Build number | `ios-release` workflow: latest App Store Connect build number + 1 |
+| Build number | `ios-release` workflow: max(latest TestFlight build number, pubspec build number) + 1; values are logged, a CLI failure fails the build |
 | Crashlytics dSYMs | Xcode run-script phase "Upload Crashlytics dSYMs" (non-Debug builds) |
 
 ## 1. Apple Developer portal (YOU)
