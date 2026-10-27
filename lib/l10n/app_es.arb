@@ -615,5 +615,21 @@
   "ovGuestHint": "Inicia sesión para ver el resumen y los datos de mercado de esta moneda",
   "sgGuestHint": "Inicia sesión para ver las señales de esta moneda",
   "signalsGuestNote": "Inicia sesión para ver las señales",
-  "adPrivacyOptions": "Opciones de privacidad de anuncios"
+  "adPrivacyOptions": "Opciones de privacidad de anuncios",
+  "homeBuyCredits": "Comprar créditos",
+  "homeBuyCreditsBalance": "Saldo: {count}",
+  "@homeBuyCreditsBalance": {"placeholders": {"count": {"type": "int"}}},
+  "creditsUnit": "créditos",
+  "creditsChoosePack": "Elige un paquete",
+  "creditsBuyFor": "Comprar · {price}",
+  "@creditsBuyFor": {"placeholders": {"price": {"type": "String"}}},
+  "creditsPerCredit": "{price} / crédito",
+  "@creditsPerCredit": {"placeholders": {"price": {"type": "String"}}},
+  "creditsBadgeBest": "Mejor valor",
+  "creditsBadgePopular": "Popular",
+  "creditsNoPackages": "No hay paquetes de créditos disponibles ahora. Inténtalo de nuevo más tarde.",
+  "creditsHowTitle": "Cómo funcionan los créditos",
+  "creditsHowUse": "Los créditos se gastan al ejecutar un análisis de IA.",
+  "creditsHowMonthly": "Los créditos mensuales se completan hasta la cantidad de tu paquete al renovar y no se acumulan.",
+  "creditsHowPurchased": "Los créditos comprados nunca caducan. Primero se gastan los mensuales."
 }

@@ -2072,4 +2072,52 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adPrivacyOptions => 'Ad privacy options';
+
+  @override
+  String get homeBuyCredits => 'Buy credits';
+
+  @override
+  String homeBuyCreditsBalance(int count) {
+    return 'Balance: $count';
+  }
+
+  @override
+  String get creditsUnit => 'credits';
+
+  @override
+  String get creditsChoosePack => 'Choose a pack';
+
+  @override
+  String creditsBuyFor(String price) {
+    return 'Buy · $price';
+  }
+
+  @override
+  String creditsPerCredit(String price) {
+    return '$price / credit';
+  }
+
+  @override
+  String get creditsBadgeBest => 'Best value';
+
+  @override
+  String get creditsBadgePopular => 'Popular';
+
+  @override
+  String get creditsNoPackages =>
+      'No credit packs are available right now. Please try again later.';
+
+  @override
+  String get creditsHowTitle => 'How credits work';
+
+  @override
+  String get creditsHowUse => 'Credits are spent when you run an AI analysis.';
+
+  @override
+  String get creditsHowMonthly =>
+      'Monthly credits are topped up to your package amount on renewal and do not carry over.';
+
+  @override
+  String get creditsHowPurchased =>
+      'Purchased credits never expire. Monthly credits are spent first.';
 }

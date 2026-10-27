@@ -945,5 +945,21 @@
   "ovGuestHint": "Log in to see this coin's summary and market data",
   "sgGuestHint": "Log in to see this coin's signals",
   "signalsGuestNote": "Sign in to see signals",
-  "adPrivacyOptions": "Ad privacy options"
+  "adPrivacyOptions": "Ad privacy options",
+  "homeBuyCredits": "Buy credits",
+  "homeBuyCreditsBalance": "Balance: {count}",
+  "@homeBuyCreditsBalance": {"placeholders": {"count": {"type": "int"}}},
+  "creditsUnit": "credits",
+  "creditsChoosePack": "Choose a pack",
+  "creditsBuyFor": "Buy · {price}",
+  "@creditsBuyFor": {"placeholders": {"price": {"type": "String"}}},
+  "creditsPerCredit": "{price} / credit",
+  "@creditsPerCredit": {"placeholders": {"price": {"type": "String"}}},
+  "creditsBadgeBest": "Best value",
+  "creditsBadgePopular": "Popular",
+  "creditsNoPackages": "No credit packs are available right now. Please try again later.",
+  "creditsHowTitle": "How credits work",
+  "creditsHowUse": "Credits are spent when you run an AI analysis.",
+  "creditsHowMonthly": "Monthly credits are topped up to your package amount on renewal and do not carry over.",
+  "creditsHowPurchased": "Purchased credits never expire. Monthly credits are spent first."
 }

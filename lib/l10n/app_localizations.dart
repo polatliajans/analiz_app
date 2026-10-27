@@ -3429,6 +3429,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ad privacy options'**
   String get adPrivacyOptions;
+
+  /// No description provided for @homeBuyCredits.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy credits'**
+  String get homeBuyCredits;
+
+  /// No description provided for @homeBuyCreditsBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance: {count}'**
+  String homeBuyCreditsBalance(int count);
+
+  /// No description provided for @creditsUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'credits'**
+  String get creditsUnit;
+
+  /// No description provided for @creditsChoosePack.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a pack'**
+  String get creditsChoosePack;
+
+  /// No description provided for @creditsBuyFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy · {price}'**
+  String creditsBuyFor(String price);
+
+  /// No description provided for @creditsPerCredit.
+  ///
+  /// In en, this message translates to:
+  /// **'{price} / credit'**
+  String creditsPerCredit(String price);
+
+  /// No description provided for @creditsBadgeBest.
+  ///
+  /// In en, this message translates to:
+  /// **'Best value'**
+  String get creditsBadgeBest;
+
+  /// No description provided for @creditsBadgePopular.
+  ///
+  /// In en, this message translates to:
+  /// **'Popular'**
+  String get creditsBadgePopular;
+
+  /// No description provided for @creditsNoPackages.
+  ///
+  /// In en, this message translates to:
+  /// **'No credit packs are available right now. Please try again later.'**
+  String get creditsNoPackages;
+
+  /// No description provided for @creditsHowTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How credits work'**
+  String get creditsHowTitle;
+
+  /// No description provided for @creditsHowUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Credits are spent when you run an AI analysis.'**
+  String get creditsHowUse;
+
+  /// No description provided for @creditsHowMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly credits are topped up to your package amount on renewal and do not carry over.'**
+  String get creditsHowMonthly;
+
+  /// No description provided for @creditsHowPurchased.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchased credits never expire. Monthly credits are spent first.'**
+  String get creditsHowPurchased;
 }
 
 class _AppLocalizationsDelegate

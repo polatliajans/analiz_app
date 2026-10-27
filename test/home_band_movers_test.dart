@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kriptoanaliz/data/home_api.dart';
+import 'package:kriptoanaliz/models/credit_package.dart';
+import 'package:kriptoanaliz/providers/credit_package_provider.dart';
+import 'package:kriptoanaliz/providers/store_price_provider.dart';
+import 'package:kriptoanaliz/screens/credit_packages_screen.dart';
+import 'package:kriptoanaliz/screens/guest_benefits_screen.dart';
 import 'package:kriptoanaliz/models/member.dart';
 import 'package:kriptoanaliz/providers/home_tab_provider.dart';
 import 'package:kriptoanaliz/providers/selected_coin_provider.dart';
@@ -221,13 +226,6 @@ void main() {
   });
 
   group('quick actions', () {
-    testWidgets('radar shortcut opens the radar tab', (tester) async {
-      final h = await pumpHome(tester, handler: okHome(fullHomeJson()));
-      await tester.tap(find.byKey(const ValueKey('quick-radar')));
-      await tester.pumpAndSettle();
-      expect(h.container.read(homeTabProvider), radarTabIndex);
-    });
-
     testWidgets('deep analysis shortcut opens the chart tab', (tester) async {
       final h = await pumpHome(tester, handler: okHome(fullHomeJson()));
       await tester.tap(find.byKey(const ValueKey('quick-deep')));
@@ -239,7 +237,8 @@ void main() {
       tester,
     ) async {
       await pumpHome(tester, handler: okHome(fullHomeJson()), member: null);
-      expect(find.byKey(const ValueKey('quick-radar')), findsOneWidget);
+      expect(find.byKey(const ValueKey('quick-radar')), findsNothing);
+      expect(find.byKey(const ValueKey('quick-buy-credits')), findsOneWidget);
       expect(find.byKey(const ValueKey('quick-glossary')), findsOneWidget);
       expect(
         find.descendant(
@@ -250,11 +249,112 @@ void main() {
       );
       expect(
         find.descendant(
-          of: find.byKey(const ValueKey('quick-radar')),
+          of: find.byKey(const ValueKey('quick-buy-credits')),
           matching: find.byIcon(Icons.lock_outline),
         ),
         findsNothing,
       );
+    });
+  });
+
+  group('buy credits tile', () {
+    final packageOverrides = [
+      creditPackageListProvider.overrideWith(
+        (ref) async => const <CreditPackage>[],
+      ),
+      storePricesProvider.overrideWith((ref, ids) async => {}),
+    ];
+
+    testWidgets('replaces radar, shows label and balance', (tester) async {
+      await pumpHome(tester, handler: okHome(fullHomeJson()));
+      final tile = find.byKey(const ValueKey('quick-buy-credits'));
+      expect(tile, findsOneWidget);
+      expect(find.byKey(const ValueKey('quick-radar')), findsNothing);
+      expect(
+        find.descendant(of: tile, matching: find.text('Buy credits')),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(of: tile, matching: find.text('Balance: 80')),
+        findsOneWidget,
+      );
+      // The tile is the wide one in the row.
+      final circle = tester.getRect(find.byKey(const ValueKey('quick-alerts')));
+      expect(tester.getRect(tile).width, greaterThan(circle.width));
+      // The small credit chip is still there.
+      expect(find.byKey(const ValueKey('home-credits-chip')), findsOneWidget);
+    });
+
+    testWidgets('tap opens the credit packages screen', (tester) async {
+      await pumpHome(
+        tester,
+        handler: okHome(fullHomeJson()),
+        extraOverrides: packageOverrides,
+      );
+      await tester.tap(find.byKey(const ValueKey('quick-buy-credits')));
+      await tester.pumpAndSettle();
+      expect(find.byType(CreditPackagesScreen), findsOneWidget);
+    });
+
+    testWidgets('credit chip still opens the credit packages screen', (
+      tester,
+    ) async {
+      await pumpHome(
+        tester,
+        handler: okHome(fullHomeJson()),
+        extraOverrides: packageOverrides,
+      );
+      await tester.tap(find.byKey(const ValueKey('home-credits-chip')));
+      await tester.pumpAndSettle();
+      expect(find.byType(CreditPackagesScreen), findsOneWidget);
+    });
+
+    testWidgets('pro members keep the tile', (tester) async {
+      final json = fullHomeJson()
+        ..['credits'] = {'balance': 300, 'is_pro': true};
+      await pumpHome(tester, handler: okHome(json));
+      expect(find.byKey(const ValueKey('quick-buy-credits')), findsOneWidget);
+      expect(find.text('Balance: 300'), findsOneWidget);
+    });
+
+    testWidgets('guest tap goes to the benefits page', (tester) async {
+      await pumpHome(tester, handler: okHome(fullHomeJson()), member: null);
+      expect(find.text('Balance: 80'), findsNothing);
+      await tester.tap(find.byKey(const ValueKey('quick-buy-credits')));
+      await tester.pumpAndSettle();
+      expect(find.byType(GuestBenefitsScreen), findsOneWidget);
+      expect(find.byType(CreditPackagesScreen), findsNothing);
+    });
+
+    for (final w in [320.0, 360.0, 800.0]) {
+      testWidgets('row lays out without overflow at ${w}dp (tr, 1.3x)', (
+        tester,
+      ) async {
+        await pumpHome(
+          tester,
+          handler: okHome(fullHomeJson()),
+          locale: 'tr',
+          textScale: 1.3,
+          size: Size(w, 3600),
+        );
+        expect(tester.takeException(), isNull);
+        expect(find.text('Kredi Al'), findsOneWidget);
+      });
+    }
+
+    testWidgets('fits the row at 360dp without scrolling (1.0x)', (
+      tester,
+    ) async {
+      await pumpHome(tester, handler: okHome(fullHomeJson()));
+      final r = tester.getRect(find.byKey(const ValueKey('quick-buy-credits')));
+      expect(r.right, lessThanOrEqualTo(360 - 16 + 0.5));
+    });
+
+    testWidgets('the one-time shine finishes (no endless animation)', (
+      tester,
+    ) async {
+      await pumpHome(tester, handler: okHome(fullHomeJson()));
+      expect(tester.hasRunningAnimations, isFalse);
     });
   });
 

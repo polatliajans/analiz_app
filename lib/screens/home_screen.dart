@@ -274,11 +274,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                         .select(chartTabIndex),
             ),
             HomeQuickAction(
-              key: const ValueKey('quick-radar'),
-              icon: Icons.radar,
-              label: l10n.radar,
-              onTap: () =>
-                  ref.read(homeTabProvider.notifier).select(radarTabIndex),
+              key: const ValueKey('quick-buy-credits'),
+              icon: Icons.toll_rounded,
+              label: l10n.homeBuyCredits,
+              featured: true,
+              subtitle: credits == null
+                  ? null
+                  : l10n.homeBuyCreditsBalance(credits),
+              // Guests are sent to the benefits page like other account-only actions.
+              onTap: isGuest
+                  ? _openBenefits
+                  : () => _push(const CreditPackagesScreen()),
             ),
             HomeQuickAction(
               key: const ValueKey('quick-alerts'),

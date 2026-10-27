@@ -615,5 +615,21 @@
   "ovGuestHint": "Bu coinin özetini ve piyasa verilerini görmek için giriş yap",
   "sgGuestHint": "Bu coinin sinyallerini görmek için giriş yap",
   "signalsGuestNote": "Sinyalleri görmek için giriş yap",
-  "adPrivacyOptions": "Reklam gizliliği seçenekleri"
+  "adPrivacyOptions": "Reklam gizliliği seçenekleri",
+  "homeBuyCredits": "Kredi Al",
+  "homeBuyCreditsBalance": "Bakiye: {count}",
+  "@homeBuyCreditsBalance": {"placeholders": {"count": {"type": "int"}}},
+  "creditsUnit": "kredi",
+  "creditsChoosePack": "Bir paket seç",
+  "creditsBuyFor": "{price} ile satın al",
+  "@creditsBuyFor": {"placeholders": {"price": {"type": "String"}}},
+  "creditsPerCredit": "kredi başı {price}",
+  "@creditsPerCredit": {"placeholders": {"price": {"type": "String"}}},
+  "creditsBadgeBest": "En avantajlı",
+  "creditsBadgePopular": "Popüler",
+  "creditsNoPackages": "Şu an satın alınabilir kredi paketi yok. Lütfen daha sonra tekrar dene.",
+  "creditsHowTitle": "Krediler nasıl çalışır",
+  "creditsHowUse": "Krediler, yapay zekâ analizi çalıştırdığında harcanır.",
+  "creditsHowMonthly": "Aylık krediler yenilenme gününde paket miktarına tamamlanır, sonraki aya devretmez.",
+  "creditsHowPurchased": "Satın alınan krediler süresiz geçerlidir. Önce aylık krediler harcanır."
 }

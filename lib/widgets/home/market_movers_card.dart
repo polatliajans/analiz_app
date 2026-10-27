@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/home_data.dart';
 import '../../utils/home_logic.dart';
+import 'buy_credits_tile.dart';
 import 'home_sections.dart';
 
 enum MarketMoversTab { gainers, losers, volume }
@@ -295,12 +296,19 @@ class HomeQuickAction {
   /// Needs an account: drawn with a small lock for guests.
   final bool locked;
 
+  /// Drawn as the wider accent "buy credits" tile instead of a circle;
+  /// [subtitle] is its optional second line (e.g. the balance).
+  final bool featured;
+  final String? subtitle;
+
   const HomeQuickAction({
     required this.icon,
     required this.label,
     required this.onTap,
     this.key,
     this.locked = false,
+    this.featured = false,
+    this.subtitle,
   });
 }
 
@@ -316,83 +324,103 @@ class HomeQuickActions extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         const gap = 8.0;
+        // The featured tile is wider than a circle shortcut.
+        const featuredWeight = 1.5;
+        double weight(HomeQuickAction a) => a.featured ? featuredWeight : 1;
+        final totalWeight = actions.fold<double>(0, (t, a) => t + weight(a));
         final fit =
-            (constraints.maxWidth - gap * (actions.length - 1)) /
-            actions.length;
-        final itemWidth = fit < 76 * scale ? 76.0 * scale : fit;
+            (constraints.maxWidth - gap * (actions.length - 1)) / totalWeight;
+        final itemWidth = fit < 64 * scale ? 64.0 * scale : fit;
         return SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
             children: [
               for (var i = 0; i < actions.length; i++) ...[
                 if (i > 0) const SizedBox(width: gap),
-                SizedBox(
-                  width: itemWidth,
-                  child: Semantics(
-                    button: true,
-                    label: actions[i].label,
-                    excludeSemantics: true,
-                    onTap: actions[i].onTap,
-                    child: InkWell(
-                      key: actions[i].key,
-                      borderRadius: BorderRadius.circular(12),
+                if (actions[i].featured)
+                  SizedBox(
+                    width: itemWidth * featuredWeight,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 2),
+                      child: BuyCreditsTile(
+                        key: actions[i].key,
+                        label: actions[i].label,
+                        subtitle: actions[i].subtitle,
+                        onTap: actions[i].onTap,
+                      ),
+                    ),
+                  )
+                else
+                  SizedBox(
+                    width: itemWidth,
+                    child: Semantics(
+                      button: true,
+                      label: actions[i].label,
+                      excludeSemantics: true,
                       onTap: actions[i].onTap,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 6),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Stack(
-                              clipBehavior: Clip.none,
-                              children: [
-                                Container(
-                                  width: 44,
-                                  height: 44,
-                                  decoration: BoxDecoration(
-                                    color: theme.colorScheme.secondaryContainer,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(
-                                    actions[i].icon,
-                                    size: 22,
-                                    color:
-                                        theme.colorScheme.onSecondaryContainer,
-                                  ),
-                                ),
-                                if (actions[i].locked)
-                                  Positioned(
-                                    right: -2,
-                                    bottom: -2,
-                                    child: Container(
-                                      padding: const EdgeInsets.all(3),
-                                      decoration: BoxDecoration(
-                                        color: theme.colorScheme.surface,
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: Icon(
-                                        Icons.lock_outline,
-                                        size: 12,
-                                        color:
-                                            theme.colorScheme.onSurfaceVariant,
-                                      ),
+                      child: InkWell(
+                        key: actions[i].key,
+                        borderRadius: BorderRadius.circular(12),
+                        onTap: actions[i].onTap,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 6),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Stack(
+                                clipBehavior: Clip.none,
+                                children: [
+                                  Container(
+                                    width: 44,
+                                    height: 44,
+                                    decoration: BoxDecoration(
+                                      color:
+                                          theme.colorScheme.secondaryContainer,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      actions[i].icon,
+                                      size: 22,
+                                      color: theme
+                                          .colorScheme
+                                          .onSecondaryContainer,
                                     ),
                                   ),
-                              ],
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              actions[i].label,
-                              maxLines: 2,
-                              textAlign: TextAlign.center,
-                              overflow: TextOverflow.ellipsis,
-                              style: theme.textTheme.labelMedium,
-                            ),
-                          ],
+                                  if (actions[i].locked)
+                                    Positioned(
+                                      right: -2,
+                                      bottom: -2,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(3),
+                                        decoration: BoxDecoration(
+                                          color: theme.colorScheme.surface,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Icon(
+                                          Icons.lock_outline,
+                                          size: 12,
+                                          color: theme
+                                              .colorScheme
+                                              .onSurfaceVariant,
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                actions[i].label,
+                                maxLines: 2,
+                                textAlign: TextAlign.center,
+                                overflow: TextOverflow.ellipsis,
+                                style: theme.textTheme.labelMedium,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
               ],
             ],
           ),

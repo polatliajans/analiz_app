@@ -2006,4 +2006,53 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get adPrivacyOptions => 'Reklam gizliliği seçenekleri';
+
+  @override
+  String get homeBuyCredits => 'Kredi Al';
+
+  @override
+  String homeBuyCreditsBalance(int count) {
+    return 'Bakiye: $count';
+  }
+
+  @override
+  String get creditsUnit => 'kredi';
+
+  @override
+  String get creditsChoosePack => 'Bir paket seç';
+
+  @override
+  String creditsBuyFor(String price) {
+    return '$price ile satın al';
+  }
+
+  @override
+  String creditsPerCredit(String price) {
+    return 'kredi başı $price';
+  }
+
+  @override
+  String get creditsBadgeBest => 'En avantajlı';
+
+  @override
+  String get creditsBadgePopular => 'Popüler';
+
+  @override
+  String get creditsNoPackages =>
+      'Şu an satın alınabilir kredi paketi yok. Lütfen daha sonra tekrar dene.';
+
+  @override
+  String get creditsHowTitle => 'Krediler nasıl çalışır';
+
+  @override
+  String get creditsHowUse =>
+      'Krediler, yapay zekâ analizi çalıştırdığında harcanır.';
+
+  @override
+  String get creditsHowMonthly =>
+      'Aylık krediler yenilenme gününde paket miktarına tamamlanır, sonraki aya devretmez.';
+
+  @override
+  String get creditsHowPurchased =>
+      'Satın alınan krediler süresiz geçerlidir. Önce aylık krediler harcanır.';
 }

@@ -2095,4 +2095,53 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get adPrivacyOptions => 'Opciones de privacidad de anuncios';
+
+  @override
+  String get homeBuyCredits => 'Comprar créditos';
+
+  @override
+  String homeBuyCreditsBalance(int count) {
+    return 'Saldo: $count';
+  }
+
+  @override
+  String get creditsUnit => 'créditos';
+
+  @override
+  String get creditsChoosePack => 'Elige un paquete';
+
+  @override
+  String creditsBuyFor(String price) {
+    return 'Comprar · $price';
+  }
+
+  @override
+  String creditsPerCredit(String price) {
+    return '$price / crédito';
+  }
+
+  @override
+  String get creditsBadgeBest => 'Mejor valor';
+
+  @override
+  String get creditsBadgePopular => 'Popular';
+
+  @override
+  String get creditsNoPackages =>
+      'No hay paquetes de créditos disponibles ahora. Inténtalo de nuevo más tarde.';
+
+  @override
+  String get creditsHowTitle => 'Cómo funcionan los créditos';
+
+  @override
+  String get creditsHowUse =>
+      'Los créditos se gastan al ejecutar un análisis de IA.';
+
+  @override
+  String get creditsHowMonthly =>
+      'Los créditos mensuales se completan hasta la cantidad de tu paquete al renovar y no se acumulan.';
+
+  @override
+  String get creditsHowPurchased =>
+      'Los créditos comprados nunca caducan. Primero se gastan los mensuales.';
 }

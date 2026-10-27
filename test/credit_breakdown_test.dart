@@ -208,7 +208,7 @@ void main() {
         overrides: overrides,
       );
       expect(find.text('Kredilerin'), findsOneWidget);
-      expect(find.text('Toplam: 25'), findsOneWidget);
+      expect(find.text('25'), findsOneWidget);
       expect(find.text('Aylık krediler 4 / 10'), findsOneWidget);
       expect(
         t
@@ -224,12 +224,10 @@ void main() {
         find.text('Satın alınan krediler 21 — süresiz geçerli'),
         findsOneWidget,
       );
+      expect(find.byKey(const Key('creditsHowItWorks')), findsOneWidget);
+      expect(find.text('Krediler nasıl çalışır'), findsOneWidget);
       expect(
-        find.textContaining('paketindeki kredi sayısına (10) tamamlanır'),
-        findsOneWidget,
-      );
-      expect(
-        find.textContaining('önce aylık krediler harcanır'),
+        find.textContaining('Önce aylık krediler harcanır'),
         findsOneWidget,
       );
       expect(t.takeException(), isNull);
@@ -242,12 +240,13 @@ void main() {
         member: _member(),
         overrides: overrides,
       );
-      expect(find.text('Toplam: 25'), findsOneWidget);
+      expect(find.byKey(const Key('creditSummaryTotal')), findsOneWidget);
+      expect(find.text('25'), findsOneWidget);
       expect(find.byKey(const Key('creditSummaryMonthly')), findsNothing);
       expect(find.byKey(const Key('creditSummaryProgress')), findsNothing);
       expect(find.byKey(const Key('creditSummaryRenewal')), findsNothing);
       expect(find.byKey(const Key('creditSummaryPurchased')), findsNothing);
-      expect(find.textContaining('(Ücretsiz: 10, Pro: 300)'), findsOneWidget);
+      expect(find.byKey(const Key('creditsHowItWorks')), findsOneWidget);
     });
 
     testWidgets('english and spanish render', (t) async {
