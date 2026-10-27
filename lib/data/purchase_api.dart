@@ -40,7 +40,15 @@ class PurchaseException implements Exception {
   /// The server already credited this purchase earlier; the store transaction
   /// can safely be finished.
   final bool alreadyProcessed;
-  PurchaseException(this.message, {this.alreadyProcessed = false});
+
+  /// The server rejected the purchase for good (422 invalid / refunded):
+  /// retrying can never succeed.
+  final bool permanent;
+  PurchaseException(
+    this.message, {
+    this.alreadyProcessed = false,
+    this.permanent = false,
+  });
 
   @override
   String toString() => message;
@@ -75,7 +83,10 @@ class PurchaseApi {
       );
     }
     if (response.statusCode == 422) {
-      throw PurchaseException(AppL10n.current.errorPurchaseInvalid);
+      throw PurchaseException(
+        AppL10n.current.errorPurchaseInvalid,
+        permanent: true,
+      );
     }
     if (response.statusCode == 502) {
       throw PurchaseException(storeVerificationUnreachableText());

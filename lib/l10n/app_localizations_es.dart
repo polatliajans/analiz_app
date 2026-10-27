@@ -2174,4 +2174,8 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get adAnalysisCapReachedIos =>
       'Has agotado los análisis con anuncios de hoy: puedes comprar créditos para continuar.';
+
+  @override
+  String get purchaseProofMissing =>
+      'La tienda aún está confirmando tu compra. Se acreditará automáticamente al confirmarse; si no aparece, vuelve a abrir la app.';
 }

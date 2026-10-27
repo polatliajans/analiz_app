@@ -641,5 +641,6 @@
   "featureNotAvailable": "Bu özellik şu anda hesabında kullanılamıyor.",
   "insufficientCreditBodyWithAdIos": "Bu analiz için yeterli kredin yok. Kısa bir reklam izleyerek bu hızlı analizi yapabilir ya da kredi alabilirsin.",
   "insufficientCreditDeepBodyIos": "Derin analiz için yeterli kredin yok. Devam etmek için kredi alabilirsin.",
-  "adAnalysisCapReachedIos": "Bugünkü reklamlı analiz hakkın doldu: devam etmek için kredi alabilirsin."
+  "adAnalysisCapReachedIos": "Bugünkü reklamlı analiz hakkın doldu: devam etmek için kredi alabilirsin.",
+  "purchaseProofMissing": "Satın alımın mağaza tarafından hâlâ onaylanıyor. Onaylanınca otomatik olarak eklenecek; görünmezse uygulamayı yeniden aç."
 }

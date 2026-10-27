@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'l10n/app_localizations.dart';
 import 'providers/auth_prompt_provider.dart';
+import 'providers/credit_purchase_provider.dart';
 import 'providers/home_tab_provider.dart';
 import 'providers/auth_provider.dart';
 import 'providers/locale_provider.dart';
@@ -88,6 +89,9 @@ class _KriptoAnalizAppState extends ConsumerState<KriptoAnalizApp> {
     _pushService = ref.read(pushServiceProvider);
     // Build the locale first so channel names use the active language.
     ref.read(localeProvider);
+    // Start listening to the store right at launch so unfinished purchases
+    // are delivered and credited even if the credit screen is never opened.
+    ref.read(creditPurchaseControllerProvider);
     _pushService.initialize();
   }
 

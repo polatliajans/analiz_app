@@ -2150,4 +2150,8 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get adAnalysisCapReachedIos =>
       'You\'ve used all of today\'s ad-funded analyses: you can buy credits to continue.';
+
+  @override
+  String get purchaseProofMissing =>
+      'Your purchase is still being confirmed by the store. It will be credited automatically once it is confirmed; if it does not show up, reopen the app.';
 }

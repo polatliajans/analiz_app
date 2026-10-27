@@ -1,17 +1,13 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:in_app_purchase/in_app_purchase.dart' show PurchaseParam;
 
-import '../data/purchase_api.dart' show PurchaseException;
-import '../data/purchase_payload.dart';
 import '../l10n/app_localizations.dart';
 import '../models/credit_breakdown.dart';
-import '../models/credit_package.dart';
 import '../models/member.dart';
 import '../providers/auth_provider.dart';
 import '../providers/credit_package_provider.dart';
-import '../providers/home_provider.dart';
+import '../providers/credit_purchase_provider.dart';
 import '../providers/store_price_provider.dart';
 import '../utils/credit_pack_pricing.dart';
 import '../widgets/brand_page.dart';
@@ -26,230 +22,88 @@ class CreditPackagesScreen extends ConsumerStatefulWidget {
 }
 
 class _CreditPackagesScreenState extends ConsumerState<CreditPackagesScreen> {
-  final InAppPurchase _iap = InAppPurchase.instance;
-  StreamSubscription<List<PurchaseDetails>>? _subscription;
-
-  // Tracks which store product IDs currently have a buy in flight, purely to
-  // drive the busy spinner in the UI. This is NOT used to decide which
-  // package gets credited — that is resolved from `purchase.productID`
-  // against the fetched package list, so tap order / concurrent purchases
-  // can never misattribute a credit.
-  final Set<String> _pendingProductIds = {};
+  // The purchase stream is listened to app-wide (creditPurchaseController);
+  // this screen only starts buys and reflects the shared state.
 
   @override
   void initState() {
     super.initState();
-    _subscription = _iap.purchaseStream.listen(
-      _onPurchaseUpdate,
-      onError: (_) {},
-    );
+    // Anything left unverified (offline earlier, packages not loaded) gets
+    // another try as soon as the user opens the shop.
+    Future.microtask(() {
+      if (mounted) {
+        ref.read(creditPurchaseControllerProvider.notifier).retryPending();
+      }
+    });
   }
 
-  @override
-  void dispose() {
-    _subscription?.cancel();
-    super.dispose();
-  }
-
-  CreditPackage? _resolvePackage(String productId) {
-    final packages = ref.read(creditPackageListProvider).value;
-    if (packages == null) return null;
-    for (final package in packages) {
-      if (package.storeProductId == productId) {
-        return package;
-      }
-    }
-    return null;
-  }
-
-  Future<void> _onPurchaseUpdate(List<PurchaseDetails> purchases) async {
-    for (final purchase in purchases) {
-      if (purchase.status == PurchaseStatus.pending) {
-        continue;
-      }
-
-      if (purchase.status == PurchaseStatus.error) {
-        setState(() => _pendingProductIds.remove(purchase.productID));
-        // No successful charge occurred here, so it's safe to acknowledge
-        // and clear this transaction instead of leaving it pending forever.
-        if (purchase.pendingCompletePurchase) {
-          await _iap.completePurchase(purchase);
-        }
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(context)!.purchaseFailed('${purchase.error}'),
-            ),
-          ),
-        );
-        continue;
-      }
-
-      if (purchase.status == PurchaseStatus.canceled) {
-        // The user backed out of the store sheet: release the busy marker and
-        // finish the (uncharged) transaction.
-        setState(() => _pendingProductIds.remove(purchase.productID));
-        if (purchase.pendingCompletePurchase) {
-          await _iap.completePurchase(purchase);
-        }
-        continue;
-      }
-
-      if (purchase.status == PurchaseStatus.purchased ||
-          purchase.status == PurchaseStatus.restored) {
-        setState(() => _pendingProductIds.remove(purchase.productID));
-
-        // Identify which package this purchase belongs to strictly from the
-        // data Google Play echoes back on the purchase itself, never from
-        // mutable UI state — this is what makes crediting correct regardless
-        // of tap order or overlapping purchases.
-        final package = _resolvePackage(purchase.productID);
-        final auth = ref.read(authProvider);
-
-        if (package == null || auth.token == null) {
-          // Unrecognized product (packages not loaded yet, stale product id,
-          // no session, etc). Deliberately do NOT complete the purchase:
-          // leaving it unfinished means Google Play will redeliver it via
-          // purchaseStream on the next app start, giving a real retry path
-          // instead of silently losing the paid credit.
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(AppLocalizations.of(context)!.purchaseNoPackage),
-              ),
-            );
-          }
-          continue;
-        }
-
-        try {
-          await ref
-              .read(purchaseApiProvider)
-              .verifyCreditPackagePurchase(
-                token: auth.token!,
-                creditPackageId: package.id,
-                proof: purchaseProofOf(purchase),
-              );
-          await ref.read(authProvider.notifier).refreshMember();
-          // Home shows the balance from its own cached payload; refresh it too.
-          ref.read(homeProvider.notifier).refresh(force: true);
-
-          // Only complete/consume the purchase once the server has actually
-          // confirmed and credited it. If verification throws below, we skip
-          // this entirely and leave the purchase pending for retry.
-          if (purchase.pendingCompletePurchase) {
-            await _iap.completePurchase(purchase);
-          }
-
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(AppLocalizations.of(context)!.creditsAdded),
-              ),
-            );
-          }
-        } on PurchaseException catch (e) {
-          if (!e.alreadyProcessed) {
-            _showRetry(e);
-            continue;
-          }
-          // Already credited on the server earlier: finish the store
-          // transaction so it is not redelivered forever.
-          if (purchase.pendingCompletePurchase) {
-            await _iap.completePurchase(purchase);
-          }
-          if (mounted) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(e.message)));
-          }
-        } catch (e) {
-          // Verification failed (network blip, 502, 422, timeout, ...).
-          // Do NOT complete the purchase here — the user already paid, and
-          // leaving it unfinished lets Google Play redeliver the same
-          // purchase for another verification attempt instead of losing it.
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  AppLocalizations.of(context)!.purchaseWillRetry('$e'),
-                ),
-              ),
-            );
-          }
-        }
-      }
-    }
-  }
-
-  void _showRetry(Object e) {
+  void _snack(String text) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(AppLocalizations.of(context)!.purchaseWillRetry('$e')),
-      ),
-    );
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
+  }
+
+  void _onNotice(PurchaseNotice notice) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (notice.kind) {
+      case PurchaseNoticeKind.credited:
+        _snack(l10n.creditsAdded);
+      case PurchaseNoticeKind.alreadyProcessed:
+      case PurchaseNoticeKind.rejected:
+        _snack(notice.detail ?? '');
+      case PurchaseNoticeKind.willRetry:
+        _snack(l10n.purchaseWillRetry(notice.detail ?? ''));
+      case PurchaseNoticeKind.storeFailed:
+        _snack(l10n.purchaseFailed(notice.detail ?? ''));
+      case PurchaseNoticeKind.proofMissing:
+        _snack(l10n.purchaseProofMissing);
+    }
   }
 
   Future<void> _buy(int packageId, String productId) async {
+    final l10n = AppLocalizations.of(context)!;
+    final controller = ref.read(creditPurchaseControllerProvider.notifier);
     // Guard re-entrancy before any await: a fast double-tap on the same
     // package's button must not fire buyConsumable twice.
-    if (_pendingProductIds.contains(productId)) {
+    if (ref
+        .read(creditPurchaseControllerProvider)
+        .pending
+        .contains(productId)) {
       return;
     }
-    setState(() => _pendingProductIds.add(productId));
+    controller.beginBuy(productId);
+    final iap = ref.read(inAppPurchaseProvider);
 
     try {
-      final available = await _iap.isAvailable();
+      final available = await iap.isAvailable();
       if (!available) {
-        setState(() => _pendingProductIds.remove(productId));
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(context)!.purchaseServiceUnavailable,
-            ),
-          ),
-        );
+        controller.endBuy(productId);
+        _snack(l10n.purchaseServiceUnavailable);
         return;
       }
 
-      final response = await _iap.queryProductDetails({productId});
+      final response = await iap.queryProductDetails({productId});
       if (response.productDetails.isEmpty) {
-        setState(() => _pendingProductIds.remove(productId));
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.productNotFound),
-          ),
-        );
+        controller.endBuy(productId);
+        _snack(l10n.productNotFound);
         return;
       }
 
       final param = PurchaseParam(
         productDetails: response.productDetails.first,
       );
-      final started = await _iap.buyConsumable(purchaseParam: param);
+      final started = await iap.buyConsumable(purchaseParam: param);
       if (!started) {
-        // Request was not even submitted to Play Billing; no stream event
+        // Request was not even submitted to the store; no stream event
         // will arrive for it, so clear the busy marker immediately.
-        setState(() => _pendingProductIds.remove(productId));
+        controller.endBuy(productId);
       }
     } catch (e) {
-      // Any thrown error from the platform (e.g. a PlatformException from
-      // buyConsumable) must still release the busy marker — otherwise this
-      // package's buy button would be stuck spinning for the rest of the
+      // Any thrown error from the platform must still release the busy
+      // marker, or this package's buy button would spin for the rest of the
       // app session.
-      setState(() => _pendingProductIds.remove(productId));
+      controller.endBuy(productId);
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)!.purchaseStartFailed('$e'),
-          ),
-        ),
-      );
+      _snack(l10n.purchaseStartFailed('$e'));
     }
   }
 
@@ -258,6 +112,15 @@ class _CreditPackagesScreenState extends ConsumerState<CreditPackagesScreen> {
     final l10n = AppLocalizations.of(context)!;
     final packagesAsync = ref.watch(creditPackageListProvider);
     final member = ref.watch(authProvider.select((a) => a.member));
+    final pendingProductIds = ref.watch(
+      creditPurchaseControllerProvider.select((s) => s.pending),
+    );
+    ref.listen(creditPurchaseControllerProvider.select((s) => s.notice), (
+      prev,
+      next,
+    ) {
+      if (next != null && next.id != prev?.id) _onNotice(next);
+    });
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.buyCredits)),
@@ -314,7 +177,7 @@ class _CreditPackagesScreenState extends ConsumerState<CreditPackagesScreen> {
                   offer: offer,
                   busy:
                       offer.package.storeProductId != null &&
-                      _pendingProductIds.contains(offer.package.storeProductId),
+                      pendingProductIds.contains(offer.package.storeProductId),
                   onBuy: offer.package.storeProductId == null
                       ? null
                       : () => _buy(

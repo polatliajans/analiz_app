@@ -2091,4 +2091,8 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get adAnalysisCapReachedIos =>
       'Bugünkü reklamlı analiz hakkın doldu: devam etmek için kredi alabilirsin.';
+
+  @override
+  String get purchaseProofMissing =>
+      'Satın alımın mağaza tarafından hâlâ onaylanıyor. Onaylanınca otomatik olarak eklenecek; görünmezse uygulamayı yeniden aç.';
 }

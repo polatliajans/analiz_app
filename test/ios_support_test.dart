@@ -64,7 +64,7 @@ void main() {
         purchaseId: 'GPA.1',
         serverVerificationData: 'play-token',
       );
-      expect(buildPurchaseBody(proof, platform: 'android'), {
+      expect(buildPurchaseBody(proof!, platform: 'android'), {
         'purchase_token': 'play-token',
       });
     });
@@ -75,21 +75,34 @@ void main() {
         purchaseId: '1000000123',
         serverVerificationData: 'base64receipt',
       );
-      expect(buildPurchaseBody(proof, platform: 'ios'), {
+      expect(buildPurchaseBody(proof!, platform: 'ios'), {
         'platform': 'ios',
         'purchase_token': '1000000123',
         'receipt': 'base64receipt',
       });
     });
 
-    test('ios without a transaction id falls back to the receipt', () {
+    test('ios without a numeric transaction id yields no proof', () {
+      for (final id in [null, '', '  ', 'abc', 'GPA.1']) {
+        expect(
+          purchaseProofFrom(
+            ios: true,
+            purchaseId: id,
+            serverVerificationData: 'r',
+          ),
+          isNull,
+          reason: 'id=$id must not fall back to the receipt',
+        );
+      }
+    });
+
+    test('android never needs a purchase id', () {
       final proof = purchaseProofFrom(
-        ios: true,
+        ios: false,
         purchaseId: null,
-        serverVerificationData: 'r',
+        serverVerificationData: 'tok',
       );
-      expect(proof.token, 'r');
-      expect(proof.receipt, 'r');
+      expect(proof!.token, 'tok');
     });
   });
 

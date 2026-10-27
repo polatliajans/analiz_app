@@ -13,27 +13,28 @@ class PurchaseProof {
   const PurchaseProof(this.token, [this.receipt]);
 }
 
-/// Builds the proof from raw store fields. On iOS `purchaseID` is the
-/// transactionIdentifier and `serverVerificationData` the receipt; if StoreKit
-/// gave no id the receipt doubles as the token so the server can still resolve
-/// the transaction.
-PurchaseProof purchaseProofFrom({
+/// Builds the proof from raw store fields. On iOS `purchaseID` is the numeric
+/// StoreKit transactionIdentifier and `serverVerificationData` the receipt.
+/// Returns null on iOS when the id is missing or not numeric: the receipt is
+/// never used as the purchase token (the caller keeps the transaction pending
+/// and tells the user instead).
+PurchaseProof? purchaseProofFrom({
   required bool ios,
   required String? purchaseId,
   required String serverVerificationData,
 }) {
   if (!ios) return PurchaseProof(serverVerificationData);
-  final id = (purchaseId == null || purchaseId.isEmpty)
-      ? serverVerificationData
-      : purchaseId;
+  final id = purchaseId?.trim();
+  if (id == null || id.isEmpty || int.tryParse(id) == null) return null;
   return PurchaseProof(id, serverVerificationData);
 }
 
-PurchaseProof purchaseProofOf(PurchaseDetails purchase) => purchaseProofFrom(
-  ios: isIOS,
-  purchaseId: purchase.purchaseID,
-  serverVerificationData: purchase.verificationData.serverVerificationData,
-);
+PurchaseProof? purchaseProofOf(PurchaseDetails purchase, {bool? ios}) =>
+    purchaseProofFrom(
+      ios: ios ?? isIOS,
+      purchaseId: purchase.purchaseID,
+      serverVerificationData: purchase.verificationData.serverVerificationData,
+    );
 
 /// POST body for `/purchases/credit-packages/{id}` and
 /// `/purchases/subscriptions/{id}`. Android keeps its original single-field

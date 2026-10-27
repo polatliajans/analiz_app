@@ -3567,6 +3567,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You\'ve used all of today\'s ad-funded analyses: you can buy credits to continue.'**
   String get adAnalysisCapReachedIos;
+
+  /// No description provided for @purchaseProofMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Your purchase is still being confirmed by the store. It will be credited automatically once it is confirmed; if it does not show up, reopen the app.'**
+  String get purchaseProofMissing;
 }
 
 class _AppLocalizationsDelegate

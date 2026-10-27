@@ -125,13 +125,29 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           continue;
         }
 
+        final proof = purchaseProofOf(purchase);
+        if (proof == null) {
+          // No usable transaction id: leave it unfinished so the store
+          // redelivers it, and say so instead of guessing a token.
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  AppLocalizations.of(context)!.purchaseProofMissing,
+                ),
+              ),
+            );
+          }
+          continue;
+        }
+
         try {
           await ref
               .read(subscriptionPurchaseApiProvider)
               .verifySubscriptionPurchase(
                 token: auth.token!,
                 subscriptionPlanId: plan.id,
-                proof: purchaseProofOf(purchase),
+                proof: proof,
               );
           await ref.read(authProvider.notifier).refreshMember();
           // Home shows the balance/Pro state from its own cached payload; refresh it too.
