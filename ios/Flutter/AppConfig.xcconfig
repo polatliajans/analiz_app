@@ -1,0 +1,11 @@
+// Build-time configuration defaults (committed, no secrets).
+// Overridden by Flutter/Secrets.xcconfig (git-ignored, written by CI) which is
+// included AFTER this file by Debug.xcconfig / Release.xcconfig.
+
+// AdMob iOS *app* id -> Info.plist GADApplicationIdentifier.
+// Default is Google's public sample app id (test ads only).
+ADMOB_IOS_APP_ID = ca-app-pub-3940256099942544~1458002511
+
+// Google Sign-In URL scheme (REVERSED_CLIENT_ID from GoogleService-Info.plist)
+// -> Info.plist CFBundleURLTypes. Placeholder until CI extracts the real value.
+GOOGLE_REVERSED_CLIENT_ID = com.googleusercontent.apps.REPLACE_WITH_REVERSED_CLIENT_ID
