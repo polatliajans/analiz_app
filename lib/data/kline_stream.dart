@@ -5,6 +5,7 @@ import 'dart:math' as math;
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../models/candle.dart';
+import 'binance_hosts.dart';
 
 /// Upper bound for the candle list while live updates keep appending.
 const maxLiveCandles = 1000;
@@ -137,17 +138,37 @@ Duration nextBackoff(int attempt) {
 }
 
 /// Combined stream (kline + mini ticker) URL for one symbol.
+/// [useFallback] picks Binance's market-data-only spot host (futures has none).
 Uri klineStreamUri({
   required String marketType,
   required String symbol,
   required String timeframe,
+  bool useFallback = false,
 }) {
   final s = symbol.toLowerCase();
   final streams = '$s@kline_$timeframe/$s@miniTicker';
   final base = marketType == 'futures'
       ? 'wss://fstream.binance.com/market/stream'
-      : 'wss://stream.binance.com:9443/stream';
+      : useFallback
+      ? '$binanceSpotWsFallback/stream'
+      : '$binanceSpotWsPrimary/stream';
   return Uri.parse('$base?streams=$streams');
+}
+
+/// Opens a socket for [uri]; the future completes once it is connected.
+typedef SocketConnector = Future<WebSocketChannel> Function(Uri uri);
+
+Future<WebSocketChannel> _defaultConnector(Uri uri) async {
+  final ch = WebSocketChannel.connect(uri);
+  try {
+    await ch.ready.timeout(const Duration(seconds: 10));
+  } catch (_) {
+    try {
+      await ch.sink.close();
+    } catch (_) {}
+    rethrow;
+  }
+  return ch;
 }
 
 /// Source of live events. Listening opens the connection, cancelling closes
@@ -161,7 +182,9 @@ abstract class KlineStream {
 }
 
 class WebSocketKlineStream implements KlineStream {
-  const WebSocketKlineStream();
+  final SocketConnector? connector;
+  final BinanceHostState? hostState;
+  const WebSocketKlineStream({this.connector, this.hostState});
 
   @override
   Stream<LiveEvent> connect({
@@ -175,16 +198,49 @@ class WebSocketKlineStream implements KlineStream {
 
     Future<void> open() async {
       try {
-        final ch = WebSocketChannel.connect(
-          klineStreamUri(
-            marketType: marketType,
-            symbol: symbol,
-            timeframe: timeframe,
-          ),
-        );
+        final connect = connector ?? _defaultConnector;
+        final state = hostState ?? BinanceHostState.shared;
+        // Spot: primary host, then the market-data-only host (or the other
+        // way round while the primary is known to be blocked). Futures has
+        // a single host.
+        final order = marketType == 'futures'
+            ? const [false]
+            : (state.useFallbackFirst
+                  ? const [true, false]
+                  : const [false, true]);
+        WebSocketChannel? ch;
+        Object? lastError;
+        StackTrace? lastStack;
+        for (final fallback in order) {
+          try {
+            ch = await connect(
+              klineStreamUri(
+                marketType: marketType,
+                symbol: symbol,
+                timeframe: timeframe,
+                useFallback: fallback,
+              ),
+            );
+            if (marketType != 'futures') {
+              fallback ? state.markPrimaryFailed() : state.markPrimaryOk();
+            }
+            break;
+          } catch (e, st) {
+            lastError = e;
+            lastStack = st;
+            if (controller.isClosed) return;
+          }
+        }
+        if (ch == null) {
+          Error.throwWithStackTrace(lastError!, lastStack!);
+        }
         channel = ch;
-        await ch.ready;
-        if (controller.isClosed) return;
+        if (controller.isClosed) {
+          try {
+            await ch.sink.close();
+          } catch (_) {}
+          return;
+        }
         sub = ch.stream.listen(
           (message) {
             if (message is! String) return;
