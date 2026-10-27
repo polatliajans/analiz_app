@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
+import '../data/subscription_purchase_api.dart'
+    show SubscriptionPurchaseException;
+import '../data/purchase_payload.dart';
 import '../l10n/app_localizations.dart';
 import '../models/subscription_plan.dart';
 import '../providers/auth_provider.dart';
@@ -10,7 +13,9 @@ import '../providers/home_provider.dart';
 import '../providers/price_alert_provider.dart';
 import '../providers/store_price_provider.dart';
 import '../providers/subscription_provider.dart';
+import '../utils/platform_info.dart';
 import '../widgets/brand_page.dart';
+import '../widgets/legal_links_row.dart';
 
 class SubscriptionScreen extends ConsumerStatefulWidget {
   const SubscriptionScreen({super.key});
@@ -49,7 +54,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     final plans = ref.read(subscriptionPlanListProvider).value;
     if (plans == null) return null;
     for (final plan in plans) {
-      if (plan.storeProductIdAndroid == productId) {
+      if (plan.storeProductId == productId) {
         return plan;
       }
     }
@@ -77,6 +82,16 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             ),
           ),
         );
+        continue;
+      }
+
+      if (purchase.status == PurchaseStatus.canceled) {
+        // The user backed out of the store sheet: release the busy marker and
+        // finish the (uncharged) transaction.
+        setState(() => _pendingProductIds.remove(purchase.productID));
+        if (purchase.pendingCompletePurchase) {
+          await _iap.completePurchase(purchase);
+        }
         continue;
       }
 
@@ -113,7 +128,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               .verifySubscriptionPurchase(
                 token: auth.token!,
                 subscriptionPlanId: plan.id,
-                purchaseToken: purchase.verificationData.serverVerificationData,
+                proof: purchaseProofOf(purchase),
               );
           await ref.read(authProvider.notifier).refreshMember();
           // Home shows the balance/Pro state from its own cached payload; refresh it too.
@@ -133,6 +148,21 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               ),
             );
           }
+        } on SubscriptionPurchaseException catch (e) {
+          if (!e.alreadyProcessed) {
+            _showRetry(e);
+            continue;
+          }
+          // Already activated on the server earlier: finish the store
+          // transaction so it is not redelivered forever.
+          if (purchase.pendingCompletePurchase) {
+            await _iap.completePurchase(purchase);
+          }
+          if (mounted) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(e.message)));
+          }
         } catch (e) {
           // Verification failed (network blip, 502, 422, timeout, ...).
           // Do NOT complete the purchase here — the user already paid, and
@@ -150,6 +180,30 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         }
       }
     }
+  }
+
+  /// App Store: replays the user's past subscription transactions through the
+  /// purchase stream (handled like a normal purchase, verified by the server).
+  Future<void> _restore() async {
+    try {
+      await _iap.restorePurchases();
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.restorePurchasesFailed),
+        ),
+      );
+    }
+  }
+
+  void _showRetry(Object e) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(AppLocalizations.of(context)!.purchaseWillRetry('$e')),
+      ),
+    );
   }
 
   Future<void> _buy(int planId, String productId) async {
@@ -238,7 +292,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                   .watch(
                     storePricesProvider(
                       plans
-                          .map((p) => p.storeProductIdAndroid)
+                          .map((p) => p.storeProductId)
                           .whereType<String>()
                           .join(','),
                     ),
@@ -270,7 +324,9 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               if (isPro) ...[
                 _AlreadyProCard(
                   title: l10n.subAlreadyProTitle,
-                  body: l10n.subAlreadyProBody,
+                  body: isIOS
+                      ? l10n.subAlreadyProBodyIos
+                      : l10n.subAlreadyProBody,
                 ),
                 const SizedBox(height: 20),
               ],
@@ -314,26 +370,33 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                   _PlanCard(
                     plan: plan,
                     priceText:
-                        storePrices[plan.storeProductIdAndroid] ??
+                        storePrices[plan.storeProductId] ??
                         ((double.tryParse(plan.price) ?? 0) > 0
                             ? '\$${plan.price}'
                             : l10n.buy),
                     isBusy:
-                        plan.storeProductIdAndroid != null &&
-                        _pendingProductIds.contains(plan.storeProductIdAndroid),
-                    onBuy: plan.storeProductIdAndroid == null
+                        plan.storeProductId != null &&
+                        _pendingProductIds.contains(plan.storeProductId),
+                    onBuy: plan.storeProductId == null
                         ? null
-                        : () => _buy(plan.id, plan.storeProductIdAndroid!),
+                        : () => _buy(plan.id, plan.storeProductId!),
                   ),
               ],
               const SizedBox(height: 8),
               Text(
-                l10n.subCancelNote,
+                isIOS ? l10n.subCancelNoteIos : l10n.subCancelNote,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
+              if (isIOS)
+                TextButton(
+                  key: const Key('restore-purchases'),
+                  onPressed: _restore,
+                  child: Text(l10n.restorePurchases),
+                ),
+              const LegalLinksRow(),
             ],
           );
         },

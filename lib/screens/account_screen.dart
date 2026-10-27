@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../l10n/app_localizations.dart';
+import '../utils/platform_info.dart';
 import '../models/member.dart';
 import '../providers/auth_prompt_provider.dart';
 import '../providers/auth_provider.dart';
@@ -389,6 +390,8 @@ class _GuestCard extends StatelessWidget {
 
 const _playSubscriptionsUrl =
     'https://play.google.com/store/account/subscriptions';
+const _appStoreSubscriptionsUrl =
+    'https://apps.apple.com/account/subscriptions';
 
 class _DeleteAccountDialog extends StatefulWidget {
   final DeleteAccountWarnings warnings;
@@ -406,13 +409,19 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
     var ok = false;
     try {
       ok = await launchUrl(
-        Uri.parse(_playSubscriptionsUrl),
+        Uri.parse(isIOS ? _appStoreSubscriptionsUrl : _playSubscriptionsUrl),
         mode: LaunchMode.externalApplication,
       );
     } catch (_) {}
     if (!ok) {
       messenger.showSnackBar(
-        SnackBar(content: Text(l10n.deleteAccountOpenFailed)),
+        SnackBar(
+          content: Text(
+            isIOS
+                ? l10n.deleteAccountOpenFailedIos
+                : l10n.deleteAccountOpenFailed,
+          ),
+        ),
       );
     }
   }
@@ -455,14 +464,20 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    l10n.deleteAccountProNote,
+                    isIOS
+                        ? l10n.deleteAccountProNoteIos
+                        : l10n.deleteAccountProNote,
                     style: TextStyle(color: scheme.onErrorContainer),
                   ),
                   const SizedBox(height: 8),
                   OutlinedButton.icon(
                     onPressed: () => _openPlay(l10n),
                     icon: const Icon(Icons.open_in_new, size: 18),
-                    label: Text(l10n.deleteAccountManageSubscription),
+                    label: Text(
+                      isIOS
+                          ? l10n.deleteAccountManageSubscriptionIos
+                          : l10n.deleteAccountManageSubscription,
+                    ),
                   ),
                 ],
               ),

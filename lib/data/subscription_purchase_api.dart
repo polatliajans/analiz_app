@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'api_http.dart';
-import 'purchase_api.dart' show isPurchaseAlreadyProcessed;
+import 'purchase_api.dart'
+    show isPurchaseAlreadyProcessed, storeVerificationUnreachableText;
+import 'purchase_payload.dart';
 
 import '../config/api_config.dart';
 import '../l10n/app_l10n.dart';
@@ -25,7 +27,11 @@ class SubscriptionPurchaseResult {
 
 class SubscriptionPurchaseException implements Exception {
   final String message;
-  SubscriptionPurchaseException(this.message);
+
+  /// The server already activated this purchase earlier; the store
+  /// transaction can safely be finished.
+  final bool alreadyProcessed;
+  SubscriptionPurchaseException(this.message, {this.alreadyProcessed = false});
 
   @override
   String toString() => message;
@@ -35,7 +41,7 @@ class SubscriptionPurchaseApi {
   Future<SubscriptionPurchaseResult> verifySubscriptionPurchase({
     required String token,
     required int subscriptionPlanId,
-    required String purchaseToken,
+    required PurchaseProof proof,
   }) async {
     final uri = Uri.parse(
       '${ApiConfig.baseUrl}/purchases/subscriptions/$subscriptionPlanId',
@@ -46,7 +52,7 @@ class SubscriptionPurchaseApi {
       response = await ApiHttp.post(
         uri,
         headers: {'Authorization': 'Bearer $token'},
-        body: {'purchase_token': purchaseToken},
+        body: buildPurchaseBody(proof),
       ).timeout(const Duration(seconds: 15));
     } catch (e) {
       throw SubscriptionPurchaseException(
@@ -58,6 +64,7 @@ class SubscriptionPurchaseApi {
         isPurchaseAlreadyProcessed(response.body)) {
       throw SubscriptionPurchaseException(
         AppL10n.current.errorPurchaseAlreadyProcessed,
+        alreadyProcessed: true,
       );
     }
     if (response.statusCode == 422) {
@@ -66,9 +73,7 @@ class SubscriptionPurchaseApi {
       );
     }
     if (response.statusCode == 502) {
-      throw SubscriptionPurchaseException(
-        AppL10n.current.errorPlayVerificationUnreachable,
-      );
+      throw SubscriptionPurchaseException(storeVerificationUnreachableText());
     }
     if (response.statusCode != 200) {
       throw SubscriptionPurchaseException(

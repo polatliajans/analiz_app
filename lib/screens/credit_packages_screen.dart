@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
+import '../data/purchase_api.dart' show PurchaseException;
+import '../data/purchase_payload.dart';
 import '../l10n/app_localizations.dart';
 import '../models/credit_breakdown.dart';
 import '../models/credit_package.dart';
@@ -53,7 +55,7 @@ class _CreditPackagesScreenState extends ConsumerState<CreditPackagesScreen> {
     final packages = ref.read(creditPackageListProvider).value;
     if (packages == null) return null;
     for (final package in packages) {
-      if (package.storeProductIdAndroid == productId) {
+      if (package.storeProductId == productId) {
         return package;
       }
     }
@@ -81,6 +83,16 @@ class _CreditPackagesScreenState extends ConsumerState<CreditPackagesScreen> {
             ),
           ),
         );
+        continue;
+      }
+
+      if (purchase.status == PurchaseStatus.canceled) {
+        // The user backed out of the store sheet: release the busy marker and
+        // finish the (uncharged) transaction.
+        setState(() => _pendingProductIds.remove(purchase.productID));
+        if (purchase.pendingCompletePurchase) {
+          await _iap.completePurchase(purchase);
+        }
         continue;
       }
 
@@ -117,7 +129,7 @@ class _CreditPackagesScreenState extends ConsumerState<CreditPackagesScreen> {
               .verifyCreditPackagePurchase(
                 token: auth.token!,
                 creditPackageId: package.id,
-                purchaseToken: purchase.verificationData.serverVerificationData,
+                proof: purchaseProofOf(purchase),
               );
           await ref.read(authProvider.notifier).refreshMember();
           // Home shows the balance from its own cached payload; refresh it too.
@@ -137,6 +149,21 @@ class _CreditPackagesScreenState extends ConsumerState<CreditPackagesScreen> {
               ),
             );
           }
+        } on PurchaseException catch (e) {
+          if (!e.alreadyProcessed) {
+            _showRetry(e);
+            continue;
+          }
+          // Already credited on the server earlier: finish the store
+          // transaction so it is not redelivered forever.
+          if (purchase.pendingCompletePurchase) {
+            await _iap.completePurchase(purchase);
+          }
+          if (mounted) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(e.message)));
+          }
         } catch (e) {
           // Verification failed (network blip, 502, 422, timeout, ...).
           // Do NOT complete the purchase here — the user already paid, and
@@ -154,6 +181,15 @@ class _CreditPackagesScreenState extends ConsumerState<CreditPackagesScreen> {
         }
       }
     }
+  }
+
+  void _showRetry(Object e) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(AppLocalizations.of(context)!.purchaseWillRetry('$e')),
+      ),
+    );
   }
 
   Future<void> _buy(int packageId, String productId) async {
@@ -236,7 +272,7 @@ class _CreditPackagesScreenState extends ConsumerState<CreditPackagesScreen> {
                   .watch(
                     storePricesProvider(
                       packages
-                          .map((p) => p.storeProductIdAndroid)
+                          .map((p) => p.storeProductId)
                           .whereType<String>()
                           .join(','),
                     ),
@@ -277,15 +313,13 @@ class _CreditPackagesScreenState extends ConsumerState<CreditPackagesScreen> {
                   key: ValueKey('credit-pack-${offer.package.id}'),
                   offer: offer,
                   busy:
-                      offer.package.storeProductIdAndroid != null &&
-                      _pendingProductIds.contains(
-                        offer.package.storeProductIdAndroid,
-                      ),
-                  onBuy: offer.package.storeProductIdAndroid == null
+                      offer.package.storeProductId != null &&
+                      _pendingProductIds.contains(offer.package.storeProductId),
+                  onBuy: offer.package.storeProductId == null
                       ? null
                       : () => _buy(
                           offer.package.id,
-                          offer.package.storeProductIdAndroid!,
+                          offer.package.storeProductId!,
                         ),
                 ),
                 const SizedBox(height: 12),

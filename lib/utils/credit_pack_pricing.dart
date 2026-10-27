@@ -88,18 +88,18 @@ List<CreditPackOffer> buildCreditPackOffers(
   Map<String, String> storePrices,
 ) {
   String labelOf(CreditPackage p) =>
-      storePrices[p.storeProductIdAndroid] ?? '\$${p.price}';
+      storePrices[p.storeProductId] ?? '\$${p.price}';
 
   // Rank on one consistent source: store prices only if every pack has a
   // parseable one, otherwise the backend's prices for all of them.
   final allStore =
       packages.isNotEmpty &&
       packages.every((p) {
-        final s = storePrices[p.storeProductIdAndroid];
+        final s = storePrices[p.storeProductId];
         return s != null && parseStorePrice(s) != null;
       });
   double? unit(CreditPackage p) {
-    final src = allStore ? storePrices[p.storeProductIdAndroid]! : p.price;
+    final src = allStore ? storePrices[p.storeProductId]! : p.price;
     final v = parseStorePrice(src)?.value;
     if (v == null || p.creditAmount <= 0) return null;
     return v / p.creditAmount;

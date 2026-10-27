@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'api_http.dart';
+import 'purchase_payload.dart';
 
 import '../config/api_config.dart';
 import '../l10n/app_l10n.dart';
+import '../utils/platform_info.dart';
 
 class PurchaseResult {
   final int creditBalance;
@@ -34,7 +36,11 @@ bool isPurchaseAlreadyProcessed(String body) {
 
 class PurchaseException implements Exception {
   final String message;
-  PurchaseException(this.message);
+
+  /// The server already credited this purchase earlier; the store transaction
+  /// can safely be finished.
+  final bool alreadyProcessed;
+  PurchaseException(this.message, {this.alreadyProcessed = false});
 
   @override
   String toString() => message;
@@ -44,7 +50,7 @@ class PurchaseApi {
   Future<PurchaseResult> verifyCreditPackagePurchase({
     required String token,
     required int creditPackageId,
-    required String purchaseToken,
+    required PurchaseProof proof,
   }) async {
     final uri = Uri.parse(
       '${ApiConfig.baseUrl}/purchases/credit-packages/$creditPackageId',
@@ -55,7 +61,7 @@ class PurchaseApi {
       response = await ApiHttp.post(
         uri,
         headers: {'Authorization': 'Bearer $token'},
-        body: {'purchase_token': purchaseToken},
+        body: buildPurchaseBody(proof),
       ).timeout(const Duration(seconds: 15));
     } catch (e) {
       throw PurchaseException(AppL10n.current.errorPurchaseVerifyFailed('$e'));
@@ -63,13 +69,16 @@ class PurchaseApi {
 
     if ((response.statusCode == 422 || response.statusCode == 409) &&
         isPurchaseAlreadyProcessed(response.body)) {
-      throw PurchaseException(AppL10n.current.errorPurchaseAlreadyProcessed);
+      throw PurchaseException(
+        AppL10n.current.errorPurchaseAlreadyProcessed,
+        alreadyProcessed: true,
+      );
     }
     if (response.statusCode == 422) {
       throw PurchaseException(AppL10n.current.errorPurchaseInvalid);
     }
     if (response.statusCode == 502) {
-      throw PurchaseException(AppL10n.current.errorPlayVerificationUnreachable);
+      throw PurchaseException(storeVerificationUnreachableText());
     }
     if (response.statusCode != 200) {
       throw PurchaseException(AppL10n.current.errorServer(response.statusCode));
@@ -80,3 +89,8 @@ class PurchaseApi {
     );
   }
 }
+
+/// "Could not reach the store verification service" in the right store's name.
+String storeVerificationUnreachableText() => isIOS
+    ? AppL10n.current.errorStoreVerificationUnreachableIos
+    : AppL10n.current.errorPlayVerificationUnreachable;
