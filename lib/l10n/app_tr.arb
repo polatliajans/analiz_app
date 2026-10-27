@@ -395,7 +395,7 @@
   "homeFngChange7d": "7 gün: {delta}",
   "homeFngSemantics": "Korku ve Açgözlülük endeksi {value}, {label}",
   "homeBtcDominance": "BTC dominansı",
-  "homeTotalCap": "Toplam piyasa değeri",
+  "homeTotalCap": "Piyasa değeri",
   "homeRegimeLabel": "Rejim: {regime}",
   "homeRegimeBull": "Boğa",
   "homeRegimeBear": "Ayı",

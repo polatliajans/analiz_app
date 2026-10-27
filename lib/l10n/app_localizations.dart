@@ -2251,7 +2251,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeTotalCap.
   ///
   /// In en, this message translates to:
-  /// **'Total market cap'**
+  /// **'Total mkt cap'**
   String get homeTotalCap;
 
   /// No description provided for @homeRegimeLabel.

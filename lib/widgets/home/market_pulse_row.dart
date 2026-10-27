@@ -168,7 +168,7 @@ class _BtcCard extends StatelessWidget {
         Expanded(
           child: Text(
             label,
-            maxLines: 1,
+            maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: muted,
           ),
@@ -205,6 +205,11 @@ class _BtcCard extends StatelessWidget {
         excludeSemantics: true,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          // When stretched to the neighbour's height, centre the content
+          // instead of pinning the rows to the bottom (large empty gap).
+          mainAxisAlignment: expand
+              ? MainAxisAlignment.center
+              : MainAxisAlignment.start,
           children: [
             Row(
               children: [
@@ -247,15 +252,14 @@ class _BtcCard extends StatelessWidget {
                   color: changeColor(context, b.change24hPct),
                 ),
               ),
-            if (expand) const Spacer(),
-            const SizedBox(height: 8),
+            SizedBox(height: expand ? 14 : 8),
             if (b?.dominancePct != null)
               line(
                 l10n.homeBtcDominance,
                 formatPlainPct(b!.dominancePct!, locale),
               ),
             if (cap?.usd != null) ...[
-              const SizedBox(height: 2),
+              SizedBox(height: expand ? 6 : 2),
               line(
                 l10n.homeTotalCap,
                 capChange != null

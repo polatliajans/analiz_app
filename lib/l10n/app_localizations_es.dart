@@ -1338,7 +1338,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get homeBtcDominance => 'Dominancia BTC';
 
   @override
-  String get homeTotalCap => 'Capitalización total';
+  String get homeTotalCap => 'Cap. total';
 
   @override
   String homeRegimeLabel(String regime) {

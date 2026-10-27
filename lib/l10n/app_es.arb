@@ -395,7 +395,7 @@
   "homeFngChange7d": "7 d: {delta}",
   "homeFngSemantics": "Índice de miedo y codicia {value}, {label}",
   "homeBtcDominance": "Dominancia BTC",
-  "homeTotalCap": "Capitalización total",
+  "homeTotalCap": "Cap. total",
   "homeRegimeLabel": "Régimen: {regime}",
   "homeRegimeBull": "Alcista",
   "homeRegimeBear": "Bajista",

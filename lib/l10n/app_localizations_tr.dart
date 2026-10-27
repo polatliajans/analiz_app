@@ -1298,7 +1298,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get homeBtcDominance => 'BTC dominansı';
 
   @override
-  String get homeTotalCap => 'Toplam piyasa değeri';
+  String get homeTotalCap => 'Piyasa değeri';
 
   @override
   String homeRegimeLabel(String regime) {

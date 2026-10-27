@@ -2,7 +2,6 @@
 // store_screenshots_test.dart): real fonts, a 1080x2400 phone surface and
 // PNG export of the rendered app.
 import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';

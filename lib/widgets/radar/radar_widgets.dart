@@ -196,19 +196,30 @@ class _RingPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final rect = Offset.zero & size;
     final arcRect = rect.deflate(stroke / 2);
+    final trackPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = stroke
+      ..strokeCap = StrokeCap.round
+      ..color = track;
+    canvas.drawArc(arcRect, 0, math.pi * 2, false, trackPaint);
+    if (progress <= 0) return;
+    final sweep = math.pi * 2 * progress;
+    // Separate, fully opaque paint: a shader is modulated by Paint.color's
+    // alpha, so reusing the (translucent) track paint dimmed the arc.
     final paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = stroke
-      ..strokeCap = StrokeCap.round;
-    canvas.drawArc(arcRect, 0, math.pi * 2, false, paint..color = track);
-    if (progress <= 0) return;
-    final sweep = math.pi * 2 * progress;
-    paint.shader = SweepGradient(
-      startAngle: 0,
-      endAngle: math.max(sweep, 0.01),
-      colors: [start, end],
-      transform: const GradientRotation(-math.pi / 2),
-    ).createShader(rect);
+      ..strokeCap = StrokeCap.round
+      ..color = const Color(0xFFFFFFFF)
+      ..shader = SweepGradient(
+        // Full circle with stops so the round cap just before the start
+        // angle wraps back to the start colour (not the clamped end colour).
+        startAngle: 0,
+        endAngle: math.pi * 2,
+        colors: [start, end, start],
+        stops: [0, progress.clamp(0.01, 1.0), 1],
+        transform: const GradientRotation(-math.pi / 2),
+      ).createShader(rect);
     canvas.drawArc(arcRect, -math.pi / 2, sweep, false, paint);
   }
 

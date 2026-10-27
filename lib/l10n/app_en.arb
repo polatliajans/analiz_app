@@ -711,7 +711,7 @@
   "homeFngSemantics": "Fear and Greed index {value}, {label}",
   "@homeFngSemantics": {"placeholders": {"value": {"type": "int"}, "label": {"type": "String"}}},
   "homeBtcDominance": "BTC dominance",
-  "homeTotalCap": "Total market cap",
+  "homeTotalCap": "Total mkt cap",
   "homeRegimeLabel": "Regime: {regime}",
   "@homeRegimeLabel": {"placeholders": {"regime": {"type": "String"}}},
   "homeRegimeBull": "Bull",
