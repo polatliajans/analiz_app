@@ -3489,6 +3489,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Purchased credits never expire. Monthly credits are spent first.'**
   String get creditsHowPurchased;
+
+  /// No description provided for @continueWithApple.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Apple'**
+  String get continueWithApple;
+
+  /// No description provided for @deleteAccountProNoteIos.
+  ///
+  /// In en, this message translates to:
+  /// **'If you have an active Pro subscription, deleting your account does not cancel it. Please cancel it separately in your Apple ID subscription settings, otherwise you may keep being charged.'**
+  String get deleteAccountProNoteIos;
+
+  /// No description provided for @deleteAccountManageSubscriptionIos.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage subscription in the App Store'**
+  String get deleteAccountManageSubscriptionIos;
+
+  /// No description provided for @deleteAccountOpenFailedIos.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the App Store.'**
+  String get deleteAccountOpenFailedIos;
+
+  /// No description provided for @errorStoreVerificationUnreachableIos.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not reach the App Store verification service.'**
+  String get errorStoreVerificationUnreachableIos;
+
+  /// No description provided for @subCancelNoteIos.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment is charged to your Apple ID at confirmation of purchase. The subscription renews automatically unless canceled at least 24 hours before the end of the current period. Manage or cancel anytime in Settings > Apple ID > Subscriptions.'**
+  String get subCancelNoteIos;
+
+  /// No description provided for @subAlreadyProBodyIos.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you for your support! You can manage or cancel your subscription anytime in your Apple ID subscription settings.'**
+  String get subAlreadyProBodyIos;
+
+  /// No description provided for @restorePurchases.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore purchases'**
+  String get restorePurchases;
+
+  /// No description provided for @restorePurchasesFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not restore purchases.'**
+  String get restorePurchasesFailed;
 }
 
 class _AppLocalizationsDelegate

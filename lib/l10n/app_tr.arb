@@ -628,5 +628,14 @@
   "creditsHowTitle": "Krediler nasıl çalışır",
   "creditsHowUse": "Krediler, yapay zekâ analizi çalıştırdığında harcanır.",
   "creditsHowMonthly": "Aylık krediler yenilenme gününde paket miktarına tamamlanır, sonraki aya devretmez.",
-  "creditsHowPurchased": "Satın alınan krediler süresiz geçerlidir. Önce aylık krediler harcanır."
+  "creditsHowPurchased": "Satın alınan krediler süresiz geçerlidir. Önce aylık krediler harcanır.",
+  "continueWithApple": "Apple ile devam et",
+  "deleteAccountProNoteIos": "Aktif bir Pro aboneliğin varsa, hesabı silmek aboneliği iptal etmez. Ücretlendirilmeye devam etmemek için aboneliği Apple Kimliği abonelik ayarlarından ayrıca iptal etmelisin.",
+  "deleteAccountManageSubscriptionIos": "Aboneliği App Store'da yönet",
+  "deleteAccountOpenFailedIos": "App Store açılamadı.",
+  "errorStoreVerificationUnreachableIos": "App Store doğrulama servisine ulaşılamadı.",
+  "subCancelNoteIos": "Ödeme, satın alma onaylandığında Apple Kimliğinizden tahsil edilir. Abonelik, mevcut dönemin bitiminden en az 24 saat önce iptal edilmezse otomatik olarak yenilenir. Aboneliğinizi istediğiniz zaman Ayarlar > Apple Kimliği > Abonelikler bölümünden yönetebilir veya iptal edebilirsiniz.",
+  "subAlreadyProBodyIos": "Desteğiniz için teşekkürler! Aboneliğinizi istediğiniz zaman Apple Kimliği abonelik ayarlarından yönetebilir veya iptal edebilirsiniz.",
+  "restorePurchases": "Satın alımları geri yükle",
+  "restorePurchasesFailed": "Satın alımlar geri yüklenemedi."
 }

@@ -1,10 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../l10n/app_l10n.dart';
+import 'apple_sign_in_logic.dart';
 import 'auth_failure.dart';
 
-/// Thin wrapper around Firebase Auth and Google Sign-In. Every method returns
+/// Thin wrapper around Firebase Auth, Google Sign-In and Sign in with Apple. Every method returns
 /// a Firebase ID token (or nothing) and converts SDK errors to [AuthFailure].
 class FirebaseAuthService {
   FirebaseAuth get _auth => FirebaseAuth.instance;
@@ -21,6 +23,12 @@ class FirebaseAuthService {
       throw AuthFailure(
         e.code == GoogleSignInExceptionCode.canceled ||
                 e.code == GoogleSignInExceptionCode.interrupted
+            ? AuthErrorKind.cancelled
+            : AuthErrorKind.unknown,
+      );
+    } on SignInWithAppleAuthorizationException catch (e) {
+      throw AuthFailure(
+        e.code == AuthorizationErrorCode.canceled
             ? AuthErrorKind.cancelled
             : AuthErrorKind.unknown,
       );
@@ -54,6 +62,67 @@ class FirebaseAuthService {
     );
     return _idToken(credential.user);
   });
+
+  /// iOS only. Native Sign in with Apple with a SHA-256 nonce; the raw nonce
+  /// goes to Firebase, the hash to Apple. Apple only returns the name on the
+  /// very first authorization, so it is copied onto the Firebase user then.
+  /// Email may be absent (or a private relay address); callers must cope.
+  Future<String> signInWithApple() => _guard(() async {
+    final rawNonce = generateAppleNonce();
+    final apple = await SignInWithApple.getAppleIDCredential(
+      scopes: [
+        AppleIDAuthorizationScopes.email,
+        AppleIDAuthorizationScopes.fullName,
+      ],
+      nonce: sha256ofString(rawNonce),
+    );
+    final identityToken = apple.identityToken;
+    if (identityToken == null) throw const AuthFailure(AuthErrorKind.unknown);
+    final credential = await _auth.signInWithCredential(
+      OAuthProvider('apple.com').credential(
+        idToken: identityToken,
+        rawNonce: rawNonce,
+        accessToken: apple.authorizationCode,
+      ),
+    );
+    final user = credential.user;
+    final name = appleDisplayName(apple.givenName, apple.familyName);
+    var nameApplied = false;
+    if (user != null &&
+        name != null &&
+        (user.displayName == null || user.displayName!.trim().isEmpty)) {
+      try {
+        await user.updateDisplayName(name);
+        nameApplied = true;
+      } catch (_) {
+        // Cosmetic only; sign-in itself succeeded.
+      }
+    }
+    // Refresh so the ID token carries the freshly set name claim.
+    return _idToken(user, forceRefresh: nameApplied);
+  });
+
+  /// App Store rule 5.1.1(v): deleting an account created with Sign in with
+  /// Apple must also revoke the Apple token. Re-authorizes with Apple to get a
+  /// fresh authorization code and hands it to Firebase (needs the Apple
+  /// provider's key configured in the Firebase console). Best effort: never
+  /// throws, so the account deletion itself is not blocked.
+  Future<void> revokeAppleTokenIfNeeded() async {
+    try {
+      final user = _auth.currentUser;
+      final isApple =
+          user?.providerData.any((p) => p.providerId == 'apple.com') ?? false;
+      if (!isApple) return;
+      final rawNonce = generateAppleNonce();
+      final apple = await SignInWithApple.getAppleIDCredential(
+        scopes: const [],
+        nonce: sha256ofString(rawNonce),
+      );
+      await _auth.revokeTokenWithAuthorizationCode(apple.authorizationCode);
+    } catch (_) {
+      // Cancelled or unavailable: continue with the deletion.
+    }
+  }
 
   Future<String> signUpWithEmail(String email, String password) =>
       _guard(() async {

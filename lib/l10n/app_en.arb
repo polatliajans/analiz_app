@@ -958,5 +958,14 @@
   "creditsHowTitle": "How credits work",
   "creditsHowUse": "Credits are spent when you run an AI analysis.",
   "creditsHowMonthly": "Monthly credits are topped up to your package amount on renewal and do not carry over.",
-  "creditsHowPurchased": "Purchased credits never expire. Monthly credits are spent first."
+  "creditsHowPurchased": "Purchased credits never expire. Monthly credits are spent first.",
+  "continueWithApple": "Continue with Apple",
+  "deleteAccountProNoteIos": "If you have an active Pro subscription, deleting your account does not cancel it. Please cancel it separately in your Apple ID subscription settings, otherwise you may keep being charged.",
+  "deleteAccountManageSubscriptionIos": "Manage subscription in the App Store",
+  "deleteAccountOpenFailedIos": "Could not open the App Store.",
+  "errorStoreVerificationUnreachableIos": "Could not reach the App Store verification service.",
+  "subCancelNoteIos": "Payment is charged to your Apple ID at confirmation of purchase. The subscription renews automatically unless canceled at least 24 hours before the end of the current period. Manage or cancel anytime in Settings > Apple ID > Subscriptions.",
+  "subAlreadyProBodyIos": "Thank you for your support! You can manage or cancel your subscription anytime in your Apple ID subscription settings.",
+  "restorePurchases": "Restore purchases",
+  "restorePurchasesFailed": "Could not restore purchases."
 }

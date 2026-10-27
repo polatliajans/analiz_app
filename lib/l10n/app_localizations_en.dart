@@ -2102,4 +2102,36 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get creditsHowPurchased =>
       'Purchased credits never expire. Monthly credits are spent first.';
+
+  @override
+  String get continueWithApple => 'Continue with Apple';
+
+  @override
+  String get deleteAccountProNoteIos =>
+      'If you have an active Pro subscription, deleting your account does not cancel it. Please cancel it separately in your Apple ID subscription settings, otherwise you may keep being charged.';
+
+  @override
+  String get deleteAccountManageSubscriptionIos =>
+      'Manage subscription in the App Store';
+
+  @override
+  String get deleteAccountOpenFailedIos => 'Could not open the App Store.';
+
+  @override
+  String get errorStoreVerificationUnreachableIos =>
+      'Could not reach the App Store verification service.';
+
+  @override
+  String get subCancelNoteIos =>
+      'Payment is charged to your Apple ID at confirmation of purchase. The subscription renews automatically unless canceled at least 24 hours before the end of the current period. Manage or cancel anytime in Settings > Apple ID > Subscriptions.';
+
+  @override
+  String get subAlreadyProBodyIos =>
+      'Thank you for your support! You can manage or cancel your subscription anytime in your Apple ID subscription settings.';
+
+  @override
+  String get restorePurchases => 'Restore purchases';
+
+  @override
+  String get restorePurchasesFailed => 'Could not restore purchases.';
 }

@@ -96,6 +96,9 @@ class AuthNotifier extends Notifier<AuthState> {
   Future<void> signInWithGoogle() =>
       _signIn(ref.read(firebaseAuthServiceProvider).signInWithGoogle);
 
+  Future<void> signInWithApple() =>
+      _signIn(ref.read(firebaseAuthServiceProvider).signInWithApple);
+
   Future<void> signInWithEmail(String email, String password) => _signIn(
     () =>
         ref.read(firebaseAuthServiceProvider).signInWithEmail(email, password),
@@ -175,6 +178,8 @@ class AuthNotifier extends Notifier<AuthState> {
   Future<void> deleteAccount() async {
     final token = state.token;
     if (token == null) return;
+    // Sign in with Apple accounts: revoke the Apple token first (best effort).
+    await ref.read(firebaseAuthServiceProvider).revokeAppleTokenIfNeeded();
     await ref.read(authApiProvider).deleteAccount(token);
     await ref.read(firebaseAuthServiceProvider).signOut();
     await ref.read(secureStorageProvider).delete(key: _tokenStorageKey);

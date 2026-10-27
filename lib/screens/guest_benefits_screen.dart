@@ -7,6 +7,8 @@ import '../providers/app_config_provider.dart';
 import '../providers/auth_prompt_provider.dart';
 import '../providers/auth_provider.dart';
 import '../services/auth_failure.dart';
+import '../utils/platform_info.dart';
+import '../widgets/apple_sign_in_button.dart';
 import '../widgets/brand_page.dart';
 import 'email_auth_screen.dart';
 
@@ -80,7 +82,11 @@ List<BrandBenefit> guestBenefitsFor(AppLocalizations l10n, PlanConfig plan) {
 class _GuestBenefitsScreenState extends ConsumerState<GuestBenefitsScreen> {
   bool _busy = false;
 
-  Future<void> _google() async {
+  Future<void> _google() => _social((auth) => auth.signInWithGoogle());
+
+  Future<void> _apple() => _social((auth) => auth.signInWithApple());
+
+  Future<void> _social(Future<void> Function(AuthNotifier auth) signIn) async {
     final l10n = AppLocalizations.of(context)!;
     final messenger = ScaffoldMessenger.of(context);
     final navigator = Navigator.of(context);
@@ -88,7 +94,7 @@ class _GuestBenefitsScreenState extends ConsumerState<GuestBenefitsScreen> {
     final auth = ref.read(authProvider.notifier);
     setState(() => _busy = true);
     try {
-      await auth.signInWithGoogle();
+      await signIn(auth);
       await promptDone.complete();
       if (!mounted) return;
       navigator.pop();
@@ -194,6 +200,10 @@ class _GuestBenefitsScreenState extends ConsumerState<GuestBenefitsScreen> {
                           : const Icon(Icons.g_mobiledata, size: 28),
                       label: Text(l10n.continueWithGoogle),
                     ),
+                    if (isIOS) ...[
+                      const SizedBox(height: 8),
+                      AppleSignInButton(onPressed: loading ? null : _apple),
+                    ],
                     const SizedBox(height: 8),
                     OutlinedButton.icon(
                       key: const Key('guest-email'),

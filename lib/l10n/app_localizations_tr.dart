@@ -2043,4 +2043,36 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get creditsHowPurchased =>
       'Satın alınan krediler süresiz geçerlidir. Önce aylık krediler harcanır.';
+
+  @override
+  String get continueWithApple => 'Apple ile devam et';
+
+  @override
+  String get deleteAccountProNoteIos =>
+      'Aktif bir Pro aboneliğin varsa, hesabı silmek aboneliği iptal etmez. Ücretlendirilmeye devam etmemek için aboneliği Apple Kimliği abonelik ayarlarından ayrıca iptal etmelisin.';
+
+  @override
+  String get deleteAccountManageSubscriptionIos =>
+      'Aboneliği App Store\'da yönet';
+
+  @override
+  String get deleteAccountOpenFailedIos => 'App Store açılamadı.';
+
+  @override
+  String get errorStoreVerificationUnreachableIos =>
+      'App Store doğrulama servisine ulaşılamadı.';
+
+  @override
+  String get subCancelNoteIos =>
+      'Ödeme, satın alma onaylandığında Apple Kimliğinizden tahsil edilir. Abonelik, mevcut dönemin bitiminden en az 24 saat önce iptal edilmezse otomatik olarak yenilenir. Aboneliğinizi istediğiniz zaman Ayarlar > Apple Kimliği > Abonelikler bölümünden yönetebilir veya iptal edebilirsiniz.';
+
+  @override
+  String get subAlreadyProBodyIos =>
+      'Desteğiniz için teşekkürler! Aboneliğinizi istediğiniz zaman Apple Kimliği abonelik ayarlarından yönetebilir veya iptal edebilirsiniz.';
+
+  @override
+  String get restorePurchases => 'Satın alımları geri yükle';
+
+  @override
+  String get restorePurchasesFailed => 'Satın alımlar geri yüklenemedi.';
 }

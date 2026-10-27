@@ -2126,4 +2126,36 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get creditsHowPurchased =>
       'Los créditos comprados nunca caducan. Primero se gastan los mensuales.';
+
+  @override
+  String get continueWithApple => 'Continuar con Apple';
+
+  @override
+  String get deleteAccountProNoteIos =>
+      'Si tienes una suscripción Pro activa, eliminar tu cuenta no la cancela. Cancélala por separado en los ajustes de suscripciones de tu ID de Apple; de lo contrario podrían seguir cobrándote.';
+
+  @override
+  String get deleteAccountManageSubscriptionIos =>
+      'Gestionar suscripción en la App Store';
+
+  @override
+  String get deleteAccountOpenFailedIos => 'No se pudo abrir la App Store.';
+
+  @override
+  String get errorStoreVerificationUnreachableIos =>
+      'No se pudo acceder al servicio de verificación de la App Store.';
+
+  @override
+  String get subCancelNoteIos =>
+      'El pago se carga a tu ID de Apple al confirmar la compra. La suscripción se renueva automáticamente salvo que se cancele al menos 24 horas antes del final del periodo actual. Gestiona o cancela cuando quieras en Ajustes > ID de Apple > Suscripciones.';
+
+  @override
+  String get subAlreadyProBodyIos =>
+      '¡Gracias por tu apoyo! Puedes gestionar o cancelar tu suscripción en cualquier momento en los ajustes de suscripciones de tu ID de Apple.';
+
+  @override
+  String get restorePurchases => 'Restaurar compras';
+
+  @override
+  String get restorePurchasesFailed => 'No se pudieron restaurar las compras.';
 }
