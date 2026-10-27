@@ -120,7 +120,8 @@ class _MutedText extends StatelessWidget {
 
 // ---------------------------------------------------------------- Header
 
-/// One slim top band: member name on the left, plan chip on the right.
+/// One slim top band: member name takes the remaining space (ellipsized), plan chip sits at the
+/// trailing edge (Row is directional, so this is RTL-safe).
 /// It sits below the status bar (the screen adds that inset).
 class HomeHeader extends StatelessWidget {
   final String? name;
@@ -162,25 +163,14 @@ class HomeHeader extends StatelessWidget {
                     ),
             ),
             const SizedBox(width: 8),
-            Flexible(
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                alignment: Alignment.centerRight,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _BandChip(
-                      key: const ValueKey('home-plan-chip'),
-                      icon: isPro
-                          ? Icons.workspace_premium
-                          : Icons.workspace_premium_outlined,
-                      label: isPro ? l10n.rolePro : l10n.roleFree,
-                      highlighted: isPro,
-                      onTap: onPro,
-                    ),
-                  ],
-                ),
-              ),
+            _BandChip(
+              key: const ValueKey('home-plan-chip'),
+              icon: isPro
+                  ? Icons.workspace_premium
+                  : Icons.workspace_premium_outlined,
+              label: isPro ? l10n.rolePro : l10n.roleFree,
+              highlighted: isPro,
+              onTap: onPro,
             ),
           ],
         ),
