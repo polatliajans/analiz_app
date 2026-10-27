@@ -103,25 +103,36 @@ class FirebaseAuthService {
   });
 
   /// App Store rule 5.1.1(v): deleting an account created with Sign in with
-  /// Apple must also revoke the Apple token. Re-authorizes with Apple to get a
-  /// fresh authorization code and hands it to Firebase (needs the Apple
-  /// provider's key configured in the Firebase console). Best effort: never
-  /// throws, so the account deletion itself is not blocked.
-  Future<void> revokeAppleTokenIfNeeded() async {
+  /// Apple must also revoke the Apple token. Step 1 (before anything is
+  /// deleted): re-authorizes with Apple to get a fresh authorization code.
+  /// Returns null for non-Apple users or when the user cancels/it is
+  /// unavailable. Has no side effect on the account, so a later failure of
+  /// the server deletion leaves everything intact. Never throws.
+  Future<String?> prepareAppleRevocation() async {
     try {
       final user = _auth.currentUser;
       final isApple =
           user?.providerData.any((p) => p.providerId == 'apple.com') ?? false;
-      if (!isApple) return;
+      if (!isApple) return null;
       final rawNonce = generateAppleNonce();
       final apple = await SignInWithApple.getAppleIDCredential(
         scopes: const [],
         nonce: sha256ofString(rawNonce),
       );
-      await _auth.revokeTokenWithAuthorizationCode(apple.authorizationCode);
+      return apple.authorizationCode;
     } catch (_) {
-      // Cancelled or unavailable: continue with the deletion.
+      return null;
     }
+  }
+
+  /// Step 2 (after the server deleted the account): hands the code from
+  /// [prepareAppleRevocation] to Firebase to revoke the Apple token (needs the
+  /// Apple provider's key configured in the Firebase console). Best effort:
+  /// never throws, so the finished deletion is never blocked.
+  Future<void> revokeAppleToken(String authorizationCode) async {
+    try {
+      await _auth.revokeTokenWithAuthorizationCode(authorizationCode);
+    } catch (_) {}
   }
 
   Future<String> signUpWithEmail(String email, String password) =>

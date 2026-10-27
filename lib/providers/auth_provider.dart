@@ -174,14 +174,25 @@ class AuthNotifier extends Notifier<AuthState> {
   }
 
   /// Deletes the account on the server, then clears the local session. If the
-  /// server call fails the exception propagates and the session is untouched.
+  /// server call fails the exception propagates and the session is untouched
+  /// (the Apple token is never revoked for an account that still exists).
+  ///
+  /// Sign in with Apple accounts: the Apple authorization code is fetched
+  /// first (no side effect), the server deletion runs, and only then is the
+  /// Apple token revoked, best effort, without blocking the completed
+  /// deletion.
   Future<void> deleteAccount() async {
     final token = state.token;
     if (token == null) return;
-    // Sign in with Apple accounts: revoke the Apple token first (best effort).
-    await ref.read(firebaseAuthServiceProvider).revokeAppleTokenIfNeeded();
+    final firebase = ref.read(firebaseAuthServiceProvider);
+    final appleCode = await firebase.prepareAppleRevocation();
     await ref.read(authApiProvider).deleteAccount(token);
-    await ref.read(firebaseAuthServiceProvider).signOut();
+    if (appleCode != null) {
+      try {
+        await firebase.revokeAppleToken(appleCode);
+      } catch (_) {}
+    }
+    await firebase.signOut();
     await ref.read(secureStorageProvider).delete(key: _tokenStorageKey);
     state = const AuthState();
   }
