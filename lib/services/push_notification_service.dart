@@ -7,10 +7,32 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../data/device_token_api.dart';
 import '../l10n/app_l10n.dart';
+import '../utils/platform_info.dart';
 import 'notification_logic.dart';
+
+/// Polls [fetch] until it returns a value, at most [attempts] times with
+/// [delay] between tries. Returns null when it never did (e.g. the APNs token
+/// on a simulator, which never arrives).
+Future<T?> retryUntilNonNull<T>(
+  Future<T?> Function() fetch, {
+  int attempts = 5,
+  Duration delay = const Duration(seconds: 1),
+}) async {
+  for (var i = 0; i < attempts; i++) {
+    try {
+      final value = await fetch();
+      if (value != null) return value;
+    } catch (_) {
+      // Treated like "not available yet".
+    }
+    if (i < attempts - 1) await Future<void>.delayed(delay);
+  }
+  return null;
+}
 
 class PushNotificationService {
   /// Called when the user taps a notification that points somewhere
@@ -82,6 +104,12 @@ class PushNotificationService {
       await _localNotifications.initialize(
         settings: const InitializationSettings(
           android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+          // Permission is requested explicitly later (after our own rationale).
+          iOS: DarwinInitializationSettings(
+            requestAlertPermission: false,
+            requestBadgePermission: false,
+            requestSoundPermission: false,
+          ),
         ),
         onDidReceiveNotificationResponse: (response) =>
             _emit(resolveNotificationPayload(response.payload)),
@@ -194,6 +222,11 @@ class PushNotificationService {
             priority: high ? Priority.high : Priority.defaultPriority,
             icon: '@mipmap/ic_launcher',
           ),
+          iOS: DarwinNotificationDetails(
+            presentAlert: true,
+            presentBadge: true,
+            presentSound: true,
+          ),
         ),
         payload: jsonEncode(message.data),
       );
@@ -225,25 +258,46 @@ class PushNotificationService {
   /// Whether the system currently lets the app post notifications.
   Future<bool> notificationsEnabled() async {
     try {
+      if (isIOS) {
+        final settings = await FirebaseMessaging.instance
+            .getNotificationSettings();
+        return settings.authorizationStatus == AuthorizationStatus.authorized ||
+            settings.authorizationStatus == AuthorizationStatus.provisional;
+      }
       return await _android?.areNotificationsEnabled() ?? true;
     } catch (_) {
       return true;
     }
   }
 
-  /// Shows the system permission dialog (Android 13+). Returns the result.
+  /// Shows the system permission dialog (Android 13+ / iOS). Returns the result.
   Future<bool> requestPermission() async {
     try {
+      if (isIOS) {
+        // Also registers for remote notifications (APNs) once granted.
+        final settings = await FirebaseMessaging.instance.requestPermission();
+        final granted =
+            settings.authorizationStatus == AuthorizationStatus.authorized ||
+            settings.authorizationStatus == AuthorizationStatus.provisional;
+        if (granted && _authToken != null) {
+          _syncedAuthToken = null;
+          unawaited(_syncCurrentToken());
+        }
+        return granted;
+      }
       return await _android?.requestNotificationsPermission() ?? true;
     } catch (_) {
       return false;
     }
   }
 
-  /// Opens the app's notification page in the Android system settings.
-  /// Returns false when that is not possible.
+  /// Opens the app's notification page in the system settings (on iOS: the
+  /// app's page in Settings). Returns false when that is not possible.
   Future<bool> openSystemNotificationSettings() async {
     try {
+      if (isIOS) {
+        return await launchUrl(Uri.parse('app-settings:'));
+      }
       return await _systemChannel.invokeMethod<bool>(
             'openNotificationSettings',
           ) ??
@@ -266,6 +320,15 @@ class PushNotificationService {
     final authToken = _authToken;
     if (authToken == null || _syncedAuthToken == authToken) return;
     try {
+      if (isIOS) {
+        // FCM needs the APNs token first. It is missing on simulators and
+        // until notification permission is granted: skip quietly, the
+        // onTokenRefresh listener registers the token once it exists.
+        final apns = await retryUntilNonNull(
+          FirebaseMessaging.instance.getAPNSToken,
+        );
+        if (apns == null) return;
+      }
       final fcmToken = await FirebaseMessaging.instance.getToken();
       if (fcmToken != null && await _registerToken(fcmToken)) {
         _syncedAuthToken = authToken;
@@ -284,7 +347,7 @@ class PushNotificationService {
       await DeviceTokenApi().register(
         token: authToken,
         fcmToken: fcmToken,
-        platform: 'android',
+        platform: platformName(),
       );
       return true;
     } catch (e) {

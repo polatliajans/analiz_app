@@ -1,14 +1,24 @@
 import 'package:http/http.dart' as http;
 
 import '../services/crash_reporter.dart';
+import '../utils/platform_info.dart';
 
 /// Thin wrapper over package:http that tells the server which language the
-/// user picked, so API messages come back localized.
+/// user picked (so API messages come back localized) and which platform the
+/// app runs on (`X-Platform: ios|android`).
 class ApiHttp {
   static String languageCode = 'en';
 
-  static Map<String, String> _withLanguage(Map<String, String>? headers) => {
+  /// Overridable in tests; defaults to the running platform.
+  static String Function() platformResolver = platformName;
+
+  static Map<String, String> _withLanguage(Map<String, String>? headers) =>
+      defaultHeaders(headers);
+
+  /// Headers added to every request (caller headers win on conflict).
+  static Map<String, String> defaultHeaders([Map<String, String>? headers]) => {
     'Accept-Language': languageCode,
+    'X-Platform': platformResolver(),
     ...?headers,
   };
 
