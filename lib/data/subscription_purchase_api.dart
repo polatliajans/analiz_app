@@ -31,7 +31,15 @@ class SubscriptionPurchaseException implements Exception {
   /// The server already activated this purchase earlier; the store
   /// transaction can safely be finished.
   final bool alreadyProcessed;
-  SubscriptionPurchaseException(this.message, {this.alreadyProcessed = false});
+
+  /// The server rejected the purchase for good (422 invalid / refunded):
+  /// retrying can never succeed.
+  final bool permanent;
+  SubscriptionPurchaseException(
+    this.message, {
+    this.alreadyProcessed = false,
+    this.permanent = false,
+  });
 
   @override
   String toString() => message;
@@ -70,6 +78,7 @@ class SubscriptionPurchaseApi {
     if (response.statusCode == 422) {
       throw SubscriptionPurchaseException(
         AppL10n.current.errorSubscriptionInvalid,
+        permanent: true,
       );
     }
     if (response.statusCode == 502) {

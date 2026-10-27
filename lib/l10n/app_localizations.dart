@@ -3523,7 +3523,7 @@ abstract class AppLocalizations {
   /// No description provided for @subCancelNoteIos.
   ///
   /// In en, this message translates to:
-  /// **'Payment is charged to your Apple ID at confirmation of purchase. The subscription renews automatically unless canceled at least 24 hours before the end of the current period. Manage or cancel anytime in Settings > Apple ID > Subscriptions.'**
+  /// **'Payment is charged to your Apple ID at confirmation of purchase. The subscription renews automatically until you cancel it, unless it is canceled at least 24 hours before the end of the current period. Your account is charged for the renewal within 24 hours before the end of the period. Manage or cancel anytime in Settings > Apple ID > Subscriptions.'**
   String get subCancelNoteIos;
 
   /// No description provided for @subAlreadyProBodyIos.
@@ -3531,6 +3531,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Thank you for your support! You can manage or cancel your subscription anytime in your Apple ID subscription settings.'**
   String get subAlreadyProBodyIos;
+
+  /// No description provided for @subAutoRenewsIos.
+  ///
+  /// In en, this message translates to:
+  /// **'Renews automatically until canceled'**
+  String get subAutoRenewsIos;
+
+  /// No description provided for @subManageIos.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage subscription'**
+  String get subManageIos;
+
+  /// No description provided for @subPeriodDay.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{per day} other{every {count} days}}'**
+  String subPeriodDay(int count);
+
+  /// No description provided for @subPeriodWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{per week} other{every {count} weeks}}'**
+  String subPeriodWeek(int count);
+
+  /// No description provided for @subPeriodMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{per month} other{every {count} months}}'**
+  String subPeriodMonth(int count);
+
+  /// No description provided for @subPeriodYear.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{per year} other{every {count} years}}'**
+  String subPeriodYear(int count);
 
   /// No description provided for @restorePurchases.
   ///
@@ -3549,24 +3585,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This feature is not available on your account right now.'**
   String get featureNotAvailable;
-
-  /// No description provided for @insufficientCreditBodyWithAdIos.
-  ///
-  /// In en, this message translates to:
-  /// **'You don\'t have enough credits for this analysis. Watch a short ad to run this one quick analysis, or buy credits.'**
-  String get insufficientCreditBodyWithAdIos;
-
-  /// No description provided for @insufficientCreditDeepBodyIos.
-  ///
-  /// In en, this message translates to:
-  /// **'You don\'t have enough credits for a deep analysis. You can buy credits to continue.'**
-  String get insufficientCreditDeepBodyIos;
-
-  /// No description provided for @adAnalysisCapReachedIos.
-  ///
-  /// In en, this message translates to:
-  /// **'You\'ve used all of today\'s ad-funded analyses: you can buy credits to continue.'**
-  String get adAnalysisCapReachedIos;
 
   /// No description provided for @purchaseProofMissing.
   ///

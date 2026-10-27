@@ -8,6 +8,11 @@ class LegalLinks {
   static const String deleteAccountPath = 'delete-account';
   static const String supportPath = 'support';
 
+  /// Where App Store subscriptions are managed / canceled.
+  static final Uri appStoreSubscriptions = Uri.parse(
+    'https://apps.apple.com/account/subscriptions',
+  );
+
   static const Set<String> _langs = {'tr', 'en', 'es'};
 
   /// Builds `https://www.cryptoanaliz.net/<path>?lang=<code>`; unknown

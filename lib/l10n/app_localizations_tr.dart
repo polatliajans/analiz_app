@@ -2064,11 +2064,61 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get subCancelNoteIos =>
-      'Ödeme, satın alma onaylandığında Apple Kimliğinizden tahsil edilir. Abonelik, mevcut dönemin bitiminden en az 24 saat önce iptal edilmezse otomatik olarak yenilenir. Aboneliğinizi istediğiniz zaman Ayarlar > Apple Kimliği > Abonelikler bölümünden yönetebilir veya iptal edebilirsiniz.';
+      'Ödeme, satın alma onaylandığında Apple Kimliğinizden tahsil edilir. Abonelik, siz iptal edene kadar, mevcut dönemin bitiminden en az 24 saat önce iptal edilmedikçe otomatik olarak yenilenir. Yenileme ücreti, dönemin bitiminden önceki 24 saat içinde hesabınızdan tahsil edilir. Aboneliğinizi istediğiniz zaman Ayarlar > Apple Kimliği > Abonelikler bölümünden yönetebilir veya iptal edebilirsiniz.';
 
   @override
   String get subAlreadyProBodyIos =>
       'Desteğiniz için teşekkürler! Aboneliğinizi istediğiniz zaman Apple Kimliği abonelik ayarlarından yönetebilir veya iptal edebilirsiniz.';
+
+  @override
+  String get subAutoRenewsIos => 'İptal edilene kadar otomatik yenilenir';
+
+  @override
+  String get subManageIos => 'Aboneliği yönet';
+
+  @override
+  String subPeriodDay(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count günde bir',
+      one: 'günlük',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String subPeriodWeek(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count haftada bir',
+      one: 'haftalık',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String subPeriodMonth(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ayda bir',
+      one: 'aylık',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String subPeriodYear(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count yılda bir',
+      one: 'yıllık',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get restorePurchases => 'Satın alımları geri yükle';
@@ -2079,18 +2129,6 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get featureNotAvailable =>
       'Bu özellik şu anda hesabında kullanılamıyor.';
-
-  @override
-  String get insufficientCreditBodyWithAdIos =>
-      'Bu analiz için yeterli kredin yok. Kısa bir reklam izleyerek bu hızlı analizi yapabilir ya da kredi alabilirsin.';
-
-  @override
-  String get insufficientCreditDeepBodyIos =>
-      'Derin analiz için yeterli kredin yok. Devam etmek için kredi alabilirsin.';
-
-  @override
-  String get adAnalysisCapReachedIos =>
-      'Bugünkü reklamlı analiz hakkın doldu: devam etmek için kredi alabilirsin.';
 
   @override
   String get purchaseProofMissing =>

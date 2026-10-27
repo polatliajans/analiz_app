@@ -2147,11 +2147,62 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get subCancelNoteIos =>
-      'El pago se carga a tu ID de Apple al confirmar la compra. La suscripción se renueva automáticamente salvo que se cancele al menos 24 horas antes del final del periodo actual. Gestiona o cancela cuando quieras en Ajustes > ID de Apple > Suscripciones.';
+      'El pago se carga a tu ID de Apple al confirmar la compra. La suscripción se renueva automáticamente hasta que la canceles, salvo que se cancele al menos 24 horas antes del final del periodo actual. La renovación se cobra en las 24 horas previas al final del periodo. Gestiona o cancela cuando quieras en Ajustes > ID de Apple > Suscripciones.';
 
   @override
   String get subAlreadyProBodyIos =>
       '¡Gracias por tu apoyo! Puedes gestionar o cancelar tu suscripción en cualquier momento en los ajustes de suscripciones de tu ID de Apple.';
+
+  @override
+  String get subAutoRenewsIos =>
+      'Se renueva automáticamente hasta que se cancele';
+
+  @override
+  String get subManageIos => 'Gestionar suscripción';
+
+  @override
+  String subPeriodDay(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'cada $count días',
+      one: 'al día',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String subPeriodWeek(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'cada $count semanas',
+      one: 'a la semana',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String subPeriodMonth(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'cada $count meses',
+      one: 'al mes',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String subPeriodYear(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'cada $count años',
+      one: 'al año',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get restorePurchases => 'Restaurar compras';
@@ -2162,18 +2213,6 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get featureNotAvailable =>
       'Esta función no está disponible en tu cuenta en este momento.';
-
-  @override
-  String get insufficientCreditBodyWithAdIos =>
-      'No tienes créditos suficientes para este análisis. Mira un anuncio corto para hacer este análisis rápido o compra créditos.';
-
-  @override
-  String get insufficientCreditDeepBodyIos =>
-      'No tienes créditos suficientes para un análisis profundo. Puedes comprar créditos para continuar.';
-
-  @override
-  String get adAnalysisCapReachedIos =>
-      'Has agotado los análisis con anuncios de hoy: puedes comprar créditos para continuar.';
 
   @override
   String get purchaseProofMissing =>

@@ -6,6 +6,9 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:kriptoanaliz/data/purchase_api.dart';
+import 'package:kriptoanaliz/data/subscription_purchase_api.dart';
+import 'package:kriptoanaliz/models/subscription_plan.dart';
+import 'package:kriptoanaliz/providers/subscription_provider.dart';
 import 'package:kriptoanaliz/l10n/app_localizations.dart';
 import 'package:kriptoanaliz/providers/store_price_provider.dart';
 import 'package:kriptoanaliz/screens/credit_packages_screen.dart';
@@ -54,6 +57,28 @@ class _Api extends PurchaseApi {
   }
 }
 
+class _SubApi extends SubscriptionPurchaseApi {
+  final List<Object> script; // SubscriptionPurchaseResult or Exception
+  int calls = 0;
+  int? lastPlanId;
+  PurchaseProof? lastProof;
+  _SubApi(this.script);
+
+  @override
+  Future<SubscriptionPurchaseResult> verifySubscriptionPurchase({
+    required String token,
+    required int subscriptionPlanId,
+    required PurchaseProof proof,
+  }) async {
+    lastPlanId = subscriptionPlanId;
+    lastProof = proof;
+    final r = script[calls < script.length ? calls : script.length - 1];
+    calls++;
+    if (r is Exception) throw r;
+    return r as SubscriptionPurchaseResult;
+  }
+}
+
 class _Auth extends FakeAuth {
   int refreshed = 0;
   final bool loggedIn;
@@ -80,6 +105,15 @@ const _pkg = CreditPackage(
   price: '1',
   storeProductIdAndroid: 'credits_100',
 );
+const _plan = SubscriptionPlan(
+  id: 3,
+  name: 'Pro Monthly',
+  price: '9.99',
+  durationDays: 30,
+  storeProductIdAndroid: 'pro_monthly',
+  appleProductId: 'ios_pro_monthly',
+);
+const _subOk = SubscriptionPurchaseResult(role: 'pro', alreadyProcessed: false);
 const _ok = PurchaseResult(creditBalance: 100, alreadyProcessed: false);
 
 PurchaseDetails _purchase({
@@ -110,22 +144,27 @@ void main() {
   late _FakeIap iap;
   late _Auth auth;
   late _Api api;
+  late _SubApi subApi;
 
   ProviderContainer make(
     List<Object> script, {
     bool ios = true,
     bool loggedIn = true,
     Future<List<CreditPackage>> Function()? packages,
+    List<Object> subScript = const [_subOk],
   }) {
     iap = _FakeIap();
     auth = _Auth(loggedIn: loggedIn);
     api = _Api(script);
+    subApi = _SubApi(subScript);
     _Home.refreshes = 0;
     final List<Override> overrides = [
       inAppPurchaseProvider.overrideWithValue(iap),
       purchaseIsIosProvider.overrideWithValue(ios),
       authProvider.overrideWith(() => auth),
       purchaseApiProvider.overrideWithValue(api),
+      subscriptionPurchaseApiProvider.overrideWithValue(subApi),
+      subscriptionPlanListProvider.overrideWith((ref) async => [_plan]),
       homeProvider.overrideWith(_Home.new),
       creditPackageListProvider.overrideWith(
         (ref) => (packages ?? () async => [_pkg])(),
@@ -254,16 +293,158 @@ void main() {
     },
   );
 
-  test(
-    'non-credit products (subscriptions) are left to their screen',
-    () async {
+  test('unknown products (neither pack nor plan) are ignored', () async {
+    make([_ok]);
+    iap.controller.add([_purchase(product: 'something_else')]);
+    await _settle();
+    expect(api.calls, 0);
+    expect(subApi.calls, 0);
+    expect(iap.completed, isEmpty);
+  });
+
+  group('subscriptions', () {
+    test('iOS purchase goes to the subscription endpoint, finished after '
+        'success', () async {
+      final c = make([_ok]);
+      iap.controller.add([_purchase(product: 'ios_pro_monthly')]);
+      await _settle();
+      expect(api.calls, 0);
+      expect(subApi.calls, 1);
+      expect(subApi.lastPlanId, 3);
+      expect(subApi.lastProof!.token, '1000000123');
+      expect(subApi.lastProof!.receipt, 'receipt');
+      expect(iap.completed, ['ios_pro_monthly']);
+      expect(auth.refreshed, 1);
+      final n = c.read(creditPurchaseControllerProvider).notice!;
+      expect(n.kind, PurchaseNoticeKind.subscriptionActivated);
+      expect(n.subscription, isTrue);
+    });
+
+    test('iOS does not match the Android product id', () async {
       make([_ok]);
       iap.controller.add([_purchase(product: 'pro_monthly')]);
       await _settle();
-      expect(api.calls, 0);
+      expect(subApi.calls, 0);
       expect(iap.completed, isEmpty);
-    },
-  );
+    });
+
+    test('Android purchase uses the Play product id and token', () async {
+      make([_ok], ios: false);
+      iap.controller.add([_purchase(product: 'pro_monthly', id: 'GPA.1')]);
+      await _settle();
+      expect(subApi.calls, 1);
+      expect(subApi.lastProof!.token, 'receipt');
+      expect(iap.completed, ['pro_monthly']);
+    });
+
+    test('duplicate delivery verifies once', () async {
+      make([_ok]);
+      final p = _purchase(product: 'ios_pro_monthly');
+      iap.controller.add([p]);
+      iap.controller.add([p]);
+      await _settle();
+      iap.controller.add([p]);
+      await _settle();
+      expect(subApi.calls, 1);
+      expect(iap.completed, ['ios_pro_monthly']);
+    });
+
+    test('restored is re-verified (idempotent) and finished', () async {
+      final c = make([_ok]);
+      iap.controller.add([_purchase(product: 'ios_pro_monthly')]);
+      await _settle();
+      expect(subApi.calls, 1);
+      iap.controller.add([
+        _purchase(product: 'ios_pro_monthly', status: PurchaseStatus.restored),
+      ]);
+      await _settle();
+      expect(subApi.calls, 2);
+      expect(iap.completed, ['ios_pro_monthly', 'ios_pro_monthly']);
+      expect(
+        c.read(creditPurchaseControllerProvider).notice!.kind,
+        PurchaseNoticeKind.subscriptionActivated,
+      );
+    });
+
+    test('restored that the server already knows counts as success', () async {
+      final c = make(
+        [_ok],
+        subScript: [
+          SubscriptionPurchaseException('dup', alreadyProcessed: true),
+        ],
+      );
+      iap.controller.add([
+        _purchase(product: 'ios_pro_monthly', status: PurchaseStatus.restored),
+      ]);
+      await _settle();
+      expect(iap.completed, ['ios_pro_monthly']);
+      expect(
+        c.read(creditPurchaseControllerProvider).notice!.kind,
+        PurchaseNoticeKind.subscriptionActivated,
+      );
+    });
+
+    test('iOS permanent 422 finishes the transaction', () async {
+      final c = make(
+        [_ok],
+        subScript: [SubscriptionPurchaseException('bad', permanent: true)],
+      );
+      final p = _purchase(product: 'ios_pro_monthly');
+      iap.controller.add([p]);
+      await _settle();
+      iap.controller.add([p]);
+      await _settle();
+      expect(subApi.calls, 1);
+      expect(iap.completed, ['ios_pro_monthly']);
+      final n = c.read(creditPurchaseControllerProvider).notice!;
+      expect(n.kind, PurchaseNoticeKind.rejected);
+      expect(n.subscription, isTrue);
+    });
+
+    test('Android permanent 422 stays pending (unchanged)', () async {
+      final c = make(
+        [_ok],
+        ios: false,
+        subScript: [SubscriptionPurchaseException('bad', permanent: true)],
+      );
+      iap.controller.add([_purchase(product: 'pro_monthly', id: 'GPA.1')]);
+      await _settle();
+      expect(iap.completed, isEmpty);
+      expect(
+        c.read(creditPurchaseControllerProvider).notice!.kind,
+        PurchaseNoticeKind.willRetry,
+      );
+    });
+
+    test('502 / network keeps it pending, a retry then activates', () async {
+      final c = make(
+        [_ok],
+        subScript: [SubscriptionPurchaseException('down'), _subOk],
+      );
+      iap.controller.add([_purchase(product: 'ios_pro_monthly')]);
+      await _settle();
+      expect(iap.completed, isEmpty);
+      expect(
+        c.read(creditPurchaseControllerProvider).notice!.kind,
+        PurchaseNoticeKind.willRetry,
+      );
+      await c.read(creditPurchaseControllerProvider.notifier).retryPending();
+      expect(subApi.calls, 2);
+      expect(iap.completed, ['ios_pro_monthly']);
+    });
+
+    test('credit packs and subscriptions in one burst both succeed', () async {
+      make([_ok]);
+      iap.controller.add([
+        _purchase(),
+        _purchase(product: 'ios_pro_monthly', id: '1000000124'),
+      ]);
+      await _settle();
+      expect(api.calls, 1);
+      expect(subApi.calls, 1);
+      expect(iap.completed, ['credits_100', 'ios_pro_monthly']);
+    });
+  });
 
   test('package list failure keeps the purchase for a later retry', () async {
     var fail = true;

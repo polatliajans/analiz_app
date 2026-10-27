@@ -43,9 +43,12 @@ class _CreditPackagesScreenState extends ConsumerState<CreditPackagesScreen> {
   }
 
   void _onNotice(PurchaseNotice notice) {
+    // Pro subscription notices belong to the Pro page.
+    if (notice.subscription) return;
     final l10n = AppLocalizations.of(context)!;
     switch (notice.kind) {
       case PurchaseNoticeKind.credited:
+      case PurchaseNoticeKind.subscriptionActivated:
         _snack(l10n.creditsAdded);
       case PurchaseNoticeKind.alreadyProcessed:
       case PurchaseNoticeKind.rejected:

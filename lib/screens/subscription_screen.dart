@@ -1,20 +1,18 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-import '../data/subscription_purchase_api.dart'
-    show SubscriptionPurchaseException;
-import '../data/purchase_payload.dart';
+import '../config/legal_links.dart';
 import '../l10n/app_localizations.dart';
 import '../models/subscription_plan.dart';
-import '../providers/auth_provider.dart';
-import '../providers/home_provider.dart';
+import '../providers/credit_purchase_provider.dart';
 import '../providers/price_alert_provider.dart';
 import '../providers/store_price_provider.dart';
+import '../providers/store_product_provider.dart';
 import '../providers/subscription_provider.dart';
-import '../utils/platform_info.dart';
 import '../utils/pro_purchase.dart';
+import '../utils/subscription_period.dart';
 import '../widgets/brand_page.dart';
 import '../widgets/legal_links_row.dart';
 
@@ -26,273 +24,137 @@ class SubscriptionScreen extends ConsumerStatefulWidget {
 }
 
 class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
-  final InAppPurchase _iap = InAppPurchase.instance;
-  StreamSubscription<List<PurchaseDetails>>? _subscription;
-
-  // Tracks which store product IDs currently have a buy in flight, purely to
-  // drive the busy spinner in the UI. This is NOT used to decide which
-  // plan gets activated — that is resolved from `purchase.productID`
-  // against the fetched plan list, so tap order / concurrent purchases
-  // can never misattribute an activation.
-  final Set<String> _pendingProductIds = {};
+  // The purchase stream is listened to app-wide (creditPurchaseController),
+  // which verifies subscriptions with the server too; this screen only starts
+  // buys / restores and reflects the shared state (busy markers, notices).
 
   @override
   void initState() {
     super.initState();
-    // Status view only where Pro cannot be bought: nothing to listen to.
-    if (!ref.read(proPurchaseAvailableProvider)) return;
-    _subscription = _iap.purchaseStream.listen(
-      _onPurchaseUpdate,
-      onError: (_) {},
-    );
+    // Anything left unverified (offline earlier, plans not loaded) gets
+    // another try as soon as the user opens the Pro page.
+    Future.microtask(() {
+      if (mounted && ref.read(proPurchaseAvailableProvider)) {
+        ref.read(creditPurchaseControllerProvider.notifier).retryPending();
+      }
+    });
   }
 
-  @override
-  void dispose() {
-    _subscription?.cancel();
-    super.dispose();
+  void _snack(String text) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
   }
 
-  SubscriptionPlan? _resolvePlan(String productId) {
-    final plans = ref.read(subscriptionPlanListProvider).value;
-    if (plans == null) return null;
-    for (final plan in plans) {
-      if (plan.storeProductId == productId) {
-        return plan;
-      }
-    }
-    return null;
-  }
-
-  Future<void> _onPurchaseUpdate(List<PurchaseDetails> purchases) async {
-    for (final purchase in purchases) {
-      if (purchase.status == PurchaseStatus.pending) {
-        continue;
-      }
-
-      if (purchase.status == PurchaseStatus.error) {
-        setState(() => _pendingProductIds.remove(purchase.productID));
-        // No successful charge occurred here, so it's safe to acknowledge
-        // and clear this transaction instead of leaving it pending forever.
-        if (purchase.pendingCompletePurchase) {
-          await _iap.completePurchase(purchase);
-        }
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(context)!.purchaseFailed('${purchase.error}'),
-            ),
-          ),
-        );
-        continue;
-      }
-
-      if (purchase.status == PurchaseStatus.canceled) {
-        // The user backed out of the store sheet: release the busy marker and
-        // finish the (uncharged) transaction.
-        setState(() => _pendingProductIds.remove(purchase.productID));
-        if (purchase.pendingCompletePurchase) {
-          await _iap.completePurchase(purchase);
-        }
-        continue;
-      }
-
-      if (purchase.status == PurchaseStatus.purchased ||
-          purchase.status == PurchaseStatus.restored) {
-        setState(() => _pendingProductIds.remove(purchase.productID));
-
-        // Identify which plan this purchase belongs to strictly from the
-        // data Google Play echoes back on the purchase itself, never from
-        // mutable UI state — this is what makes activation correct regardless
-        // of tap order or overlapping purchases.
-        final plan = _resolvePlan(purchase.productID);
-        final auth = ref.read(authProvider);
-
-        if (plan == null || auth.token == null) {
-          // Unrecognized product (plans not loaded yet, stale product id,
-          // no session, etc). Deliberately do NOT complete the purchase:
-          // leaving it unfinished means Google Play will redeliver it via
-          // purchaseStream on the next app start, giving a real retry path
-          // instead of silently losing the paid subscription.
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(AppLocalizations.of(context)!.purchaseNoPlan),
-              ),
-            );
-          }
-          continue;
-        }
-
-        final proof = purchaseProofOf(purchase);
-        if (proof == null) {
-          // No usable transaction id: leave it unfinished so the store
-          // redelivers it, and say so instead of guessing a token.
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  AppLocalizations.of(context)!.purchaseProofMissing,
-                ),
-              ),
-            );
-          }
-          continue;
-        }
-
-        try {
-          await ref
-              .read(subscriptionPurchaseApiProvider)
-              .verifySubscriptionPurchase(
-                token: auth.token!,
-                subscriptionPlanId: plan.id,
-                proof: proof,
-              );
-          await ref.read(authProvider.notifier).refreshMember();
-          // Home shows the balance/Pro state from its own cached payload; refresh it too.
-          ref.read(homeProvider.notifier).refresh(force: true);
-
-          // Only complete/consume the purchase once the server has actually
-          // confirmed and activated it. If verification throws below, we skip
-          // this entirely and leave the purchase pending for retry.
-          if (purchase.pendingCompletePurchase) {
-            await _iap.completePurchase(purchase);
-          }
-
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(AppLocalizations.of(context)!.proActivated),
-              ),
-            );
-          }
-        } on SubscriptionPurchaseException catch (e) {
-          if (!e.alreadyProcessed) {
-            _showRetry(e);
-            continue;
-          }
-          // Already activated on the server earlier: finish the store
-          // transaction so it is not redelivered forever.
-          if (purchase.pendingCompletePurchase) {
-            await _iap.completePurchase(purchase);
-          }
-          if (mounted) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(e.message)));
-          }
-        } catch (e) {
-          // Verification failed (network blip, 502, 422, timeout, ...).
-          // Do NOT complete the purchase here — the user already paid, and
-          // leaving it unfinished lets Google Play redeliver the same
-          // purchase for another verification attempt instead of losing it.
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  AppLocalizations.of(context)!.purchaseWillRetry('$e'),
-                ),
-              ),
-            );
-          }
-        }
-      }
+  void _onNotice(PurchaseNotice notice) {
+    // Credit-pack notices belong to the credit shop.
+    if (!notice.subscription) return;
+    final l10n = AppLocalizations.of(context)!;
+    switch (notice.kind) {
+      case PurchaseNoticeKind.subscriptionActivated:
+      case PurchaseNoticeKind.credited:
+        _snack(l10n.proActivated);
+      case PurchaseNoticeKind.alreadyProcessed:
+      case PurchaseNoticeKind.rejected:
+        _snack(notice.detail ?? '');
+      case PurchaseNoticeKind.willRetry:
+        _snack(l10n.purchaseWillRetry(notice.detail ?? ''));
+      case PurchaseNoticeKind.storeFailed:
+        _snack(l10n.purchaseFailed(notice.detail ?? ''));
+      case PurchaseNoticeKind.proofMissing:
+        _snack(l10n.purchaseProofMissing);
     }
   }
 
   /// App Store: replays the user's past subscription transactions through the
   /// purchase stream (handled like a normal purchase, verified by the server).
   Future<void> _restore() async {
+    final failed = AppLocalizations.of(context)!.restorePurchasesFailed;
     try {
-      await _iap.restorePurchases();
+      await ref
+          .read(creditPurchaseControllerProvider.notifier)
+          .restorePurchases();
     } catch (_) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.restorePurchasesFailed),
-        ),
-      );
+      _snack(failed);
     }
   }
 
-  void _showRetry(Object e) {
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(AppLocalizations.of(context)!.purchaseWillRetry('$e')),
-      ),
-    );
+  Future<void> _manageSubscription() async {
+    final failed = AppLocalizations.of(context)!.deleteAccountOpenFailedIos;
+    var ok = false;
+    try {
+      ok = await launchUrl(
+        LegalLinks.appStoreSubscriptions,
+        mode: LaunchMode.externalApplication,
+      );
+    } catch (_) {}
+    if (!ok) _snack(failed);
   }
 
-  Future<void> _buy(int planId, String productId) async {
+  Future<void> _buy(String productId) async {
+    final l10n = AppLocalizations.of(context)!;
+    final controller = ref.read(creditPurchaseControllerProvider.notifier);
     // Guard re-entrancy before any await: a fast double-tap on the same
     // plan's button must not fire buyNonConsumable twice.
-    if (_pendingProductIds.contains(productId)) {
+    if (ref
+        .read(creditPurchaseControllerProvider)
+        .pending
+        .contains(productId)) {
       return;
     }
-    setState(() => _pendingProductIds.add(productId));
+    controller.beginBuy(productId);
+    final iap = ref.read(inAppPurchaseProvider);
 
     try {
-      final available = await _iap.isAvailable();
+      final available = await iap.isAvailable();
       if (!available) {
-        setState(() => _pendingProductIds.remove(productId));
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(context)!.purchaseServiceUnavailable,
-            ),
-          ),
-        );
+        controller.endBuy(productId);
+        _snack(l10n.purchaseServiceUnavailable);
         return;
       }
 
-      final response = await _iap.queryProductDetails({productId});
+      final response = await iap.queryProductDetails({productId});
       if (response.productDetails.isEmpty) {
-        setState(() => _pendingProductIds.remove(productId));
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.productNotFound),
-          ),
-        );
+        controller.endBuy(productId);
+        _snack(l10n.productNotFound);
         return;
       }
 
       final param = PurchaseParam(
         productDetails: response.productDetails.first,
       );
-      final started = await _iap.buyNonConsumable(purchaseParam: param);
+      final started = await iap.buyNonConsumable(purchaseParam: param);
       if (!started) {
-        // Request was not even submitted to Play Billing; no stream event
+        // Request was not even submitted to the store; no stream event
         // will arrive for it, so clear the busy marker immediately.
-        setState(() => _pendingProductIds.remove(productId));
+        controller.endBuy(productId);
       }
     } catch (e) {
       // Any thrown error from the platform (e.g. a PlatformException from
-      // buyNonConsumable) must still release the busy marker — otherwise this
+      // buyNonConsumable) must still release the busy marker, otherwise this
       // plan's buy button would be stuck spinning for the rest of the
       // app session.
-      setState(() => _pendingProductIds.remove(productId));
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)!.purchaseStartFailed('$e'),
-          ),
-        ),
-      );
+      controller.endBuy(productId);
+      _snack(l10n.purchaseStartFailed('$e'));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    // Where Pro cannot be bought (iOS v1) this page is only a status view for
-    // members who are already Pro: no plans are fetched, no price, no buy or
-    // restore button.
+    // Where Pro cannot be bought (central switch off) this page is only a
+    // status view for members who are already Pro: no plans are fetched, no
+    // price, no buy or restore button.
     final canBuy = ref.watch(proPurchaseAvailableProvider);
+    final ios = ref.watch(purchaseIsIosProvider);
+    final pendingProductIds = ref.watch(
+      creditPurchaseControllerProvider.select((s) => s.pending),
+    );
+    ref.listen(creditPurchaseControllerProvider.select((s) => s.notice), (
+      prev,
+      next,
+    ) {
+      if (next != null && next.id != prev?.id) _onNotice(next);
+    });
     final plansAsync = canBuy
         ? ref.watch(subscriptionPlanListProvider)
         : const AsyncData<List<SubscriptionPlan>>([]);
@@ -312,18 +174,22 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           ),
         ),
         data: (plans) {
+          // The store product id of a plan on the platform this runs on.
+          String? productIdOf(SubscriptionPlan plan) => plan.productIdFor(
+            ios ? TargetPlatform.iOS : TargetPlatform.android,
+          );
+          final productIds = plans
+              .map(productIdOf)
+              .whereType<String>()
+              .join(',');
           final storePrices =
-              ref
-                  .watch(
-                    storePricesProvider(
-                      plans
-                          .map((p) => p.storeProductId)
-                          .whereType<String>()
-                          .join(','),
-                    ),
-                  )
-                  .value ??
+              ref.watch(storePricesProvider(productIds)).value ??
               const <String, String>{};
+          // iOS shows the App Store's own title / price / billing period.
+          final storeProducts = ios
+              ? ref.watch(storeProductsProvider(productIds)).value ??
+                    const <String, ProductDetails>{}
+              : const <String, ProductDetails>{};
 
           // The monthly credit shown in the benefits is the plan's own value
           // (the server tops the member up to it), never a hard-coded number.
@@ -349,7 +215,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               if (isPro) ...[
                 _AlreadyProCard(
                   title: l10n.subAlreadyProTitle,
-                  body: isIOS
+                  body: ios
                       ? l10n.subAlreadyProBodyIos
                       : l10n.subAlreadyProBody,
                 ),
@@ -394,30 +260,49 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 for (final plan in plans)
                   _PlanCard(
                     plan: plan,
+                    title: ios
+                        ? _nonEmpty(storeProducts[productIdOf(plan)]?.title) ??
+                              plan.name
+                        : plan.name,
                     priceText:
-                        storePrices[plan.storeProductId] ??
+                        storePrices[productIdOf(plan)] ??
                         ((double.tryParse(plan.price) ?? 0) > 0
                             ? '\$${plan.price}'
                             : l10n.buy),
+                    periodText: ios
+                        ? storeKitPeriodText(
+                                storeProducts[productIdOf(plan)],
+                                l10n,
+                              ) ??
+                              l10n.durationDays(plan.durationDays)
+                        : l10n.durationDays(plan.durationDays),
+                    autoRenewNote: ios ? l10n.subAutoRenewsIos : null,
                     isBusy:
-                        plan.storeProductId != null &&
-                        _pendingProductIds.contains(plan.storeProductId),
-                    onBuy: plan.storeProductId == null
+                        productIdOf(plan) != null &&
+                        pendingProductIds.contains(productIdOf(plan)),
+                    onBuy: productIdOf(plan) == null
                         ? null
-                        : () => _buy(plan.id, plan.storeProductId!),
+                        : () => _buy(productIdOf(plan)!),
                   ),
               ],
               const SizedBox(height: 8),
               if (canBuy || isPro)
                 Text(
-                  isIOS ? l10n.subCancelNoteIos : l10n.subCancelNote,
+                  ios ? l10n.subCancelNoteIos : l10n.subCancelNote,
+                  key: const Key('subscription-terms-note'),
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
-              if (isIOS && canBuy)
+              if (ios && (canBuy || isPro))
                 TextButton(
+                  key: const Key('manage-subscription'),
+                  onPressed: _manageSubscription,
+                  child: Text(l10n.subManageIos),
+                ),
+              if (ios && canBuy)
+                OutlinedButton(
                   key: const Key('restore-purchases'),
                   onPressed: _restore,
                   child: Text(l10n.restorePurchases),
@@ -479,13 +364,21 @@ class _AlreadyProCard extends StatelessWidget {
 
 class _PlanCard extends StatelessWidget {
   final SubscriptionPlan plan;
+  final String title;
   final String priceText;
+  final String periodText;
+
+  /// iOS: "renews automatically until canceled", shown under the button.
+  final String? autoRenewNote;
   final bool isBusy;
   final VoidCallback? onBuy;
 
   const _PlanCard({
     required this.plan,
+    required this.title,
     required this.priceText,
+    required this.periodText,
+    required this.autoRenewNote,
     required this.isBusy,
     required this.onBuy,
   });
@@ -507,7 +400,7 @@ class _PlanCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            plan.name,
+            title,
             textAlign: TextAlign.center,
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w700,
@@ -523,7 +416,7 @@ class _PlanCard extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            l10n.durationDays(plan.durationDays),
+            periodText,
             textAlign: TextAlign.center,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.onSurfaceVariant,
@@ -558,8 +451,20 @@ class _PlanCard extends StatelessWidget {
                     ),
                   ),
           ),
+          if (autoRenewNote != null) ...[
+            const SizedBox(height: 8),
+            Text(
+              autoRenewNote!,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: scheme.onSurfaceVariant,
+              ),
+            ),
+          ],
         ],
       ),
     );
   }
 }
+
+String? _nonEmpty(String? s) => s == null || s.trim().isEmpty ? null : s.trim();

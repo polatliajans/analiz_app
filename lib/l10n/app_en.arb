@@ -964,14 +964,45 @@
   "deleteAccountManageSubscriptionIos": "Manage subscription in the App Store",
   "deleteAccountOpenFailedIos": "Could not open the App Store.",
   "errorStoreVerificationUnreachableIos": "Could not reach the App Store verification service.",
-  "subCancelNoteIos": "Payment is charged to your Apple ID at confirmation of purchase. The subscription renews automatically unless canceled at least 24 hours before the end of the current period. Manage or cancel anytime in Settings > Apple ID > Subscriptions.",
+  "subCancelNoteIos": "Payment is charged to your Apple ID at confirmation of purchase. The subscription renews automatically until you cancel it, unless it is canceled at least 24 hours before the end of the current period. Your account is charged for the renewal within 24 hours before the end of the period. Manage or cancel anytime in Settings > Apple ID > Subscriptions.",
   "subAlreadyProBodyIos": "Thank you for your support! You can manage or cancel your subscription anytime in your Apple ID subscription settings.",
+  "subAutoRenewsIos": "Renews automatically until canceled",
+  "subManageIos": "Manage subscription",
+  "subPeriodDay": "{count, plural, =1{per day} other{every {count} days}}",
+  "@subPeriodDay": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "subPeriodWeek": "{count, plural, =1{per week} other{every {count} weeks}}",
+  "@subPeriodWeek": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "subPeriodMonth": "{count, plural, =1{per month} other{every {count} months}}",
+  "@subPeriodMonth": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "subPeriodYear": "{count, plural, =1{per year} other{every {count} years}}",
+  "@subPeriodYear": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "restorePurchases": "Restore purchases",
   "restorePurchasesFailed": "Could not restore purchases.",
   "featureNotAvailable": "This feature is not available on your account right now.",
-  "insufficientCreditBodyWithAdIos": "You don't have enough credits for this analysis. Watch a short ad to run this one quick analysis, or buy credits.",
-  "insufficientCreditDeepBodyIos": "You don't have enough credits for a deep analysis. You can buy credits to continue.",
-  "adAnalysisCapReachedIos": "You've used all of today's ad-funded analyses: you can buy credits to continue.",
   "purchaseProofMissing": "Your purchase is still being confirmed by the store. It will be credited automatically once it is confirmed; if it does not show up, reopen the app.",
   "analysisInfoDisclaimer": "AI analysis is for information only. It is not financial or investment advice.",
   "reportAnalysis": "Report this analysis",

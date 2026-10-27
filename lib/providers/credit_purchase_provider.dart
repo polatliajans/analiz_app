@@ -1,15 +1,20 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show TargetPlatform;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
 import '../data/purchase_api.dart' show PurchaseException;
 import '../data/purchase_payload.dart';
+import '../data/subscription_purchase_api.dart'
+    show SubscriptionPurchaseException;
 import '../models/credit_package.dart';
+import '../models/subscription_plan.dart';
 import '../utils/platform_info.dart';
 import 'auth_provider.dart';
 import 'credit_package_provider.dart';
 import 'home_provider.dart';
+import 'subscription_provider.dart';
 
 /// The store plugin; overridden with a fake in tests.
 final inAppPurchaseProvider = Provider<InAppPurchase>(
@@ -23,6 +28,10 @@ final purchaseIsIosProvider = Provider<bool>((ref) => isIOS);
 enum PurchaseNoticeKind {
   /// Credited; the balance was refreshed.
   credited,
+
+  /// A Pro subscription was activated (bought or restored); the member was
+  /// refreshed.
+  subscriptionActivated,
 
   /// The server had already credited it; the transaction was finished.
   alreadyProcessed,
@@ -46,7 +55,16 @@ class PurchaseNotice {
   final int id;
   final PurchaseNoticeKind kind;
   final String? detail;
-  const PurchaseNotice(this.id, this.kind, [this.detail]);
+
+  /// The notice is about a Pro subscription (shown by the Pro screen); false
+  /// for credit packs (shown by the credit shop).
+  final bool subscription;
+  const PurchaseNotice(
+    this.id,
+    this.kind, [
+    this.detail,
+    this.subscription = false,
+  ]);
 }
 
 class CreditPurchaseState {
@@ -67,10 +85,13 @@ class CreditPurchaseState {
 /// Listens to the store's purchase stream for the whole app run (started at
 /// launch from the root widget), so transactions StoreKit/Play re-deliver
 /// at start (e.g. the app was killed after paying) are verified and credited
-/// even while the credit screen is closed. Screens only observe [state].
+/// even while the credit screen is closed. Credit packs and Pro subscriptions
+/// are both handled here (by the product's type, resolved from the package /
+/// plan lists); screens only observe [state].
 ///
 /// Idempotent: a purchase is processed once at a time and at most once per
-/// run after it succeeded or was rejected; the server is idempotent too.
+/// run after it succeeded or was rejected (a user-requested restore is
+/// verified again); the server is idempotent too.
 class CreditPurchaseController extends Notifier<CreditPurchaseState> {
   StreamSubscription<List<PurchaseDetails>>? _sub;
 
@@ -109,9 +130,37 @@ class CreditPurchaseController extends Notifier<CreditPurchaseState> {
   void endBuy(String productId) =>
       state = state.copyWith(pending: {...state.pending}..remove(productId));
 
-  void _notice(PurchaseNoticeKind kind, [String? detail]) {
-    state = state.copyWith(notice: PurchaseNotice(++_noticeSeq, kind, detail));
+  void _notice(
+    PurchaseNoticeKind kind, [
+    String? detail,
+    bool subscription = false,
+  ]) {
+    state = state.copyWith(
+      notice: PurchaseNotice(++_noticeSeq, kind, detail, subscription),
+    );
   }
+
+  TargetPlatform get _platform => ref.read(purchaseIsIosProvider)
+      ? TargetPlatform.iOS
+      : TargetPlatform.android;
+
+  SubscriptionPlan? _planFor(String productId, List<SubscriptionPlan>? plans) {
+    if (plans == null) return null;
+    for (final plan in plans) {
+      if (plan.productIdFor(_platform) == productId) return plan;
+    }
+    return null;
+  }
+
+  /// Best effort (cached plan list only): is [productId] a Pro plan?
+  bool _isSubscriptionProduct(String productId) =>
+      _planFor(productId, ref.read(subscriptionPlanListProvider).value) != null;
+
+  /// App Store: asks StoreKit to replay the user's past transactions. They
+  /// arrive on the purchase stream as `restored` and are re-verified with the
+  /// server (idempotent there).
+  Future<void> restorePurchases() =>
+      ref.read(inAppPurchaseProvider).restorePurchases();
 
   Future<void> _complete(PurchaseDetails p) async {
     if (!p.pendingCompletePurchase) return;
@@ -129,13 +178,20 @@ class CreditPurchaseController extends Notifier<CreditPurchaseState> {
           endBuy(p.productID);
           // Nothing was charged: acknowledge so it leaves the queue.
           await _complete(p);
-          _notice(PurchaseNoticeKind.storeFailed, '${p.error}');
+          _notice(
+            PurchaseNoticeKind.storeFailed,
+            '${p.error}',
+            _isSubscriptionProduct(p.productID),
+          );
         case PurchaseStatus.canceled:
           endBuy(p.productID);
           await _complete(p);
         case PurchaseStatus.purchased:
         case PurchaseStatus.restored:
           endBuy(p.productID);
+          // A restore is an explicit user action: verify it again even if
+          // this transaction was already finished earlier in this run.
+          if (p.status == PurchaseStatus.restored) _finished.remove(_key(p));
           _queue[_key(p)] = p;
           await _drain();
       }
@@ -145,18 +201,16 @@ class CreditPurchaseController extends Notifier<CreditPurchaseState> {
   /// Re-tries every queued purchase (new session, screen opened, manual).
   Future<void> retryPending() => _drain();
 
-  /// How long to wait for the package list before giving up for now
+  /// How long to wait for the package / plan list before giving up for now
   /// (Riverpod keeps retrying a failing provider in the background).
   static Duration packageWait = const Duration(seconds: 15);
 
-  Future<List<CreditPackage>?> _packages() async {
-    final current = ref.read(creditPackageListProvider);
+  Future<List<T>?> _loaded<T>(FutureProvider<List<T>> provider) async {
+    final current = ref.read(provider);
     if (current.hasValue) return current.value;
     if (current.hasError && !current.isLoading) return null;
     try {
-      return await ref
-          .read(creditPackageListProvider.future)
-          .timeout(packageWait);
+      return await ref.read(provider.future).timeout(packageWait);
     } catch (_) {
       return null;
     }
@@ -166,35 +220,82 @@ class CreditPurchaseController extends Notifier<CreditPurchaseState> {
     if (_queue.isEmpty) return;
     final token = ref.read(authProvider).token;
     if (token == null) return; // stays queued until login
-    final packages = await _packages();
+    final packages = await _loaded(creditPackageListProvider);
     if (!ref.mounted) return;
-    if (packages == null) {
-      // Package list not loaded (offline): try again on the next trigger.
-      ref.invalidate(creditPackageListProvider);
-      return;
+
+    CreditPackage? packageOf(PurchaseDetails p) {
+      for (final c in packages ?? const <CreditPackage>[]) {
+        if (c.storeProductId == p.productID) return c;
+      }
+      return null;
     }
+
+    // The plan list is only needed for products that are not credit packs.
+    List<SubscriptionPlan>? plans;
+    var plansTried = false;
+    if (_queue.values.any((p) => packageOf(p) == null)) {
+      plansTried = true;
+      plans = await _loaded(subscriptionPlanListProvider);
+      if (!ref.mounted) return;
+    }
+
     for (final entry in _queue.entries.toList()) {
       final p = entry.value;
-      CreditPackage? package;
-      for (final c in packages) {
-        if (c.storeProductId == p.productID) package = c;
-      }
-      if (package == null) {
-        // Not a credit pack (e.g. a subscription handled by its own
-        // screen): leave it alone.
-        _queue.remove(entry.key);
+      final package = packageOf(p);
+      if (package != null) {
+        await _process(
+          entry.key,
+          p,
+          subscription: false,
+          verify: (proof) async {
+            await ref
+                .read(purchaseApiProvider)
+                .verifyCreditPackagePurchase(
+                  token: token,
+                  creditPackageId: package.id,
+                  proof: proof,
+                );
+          },
+        );
         continue;
       }
-      await _process(entry.key, p, package, token);
+      final plan = _planFor(p.productID, plans);
+      if (plan != null) {
+        await _process(
+          entry.key,
+          p,
+          subscription: true,
+          verify: (proof) async {
+            await ref
+                .read(subscriptionPurchaseApiProvider)
+                .verifySubscriptionPurchase(
+                  token: token,
+                  subscriptionPlanId: plan.id,
+                  proof: proof,
+                );
+          },
+        );
+        continue;
+      }
+      if (packages != null && plans != null) {
+        // Neither a credit pack nor a Pro plan we know: leave it alone.
+        _queue.remove(entry.key);
+      }
+    }
+    // A list that could not be loaded (offline): try again on the next
+    // trigger, with the purchases still queued.
+    if (packages == null) ref.invalidate(creditPackageListProvider);
+    if (plansTried && plans == null) {
+      ref.invalidate(subscriptionPlanListProvider);
     }
   }
 
   Future<void> _process(
     String key,
-    PurchaseDetails p,
-    CreditPackage package,
-    String token,
-  ) async {
+    PurchaseDetails p, {
+    required bool subscription,
+    required Future<void> Function(PurchaseProof proof) verify,
+  }) async {
     if (_finished.contains(key)) {
       _queue.remove(key);
       return;
@@ -207,43 +308,64 @@ class CreditPurchaseController extends Notifier<CreditPurchaseState> {
         // iOS without a numeric transaction id: never guess a token.
         // Left unfinished; the store redelivers it on the next launch.
         _queue.remove(key);
-        _notice(PurchaseNoticeKind.proofMissing);
+        _notice(PurchaseNoticeKind.proofMissing, null, subscription);
         return;
       }
-      try {
-        await ref
-            .read(purchaseApiProvider)
-            .verifyCreditPackagePurchase(
-              token: token,
-              creditPackageId: package.id,
-              proof: proof,
-            );
-        await ref.read(authProvider.notifier).refreshMember();
-        ref.read(homeProvider.notifier).refresh(force: true);
-        // Finish only after the server confirmed the credit.
+
+      Future<void> finish(PurchaseNoticeKind kind, [String? detail]) async {
         await _complete(p);
         _finished.add(key);
         _queue.remove(key);
-        _notice(PurchaseNoticeKind.credited);
-      } on PurchaseException catch (e) {
-        if (e.alreadyProcessed) {
-          await _complete(p);
-          _finished.add(key);
-          _queue.remove(key);
-          _notice(PurchaseNoticeKind.alreadyProcessed, e.message);
-        } else if (ios && e.permanent) {
+        _notice(kind, detail, subscription);
+      }
+
+      Future<void> failed(
+        String message, {
+        required bool alreadyProcessed,
+        required bool permanent,
+      }) async {
+        if (alreadyProcessed) {
+          // A restored subscription the server already knows is a success
+          // for the user.
+          if (subscription && p.status == PurchaseStatus.restored) {
+            await finish(PurchaseNoticeKind.subscriptionActivated);
+          } else {
+            await finish(PurchaseNoticeKind.alreadyProcessed, message);
+          }
+        } else if (ios && permanent) {
           // Invalid / refunded: retrying never helps, and an unfinished
           // transaction would be redelivered (and rejected) forever.
-          await _complete(p);
-          _finished.add(key);
-          _queue.remove(key);
-          _notice(PurchaseNoticeKind.rejected, e.message);
+          await finish(PurchaseNoticeKind.rejected, message);
         } else {
           // 502 / network: keep it pending for a retry.
-          _notice(PurchaseNoticeKind.willRetry, e.message);
+          _notice(PurchaseNoticeKind.willRetry, message, subscription);
         }
+      }
+
+      try {
+        await verify(proof);
+        await ref.read(authProvider.notifier).refreshMember();
+        ref.read(homeProvider.notifier).refresh(force: true);
+        // Finish only after the server confirmed the credit / activation.
+        await finish(
+          subscription
+              ? PurchaseNoticeKind.subscriptionActivated
+              : PurchaseNoticeKind.credited,
+        );
+      } on PurchaseException catch (e) {
+        await failed(
+          e.message,
+          alreadyProcessed: e.alreadyProcessed,
+          permanent: e.permanent,
+        );
+      } on SubscriptionPurchaseException catch (e) {
+        await failed(
+          e.message,
+          alreadyProcessed: e.alreadyProcessed,
+          permanent: e.permanent,
+        );
       } catch (e) {
-        _notice(PurchaseNoticeKind.willRetry, '$e');
+        _notice(PurchaseNoticeKind.willRetry, '$e', subscription);
       }
     } finally {
       _inFlight.remove(key);
