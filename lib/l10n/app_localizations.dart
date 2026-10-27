@@ -3580,6 +3580,30 @@ abstract class AppLocalizations {
   /// **'Could not restore purchases.'**
   String get restorePurchasesFailed;
 
+  /// No description provided for @purchaseBoundToOtherAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'This subscription is linked to another account. Sign in with the account you used to subscribe, or contact support.'**
+  String get purchaseBoundToOtherAccount;
+
+  /// No description provided for @purchaseActiveOtherStore.
+  ///
+  /// In en, this message translates to:
+  /// **'You already have an active Pro subscription via {store}. Manage it there; this new purchase was not activated, so please cancel it in your {thisStore} subscriptions to avoid being charged.'**
+  String purchaseActiveOtherStore(String store, String thisStore);
+
+  /// No description provided for @restoreNothingToRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'No purchases to restore.'**
+  String get restoreNothingToRestore;
+
+  /// No description provided for @subProductUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This plan is not available in the store right now.'**
+  String get subProductUnavailable;
+
   /// No description provided for @featureNotAvailable.
   ///
   /// In en, this message translates to:

@@ -1002,6 +1002,20 @@
   },
   "restorePurchases": "Restore purchases",
   "restorePurchasesFailed": "Could not restore purchases.",
+  "purchaseBoundToOtherAccount": "This subscription is linked to another account. Sign in with the account you used to subscribe, or contact support.",
+  "purchaseActiveOtherStore": "You already have an active Pro subscription via {store}. Manage it there; this new purchase was not activated, so please cancel it in your {thisStore} subscriptions to avoid being charged.",
+  "@purchaseActiveOtherStore": {
+    "placeholders": {
+      "store": {
+        "type": "String"
+      },
+      "thisStore": {
+        "type": "String"
+      }
+    }
+  },
+  "restoreNothingToRestore": "No purchases to restore.",
+  "subProductUnavailable": "This plan is not available in the store right now.",
   "featureNotAvailable": "This feature is not available on your account right now.",
   "purchaseProofMissing": "Your purchase is still being confirmed by the store. It will be credited automatically once it is confirmed; if it does not show up, reopen the app.",
   "analysisInfoDisclaimer": "AI analysis is for information only. It is not financial or investment advice.",

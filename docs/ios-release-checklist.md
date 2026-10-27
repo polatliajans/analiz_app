@@ -22,8 +22,9 @@ in the Apple / Firebase / AdMob / Codemagic consoles. Secrets are never committe
 2. **Keys**: create
    - an **APNs Auth Key** (`.p8`, Apple Push Notifications service), needed by Firebase;
    - a **Sign in with Apple key** (`.p8`, with its Key ID), needed by Firebase to revoke the Apple token on account deletion;
-   - an **App Store Connect API key** (Users and Access > Integrations > App Store Connect API, role App Manager or Admin) for Codemagic;
-   - an **In-App Purchase key** (App Store Connect > Users and Access > Integrations > In-App Purchase, `.p8`): note the **Issuer ID** (shown on that page), the **Key ID**, and download the `.p8` once (it cannot be downloaded again). The server uses it to verify purchases with the App Store Server API.
+   - **TWO different App Store Connect keys, never mix them up:**
+     - **A. App Store Connect API key** (Users and Access > Integrations > **App Store Connect API**, role **App Manager** or Admin). It goes **ONLY** into the Codemagic integration `codemagic_asc` (step 5.2), used to sign and upload builds. It must never be entered in the admin panel.
+     - **B. In-App Purchase key** (Users and Access > Integrations > **In-App Purchase**, `.p8`): note the **Issuer ID** (shown on that page), the **Key ID**, and download the `.p8` once (it cannot be downloaded again). It goes **ONLY** into the Laravel admin panel's Apple settings (step 2.4: Issuer ID, Key ID, `.p8` contents). The server uses it to verify purchases with the App Store Server API. It must never be entered in Codemagic.
 3. Note your **Team ID**.
 
 ## 2. App Store Connect (YOU)
@@ -34,12 +35,21 @@ in the Apple / Firebase / AdMob / Codemagic consoles. Secrets are never committe
    - **Pro subscription (auto-renewable)**: In-App Purchases > **Subscriptions** > create a **subscription group** (e.g. "CryptoAnaliz Pro"), then one **auto-renewable subscription** per Pro plan (duration and price as the plan; plans in the same group are mutually exclusive upgrade/downgrade levels). Per product: reference name, **product id**, duration, price, and **localizations** (display name + description, tr/en/es), plus the group localization. Do not add an introductory/free-trial offer unless you want one (the app only shows what StoreKit reports, never a hard-coded trial).
    - **Product ids must match** the **iOS product id** (`apple_product_id`) field of the corresponding subscription plan in the Laravel admin. **Enter the Pro plans' iOS product ids in the admin panel** (Subscription plans); a plan without one falls back to its Android id and will not be found in the App Store.
    - **Subscription review screenshot**: upload a screenshot of the in-app Pro screen (plans with price and billing period, the auto-renew / Apple ID / cancel note, Manage subscription, Restore purchases, Terms of Use and Privacy Policy links) for each subscription product; each product must reach "Ready to Submit" and be attached to the app version at submission.
-   - Subscription group > **App Store Server Notifications**: set the **Production Server URL** and the **Sandbox Server URL** to `https://www.cryptoanaliz.net/api/apple/notifications` (Version 2 notifications). The server uses them for renewals, expirations, refunds and revocations.
-   - **Sandbox testing**: Users and Access > Sandbox > **Test Accounts**: create a sandbox Apple ID; on the iPhone sign in under Settings > Developer / App Store > Sandbox Account. Sandbox renewals are accelerated (a monthly plan renews about every 5 minutes, up to 6 times), which exercises renewals and expiry against the notification URL.
-4. **Server configuration** (Laravel admin > Settings > "Apple App Store Ayarları"): enter the In-App Purchase key from step 1.2: `apple_issuer_id` (Issuer ID), `apple_key_id` (Key ID), `apple_private_key` (contents of the `.p8`) and `apple_bundle_id` (`com.polatliajans.kriptoanaliz`). The legacy App-Specific Shared Secret is not used.
+   - **App Store Server Notifications**: this is **not** set at subscription-group level. Go to App Store Connect > your app > **App Information** > **App Store Server Notifications** and set both the **Production Server URL** and the **Sandbox Server URL** to `https://www.cryptoanaliz.net/api/apple/notifications` (choose **Version 2** notifications). The server uses them for renewals, expirations, refunds and revocations.
+   - **Sandbox testing**: Users and Access > Sandbox > **Test Accounts**: create a sandbox Apple ID; on the iPhone sign in under Settings > Developer / App Store > Sandbox Account. **Sandbox renewals are accelerated** (a monthly plan renews about every 5 minutes, at most 6 renewals, then it expires), so a TestFlight renewal / expiry test takes minutes, not a month, and exercises the notification URL.
+4. **Server configuration** (Laravel admin > Settings > "Apple App Store Ayarları"): enter the **In-App Purchase key (key B from step 1.2, not the App Store Connect API key)**: `apple_issuer_id` (Issuer ID), `apple_key_id` (Key ID), `apple_private_key` (contents of the `.p8`) and `apple_bundle_id` (`com.polatliajans.kriptoanaliz`). The legacy App-Specific Shared Secret is not used. Note the naming: the field you fill in the admin panel for each credit package / subscription plan is labelled **iOS product id**; the API / database field behind it is `apple_product_id`.
 5. **App Privacy** questionnaire: answer it consistently with `ios/Runner/PrivacyInfo.xcprivacy` (name, email, user id, device id, advertising data, purchase history, crash data, performance data, product interaction; tracking = yes because of ads).
 6. Age rating, category, support URL, **Privacy Policy URL** (`https://www.cryptoanaliz.net/privacy`), screenshots (6.9" and 6.5" iPhone; the app is iPhone-only).
-7. **App Review information**: a demo account (email + password) and a note such as "Crypto market analysis, no trading, not financial advice".
+7. **App Review information**: a demo account (email + password; it needs **no email verification**) and a note. Suggested **App Review notes** text:
+
+   > CryptoAnaliz is a crypto market analysis app (no trading, not financial advice).
+   > Demo account: the email/password above. It needs no email verification; just sign in.
+   > In-app purchases: review runs against our PRODUCTION server with the Apple sandbox, and this works: the server verifies sandbox transactions with the App Store Server API automatically.
+   > To subscribe: sign in, open the "My Account" tab, tap "Upgrade to Pro" in the credit card, choose a plan on the "Pro Subscription" screen and tap "Subscribe".
+   > Restore purchases: My Account tab > "Upgrade to Pro" > "Pro Subscription" screen > "Restore purchases" button at the bottom (next to "Manage subscription").
+   > Credit packs: My Account tab > "Buy Credits" shows consumable credit packs (not restorable, by design).
+
+   Keep the demo account non-Pro so the Subscribe button is visible to the reviewer.
 8. Put the Terms of Use link (`https://www.cryptoanaliz.net/terms`) into the app description (the app also links it on the login screen and the legal links row).
 
 ## 3. Firebase console (YOU)
@@ -63,7 +73,7 @@ in the Apple / Firebase / AdMob / Codemagic consoles. Secrets are never committe
 ## 5. Codemagic (YOU)
 
 1. Add the repository as an application and choose the **codemagic.yaml** configuration.
-2. Teams > Integrations > Developer Portal > **App Store Connect**: add the API key from step 1.2 and name the integration exactly `codemagic_asc`.
+2. Teams > Integrations > Developer Portal > **App Store Connect**: add the **App Store Connect API key (key A from step 1.2; not the In-App Purchase key)** and name the integration exactly `codemagic_asc`.
 3. Code signing identities > iOS: let Codemagic create/fetch a distribution certificate and an App Store provisioning profile through the integration, or upload your own. The profile must be for `com.polatliajans.kriptoanaliz` and was generated after enabling Push and Sign in with Apple.
 4. Environment variables > group **`ios_release`** (mark secure):
    - `GOOGLE_SERVICE_INFO_PLIST`: base64 of the plist (step 3.5)

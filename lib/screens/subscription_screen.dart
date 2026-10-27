@@ -62,17 +62,24 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         _snack(l10n.purchaseFailed(notice.detail ?? ''));
       case PurchaseNoticeKind.proofMissing:
         _snack(l10n.purchaseProofMissing);
+      case PurchaseNoticeKind.boundToOtherAccount:
+        _snack(l10n.purchaseBoundToOtherAccount);
+      case PurchaseNoticeKind.activeOtherStore:
+        _snack(notice.detail ?? '');
     }
   }
 
   /// App Store: replays the user's past subscription transactions through the
   /// purchase stream (handled like a normal purchase, verified by the server).
   Future<void> _restore() async {
-    final failed = AppLocalizations.of(context)!.restorePurchasesFailed;
+    final l10n = AppLocalizations.of(context)!;
+    final failed = l10n.restorePurchasesFailed;
+    final nothing = l10n.restoreNothingToRestore;
     try {
-      await ref
+      final found = await ref
           .read(creditPurchaseControllerProvider.notifier)
           .restorePurchases();
+      if (!found) _snack(nothing);
     } catch (_) {
       _snack(failed);
     }
@@ -190,6 +197,15 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               ? ref.watch(storeProductsProvider(productIds)).value ??
                     const <String, ProductDetails>{}
               : const <String, ProductDetails>{};
+          // iOS: the store answered with products but not this plan's (not
+          // configured / not approved yet): the server's USD price would
+          // only lead to a failing purchase, so the button is disabled.
+          // (An empty answer means the store itself is unreachable; the buy
+          // attempt then reports that.)
+          bool storeLacks(SubscriptionPlan plan) =>
+              ios &&
+              storeProducts.isNotEmpty &&
+              !storeProducts.containsKey(productIdOf(plan));
 
           // The monthly credit shown in the benefits is the plan's own value
           // (the server tops the member up to it), never a hard-coded number.
@@ -280,7 +296,8 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                     isBusy:
                         productIdOf(plan) != null &&
                         pendingProductIds.contains(productIdOf(plan)),
-                    onBuy: productIdOf(plan) == null
+                    unavailable: storeLacks(plan),
+                    onBuy: productIdOf(plan) == null || storeLacks(plan)
                         ? null
                         : () => _buy(productIdOf(plan)!),
                   ),
@@ -373,6 +390,9 @@ class _PlanCard extends StatelessWidget {
   final bool isBusy;
   final VoidCallback? onBuy;
 
+  /// iOS: the App Store does not offer this plan right now.
+  final bool unavailable;
+
   const _PlanCard({
     required this.plan,
     required this.title,
@@ -381,6 +401,7 @@ class _PlanCard extends StatelessWidget {
     required this.autoRenewNote,
     required this.isBusy,
     required this.onBuy,
+    this.unavailable = false,
   });
 
   @override
@@ -424,7 +445,7 @@ class _PlanCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           FilledButton(
-            onPressed: isBusy ? null : onBuy,
+            onPressed: isBusy || unavailable ? null : onBuy,
             style: FilledButton.styleFrom(
               minimumSize: const Size.fromHeight(52),
               backgroundColor: brandTeal,
@@ -451,7 +472,15 @@ class _PlanCard extends StatelessWidget {
                     ),
                   ),
           ),
-          if (autoRenewNote != null) ...[
+          if (unavailable) ...[
+            const SizedBox(height: 8),
+            Text(
+              l10n.subProductUnavailable,
+              key: const Key('plan-unavailable'),
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodySmall?.copyWith(color: scheme.error),
+            ),
+          ] else if (autoRenewNote != null) ...[
             const SizedBox(height: 8),
             Text(
               autoRenewNote!,

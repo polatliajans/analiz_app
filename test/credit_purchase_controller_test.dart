@@ -1,6 +1,9 @@
 import 'dart:async';
 
+import 'package:fake_async/fake_async.dart';
 import 'package:flutter/material.dart';
+import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
+import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -24,9 +27,23 @@ import 'helpers/home_fakes.dart';
 class _FakeIap implements InAppPurchase {
   final controller = StreamController<List<PurchaseDetails>>.broadcast();
   final completed = <String>[];
+  int restores = 0;
+
+  /// What a restore delivers on the purchase stream while it runs.
+  List<PurchaseDetails> restoreEmits = const [];
+
+  /// Never completes when true (a store without a completion signal).
+  bool restoreHangs = false;
 
   @override
   Stream<List<PurchaseDetails>> get purchaseStream => controller.stream;
+
+  @override
+  Future<void> restorePurchases({String? applicationUserName}) async {
+    restores++;
+    if (restoreHangs) return Completer<void>().future;
+    if (restoreEmits.isNotEmpty) controller.add(restoreEmits);
+  }
 
   @override
   Future<void> completePurchase(PurchaseDetails purchase) async {
@@ -140,6 +157,8 @@ Future<void> _settle() =>
     Future<void>.delayed(const Duration(milliseconds: 20));
 
 void main() {
+  CreditPurchaseController.retryBackoff = const [];
+  CreditPurchaseController.restoreGrace = Duration.zero;
   CreditPurchaseController.packageWait = const Duration(milliseconds: 200);
   late _FakeIap iap;
   late _Auth auth;
@@ -523,5 +542,236 @@ void main() {
     expect(find.text(l10n.creditsAdded), findsOneWidget);
     expect(find.byType(CircularProgressIndicator), findsNothing);
     expect(api.calls, 1);
+  });
+
+  group('iOS hardening', () {
+    AppStorePurchaseDetails sk({
+      required PurchaseStatus status,
+      String? id = '2000000999',
+      String? original,
+      String product = 'ios_pro_monthly',
+    }) {
+      final p = AppStorePurchaseDetails(
+        purchaseID: id,
+        productID: product,
+        verificationData: PurchaseVerificationData(
+          localVerificationData: 'l',
+          serverVerificationData: 'receipt',
+          source: 'app_store',
+        ),
+        transactionDate: '0',
+        status: status,
+        skPaymentTransaction: SKPaymentTransactionWrapper(
+          payment: SKPaymentWrapper(productIdentifier: product),
+          transactionState: SKPaymentTransactionStateWrapper.restored,
+          transactionIdentifier: id,
+          originalTransaction: original == null
+              ? null
+              : SKPaymentTransactionWrapper(
+                  payment: SKPaymentWrapper(productIdentifier: product),
+                  transactionState: SKPaymentTransactionStateWrapper.purchased,
+                  transactionIdentifier: original,
+                ),
+        ),
+      );
+      p.pendingCompletePurchase = true;
+      return p;
+    }
+
+    const backoff = [
+      Duration(seconds: 2),
+      Duration(seconds: 5),
+      Duration(seconds: 10),
+    ];
+
+    test('restored uses the ORIGINAL transaction id (subscription)', () async {
+      make([_ok]);
+      iap.controller.add([
+        sk(status: PurchaseStatus.restored, original: '1000000777'),
+      ]);
+      await _settle();
+      expect(subApi.lastProof!.token, '1000000777');
+    });
+
+    test('restored uses the ORIGINAL transaction id (consumable)', () async {
+      make([_ok]);
+      iap.controller.add([
+        sk(
+          status: PurchaseStatus.restored,
+          original: '1000000555',
+          product: 'credits_100',
+        ),
+      ]);
+      await _settle();
+      expect(api.lastProof!.token, '1000000555');
+    });
+
+    test('restored without an original falls back to its own id', () async {
+      make([_ok]);
+      iap.controller.add([sk(status: PurchaseStatus.restored)]);
+      await _settle();
+      expect(subApi.lastProof!.token, '2000000999');
+    });
+
+    test('a fresh purchase keeps its own id even with an original', () async {
+      make([_ok]);
+      iap.controller.add([
+        sk(status: PurchaseStatus.purchased, original: '1000000777'),
+      ]);
+      await _settle();
+      expect(subApi.lastProof!.token, '2000000999');
+    });
+
+    test('a non-numeric original id is still rejected', () async {
+      final c = make([_ok]);
+      iap.controller.add([
+        sk(status: PurchaseStatus.restored, original: 'abc'),
+      ]);
+      await _settle();
+      expect(subApi.calls, 0);
+      expect(
+        c.read(creditPurchaseControllerProvider).notice!.kind,
+        PurchaseNoticeKind.proofMissing,
+      );
+    });
+
+    test('transient failures are retried with backoff, then succeed', () {
+      fakeAsync((async) {
+        CreditPurchaseController.retryBackoff = backoff;
+        addTearDown(() => CreditPurchaseController.retryBackoff = const []);
+        final c = make(
+          [_ok],
+          subScript: [
+            SubscriptionPurchaseException('502'),
+            SubscriptionPurchaseException('502'),
+            _subOk,
+          ],
+        );
+        iap.controller.add([_purchase(product: 'ios_pro_monthly')]);
+        async.elapse(const Duration(milliseconds: 500));
+        expect(subApi.calls, 1);
+        async.elapse(const Duration(seconds: 2));
+        expect(subApi.calls, 2);
+        expect(iap.completed, isEmpty);
+        async.elapse(const Duration(seconds: 5));
+        expect(subApi.calls, 3);
+        expect(iap.completed, ['ios_pro_monthly']);
+        expect(
+          c.read(creditPurchaseControllerProvider).notice!.kind,
+          PurchaseNoticeKind.subscriptionActivated,
+        );
+      });
+    });
+
+    test('after the retries are used up it stays pending (willRetry)', () {
+      fakeAsync((async) {
+        CreditPurchaseController.retryBackoff = backoff;
+        addTearDown(() => CreditPurchaseController.retryBackoff = const []);
+        final c = make(
+          [_ok],
+          subScript: [SubscriptionPurchaseException('502')],
+        );
+        iap.controller.add([_purchase(product: 'ios_pro_monthly')]);
+        async.elapse(const Duration(seconds: 30));
+        expect(subApi.calls, 4); // first try + 3 retries
+        expect(iap.completed, isEmpty);
+        expect(
+          c.read(creditPurchaseControllerProvider).notice!.kind,
+          PurchaseNoticeKind.willRetry,
+        );
+      });
+    });
+
+    test('permanent rejections are not retried', () {
+      fakeAsync((async) {
+        CreditPurchaseController.retryBackoff = backoff;
+        addTearDown(() => CreditPurchaseController.retryBackoff = const []);
+        make(
+          [_ok],
+          subScript: [SubscriptionPurchaseException('bad', permanent: true)],
+        );
+        iap.controller.add([_purchase(product: 'ios_pro_monthly')]);
+        async.elapse(const Duration(seconds: 30));
+        expect(subApi.calls, 1);
+        expect(iap.completed, ['ios_pro_monthly']);
+      });
+    });
+
+    test('bound to another account: finished, specific notice', () async {
+      final c = make(
+        [_ok],
+        subScript: [
+          SubscriptionPurchaseException(
+            'linked',
+            permanent: true,
+            code: 'subscription_bound_to_other_account',
+          ),
+        ],
+      );
+      iap.controller.add([_purchase(product: 'ios_pro_monthly')]);
+      await _settle();
+      expect(iap.completed, ['ios_pro_monthly']);
+      expect(subApi.calls, 1);
+      expect(
+        c.read(creditPurchaseControllerProvider).notice!.kind,
+        PurchaseNoticeKind.boundToOtherAccount,
+      );
+    });
+
+    test('active subscription at the other store: finished + notice', () async {
+      final c = make(
+        [_ok],
+        subScript: [
+          SubscriptionPurchaseException(
+            'use Google Play',
+            permanent: true,
+            code: 'subscription_active_other_store',
+          ),
+        ],
+      );
+      iap.controller.add([_purchase(product: 'ios_pro_monthly')]);
+      await _settle();
+      expect(iap.completed, ['ios_pro_monthly']);
+      final n = c.read(creditPurchaseControllerProvider).notice!;
+      expect(n.kind, PurchaseNoticeKind.activeOtherStore);
+      expect(n.detail, 'use Google Play');
+      expect(n.subscription, isTrue);
+    });
+
+    test('restore with nothing delivered reports false', () async {
+      final c = make([_ok]);
+      final found = await c
+          .read(creditPurchaseControllerProvider.notifier)
+          .restorePurchases();
+      expect(iap.restores, 1);
+      expect(found, isFalse);
+    });
+
+    test('restore that delivers a purchase reports true', () async {
+      final c = make([_ok]);
+      iap.restoreEmits = [
+        _purchase(product: 'ios_pro_monthly', status: PurchaseStatus.restored),
+      ];
+      final found = await c
+          .read(creditPurchaseControllerProvider.notifier)
+          .restorePurchases();
+      expect(found, isTrue);
+    });
+
+    test('restore without a completion signal gives up after the timeout', () {
+      fakeAsync((async) {
+        final c = make([_ok]);
+        iap.restoreHangs = true;
+        bool? found;
+        c
+            .read(creditPurchaseControllerProvider.notifier)
+            .restorePurchases()
+            .then((v) => found = v);
+        async.elapse(const Duration(seconds: 5));
+        expect(found, isNull);
+        async.elapse(const Duration(seconds: 2));
+        expect(found, isFalse);
+      });
+    });
   });
 }

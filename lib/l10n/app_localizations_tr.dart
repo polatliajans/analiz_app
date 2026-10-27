@@ -2127,6 +2127,22 @@ class AppLocalizationsTr extends AppLocalizations {
   String get restorePurchasesFailed => 'Satın alımlar geri yüklenemedi.';
 
   @override
+  String get purchaseBoundToOtherAccount =>
+      'Bu abonelik başka bir hesaba bağlı. Abone olduğun hesapla giriş yap veya destekle iletişime geç.';
+
+  @override
+  String purchaseActiveOtherStore(String store, String thisStore) {
+    return '$store üzerinden zaten aktif bir Pro aboneliğin var. Aboneliğini orada yönet; bu yeni satın alma etkinleştirilmedi, ücretlendirilmemek için $thisStore aboneliklerinden iptal et.';
+  }
+
+  @override
+  String get restoreNothingToRestore => 'Geri yüklenecek satın alım yok.';
+
+  @override
+  String get subProductUnavailable =>
+      'Bu plan şu anda mağazada kullanılamıyor.';
+
+  @override
   String get featureNotAvailable =>
       'Bu özellik şu anda hesabında kullanılamıyor.';
 

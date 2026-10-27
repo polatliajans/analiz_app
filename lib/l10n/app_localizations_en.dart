@@ -2186,6 +2186,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get restorePurchasesFailed => 'Could not restore purchases.';
 
   @override
+  String get purchaseBoundToOtherAccount =>
+      'This subscription is linked to another account. Sign in with the account you used to subscribe, or contact support.';
+
+  @override
+  String purchaseActiveOtherStore(String store, String thisStore) {
+    return 'You already have an active Pro subscription via $store. Manage it there; this new purchase was not activated, so please cancel it in your $thisStore subscriptions to avoid being charged.';
+  }
+
+  @override
+  String get restoreNothingToRestore => 'No purchases to restore.';
+
+  @override
+  String get subProductUnavailable =>
+      'This plan is not available in the store right now.';
+
+  @override
   String get featureNotAvailable =>
       'This feature is not available on your account right now.';
 

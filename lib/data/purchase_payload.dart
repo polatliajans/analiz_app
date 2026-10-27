@@ -1,4 +1,5 @@
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 
 import '../utils/platform_info.dart';
 
@@ -29,22 +30,39 @@ PurchaseProof? purchaseProofFrom({
   return PurchaseProof(id, serverVerificationData);
 }
 
-PurchaseProof? purchaseProofOf(PurchaseDetails purchase, {bool? ios}) =>
-    purchaseProofFrom(
-      ios: ios ?? isIOS,
-      purchaseId: purchase.purchaseID,
-      serverVerificationData: purchase.verificationData.serverVerificationData,
-    );
+/// The transaction id the server should look up on iOS. A StoreKit 1
+/// `restored` transaction carries a NEW transactionIdentifier that Apple's
+/// server API does not know; the original purchase's id does, so it is
+/// preferred there. Fresh purchases keep their own id.
+String? _iosTransactionId(PurchaseDetails purchase) {
+  if (purchase.status == PurchaseStatus.restored &&
+      purchase is AppStorePurchaseDetails) {
+    final original = purchase
+        .skPaymentTransaction
+        .originalTransaction
+        ?.transactionIdentifier
+        ?.trim();
+    if (original != null && original.isNotEmpty) return original;
+  }
+  return purchase.purchaseID;
+}
+
+PurchaseProof? purchaseProofOf(PurchaseDetails purchase, {bool? ios}) {
+  final onIos = ios ?? isIOS;
+  return purchaseProofFrom(
+    ios: onIos,
+    purchaseId: onIos ? _iosTransactionId(purchase) : purchase.purchaseID,
+    serverVerificationData: purchase.verificationData.serverVerificationData,
+  );
+}
 
 /// POST body for `/purchases/credit-packages/{id}` and
 /// `/purchases/subscriptions/{id}`. Android keeps its original single-field
-/// body; iOS adds `platform` and `receipt`.
+/// body; iOS adds `platform`. The server reads only `purchase_token` (it
+/// verifies by transaction id through the App Store Server API), so the
+/// base64 receipt is not sent.
 Map<String, String> buildPurchaseBody(PurchaseProof proof, {String? platform}) {
   final p = platform ?? platformName();
   if (p != 'ios') return {'purchase_token': proof.token};
-  return {
-    'platform': 'ios',
-    'purchase_token': proof.token,
-    'receipt': proof.receipt ?? '',
-  };
+  return {'platform': 'ios', 'purchase_token': proof.token};
 }

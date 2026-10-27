@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kriptoanaliz/providers/credit_purchase_provider.dart';
 import 'package:kriptoanaliz/ads/ad_logic.dart';
 import 'package:kriptoanaliz/ads/consent_flow.dart';
 import 'package:kriptoanaliz/data/api_http.dart';
@@ -13,6 +14,8 @@ import 'package:kriptoanaliz/utils/platform_info.dart';
 import 'package:kriptoanaliz/widgets/apple_sign_in_button.dart';
 
 void main() {
+  CreditPurchaseController.retryBackoff = const [];
+  CreditPurchaseController.restoreGrace = Duration.zero;
   group('platform header', () {
     tearDown(() => ApiHttp.platformResolver = platformName);
 
@@ -69,7 +72,7 @@ void main() {
       });
     });
 
-    test('ios sends transaction id as token plus the receipt', () {
+    test('ios sends transaction id as token without the receipt', () {
       final proof = purchaseProofFrom(
         ios: true,
         purchaseId: '1000000123',
@@ -78,7 +81,6 @@ void main() {
       expect(buildPurchaseBody(proof!, platform: 'ios'), {
         'platform': 'ios',
         'purchase_token': '1000000123',
-        'receipt': 'base64receipt',
       });
     });
 

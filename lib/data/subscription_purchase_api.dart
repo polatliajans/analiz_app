@@ -2,7 +2,13 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'api_http.dart';
 import 'purchase_api.dart'
-    show isPurchaseAlreadyProcessed, storeVerificationUnreachableText;
+    show
+        activeOtherStoreText,
+        codeSubscriptionActiveOtherStore,
+        codeSubscriptionBoundToOtherAccount,
+        isPurchaseAlreadyProcessed,
+        purchaseErrorCode,
+        storeVerificationUnreachableText;
 import 'purchase_payload.dart';
 
 import '../config/api_config.dart';
@@ -35,10 +41,15 @@ class SubscriptionPurchaseException implements Exception {
   /// The server rejected the purchase for good (422 invalid / refunded):
   /// retrying can never succeed.
   final bool permanent;
+
+  /// Server `code` (`subscription_bound_to_other_account`,
+  /// `subscription_active_other_store`), if any.
+  final String? code;
   SubscriptionPurchaseException(
     this.message, {
     this.alreadyProcessed = false,
     this.permanent = false,
+    this.code,
   });
 
   @override
@@ -68,6 +79,23 @@ class SubscriptionPurchaseApi {
       );
     }
 
+    final code = purchaseErrorCode(response.body);
+    if (response.statusCode == 422 &&
+        code == codeSubscriptionBoundToOtherAccount) {
+      throw SubscriptionPurchaseException(
+        AppL10n.current.purchaseBoundToOtherAccount,
+        permanent: true,
+        code: code,
+      );
+    }
+    if (response.statusCode == 409 &&
+        code == codeSubscriptionActiveOtherStore) {
+      throw SubscriptionPurchaseException(
+        activeOtherStoreText(),
+        permanent: true,
+        code: code,
+      );
+    }
     if ((response.statusCode == 422 || response.statusCode == 409) &&
         isPurchaseAlreadyProcessed(response.body)) {
       throw SubscriptionPurchaseException(

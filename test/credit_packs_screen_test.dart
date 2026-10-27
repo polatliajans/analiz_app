@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kriptoanaliz/providers/credit_purchase_provider.dart';
 import 'package:kriptoanaliz/l10n/app_localizations.dart';
 import 'package:kriptoanaliz/models/credit_package.dart';
 import 'package:kriptoanaliz/models/member.dart';
@@ -67,6 +68,8 @@ Future<void> _pump(
 }
 
 void main() {
+  CreditPurchaseController.retryBackoff = const [];
+  CreditPurchaseController.restoreGrace = Duration.zero;
   group('price parsing', () {
     test('common store formats', () {
       expect(parseStorePrice(r'$4.99')!.value, 4.99);

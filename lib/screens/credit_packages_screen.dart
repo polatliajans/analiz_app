@@ -59,6 +59,10 @@ class _CreditPackagesScreenState extends ConsumerState<CreditPackagesScreen> {
         _snack(l10n.purchaseFailed(notice.detail ?? ''));
       case PurchaseNoticeKind.proofMissing:
         _snack(l10n.purchaseProofMissing);
+      case PurchaseNoticeKind.boundToOtherAccount:
+        _snack(l10n.purchaseBoundToOtherAccount);
+      case PurchaseNoticeKind.activeOtherStore:
+        _snack(notice.detail ?? '');
     }
   }
 

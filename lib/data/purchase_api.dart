@@ -24,15 +24,26 @@ class PurchaseResult {
   }
 }
 
-/// True when the server rejected the token with `purchase_already_processed`.
-bool isPurchaseAlreadyProcessed(String body) {
+/// The machine-readable `code` of a server error body, or null.
+String? purchaseErrorCode(String body) {
   try {
     final json = jsonDecode(body);
-    return json is Map && json['code'] == 'purchase_already_processed';
-  } catch (_) {
-    return false;
-  }
+    if (json is Map && json['code'] is String) return json['code'] as String;
+  } catch (_) {}
+  return null;
 }
+
+/// True when the server rejected the token with `purchase_already_processed`.
+bool isPurchaseAlreadyProcessed(String body) =>
+    purchaseErrorCode(body) == 'purchase_already_processed';
+
+/// 422: the Apple subscription is linked to a different member account.
+const codeSubscriptionBoundToOtherAccount =
+    'subscription_bound_to_other_account';
+
+/// 409: the member already has an active Pro subscription from the other
+/// store (Google Play vs App Store).
+const codeSubscriptionActiveOtherStore = 'subscription_active_other_store';
 
 class PurchaseException implements Exception {
   final String message;
@@ -44,10 +55,14 @@ class PurchaseException implements Exception {
   /// The server rejected the purchase for good (422 invalid / refunded):
   /// retrying can never succeed.
   final bool permanent;
+
+  /// Server `code` (e.g. [codeSubscriptionBoundToOtherAccount]), if any.
+  final String? code;
   PurchaseException(
     this.message, {
     this.alreadyProcessed = false,
     this.permanent = false,
+    this.code,
   });
 
   @override
@@ -105,3 +120,9 @@ class PurchaseApi {
 String storeVerificationUnreachableText() => isIOS
     ? AppL10n.current.errorStoreVerificationUnreachableIos
     : AppL10n.current.errorPlayVerificationUnreachable;
+
+/// "You already have an active Pro subscription via the other store".
+String activeOtherStoreText() => AppL10n.current.purchaseActiveOtherStore(
+  isIOS ? 'Google Play' : 'App Store',
+  isIOS ? 'App Store' : 'Google Play',
+);

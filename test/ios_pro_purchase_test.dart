@@ -110,6 +110,8 @@ Future<AppLocalizations> _en() =>
     AppLocalizations.delegate.load(const Locale('en'));
 
 void main() {
+  CreditPurchaseController.retryBackoff = const [];
+  CreditPurchaseController.restoreGrace = Duration.zero;
   final noPro = proPurchaseAvailableProvider.overrideWithValue(false);
 
   group('proPurchaseAvailableFor', () {
@@ -253,6 +255,7 @@ void main() {
       required bool pro,
       bool ios = true,
       bool storeKit = true,
+      Map<String, ProductDetails>? products,
     }) {
       iap = _FakeIap();
       return [
@@ -269,7 +272,8 @@ void main() {
         ),
         storeProductsProvider.overrideWith(
           (ref, ids) async =>
-              storeKit ? {'ios_pro_monthly': _storeProduct()} : {},
+              products ??
+              (storeKit ? {'ios_pro_monthly': _storeProduct()} : {}),
         ),
       ];
     }
@@ -321,6 +325,40 @@ void main() {
       expect(find.text(l10n.durationDays(30)), findsOneWidget);
     });
 
+    testWidgets('Subscribe is disabled when the store lacks the plan', (
+      tester,
+    ) async {
+      await pumpScreen(
+        tester,
+        overrides(pro: false, products: {'other': _storeProduct(id: 'other')}),
+      );
+      final l10n = await _en();
+      expect(find.byKey(const Key('plan-unavailable')), findsOneWidget);
+      expect(find.text(l10n.subProductUnavailable), findsOneWidget);
+      final button = tester.widget<FilledButton>(find.byType(FilledButton));
+      expect(button.onPressed, isNull);
+    });
+
+    testWidgets('Subscribe stays enabled when the plan is in the store', (
+      tester,
+    ) async {
+      await pumpScreen(tester, overrides(pro: false));
+      expect(find.byKey(const Key('plan-unavailable')), findsNothing);
+      final button = tester.widget<FilledButton>(find.byType(FilledButton));
+      expect(button.onPressed, isNotNull);
+    });
+
+    testWidgets('restore with nothing to restore tells the user', (
+      tester,
+    ) async {
+      await pumpScreen(tester, overrides(pro: false));
+      await tester.tap(find.byKey(const Key('restore-purchases')));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+      final l10n = await _en();
+      expect(find.text(l10n.restoreNothingToRestore), findsOneWidget);
+    });
+
     testWidgets('restore button replays the store transactions', (
       tester,
     ) async {
@@ -328,6 +366,7 @@ void main() {
       await tester.tap(find.byKey(const Key('restore-purchases')));
       await tester.pump();
       expect(iap.restores, 1);
+      await tester.pump(const Duration(milliseconds: 100));
     });
 
     testWidgets('Pro member: status card, manage + restore, no plans', (
@@ -413,7 +452,7 @@ void main() {
       return (seen, outcome);
     }
 
-    test('iOS sends platform, transaction id and receipt', () async {
+    test('iOS sends platform and transaction id (no receipt)', () async {
       final (req, outcome) = await post(
         TargetPlatform.iOS,
         const PurchaseProof('1000000123', 'base64receipt'),
@@ -423,10 +462,38 @@ void main() {
       expect(req.bodyFields, {
         'platform': 'ios',
         'purchase_token': '1000000123',
-        'receipt': 'base64receipt',
       });
       expect(outcome, isA<SubscriptionPurchaseResult>());
       expect((outcome as SubscriptionPurchaseResult).role, 'pro');
+    });
+
+    test(
+      '422 subscription_bound_to_other_account is permanent with code',
+      () async {
+        final (_, outcome) = await post(
+          TargetPlatform.iOS,
+          const PurchaseProof('1000000123'),
+          422,
+          '{"code":"subscription_bound_to_other_account","message":"x"}',
+        );
+        final e = outcome as SubscriptionPurchaseException;
+        expect(e.code, 'subscription_bound_to_other_account');
+        expect(e.permanent, isTrue);
+        expect(e.alreadyProcessed, isFalse);
+        expect(e.message, contains('another account'));
+      },
+    );
+
+    test('409 subscription_active_other_store carries its code', () async {
+      final (_, outcome) = await post(
+        TargetPlatform.iOS,
+        const PurchaseProof('1000000123'),
+        409,
+        '{"code":"subscription_active_other_store","message":"x"}',
+      );
+      final e = outcome as SubscriptionPurchaseException;
+      expect(e.code, 'subscription_active_other_store');
+      expect(e.message, contains('Google Play'));
     });
 
     test('Android keeps the single-field body', () async {

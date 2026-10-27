@@ -4,7 +4,11 @@ import 'package:flutter/foundation.dart' show TargetPlatform;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
-import '../data/purchase_api.dart' show PurchaseException;
+import '../data/purchase_api.dart'
+    show
+        PurchaseException,
+        codeSubscriptionActiveOtherStore,
+        codeSubscriptionBoundToOtherAccount;
 import '../data/purchase_payload.dart';
 import '../data/subscription_purchase_api.dart'
     show SubscriptionPurchaseException;
@@ -47,6 +51,15 @@ enum PurchaseNoticeKind {
 
   /// iOS transaction without a usable id: stays pending.
   proofMissing,
+
+  /// The Apple subscription is linked to another member account (permanent;
+  /// the transaction was finished).
+  boundToOtherAccount,
+
+  /// The member already has an active Pro subscription from the other store.
+  /// An iOS transaction (already charged) is finished so it is not redelivered
+  /// forever; the user is told to manage / cancel it in the store.
+  activeOtherStore,
 }
 
 /// One message for the UI. [id] makes every notice unique so listeners
@@ -100,6 +113,27 @@ class CreditPurchaseController extends Notifier<CreditPurchaseState> {
   final Set<String> _inFlight = {};
   final Set<String> _finished = {};
   int _noticeSeq = 0;
+
+  /// Purchase-stream events (purchased / restored) seen so far; a restore
+  /// that does not move this found nothing to restore.
+  int _deliveries = 0;
+
+  /// Waits between automatic retries of a transient verification failure
+  /// (502 / network / "not found yet" right after the purchase). Tests
+  /// shorten it.
+  static List<Duration> retryBackoff = const [
+    Duration(seconds: 2),
+    Duration(seconds: 5),
+    Duration(seconds: 10),
+  ];
+
+  /// Upper bound for the store's restore call when it gives no completion
+  /// signal.
+  static Duration restoreTimeout = const Duration(seconds: 6);
+
+  /// Grace period after the restore call returns for restored transactions
+  /// still travelling through the purchase stream.
+  static Duration restoreGrace = const Duration(milliseconds: 800);
 
   @override
   CreditPurchaseState build() {
@@ -159,8 +193,18 @@ class CreditPurchaseController extends Notifier<CreditPurchaseState> {
   /// App Store: asks StoreKit to replay the user's past transactions. They
   /// arrive on the purchase stream as `restored` and are re-verified with the
   /// server (idempotent there).
-  Future<void> restorePurchases() =>
-      ref.read(inAppPurchaseProvider).restorePurchases();
+  ///
+  /// Returns true when at least one purchase arrived during the restore;
+  /// false means there was nothing to restore (the caller tells the user).
+  Future<bool> restorePurchases() async {
+    final before = _deliveries;
+    await ref
+        .read(inAppPurchaseProvider)
+        .restorePurchases()
+        .timeout(restoreTimeout, onTimeout: () {});
+    await Future<void>.delayed(restoreGrace);
+    return _deliveries != before;
+  }
 
   Future<void> _complete(PurchaseDetails p) async {
     if (!p.pendingCompletePurchase) return;
@@ -188,6 +232,7 @@ class CreditPurchaseController extends Notifier<CreditPurchaseState> {
           await _complete(p);
         case PurchaseStatus.purchased:
         case PurchaseStatus.restored:
+          _deliveries++;
           endBuy(p.productID);
           // A restore is an explicit user action: verify it again even if
           // this transaction was already finished earlier in this run.
@@ -323,8 +368,28 @@ class CreditPurchaseController extends Notifier<CreditPurchaseState> {
         String message, {
         required bool alreadyProcessed,
         required bool permanent,
+        String? code,
       }) async {
-        if (alreadyProcessed) {
+        if (code == codeSubscriptionBoundToOtherAccount) {
+          // Permanent: retrying never helps. Finish (iOS) so Apple stops
+          // redelivering it.
+          if (ios) await _complete(p);
+          _finished.add(key);
+          _queue.remove(key);
+          _notice(
+            PurchaseNoticeKind.boundToOtherAccount,
+            message,
+            subscription,
+          );
+        } else if (code == codeSubscriptionActiveOtherStore) {
+          // Apple already charged this transaction: finish it so it is not
+          // left silently pending forever, and tell the user clearly. (On
+          // Android the unacknowledged purchase is refunded by Play.)
+          if (ios) await _complete(p);
+          _finished.add(key);
+          _queue.remove(key);
+          _notice(PurchaseNoticeKind.activeOtherStore, message, subscription);
+        } else if (alreadyProcessed) {
           // A restored subscription the server already knows is a success
           // for the user.
           if (subscription && p.status == PurchaseStatus.restored) {
@@ -342,30 +407,50 @@ class CreditPurchaseController extends Notifier<CreditPurchaseState> {
         }
       }
 
-      try {
-        await verify(proof);
-        await ref.read(authProvider.notifier).refreshMember();
-        ref.read(homeProvider.notifier).refresh(force: true);
-        // Finish only after the server confirmed the credit / activation.
-        await finish(
-          subscription
-              ? PurchaseNoticeKind.subscriptionActivated
-              : PurchaseNoticeKind.credited,
-        );
-      } on PurchaseException catch (e) {
+      for (var attempt = 0; ; attempt++) {
+        String message;
+        var alreadyProcessed = false;
+        var permanent = false;
+        String? code;
+        try {
+          await verify(proof);
+          await ref.read(authProvider.notifier).refreshMember();
+          ref.read(homeProvider.notifier).refresh(force: true);
+          // Finish only after the server confirmed the credit / activation.
+          await finish(
+            subscription
+                ? PurchaseNoticeKind.subscriptionActivated
+                : PurchaseNoticeKind.credited,
+          );
+          return;
+        } on PurchaseException catch (e) {
+          message = e.message;
+          alreadyProcessed = e.alreadyProcessed;
+          permanent = e.permanent;
+          code = e.code;
+        } on SubscriptionPurchaseException catch (e) {
+          message = e.message;
+          alreadyProcessed = e.alreadyProcessed;
+          permanent = e.permanent;
+          code = e.code;
+        } catch (e) {
+          message = '$e';
+        }
+        final transient = !alreadyProcessed && !permanent && code == null;
+        if (transient && attempt < retryBackoff.length) {
+          // Right after a purchase the store / server may not know the
+          // transaction yet: wait and try again before leaving it pending.
+          await Future<void>.delayed(retryBackoff[attempt]);
+          if (!ref.mounted) return;
+          continue;
+        }
         await failed(
-          e.message,
-          alreadyProcessed: e.alreadyProcessed,
-          permanent: e.permanent,
+          message,
+          alreadyProcessed: alreadyProcessed,
+          permanent: permanent,
+          code: code,
         );
-      } on SubscriptionPurchaseException catch (e) {
-        await failed(
-          e.message,
-          alreadyProcessed: e.alreadyProcessed,
-          permanent: e.permanent,
-        );
-      } catch (e) {
-        _notice(PurchaseNoticeKind.willRetry, '$e', subscription);
+        return;
       }
     } finally {
       _inFlight.remove(key);
