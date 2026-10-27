@@ -30,17 +30,52 @@ class LegalLinksRow extends StatelessWidget {
       alignment: WrapAlignment.center,
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
-        TextButton(
+        _LinkText(
           key: const Key('legal-privacy'),
-          onPressed: () => _open(context, LegalLinks.privacyPath),
-          child: Text(l10n.privacyPolicy),
+          label: l10n.privacyPolicy,
+          onTap: () => _open(context, LegalLinks.privacyPath),
         ),
-        TextButton(
+        _LinkText(
           key: const Key('legal-terms'),
-          onPressed: () => _open(context, LegalLinks.termsPath),
-          child: Text(l10n.termsOfUse),
+          label: l10n.termsOfUse,
+          onTap: () => _open(context, LegalLinks.termsPath),
         ),
       ],
+    );
+  }
+}
+
+/// Underlined text link with a 48dp-high tap target.
+class _LinkText extends StatelessWidget {
+  final String label;
+  final VoidCallback onTap;
+
+  const _LinkText({super.key, required this.label, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Semantics(
+      link: true,
+      child: InkWell(
+        onTap: onTap,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 48),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Center(
+              widthFactor: 1,
+              child: Text(
+                label,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
