@@ -72,7 +72,7 @@ function bgSvg(cap) {
       ])
       .png().toBuffer();
     // the phone bleeds off the bottom edge: crop the canvas to H
-    await sharp(out).extract({ left: 0, top: 0, width: W, height: H }).png().toFile(path.join(outDir, `${key}.png`));
+    await sharp(out).extract({ left: 0, top: 0, width: W, height: H }).removeAlpha().png().toFile(path.join(outDir, `${key}.png`));
     console.log('ok', key, `${W}x${H}`);
   }
 })();
