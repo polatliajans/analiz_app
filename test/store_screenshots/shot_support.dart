@@ -1,4 +1,4 @@
-// Support code for the Play Store screenshot capture (see
+// Support code for the Play / App Store screenshot capture (see
 // store_screenshots_test.dart): real fonts, a 1080x2400 phone surface and
 // PNG export of the rendered app.
 import 'dart:io';
@@ -22,7 +22,10 @@ List<String> storeShotLangs() =>
 /// Raw capture output; the composer (assets/brand/compose_screenshots.js)
 /// turns these into the branded store images.
 String storeShotRawDir() =>
-    Platform.environment['STORE_SHOT_RAW'] ?? 'store_assets/screenshots/raw/render';
+    Platform.environment['STORE_SHOT_RAW'] ??
+    (iosProfile
+        ? 'store_assets/screenshots/raw/render_ios'
+        : 'store_assets/screenshots/raw/render');
 
 /// Directory holding Roboto + MaterialIcons (Flutter SDK material_fonts).
 String _fontsDir() =>
@@ -58,13 +61,19 @@ Future<void> loadStoreFonts() async {
   await icons.load();
 }
 
-/// Same insets as the phone captures (status bar 32dp, nav bar 44dp); the
-/// composer crops them away.
-const topInset = 32.0;
-const bottomInset = 44.0;
+/// Profile: `STORE_SHOT_PROFILE=ios` renders the App Store set (iPhone 6.9",
+/// 440x956 logical at 3x = 1320x2868, Dynamic Island insets, no Pro purchase
+/// surfaces); anything else is the Play Store phone (1080x2400).
+final bool iosProfile = Platform.environment['STORE_SHOT_PROFILE'] == 'ios';
+
+/// Insets of the capture (Play: status bar 32dp, nav bar 44dp; iOS: Dynamic
+/// Island 59dp, home indicator 34dp); the composer crops them away.
+final double topInset = iosProfile ? 59.0 : 32.0;
+final double bottomInset = iosProfile ? 34.0 : 44.0;
 
 void usePhoneSurface(WidgetTester tester) {
-  tester.view.physicalSize = const Size(1080, 2400);
+  tester.view.physicalSize =
+      iosProfile ? const Size(1320, 2868) : const Size(1080, 2400);
   tester.view.devicePixelRatio = 3;
   addTearDown(tester.view.reset);
 }
@@ -90,8 +99,8 @@ Widget shotApp({
         supportedLocales: AppLocalizations.supportedLocales,
         builder: (context, child) => MediaQuery(
           data: MediaQuery.of(context).copyWith(
-            padding: const EdgeInsets.only(top: topInset, bottom: bottomInset),
-            viewPadding: const EdgeInsets.only(
+            padding: EdgeInsets.only(top: topInset, bottom: bottomInset),
+            viewPadding: EdgeInsets.only(
               top: topInset,
               bottom: bottomInset,
             ),

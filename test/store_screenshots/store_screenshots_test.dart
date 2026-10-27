@@ -42,6 +42,7 @@ import 'package:kriptoanaliz/providers/radar_provider.dart';
 import 'package:kriptoanaliz/providers/selected_coin_provider.dart';
 import 'package:kriptoanaliz/providers/watchlist_provider.dart';
 import 'package:kriptoanaliz/utils/price_alert_logic.dart';
+import 'package:kriptoanaliz/utils/pro_purchase.dart';
 import 'package:kriptoanaliz/screens/chart_screen.dart';
 import 'package:kriptoanaliz/screens/glossary_screen.dart';
 import 'package:kriptoanaliz/screens/home_screen.dart';
@@ -90,6 +91,8 @@ Future<ProviderContainer> makeContainer(
       sharedPreferencesProvider.overrideWithValue(prefs),
       adsControllerProvider.overrideWith(_NoAds.new),
       authProvider.overrideWith(() => FakeAuth(member)),
+      // iOS profile: the app hides every Pro purchase surface on iOS.
+      if (iosProfile) proPurchaseAvailableProvider.overrideWithValue(false),
       ...extra,
     ],
   );
