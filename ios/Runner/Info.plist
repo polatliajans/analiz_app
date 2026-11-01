@@ -59,6 +59,8 @@
 	<string>$(ADMOB_IOS_APP_ID)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>FirebaseAutomaticScreenReportingEnabled</key>
+	<false/>
 	<key>NSUserTrackingUsageDescription</key>
 	<string>This identifier will be used to deliver more relevant ads to you. You can change this at any time in Settings.</string>
 	<key>SKAdNetworkItems</key>

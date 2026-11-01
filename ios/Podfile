@@ -1,6 +1,10 @@
 # Minimum iOS version for the whole pod graph (matches the Xcode project).
 platform :ios, '15.0'
 
+# Firebase Analytics without the IDFA/ad-id code path: analytics stays free of
+# advertising identifiers (AdMob handles IDFA separately, behind ATT).
+$FirebaseAnalyticsWithoutAdIdSupport = true
+
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
