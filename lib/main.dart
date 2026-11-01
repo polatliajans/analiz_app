@@ -214,12 +214,9 @@ class _KriptoAnalizAppState extends ConsumerState<KriptoAnalizApp> {
   Widget build(BuildContext context) {
     ref.listen(authProvider, (previous, next) {
       CrashReporter.instance.setContext(loggedIn: next.isLoggedIn);
-      // Numeric member id only (never email or name); cleared on sign-out.
-      final memberId = next.member?.id;
-      if (previous == null ||
-          previous.member?.id != memberId ||
-          _planOf(previous) != _planOf(next)) {
-        _analytics.setUserId(memberId == null ? null : '$memberId');
+      // No user id is sent to Analytics (the privacy policy states so); only
+      // the coarse plan user property follows the account.
+      if (previous == null || _planOf(previous) != _planOf(next)) {
         _analytics.setUserProperty(AnalyticsUserProps.plan, _planOf(next));
       }
       _pushService.updateAuth(authToken: next.isLoggedIn ? next.token : null);

@@ -9,7 +9,7 @@ property linked to Firebase project `kripto-analiz-affb8`). All code lives in
 - Service: `AnalyticsService` (interface) behind `analyticsProvider`. The default is a no-op, so tests never need Firebase. `main.dart` overrides it with `SafeAnalyticsService(FirebaseAnalyticsBackend())` in release builds.
 - Every call is non-blocking and wrapped in try/catch; an SDK failure can never break the app.
 - Limits enforced before the SDK sees anything: event name <= 40 chars (`[a-z][a-z0-9_]*`, no `firebase_`/`google_`/`ga_` prefix), <= 25 params, param name <= 40, string value <= 100, user property name <= 24 / value <= 36. Booleans are sent as 1/0, nulls are dropped.
-- No PII: no email, no name, no free text. The only identifier is the numeric member id (`setUserId`), cleared on logout and on account deletion.
+- No PII: no email, no name, no free text. No user id is sent (`setUserId` is not called; the privacy policy says so). Events are tied only to the Analytics app instance id, which is reset on account deletion.
 
 ## Consent
 
