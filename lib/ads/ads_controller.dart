@@ -10,6 +10,9 @@ import '../providers/app_config_provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/locale_provider.dart';
 import '../providers/price_alert_provider.dart';
+import '../services/analytics_consent.dart';
+import '../services/analytics_events.dart';
+import '../services/analytics_service.dart';
 import 'ad_analysis_flow.dart';
 import 'ad_counters.dart';
 import 'consent_flow.dart';
@@ -102,9 +105,19 @@ class AdsController extends Notifier<AdsState> {
     if (!config.enabled && !_adAnalysisWanted) {
       _disposeFullScreenAds();
       state = const AdsState();
+      // No consent form runs for this member (e.g. Pro): analytics still
+      // needs UMP's verdict.
+      unawaited(
+        ref.read(analyticsConsentCoordinatorProvider).resolveWithoutForm(),
+      );
       return;
     }
     final ok = await (_consentAndInit ??= _obtainConsentAndInitialize());
+    // The consent flow has run: let analytics follow UMP's verdict (also when
+    // ads are not allowed, e.g. the user declined in the EEA).
+    if (ref.mounted) {
+      unawaited(ref.read(analyticsConsentCoordinatorProvider).resolveFromUmp());
+    }
     // Config may have changed (e.g. upgraded to Pro) while consent ran.
     if (!ok || !ref.mounted) return;
     if (!ref.read(effectiveAdsConfigProvider).enabled && !_adAnalysisWanted) {
@@ -257,9 +270,15 @@ class AdsController extends Notifier<AdsState> {
     }
     _navInterstitial = null;
     _showingFullScreen = true;
+    final analytics = ref.read(analyticsProvider);
     ad.fullScreenContentCallback = FullScreenContentCallback(
-      onAdShowedFullScreenContent: (_) =>
-          counters.recordNavigationShown(DateTime.now()),
+      onAdShowedFullScreenContent: (_) {
+        counters.recordNavigationShown(DateTime.now());
+        analytics.logAdShown(
+          AdPlacementKeys.interstitialNavigation,
+          'interstitial',
+        );
+      },
       onAdDismissedFullScreenContent: (a) {
         _showingFullScreen = false;
         a.dispose();
@@ -310,9 +329,15 @@ class AdsController extends Notifier<AdsState> {
     }
     _interstitial = null;
     _showingFullScreen = true;
+    final analytics = ref.read(analyticsProvider);
     ad.fullScreenContentCallback = FullScreenContentCallback(
-      onAdShowedFullScreenContent: (_) =>
-          counters.setLastInterstitialAt(DateTime.now()),
+      onAdShowedFullScreenContent: (_) {
+        counters.setLastInterstitialAt(DateTime.now());
+        analytics.logAdShown(
+          AdPlacementKeys.interstitialAnalysis,
+          'interstitial',
+        );
+      },
       onAdDismissedFullScreenContent: (a) {
         _showingFullScreen = false;
         a.dispose();
@@ -335,6 +360,8 @@ class AdsController extends Notifier<AdsState> {
   // -------------------------------------------------------------------- rewarded
 
   bool get _adAnalysisWanted => ref.read(adAnalysisWantedProvider);
+
+  static const _rewardedPlacement = 'rewarded_analysis';
 
   void _loadRewarded() {
     if (!state.sdkReady || !_adAnalysisWanted) return;
@@ -415,7 +442,10 @@ class AdsController extends Notifier<AdsState> {
           customData: customData,
         ),
       );
+      final analytics = ref.read(analyticsProvider);
       ad.fullScreenContentCallback = FullScreenContentCallback(
+        onAdShowedFullScreenContent: (_) =>
+            analytics.logAdShown(_rewardedPlacement, 'rewarded'),
         onAdDismissedFullScreenContent: (a) => finish(
           earned ? RewardedOutcome.earned : RewardedOutcome.dismissed,
           a,
@@ -423,7 +453,12 @@ class AdsController extends Notifier<AdsState> {
         onAdFailedToShowFullScreenContent: (a, _) =>
             finish(RewardedOutcome.failed, a),
       );
-      await ad.show(onUserEarnedReward: (_, _) => earned = true);
+      await ad.show(
+        onUserEarnedReward: (_, _) {
+          earned = true;
+          analytics.logRewardedAdCompleted(_rewardedPlacement);
+        },
+      );
     } catch (_) {
       finish(RewardedOutcome.failed, ad);
     }

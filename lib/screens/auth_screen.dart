@@ -141,7 +141,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                         ? null
                         : () => ref
                               .read(authPromptDoneProvider.notifier)
-                              .complete(),
+                              .continueAsGuest(),
                     child: Text(l10n.continueAsGuest),
                   ),
                 ],

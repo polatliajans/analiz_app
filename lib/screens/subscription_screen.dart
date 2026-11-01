@@ -11,6 +11,8 @@ import '../providers/price_alert_provider.dart';
 import '../providers/store_price_provider.dart';
 import '../providers/store_product_provider.dart';
 import '../providers/subscription_provider.dart';
+import '../services/analytics_events.dart';
+import '../services/analytics_service.dart';
 import '../utils/pro_purchase.dart';
 import '../utils/subscription_period.dart';
 import '../widgets/brand_page.dart';
@@ -28,9 +30,15 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
   // which verifies subscriptions with the server too; this screen only starts
   // buys / restores and reflects the shared state (busy markers, notices).
 
+  static const _analyticsSource = 'subscription_screen';
+  late final AnalyticsService _analytics;
+  bool _activated = false;
+
   @override
   void initState() {
     super.initState();
+    _analytics = ref.read(analyticsProvider);
+    _analytics.logProScreenView(_analyticsSource);
     // Anything left unverified (offline earlier, plans not loaded) gets
     // another try as soon as the user opens the Pro page.
     Future.microtask(() {
@@ -38,6 +46,12 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         ref.read(creditPurchaseControllerProvider.notifier).retryPending();
       }
     });
+  }
+
+  @override
+  void dispose() {
+    if (!_activated) _analytics.logPaywallDismissed(_analyticsSource);
+    super.dispose();
   }
 
   void _snack(String text) {
@@ -52,6 +66,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     switch (notice.kind) {
       case PurchaseNoticeKind.subscriptionActivated:
       case PurchaseNoticeKind.credited:
+        _activated = true;
         _snack(l10n.proActivated);
       case PurchaseNoticeKind.alreadyProcessed:
       case PurchaseNoticeKind.rejected:

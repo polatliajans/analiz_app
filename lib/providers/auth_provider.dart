@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../data/auth_api.dart';
 import '../models/credit_breakdown.dart';
 import '../models/member.dart';
+import '../services/analytics_events.dart';
+import '../services/analytics_service.dart';
 import '../services/firebase_auth_service.dart';
 
 const _tokenStorageKey = 'auth_token';
@@ -83,30 +87,43 @@ class AuthNotifier extends Notifier<AuthState> {
     state = AuthState(member: result.member, token: result.token);
   }
 
-  Future<void> _signIn(Future<String> Function() getIdToken) async {
+  Future<void> _signIn(
+    Future<String> Function() getIdToken,
+    AuthMethod method, {
+    bool signUp = false,
+  }) async {
     state = state.copyWith(isLoading: true);
     try {
       await _exchangeAndStore(await getIdToken());
+      final analytics = ref.read(analyticsProvider);
+      signUp ? analytics.logSignUp(method) : analytics.logLogin(method);
     } catch (e) {
       state = state.copyWith(isLoading: false);
       rethrow;
     }
   }
 
-  Future<void> signInWithGoogle() =>
-      _signIn(ref.read(firebaseAuthServiceProvider).signInWithGoogle);
+  Future<void> signInWithGoogle() => _signIn(
+    ref.read(firebaseAuthServiceProvider).signInWithGoogle,
+    AuthMethod.google,
+  );
 
-  Future<void> signInWithApple() =>
-      _signIn(ref.read(firebaseAuthServiceProvider).signInWithApple);
+  Future<void> signInWithApple() => _signIn(
+    ref.read(firebaseAuthServiceProvider).signInWithApple,
+    AuthMethod.apple,
+  );
 
   Future<void> signInWithEmail(String email, String password) => _signIn(
     () =>
         ref.read(firebaseAuthServiceProvider).signInWithEmail(email, password),
+    AuthMethod.email,
   );
 
   Future<void> registerWithEmail(String email, String password) => _signIn(
     () =>
         ref.read(firebaseAuthServiceProvider).signUpWithEmail(email, password),
+    AuthMethod.email,
+    signUp: true,
   );
 
   Future<void> sendPasswordReset(String email) =>
@@ -160,6 +177,7 @@ class AuthNotifier extends Notifier<AuthState> {
   }
 
   Future<void> logout() async {
+    ref.read(analyticsProvider).logLogout();
     final token = state.token;
     if (token != null) {
       try {
@@ -195,6 +213,7 @@ class AuthNotifier extends Notifier<AuthState> {
     await firebase.signOut();
     await ref.read(secureStorageProvider).delete(key: _tokenStorageKey);
     state = const AuthState();
+    unawaited(ref.read(analyticsProvider).resetOnAccountDeleted());
   }
 }
 

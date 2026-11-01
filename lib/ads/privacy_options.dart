@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
@@ -29,7 +31,16 @@ class UmpPrivacyOptions implements PrivacyOptions {
   @override
   Future<void> show() async {
     try {
-      await ConsentForm.showPrivacyOptionsForm((_) {});
+      // Completes when the form is dismissed, so callers can react to a
+      // changed choice (analytics follows the same consent).
+      final dismissed = Completer<void>();
+      await ConsentForm.showPrivacyOptionsForm((_) {
+        if (!dismissed.isCompleted) dismissed.complete();
+      });
+      await dismissed.future.timeout(
+        const Duration(minutes: 10),
+        onTimeout: () {},
+      );
     } catch (_) {
       // Best effort: nothing to show if the form is unavailable.
     }

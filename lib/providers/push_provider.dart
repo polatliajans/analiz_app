@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../services/analytics_events.dart';
+import '../services/analytics_service.dart';
 import '../services/notification_logic.dart';
 import '../services/push_notification_service.dart';
 
@@ -18,8 +20,10 @@ final pendingNotificationTargetProvider =
 
 final pushServiceProvider = Provider<PushNotificationService>((ref) {
   final service = PushNotificationService(
-    onTarget: (t) =>
-        ref.read(pendingNotificationTargetProvider.notifier).set(t),
+    onTarget: (t) {
+      ref.read(analyticsProvider).logPushOpened(t.screen.name);
+      ref.read(pendingNotificationTargetProvider.notifier).set(t);
+    },
   );
   ref.onDispose(service.dispose);
   return service;

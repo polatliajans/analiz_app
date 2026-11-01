@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../services/analytics_events.dart';
+import '../services/analytics_service.dart';
 import 'locale_provider.dart';
 
 const authPromptDoneKey = 'auth_prompt_done';
@@ -14,6 +16,12 @@ class AuthPromptDoneNotifier extends Notifier<bool> {
   Future<void> complete() async {
     state = true;
     await ref.read(sharedPreferencesProvider).setBool(authPromptDoneKey, true);
+  }
+
+  /// "Continue as guest" on the first-run screen.
+  Future<void> continueAsGuest() {
+    ref.read(analyticsProvider).logLogin(AuthMethod.guest);
+    return complete();
   }
 
   /// Shows the first-run sign-in screen again (used after account deletion).

@@ -11,6 +11,7 @@ import '../providers/auth_provider.dart';
 import '../providers/locale_provider.dart';
 import '../providers/startup_tab_provider.dart';
 import '../providers/theme_provider.dart';
+import '../services/analytics_consent.dart';
 import '../widgets/notification_settings_section.dart';
 import 'glossary_screen.dart';
 import 'onboarding_screen.dart';
@@ -201,7 +202,14 @@ class SettingsScreen extends ConsumerWidget {
               leading: const Icon(Icons.ads_click_outlined),
               title: Text(l10n.adPrivacyOptions),
               trailing: const Icon(Icons.chevron_right),
-              onTap: () => ref.read(privacyOptionsProvider).show(),
+              onTap: () async {
+                final coordinator = ref.read(
+                  analyticsConsentCoordinatorProvider,
+                );
+                await ref.read(privacyOptionsProvider).show();
+                // The choice may have changed: analytics follows it.
+                await coordinator.resolveFromUmp();
+              },
             ),
           ListTile(
             leading: const Icon(Icons.person_remove_outlined),

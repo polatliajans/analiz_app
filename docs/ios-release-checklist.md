@@ -85,6 +85,8 @@ in the Apple / Firebase / AdMob / Codemagic consoles. Secrets are never committe
 
 Install the build on a real iPhone and verify: Google login; **Continue with Apple** (visible on iOS only); push permission and receiving a push (FCM token registered with platform `ios`); the ATT prompt appears after the consent form; test ads; sandbox purchase of a credit pack (incl. killing the app mid-purchase and relaunching: the pending transaction must be credited at launch); sandbox purchase of a Pro plan (the Pro screen shows StoreKit title, price and billing period, the auto-renew / Apple ID / 24 hours cancel note, Manage subscription, Restore purchases, Terms of Use and Privacy Policy; the account becomes Pro; kill the app right after paying and relaunch: it must still be activated), **Restore purchases** on a second device or after reinstall (Pro comes back, no duplicate charge), Manage subscription opens the App Store subscriptions page, renewals/expiry (sandbox) reflected in the account; account deletion (Apple users get a re-authorization prompt to revoke the token); Privacy/Terms links on the login screen.
 
+Analytics: with `-FIRAnalyticsDebugEnabled` in the Xcode scheme, open Firebase **DebugView** (or GA4 Realtime) and confirm `screen_view`, `login` and the analysis events arrive once the consent form is accepted (details and the Android command in `docs/analytics-events.md`). Standard GA4 reports lag 24-48 hours; Realtime/DebugView take minutes.
+
 ## 7. Limits of the Windows-only verification (assumptions)
 
 - Nothing in `ios/` was compiled. `project.pbxproj` was edited by hand and only parsed with a pbxproj parser.

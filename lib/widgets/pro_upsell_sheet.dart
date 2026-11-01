@@ -5,6 +5,8 @@ import '../l10n/app_localizations.dart';
 import '../providers/auth_provider.dart';
 import '../screens/auth_screen.dart';
 import '../screens/subscription_screen.dart';
+import '../services/analytics_events.dart';
+import '../services/analytics_service.dart';
 import '../utils/pro_purchase.dart';
 
 /// The Pro-only feature that triggered the upsell.
@@ -36,14 +38,22 @@ Future<void> showProUpsell(
     );
     return Future<void>.value();
   }
-  return showModalBottomSheet<void>(
+  final analytics = ProviderScope.containerOf(
+    context,
+    listen: false,
+  ).read(analyticsProvider);
+  final source = 'upsell_${feature.name}';
+  analytics.logProScreenView(source);
+  return showModalBottomSheet<bool>(
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
     showDragHandle: true,
     builder: (_) =>
         _ProUpsellSheet(feature: feature, count: count, limit: limit),
-  );
+  ).then((upgrade) {
+    if (upgrade != true) analytics.logPaywallDismissed(source);
+  });
 }
 
 class _ProUpsellSheet extends ConsumerWidget {
@@ -141,7 +151,7 @@ class _ProUpsellSheet extends ConsumerWidget {
               onPressed: () {
                 final navigator = Navigator.of(context);
                 final loggedIn = ref.read(authProvider).isLoggedIn;
-                navigator.pop();
+                navigator.pop(true);
                 navigator.push(
                   MaterialPageRoute(
                     builder: (_) => loggedIn

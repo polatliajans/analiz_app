@@ -14,6 +14,8 @@ import '../data/subscription_purchase_api.dart'
     show SubscriptionPurchaseException;
 import '../models/credit_package.dart';
 import '../models/subscription_plan.dart';
+import '../services/analytics_events.dart';
+import '../services/analytics_service.dart';
 import '../utils/platform_info.dart';
 import 'auth_provider.dart';
 import 'credit_package_provider.dart';
@@ -158,8 +160,10 @@ class CreditPurchaseController extends Notifier<CreditPurchaseState> {
       p.purchaseID ??
       '${p.productID}:${p.verificationData.serverVerificationData.hashCode}';
 
-  void beginBuy(String productId) =>
-      state = state.copyWith(pending: {...state.pending, productId});
+  void beginBuy(String productId) {
+    ref.read(analyticsProvider).logCreditPurchaseStarted(productId);
+    state = state.copyWith(pending: {...state.pending, productId});
+  }
 
   void endBuy(String productId) =>
       state = state.copyWith(pending: {...state.pending}..remove(productId));
@@ -197,6 +201,7 @@ class CreditPurchaseController extends Notifier<CreditPurchaseState> {
   /// Returns true when at least one purchase arrived during the restore;
   /// false means there was nothing to restore (the caller tells the user).
   Future<bool> restorePurchases() async {
+    ref.read(analyticsProvider).logRestoreTapped();
     final before = _deliveries;
     await ref
         .read(inAppPurchaseProvider)
@@ -416,6 +421,13 @@ class CreditPurchaseController extends Notifier<CreditPurchaseState> {
           await verify(proof);
           await ref.read(authProvider.notifier).refreshMember();
           ref.read(homeProvider.notifier).refresh(force: true);
+          // Server-confirmed: a restore is not a new purchase.
+          if (p.status == PurchaseStatus.purchased) {
+            final analytics = ref.read(analyticsProvider);
+            subscription
+                ? analytics.logSubscriptionStarted(p.productID)
+                : analytics.logPurchase(p.productID);
+          }
           // Finish only after the server confirmed the credit / activation.
           await finish(
             subscription

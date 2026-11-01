@@ -24,6 +24,8 @@ import '../providers/live_chart_provider.dart';
 import '../providers/price_alert_provider.dart';
 import '../providers/selected_coin_provider.dart';
 import '../providers/watchlist_provider.dart';
+import '../services/analytics_events.dart';
+import '../services/analytics_service.dart';
 import '../utils/feature_gate.dart';
 import '../utils/timeframes.dart';
 import '../widgets/analysis_card.dart';
@@ -98,16 +100,32 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
       notifier.acknowledge();
     }
 
+    final analytics = ref.read(analyticsProvider);
+    var jobTimeframe = ref.read(timeframeProvider);
+    final fromJob = s.job?.timeframe;
+    if (fromJob != null) jobTimeframe = fromJob;
     switch (s.phase) {
       case DeepAnalysisPhase.completed:
+        analytics.logAnalysisCompleted(
+          AnalysisFunnel.deep,
+          jobTimeframe,
+          s.job?.creditCost ?? 0,
+        );
         _showDeepResult(s.job!);
       case DeepAnalysisPhase.failed:
+        analytics.logAnalysisFailed(
+          AnalysisFunnel.deep,
+          s.job?.errorCode ?? 'job_failed',
+        );
         say(l10n.deepAnalysisFailedRefunded);
       case DeepAnalysisPhase.timedOut:
+        analytics.logAnalysisFailed(AnalysisFunnel.deep, 'timed_out');
         say(l10n.deepAnalysisStillRunning);
       case DeepAnalysisPhase.networkLost:
+        analytics.logAnalysisFailed(AnalysisFunnel.deep, 'network_lost');
         say(l10n.deepAnalysisCheckLater);
       case DeepAnalysisPhase.error:
+        analytics.logAnalysisFailed(AnalysisFunnel.deep, 'error');
         say(s.message ?? l10n.deepAnalysisCheckLater);
       case DeepAnalysisPhase.waiting:
       case DeepAnalysisPhase.idle:
@@ -175,10 +193,17 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
       showProUpsell(context, ProFeature.timeframe);
       return;
     }
+    final analytics = ref.read(analyticsProvider);
+    analytics.logAnalysisStarted(AnalysisFunnel.quick, timeframe);
     try {
       final r = await runWithAnalysisOverlay(
         context,
         () => request(auth.token!, timeframe),
+      );
+      analytics.logAnalysisCompleted(
+        AnalysisFunnel.quick,
+        timeframe,
+        r.creditCost,
       );
       await _presentQuickResult(
         result: r.result,
@@ -188,17 +213,23 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
     } catch (e) {
       if (!mounted) return;
       if (e is InsufficientCreditException) {
+        analytics.logAnalysisFailed(
+          AnalysisFunnel.quick,
+          'insufficient_credit',
+        );
         final watchAd = await showInsufficientCreditDialog(context);
         if (watchAd && mounted) await _runAdAnalysis(coin);
         return;
       }
       if (e is ProRequiredException) {
+        analytics.logAnalysisFailed(AnalysisFunnel.quick, 'pro_required');
         // The server's view of the plan wins: resync, then explain.
         ref.read(authProvider.notifier).refreshMember();
         ref.read(appConfigProvider.notifier).refresh();
         showProUpsell(context, proFeature);
         return;
       }
+      analytics.logAnalysisFailed(AnalysisFunnel.quick, 'error');
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(failureMessage(l10n, '$e'))));
@@ -245,6 +276,8 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
       showProUpsell(context, ProFeature.timeframe);
       return;
     }
+    final analytics = ref.read(analyticsProvider);
+    analytics.logAnalysisStarted(AnalysisFunnel.ad, timeframe);
     void Function()? closeOverlay;
     final flow = AdAnalysisFlow(
       api: ref.read(adAnalysisApiProvider),
@@ -278,6 +311,11 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
     switch (result.outcome) {
       case AdFlowOutcome.success:
         final r = result.analysis!;
+        analytics.logAnalysisCompleted(
+          AnalysisFunnel.ad,
+          timeframe,
+          r.creditCost,
+        );
         await _presentQuickResult(
           result: r.result,
           creditCost: r.creditCost,
@@ -292,6 +330,14 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
         break;
       case AdFlowOutcome.failed:
         final e = result.error;
+        analytics.logAnalysisFailed(
+          AnalysisFunnel.ad,
+          e is InsufficientCreditException
+              ? 'insufficient_credit'
+              : e is ProRequiredException
+              ? 'pro_required'
+              : 'error',
+        );
         if (e is InsufficientCreditException) {
           await showInsufficientCreditDialog(context);
         } else if (e is ProRequiredException) {
@@ -302,6 +348,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
           say(l10n.analysisFailed('$e'));
         }
       default:
+        analytics.logAnalysisFailed(AnalysisFunnel.ad, result.outcome.name);
         final text = adFlowMessage(l10n, result.outcome);
         if (text != null) say(text);
         if (result.outcome == AdFlowOutcome.capReached ||
@@ -345,6 +392,8 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
       showProUpsell(context, ProFeature.timeframe);
       return;
     }
+    final analytics = ref.read(analyticsProvider);
+    analytics.logAnalysisStarted(AnalysisFunnel.deep, timeframe);
     try {
       await ref
           .read(deepAnalysisProvider.notifier)
@@ -352,17 +401,20 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
     } catch (e) {
       if (!mounted) return;
       if (e is InsufficientCreditException) {
+        analytics.logAnalysisFailed(AnalysisFunnel.deep, 'insufficient_credit');
         // Deep analysis always costs credits: no ad option.
         showInsufficientCreditDialog(context, kind: AnalysisKind.deep);
         return;
       }
       if (e is ProRequiredException) {
+        analytics.logAnalysisFailed(AnalysisFunnel.deep, 'pro_required');
         // The server's view of the plan wins: resync, then explain.
         ref.read(authProvider.notifier).refreshMember();
         ref.read(appConfigProvider.notifier).refresh();
         showProUpsell(context, ProFeature.deepAnalysis);
         return;
       }
+      analytics.logAnalysisFailed(AnalysisFunnel.deep, 'error');
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(l10n.deepAnalysisFailed('$e'))));
