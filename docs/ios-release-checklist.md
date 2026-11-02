@@ -23,7 +23,7 @@ in the Apple / Firebase / AdMob / Codemagic consoles. Secrets are never committe
    - an **APNs Auth Key** (`.p8`, Apple Push Notifications service), needed by Firebase;
    - a **Sign in with Apple key** (`.p8`, with its Key ID), needed by Firebase to revoke the Apple token on account deletion;
    - **TWO different App Store Connect keys, never mix them up:**
-     - **A. App Store Connect API key** (Users and Access > Integrations > **App Store Connect API**, role **App Manager** or Admin). It goes **ONLY** into the Codemagic integration `codemagic_asc` (step 5.2), used to sign and upload builds. It must never be entered in the admin panel.
+     - **A. App Store Connect API key** (Users and Access > Integrations > **App Store Connect API**, role **App Manager** or Admin). It goes **ONLY** into the Codemagic integration named `Codemagic` (step 5.2; it is the team key B5DRCJAD67 already connected for another app and is reused here), used to sign and upload builds. It must never be entered in the admin panel.
      - **B. In-App Purchase key** (Users and Access > Integrations > **In-App Purchase**, `.p8`): note the **Issuer ID** (shown on that page), the **Key ID**, and download the `.p8` once (it cannot be downloaded again). It goes **ONLY** into the Laravel admin panel's Apple settings (step 2.4: Issuer ID, Key ID, `.p8` contents). The server uses it to verify purchases with the App Store Server API. It must never be entered in Codemagic.
 3. Note your **Team ID**.
 
@@ -73,7 +73,7 @@ in the Apple / Firebase / AdMob / Codemagic consoles. Secrets are never committe
 ## 5. Codemagic (YOU)
 
 1. Add the repository as an application and choose the **codemagic.yaml** configuration.
-2. Teams > Integrations > Developer Portal > **App Store Connect**: add the **App Store Connect API key (key A from step 1.2; not the In-App Purchase key)** and name the integration exactly `codemagic_asc`.
+2. Teams > Integrations > Developer Portal > **App Store Connect**: add the **App Store Connect API key (key A from step 1.2; not the In-App Purchase key)** (here an existing integration named `Codemagic` is reused; `codemagic.yaml` references it by that name, so keep the names in sync).
 3. Code signing identities > iOS: let Codemagic create/fetch a distribution certificate and an App Store provisioning profile through the integration, or upload your own. The profile must be for `com.polatliajans.kriptoanaliz` and was generated after enabling Push and Sign in with Apple.
 4. Environment variables > group **`ios_release`** (mark secure):
    - `GOOGLE_SERVICE_INFO_PLIST`: base64 of the plist (step 3.5)

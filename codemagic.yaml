@@ -3,7 +3,7 @@
 # One-time setup lives in docs/ios-release-checklist.md. Secrets are NEVER in
 # this file; only the names of Codemagic variables / integrations appear here:
 #
-#   Integration  codemagic_asc          App Store Connect API key (Teams > Integrations)
+#   Integration  Codemagic               App Store Connect API key (Teams > Integrations)
 #   Group        ios_release            GOOGLE_SERVICE_INFO_PLIST  (secure, base64 of GoogleService-Info.plist)
 #                                       ADMOB_IOS_APP_ID           (AdMob iOS APP id, ca-app-pub-...~...)
 #                                       APP_STORE_APPLE_ID         (numeric Apple ID of the app in App Store Connect)
@@ -17,7 +17,7 @@ workflows:
     instance_type: mac_mini_m2
     max_build_duration: 60
     integrations:
-      app_store_connect: codemagic_asc
+      app_store_connect: Codemagic
     environment:
       flutter: 3.38.7
       xcode: latest
@@ -54,7 +54,7 @@ workflows:
           set -euo pipefail
           # Build number = max(latest TestFlight build, pubspec build number) + 1.
           # `get-latest-testflight-build-number` (Codemagic CLI, uses the
-          # codemagic_asc integration) covers every build App Store Connect
+          # Codemagic integration) covers every build App Store Connect
           # has processed, including ones never sent to review.
           PUBSPEC_BUILD_NUMBER=$(sed -n 's/^version: *[0-9.]*+\([0-9][0-9]*\).*/\1/p' pubspec.yaml | head -n 1)
           PUBSPEC_BUILD_NUMBER=${PUBSPEC_BUILD_NUMBER:-0}
