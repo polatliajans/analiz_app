@@ -46,10 +46,11 @@ Analytics follows the user's consent (Google UMP, the same flow as ads):
 | `rewarded_ad_completed` | `placement` | `AdsController` (reward earned) |
 | `push_opened` | `screen` (target screen name) | `pushServiceProvider` (notification tap) |
 | `guide_card_tapped` | `source`: home, settings | `openGuide` (home guide card, Settings > How it works) |
+| `terms_accepted` | `version` (terms version, e.g. 2026-11-02) | `TermsAcceptedNotifier.accept` (first-launch / re-acceptance gate). Analytics is still denied until consent, so a first-time user's own event is normally dropped; later versions are recorded once consent is granted |
 
 Not implemented because the feature does not exist in the app: `share_analysis_tapped`, `report_analysis_tapped`.
 
-Screens reported by `screen_view`: `language`, `onboarding`, `auth`, the tabs (`home`, `chart`, `radar`, `watchlist`, `account`) and pushed pages (`subscription`, `credit_packages`, `auth`, `email_auth`, `glossary`, `guest_benefits`, `guide`, `alarms`, `onboarding`, `settings`, `analysis_history`; see `analytics_screens.dart`).
+Screens reported by `screen_view`: `language`, `terms`, `onboarding`, `auth`, the tabs (`home`, `chart`, `radar`, `watchlist`, `account`) and pushed pages (`subscription`, `credit_packages`, `auth`, `email_auth`, `glossary`, `guest_benefits`, `guide`, `alarms`, `onboarding`, `settings`, `analysis_history`; see `analytics_screens.dart`).
 
 ## User properties
 

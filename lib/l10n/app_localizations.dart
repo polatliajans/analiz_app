@@ -3909,6 +3909,192 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Signals and analyses are produced by AI and technical indicators; no information is certain. Crypto markets are very risky and you can lose some or all of your money. This app does not give investment advice. All decisions and any losses are solely yours.'**
   String get guideDisclaimerBody;
+
+  /// No description provided for @termsGateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Before you start'**
+  String get termsGateTitle;
+
+  /// No description provided for @termsGateIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Please read these points and accept the terms to continue.'**
+  String get termsGateIntro;
+
+  /// No description provided for @termsGateBullet1.
+  ///
+  /// In en, this message translates to:
+  /// **'CryptoAnaliz only provides AI-generated analysis and signals.'**
+  String get termsGateBullet1;
+
+  /// No description provided for @termsGateBullet2.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing in the app is financial or investment advice.'**
+  String get termsGateBullet2;
+
+  /// No description provided for @termsGateBullet3.
+  ///
+  /// In en, this message translates to:
+  /// **'No result is guaranteed: signals and analyses can be wrong.'**
+  String get termsGateBullet3;
+
+  /// No description provided for @termsGateBullet4.
+  ///
+  /// In en, this message translates to:
+  /// **'Crypto markets are very risky and you can lose some or all of your money.'**
+  String get termsGateBullet4;
+
+  /// No description provided for @termsGateBullet5.
+  ///
+  /// In en, this message translates to:
+  /// **'You are solely responsible for your own decisions and any losses.'**
+  String get termsGateBullet5;
+
+  /// No description provided for @termsGateBullet6.
+  ///
+  /// In en, this message translates to:
+  /// **'Some features use credits or a Pro subscription; the details are in the Terms of Use.'**
+  String get termsGateBullet6;
+
+  /// No description provided for @termsGateLinksLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Read the full documents'**
+  String get termsGateLinksLabel;
+
+  /// No description provided for @termsGateCheckbox.
+  ///
+  /// In en, this message translates to:
+  /// **'I have read and accept the Terms of Use and Privacy Policy and understand that signals are AI-generated and not investment advice'**
+  String get termsGateCheckbox;
+
+  /// No description provided for @termsGateContinueHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tick the box above to continue'**
+  String get termsGateContinueHint;
+
+  /// No description provided for @guideLevelsProOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Level 3 (strongest) signals are available to Pro subscribers only. Free accounts see {max, plural, =1{level 1} other{levels 1 to {max}}} on the chart, and guests do not see chart signals.'**
+  String guideLevelsProOnly(int max);
+
+  /// No description provided for @guideLevelsAllFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Free accounts see all three levels on the chart. Guests do not see chart signals; sign in for free to see them.'**
+  String get guideLevelsAllFree;
+
+  /// No description provided for @planCmpTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Free vs Pro'**
+  String get planCmpTitle;
+
+  /// No description provided for @planCmpFeature.
+  ///
+  /// In en, this message translates to:
+  /// **'Feature'**
+  String get planCmpFeature;
+
+  /// No description provided for @planCmpIncluded.
+  ///
+  /// In en, this message translates to:
+  /// **'Included'**
+  String get planCmpIncluded;
+
+  /// No description provided for @planCmpNotIncluded.
+  ///
+  /// In en, this message translates to:
+  /// **'Not included'**
+  String get planCmpNotIncluded;
+
+  /// No description provided for @planCmpUnlimited.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited'**
+  String get planCmpUnlimited;
+
+  /// No description provided for @planCmpLimited.
+  ///
+  /// In en, this message translates to:
+  /// **'Limited'**
+  String get planCmpLimited;
+
+  /// No description provided for @planCmpRowCredits.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly credits'**
+  String get planCmpRowCredits;
+
+  /// No description provided for @planCmpRowSignalLevels.
+  ///
+  /// In en, this message translates to:
+  /// **'Chart signal levels'**
+  String get planCmpRowSignalLevels;
+
+  /// No description provided for @planCmpRowTimeframes.
+  ///
+  /// In en, this message translates to:
+  /// **'Fastest timeframes ({timeframes})'**
+  String planCmpRowTimeframes(String timeframes);
+
+  /// No description provided for @planCmpRowQuick.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick AI analysis'**
+  String get planCmpRowQuick;
+
+  /// No description provided for @planCmpRowDeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Deep analysis'**
+  String get planCmpRowDeep;
+
+  /// No description provided for @planCmpRowWatchlist.
+  ///
+  /// In en, this message translates to:
+  /// **'Watchlist size'**
+  String get planCmpRowWatchlist;
+
+  /// No description provided for @planCmpRowAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Price alerts'**
+  String get planCmpRowAlerts;
+
+  /// No description provided for @planCmpRowSignalPush.
+  ///
+  /// In en, this message translates to:
+  /// **'Watchlist signal notifications'**
+  String get planCmpRowSignalPush;
+
+  /// No description provided for @planCmpRowRadar.
+  ///
+  /// In en, this message translates to:
+  /// **'Full radar with AI notes'**
+  String get planCmpRowRadar;
+
+  /// No description provided for @planCmpRowNoAds.
+  ///
+  /// In en, this message translates to:
+  /// **'No ads'**
+  String get planCmpRowNoAds;
+
+  /// No description provided for @planCmpFootnote.
+  ///
+  /// In en, this message translates to:
+  /// **'Free means a signed-in free account.'**
+  String get planCmpFootnote;
+
+  /// No description provided for @planCmpRowSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'{feature}: Free {free}, Pro {pro}'**
+  String planCmpRowSemantics(String feature, String free, String pro);
 }
 
 class _AppLocalizationsDelegate

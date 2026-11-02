@@ -2405,4 +2405,120 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get guideDisclaimerBody =>
       'Las señales y los análisis los generan la IA y los indicadores técnicos; ninguna información es segura. Los mercados cripto son muy arriesgados y puedes perder parte o todo tu dinero. Esta app no ofrece asesoramiento de inversión. Todas las decisiones y las posibles pérdidas son únicamente tuyas.';
+
+  @override
+  String get termsGateTitle => 'Antes de empezar';
+
+  @override
+  String get termsGateIntro =>
+      'Lee estos puntos y acepta los términos para continuar.';
+
+  @override
+  String get termsGateBullet1 =>
+      'CryptoAnaliz solo ofrece análisis y señales generados por IA.';
+
+  @override
+  String get termsGateBullet2 =>
+      'Nada en la app es asesoramiento financiero ni de inversión.';
+
+  @override
+  String get termsGateBullet3 =>
+      'Ningún resultado está garantizado: las señales y los análisis pueden fallar.';
+
+  @override
+  String get termsGateBullet4 =>
+      'Los mercados de criptomonedas son muy arriesgados y puedes perder parte o todo tu dinero.';
+
+  @override
+  String get termsGateBullet5 =>
+      'Eres el único responsable de tus decisiones y de cualquier pérdida.';
+
+  @override
+  String get termsGateBullet6 =>
+      'Algunas funciones usan créditos o una suscripción Pro; los detalles están en los Términos de uso.';
+
+  @override
+  String get termsGateLinksLabel => 'Lee los documentos completos';
+
+  @override
+  String get termsGateCheckbox =>
+      'He leído y acepto los Términos de uso y la Política de privacidad, y entiendo que las señales las genera la IA y no son asesoramiento de inversión';
+
+  @override
+  String get termsGateContinueHint =>
+      'Marca la casilla de arriba para continuar';
+
+  @override
+  String guideLevelsProOnly(int max) {
+    String _temp0 = intl.Intl.pluralLogic(
+      max,
+      locale: localeName,
+      other: 'los niveles 1 a $max',
+      one: 'el nivel 1',
+    );
+    return 'Las señales de nivel 3 (las más fuertes) son solo para suscriptores Pro. Las cuentas gratuitas ven $_temp0 en el gráfico, y los invitados no ven señales en el gráfico.';
+  }
+
+  @override
+  String get guideLevelsAllFree =>
+      'Las cuentas gratuitas ven los tres niveles en el gráfico. Los invitados no ven señales en el gráfico; inicia sesión gratis para verlas.';
+
+  @override
+  String get planCmpTitle => 'Gratis vs Pro';
+
+  @override
+  String get planCmpFeature => 'Función';
+
+  @override
+  String get planCmpIncluded => 'Incluido';
+
+  @override
+  String get planCmpNotIncluded => 'No incluido';
+
+  @override
+  String get planCmpUnlimited => 'Ilimitado';
+
+  @override
+  String get planCmpLimited => 'Limitado';
+
+  @override
+  String get planCmpRowCredits => 'Créditos mensuales';
+
+  @override
+  String get planCmpRowSignalLevels => 'Niveles de señal en el gráfico';
+
+  @override
+  String planCmpRowTimeframes(String timeframes) {
+    return 'Marcos temporales más rápidos ($timeframes)';
+  }
+
+  @override
+  String get planCmpRowQuick => 'Análisis rápido con IA';
+
+  @override
+  String get planCmpRowDeep => 'Análisis profundo';
+
+  @override
+  String get planCmpRowWatchlist => 'Tamaño de la lista de seguimiento';
+
+  @override
+  String get planCmpRowAlerts => 'Alertas de precio';
+
+  @override
+  String get planCmpRowSignalPush => 'Notificaciones de señales de tu lista';
+
+  @override
+  String get planCmpRowRadar => 'Radar completo con notas de IA';
+
+  @override
+  String get planCmpRowNoAds => 'Sin anuncios';
+
+  @override
+  String get planCmpFootnote =>
+      'Gratis significa una cuenta gratuita con sesión iniciada.';
+
+  @override
+  String planCmpRowSemantics(String feature, String free, String pro) {
+    return '$feature: Gratis $free, Pro $pro';
+  }
 }

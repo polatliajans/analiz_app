@@ -2319,4 +2319,120 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get guideDisclaimerBody =>
       'Sinyaller ve analizler yapay zekâ ve teknik göstergelerle üretilir; hiçbir bilgi kesin değildir. Kripto piyasaları çok risklidir ve paranın bir kısmını ya da tamamını kaybedebilirsin. Bu uygulama yatırım tavsiyesi vermez. Tüm kararlar ve olası kayıplar yalnızca sana aittir.';
+
+  @override
+  String get termsGateTitle => 'Başlamadan önce';
+
+  @override
+  String get termsGateIntro =>
+      'Devam etmek için lütfen aşağıdaki maddeleri okuyun ve koşulları kabul edin.';
+
+  @override
+  String get termsGateBullet1 =>
+      'CryptoAnaliz yalnızca yapay zekâ üretimi analiz ve sinyaller sunar.';
+
+  @override
+  String get termsGateBullet2 =>
+      'Uygulamadaki hiçbir içerik finansal veya yatırım tavsiyesi değildir.';
+
+  @override
+  String get termsGateBullet3 =>
+      'Hiçbir sonuç garanti edilmez: sinyaller ve analizler yanlış olabilir.';
+
+  @override
+  String get termsGateBullet4 =>
+      'Kripto piyasaları çok risklidir; paranızın bir kısmını veya tamamını kaybedebilirsiniz.';
+
+  @override
+  String get termsGateBullet5 =>
+      'Kendi kararlarınızdan ve olası kayıplardan yalnızca siz sorumlusunuz.';
+
+  @override
+  String get termsGateBullet6 =>
+      'Bazı özellikler kredi veya Pro abonelik kullanır; ayrıntılar Kullanım Koşulları\'ndadır.';
+
+  @override
+  String get termsGateLinksLabel => 'Metinlerin tamamını okuyun';
+
+  @override
+  String get termsGateCheckbox =>
+      'Kullanım Koşulları\'nı ve Gizlilik Politikası\'nı okudum, kabul ediyorum; sinyallerin yapay zekâ ürünü olduğunu ve yatırım tavsiyesi olmadığını anlıyorum';
+
+  @override
+  String get termsGateContinueHint =>
+      'Devam etmek için yukarıdaki kutuyu işaretleyin';
+
+  @override
+  String guideLevelsProOnly(int max) {
+    String _temp0 = intl.Intl.pluralLogic(
+      max,
+      locale: localeName,
+      other: '1 ile $max. kademe arasını',
+      one: 'yalnızca 1. kademeyi',
+    );
+    return '3. kademe (en güçlü) sinyaller yalnızca Pro abonelere açıktır. Ücretsiz hesaplar grafikte $_temp0 görür; misafirler grafik sinyallerini görmez.';
+  }
+
+  @override
+  String get guideLevelsAllFree =>
+      'Ücretsiz hesaplar grafikte üç kademeyi de görür. Misafirler grafik sinyallerini görmez; görmek için ücretsiz giriş yapın.';
+
+  @override
+  String get planCmpTitle => 'Ücretsiz ve Pro';
+
+  @override
+  String get planCmpFeature => 'Özellik';
+
+  @override
+  String get planCmpIncluded => 'Dahil';
+
+  @override
+  String get planCmpNotIncluded => 'Dahil değil';
+
+  @override
+  String get planCmpUnlimited => 'Sınırsız';
+
+  @override
+  String get planCmpLimited => 'Kısıtlı';
+
+  @override
+  String get planCmpRowCredits => 'Aylık kredi';
+
+  @override
+  String get planCmpRowSignalLevels => 'Grafik sinyal kademeleri';
+
+  @override
+  String planCmpRowTimeframes(String timeframes) {
+    return 'En hızlı zaman dilimleri ($timeframes)';
+  }
+
+  @override
+  String get planCmpRowQuick => 'Hızlı yapay zekâ analizi';
+
+  @override
+  String get planCmpRowDeep => 'Derin analiz';
+
+  @override
+  String get planCmpRowWatchlist => 'Takip listesi boyutu';
+
+  @override
+  String get planCmpRowAlerts => 'Fiyat alarmları';
+
+  @override
+  String get planCmpRowSignalPush => 'Takip listesi sinyal bildirimleri';
+
+  @override
+  String get planCmpRowRadar => 'Yapay zekâ notlu tam radar';
+
+  @override
+  String get planCmpRowNoAds => 'Reklamsız';
+
+  @override
+  String get planCmpFootnote =>
+      'Ücretsiz, giriş yapmış ücretsiz hesap demektir.';
+
+  @override
+  String planCmpRowSemantics(String feature, String free, String pro) {
+    return '$feature: Ücretsiz $free, Pro $pro';
+  }
 }

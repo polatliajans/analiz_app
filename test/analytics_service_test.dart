@@ -234,6 +234,7 @@ void main() {
         s.logRewardedAdCompleted('rewarded_analysis');
         s.logPushOpened('radar');
         s.logGuideCardTapped('home');
+        s.logTermsAccepted('2026-11-02');
 
         expect(
           rec.events.map((e) => e.name).toSet(),

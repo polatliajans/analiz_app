@@ -19,7 +19,9 @@ import 'screens/auth_screen.dart';
 import 'screens/home_shell.dart';
 import 'screens/language_selection_screen.dart';
 import 'screens/onboarding_screen.dart';
+import 'screens/terms_acceptance_screen.dart';
 import 'providers/push_provider.dart';
+import 'providers/terms_acceptance_provider.dart';
 import 'providers/theme_provider.dart';
 import 'theme/app_theme.dart';
 import 'utils/platform_info.dart';
@@ -143,6 +145,9 @@ class _KriptoAnalizAppState extends ConsumerState<KriptoAnalizApp> {
     // Start listening to the store right at launch so unfinished purchases
     // are delivered and credited even if the credit screen is never opened.
     ref.read(creditPurchaseControllerProvider);
+    // Reports the terms acceptance to the server once signed in (retried on
+    // later launches if it failed); never blocks the UI.
+    ref.read(termsSyncProvider);
     _pushService.initialize();
   }
 
@@ -240,6 +245,7 @@ class _KriptoAnalizAppState extends ConsumerState<KriptoAnalizApp> {
 
     final localeState = ref.watch(localeProvider);
     final themeMode = ref.watch(themeModeProvider);
+    final termsAccepted = ref.watch(termsAcceptedProvider);
     final onboardingDone = ref.watch(onboardingDoneProvider);
     final authPromptDone = ref.watch(authPromptDoneProvider);
     final auth = ref.watch(authProvider);
@@ -247,12 +253,15 @@ class _KriptoAnalizAppState extends ConsumerState<KriptoAnalizApp> {
 
     final homeShowing =
         localeState.hasChosen &&
+        termsAccepted &&
         onboardingDone &&
         (authPromptDone || (!auth.isRestoring && auth.isLoggedIn));
     _afterFrame(homeShowing && !auth.isRestoring, auth);
     _trackStage(
       !localeState.hasChosen
           ? AnalyticsScreens.language
+          : !termsAccepted
+          ? AnalyticsScreens.terms
           : !onboardingDone
           ? AnalyticsScreens.onboarding
           : !authPromptDone
@@ -278,17 +287,19 @@ class _KriptoAnalizAppState extends ConsumerState<KriptoAnalizApp> {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       home: !localeState.hasChosen
           ? const LanguageSelectionScreen()
-          : !onboardingDone
-          ? const OnboardingScreen()
-          : !authPromptDone
-          ? (auth.isRestoring
-                ? const Scaffold(
-                    body: Center(child: CircularProgressIndicator()),
-                  )
-                : auth.isLoggedIn
-                ? const HomeShell()
-                : const AuthScreen(showGuest: true))
-          : const HomeShell(),
+          : TermsGate(
+              child: !onboardingDone
+                  ? const OnboardingScreen()
+                  : !authPromptDone
+                  ? (auth.isRestoring
+                        ? const Scaffold(
+                            body: Center(child: CircularProgressIndicator()),
+                          )
+                        : auth.isLoggedIn
+                        ? const HomeShell()
+                        : const AuthScreen(showGuest: true))
+                  : const HomeShell(),
+            ),
     );
   }
 }

@@ -19,6 +19,7 @@ abstract final class AnalyticsEvents {
   static const rewardedAdCompleted = 'rewarded_ad_completed';
   static const pushOpened = 'push_opened';
   static const guideCardTapped = 'guide_card_tapped';
+  static const termsAccepted = 'terms_accepted';
 
   static const all = [
     signUp,
@@ -37,6 +38,7 @@ abstract final class AnalyticsEvents {
     rewardedAdCompleted,
     pushOpened,
     guideCardTapped,
+    termsAccepted,
   ];
 }
 
@@ -52,6 +54,7 @@ abstract final class AnalyticsScreens {
   static const language = 'language';
   static const onboarding = 'onboarding';
   static const auth = 'auth';
+  static const terms = 'terms';
 
   /// Bottom-tab screens, indexed like `homeTabProvider`.
   static const tabs = ['home', 'chart', 'radar', 'watchlist', 'account'];
@@ -152,4 +155,8 @@ extension AnalyticsEventLog on AnalyticsService {
   /// `source`: home | settings.
   void logGuideCardTapped(String source) =>
       logEvent(AnalyticsEvents.guideCardTapped, {'source': source});
+
+  /// The user accepted the Terms of Use / Privacy Policy version [version].
+  void logTermsAccepted(String version) =>
+      logEvent(AnalyticsEvents.termsAccepted, {'version': version});
 }
