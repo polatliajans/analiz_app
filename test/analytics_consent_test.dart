@@ -49,13 +49,24 @@ void main() {
       );
     });
 
-    test('stays off while consent is required or unknown', () {
+    test('stays off while consent is required', () {
       expect(
         analyticsAllowedFor(UmpStatus.required, canRequestAds: true),
         isFalse,
       );
       expect(
+        analyticsAllowedFor(UmpStatus.required, canRequestAds: false),
+        isFalse,
+      );
+    });
+
+    test('unknown status follows canRequestAds (real device regression)', () {
+      expect(
         analyticsAllowedFor(UmpStatus.unknown, canRequestAds: true),
+        isTrue,
+      );
+      expect(
+        analyticsAllowedFor(UmpStatus.unknown, canRequestAds: false),
         isFalse,
       );
     });

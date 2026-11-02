@@ -102,6 +102,9 @@ class AdsController extends Notifier<AdsState> {
   }
 
   Future<void> _onConfig(AdsConfig config) async {
+    analyticsTrace(
+      'ads._onConfig enabled=${config.enabled} wanted=$_adAnalysisWanted',
+    );
     if (!config.enabled && !_adAnalysisWanted) {
       _disposeFullScreenAds();
       state = const AdsState();
@@ -113,6 +116,7 @@ class AdsController extends Notifier<AdsState> {
       return;
     }
     final ok = await (_consentAndInit ??= _obtainConsentAndInitialize());
+    analyticsTrace('ads.consentFlow done ok=$ok mounted=${ref.mounted}');
     // The consent flow has run: let analytics follow UMP's verdict (also when
     // ads are not allowed, e.g. the user declined in the EEA).
     if (ref.mounted) {

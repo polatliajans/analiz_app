@@ -79,13 +79,21 @@ Future<void> _bootstrap() async {
 /// The real analytics service starts denied (nothing is collected until the
 /// consent flow grants it); a no-op when Firebase is missing or in debug.
 Future<AnalyticsService> _createAnalytics() async {
-  if (kDebugMode && !_analyticsInDebug) return const NoopAnalyticsService();
+  if (kDebugMode && !_analyticsInDebug) {
+    analyticsTrace('create: Noop (debug build)');
+    return const NoopAnalyticsService();
+  }
   try {
-    if (Firebase.apps.isEmpty) return const NoopAnalyticsService();
+    if (Firebase.apps.isEmpty) {
+      analyticsTrace('create: Noop (Firebase.apps empty)');
+      return const NoopAnalyticsService();
+    }
     final service = SafeAnalyticsService(FirebaseAnalyticsBackend());
     await service.init();
+    analyticsTrace('create: SafeAnalyticsService ready');
     return service;
-  } catch (_) {
+  } catch (e) {
+    analyticsTrace('create: Noop (exception ${e.runtimeType}: $e)');
     return const NoopAnalyticsService();
   }
 }

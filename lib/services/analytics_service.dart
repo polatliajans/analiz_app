@@ -11,6 +11,15 @@ const analyticsMaxParamValueLength = 100;
 const analyticsMaxUserPropertyNameLength = 24;
 const analyticsMaxUserPropertyValueLength = 36;
 
+/// TEMPORARY diagnostics: one switch for all `ANALYTICS:` print() traces
+/// (visible in release logcat under tag `flutter`). Never carries PII.
+const analyticsTraceEnabled = false;
+
+void analyticsTrace(String message) {
+  // ignore: avoid_print
+  if (analyticsTraceEnabled) print('ANALYTICS: $message');
+}
+
 /// Events held back while the consent decision is still pending.
 const analyticsMaxQueuedEvents = 50;
 
@@ -153,20 +162,30 @@ class SafeAnalyticsService implements AnalyticsService {
   @override
   Future<void> init() async {
     _consent = _Consent.pending;
+    analyticsTrace('init start (consent pending)');
     await _guard(
       () => _backend.setConsent(AnalyticsConsent.forDecision(allowed: false)),
+      'init.setConsent(false)',
     );
-    await _guard(() => _backend.setCollectionEnabled(false));
+    await _guard(
+      () => _backend.setCollectionEnabled(false),
+      'init.setCollectionEnabled(false)',
+    );
   }
 
   @override
   Future<void> applyConsent({required bool allowed}) async {
     final wasGranted = _consent == _Consent.granted;
     _consent = allowed ? _Consent.granted : _Consent.denied;
+    analyticsTrace('applyConsent allowed=$allowed queued=${_queue.length}');
     await _guard(
       () => _backend.setConsent(AnalyticsConsent.forDecision(allowed: allowed)),
+      'applyConsent.setConsent($allowed)',
     );
-    await _guard(() => _backend.setCollectionEnabled(allowed));
+    await _guard(
+      () => _backend.setCollectionEnabled(allowed),
+      'applyConsent.setCollectionEnabled($allowed)',
+    );
     if (allowed) {
       _applyIdentity();
       final pending = List.of(_queue);
@@ -176,7 +195,9 @@ class SafeAnalyticsService implements AnalyticsService {
       }
     } else {
       _queue.clear();
-      if (wasGranted) await _guard(() => _backend.setUserId(null));
+      if (wasGranted) {
+        await _guard(() => _backend.setUserId(null), 'setUserId(null)');
+      }
     }
   }
 
@@ -186,7 +207,7 @@ class SafeAnalyticsService implements AnalyticsService {
       return;
     }
     final clean = sanitizeAnalyticsParams(params);
-    _deliver(() => _fire(() => _backend.logEvent(name, clean)));
+    _deliver(name, () => _fire(name, () => _backend.logEvent(name, clean)));
   }
 
   @override
@@ -195,14 +216,17 @@ class SafeAnalyticsService implements AnalyticsService {
     final name = screenName.length > analyticsMaxParamValueLength
         ? screenName.substring(0, analyticsMaxParamValueLength)
         : screenName;
-    _deliver(() => _fire(() => _backend.logScreenView(name)));
+    _deliver(
+      'screen_view',
+      () => _fire('screen_view', () => _backend.logScreenView(name)),
+    );
   }
 
   @override
   void setUserId(String? id) {
     _userId = id;
     if (_consent == _Consent.granted) {
-      _fire(() => _backend.setUserId(id));
+      _fire('setUserId', () => _backend.setUserId(id));
     }
   }
 
@@ -220,7 +244,7 @@ class SafeAnalyticsService implements AnalyticsService {
         : value;
     _properties[name] = v;
     if (_consent == _Consent.granted) {
-      _fire(() => _backend.setUserProperty(name, v));
+      _fire('setUserProperty:$name', () => _backend.setUserProperty(name, v));
     }
   }
 
@@ -230,43 +254,62 @@ class SafeAnalyticsService implements AnalyticsService {
     _properties.remove('plan');
     _queue.clear();
     if (_consent != _Consent.granted) return;
-    await _guard(() => _backend.setUserId(null));
-    await _guard(() => _backend.setUserProperty('plan', null));
-    await _guard(_backend.resetAnalyticsData);
+    await _guard(() => _backend.setUserId(null), 'setUserId(null)');
+    await _guard(
+      () => _backend.setUserProperty('plan', null),
+      'setUserProperty(plan,null)',
+    );
+    await _guard(_backend.resetAnalyticsData, 'resetAnalyticsData');
   }
 
   void _applyIdentity() {
-    _fire(() => _backend.setUserId(_userId));
+    _fire('setUserId', () => _backend.setUserId(_userId));
     _properties.forEach(
-      (name, value) => _fire(() => _backend.setUserProperty(name, value)),
+      (name, value) => _fire(
+        'setUserProperty:$name',
+        () => _backend.setUserProperty(name, value),
+      ),
     );
   }
 
   /// Runs [send] now when granted, queues it while undecided, drops it when
   /// denied.
-  void _deliver(void Function() send) {
+  void _deliver(String name, void Function() send) {
     switch (_consent) {
       case _Consent.granted:
+        analyticsTrace('deliver $name');
         send();
       case _Consent.pending:
+        analyticsTrace('queued $name');
         if (_queue.length >= analyticsMaxQueuedEvents) _queue.removeAt(0);
         _queue.add(send);
       case _Consent.denied:
-        break;
+        analyticsTrace('dropped (denied) $name');
     }
   }
 
   /// Fire-and-forget: a failing backend is ignored, never rethrown.
-  void _fire(Future<void> Function() call) {
+  void _fire(String what, Future<void> Function() call) {
     try {
-      unawaited(call().catchError((Object _) {}));
-    } catch (_) {}
+      unawaited(
+        call().then(
+          (_) => analyticsTrace('ok $what'),
+          onError: (Object e) =>
+              analyticsTrace('ERR $what ${e.runtimeType}: $e'),
+        ),
+      );
+    } catch (e) {
+      analyticsTrace('ERR(sync) $what ${e.runtimeType}: $e');
+    }
   }
 
-  Future<void> _guard(Future<void> Function() call) async {
+  Future<void> _guard(Future<void> Function() call, String what) async {
     try {
       await call();
-    } catch (_) {}
+      analyticsTrace('ok $what');
+    } catch (e) {
+      analyticsTrace('ERR $what ${e.runtimeType}: $e');
+    }
   }
 }
 

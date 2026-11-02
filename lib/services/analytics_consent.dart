@@ -9,16 +9,18 @@ import 'analytics_service.dart';
 enum UmpStatus { notRequired, required, obtained, unknown }
 
 /// Analytics may collect when consent is not needed in the user's region, or
-/// when it was obtained and UMP lets the app proceed. Anything else (still
-/// required, unknown, declined) keeps analytics off.
+/// when UMP lets the app proceed (`canRequestAds`, which is what UMP itself
+/// treats as the verdict). The status can read `unknown` on devices where
+/// UMP already says ads may be requested (seen in Turkey), so `unknown` follows
+/// `canRequestAds`. A still-required or declined consent keeps analytics off.
 bool analyticsAllowedFor(UmpStatus status, {required bool canRequestAds}) {
   switch (status) {
     case UmpStatus.notRequired:
       return true;
     case UmpStatus.obtained:
+    case UmpStatus.unknown:
       return canRequestAds;
     case UmpStatus.required:
-    case UmpStatus.unknown:
       return false;
   }
 }
@@ -81,12 +83,13 @@ class AnalyticsConsentCoordinator {
     if (!_service.active) return;
     var allowed = false;
     try {
-      allowed = analyticsAllowedFor(
-        await _source.status(),
-        canRequestAds: await _source.canRequestAds(),
-      );
-    } catch (_) {
+      final status = await _source.status();
+      final can = await _source.canRequestAds();
+      allowed = analyticsAllowedFor(status, canRequestAds: can);
+      analyticsTrace('consent ump=$status canRequestAds=$can allowed=$allowed');
+    } catch (e) {
       // Unknown means off.
+      analyticsTrace('consent ERR ${e.runtimeType}: $e');
     }
     await _service.applyConsent(allowed: allowed);
   }
