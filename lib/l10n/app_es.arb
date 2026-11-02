@@ -722,12 +722,12 @@
   "planCmpRowSignalLevels": "Niveles de señal en el gráfico",
   "planCmpRowTimeframes": "Marcos temporales más rápidos ({timeframes})",
   "planCmpRowQuick": "Análisis rápido con IA",
-  "planCmpRowDeep": "Análisis profundo",
+  "planCmpRowDeep": "Análisis profundo multimarco",
   "planCmpRowWatchlist": "Tamaño de la lista de seguimiento",
   "planCmpRowAlerts": "Alertas de precio",
   "planCmpRowSignalPush": "Notificaciones de señales de tu lista",
   "planCmpRowRadar": "Radar completo con notas de IA",
-  "planCmpRowNoAds": "Sin anuncios",
+  "planCmpRowNoAds": "App sin anuncios",
   "planCmpFootnote": "Gratis significa una cuenta gratuita con sesión iniciada.",
   "planCmpRowSemantics": "{feature}: Gratis {free}, Pro {pro}"
 }

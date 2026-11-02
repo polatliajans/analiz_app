@@ -17,6 +17,7 @@ import '../utils/pro_purchase.dart';
 import '../utils/subscription_period.dart';
 import '../widgets/brand_page.dart';
 import '../widgets/legal_links_row.dart';
+import '../widgets/plan_comparison_table.dart';
 
 class SubscriptionScreen extends ConsumerStatefulWidget {
   const SubscriptionScreen({super.key});
@@ -285,6 +286,9 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 ],
               ),
               if (!isPro && canBuy) ...[
+                // Free vs Pro, only for people who could still upgrade.
+                const SizedBox(height: 20),
+                const PlanComparison(),
                 const SizedBox(height: 24),
                 BrandSectionHeading(l10n.subPlansHeading),
                 const SizedBox(height: 8),

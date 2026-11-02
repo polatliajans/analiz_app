@@ -4051,7 +4051,7 @@ abstract class AppLocalizations {
   /// No description provided for @planCmpRowDeep.
   ///
   /// In en, this message translates to:
-  /// **'Deep analysis'**
+  /// **'Multi-timeframe deep analysis'**
   String get planCmpRowDeep;
 
   /// No description provided for @planCmpRowWatchlist.
@@ -4081,7 +4081,7 @@ abstract class AppLocalizations {
   /// No description provided for @planCmpRowNoAds.
   ///
   /// In en, this message translates to:
-  /// **'No ads'**
+  /// **'Ad-free app'**
   String get planCmpRowNoAds;
 
   /// No description provided for @planCmpFootnote.

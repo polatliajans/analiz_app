@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../l10n/app_localizations.dart';
+import '../providers/app_config_provider.dart';
 import '../services/analytics_events.dart';
 import '../services/analytics_service.dart';
 import '../theme/app_theme.dart';
+import '../widgets/plan_comparison_table.dart';
 
 /// Where a guide entry point lives; reported as the `source` of
 /// `guide_card_tapped`.
@@ -23,8 +25,9 @@ Future<void> openGuide(
 }
 
 /// "How it works": what the app is for, what the 1-3 signal levels mean, buy
-/// vs. sell signals, usage tips, credits and the risk disclaimer. Static
-/// content only; no network or account state.
+/// vs. sell signals, usage tips, credits, the Free vs Pro table and the risk
+/// disclaimer. Texts are static; only the level access note and the table
+/// follow the server's plan config.
 class GuideScreen extends StatelessWidget {
   const GuideScreen({super.key});
 
@@ -50,6 +53,8 @@ class GuideScreen extends StatelessWidget {
                 _TipsSection(),
                 gap,
                 _CreditsSection(),
+                gap,
+                const PlanComparison(),
                 gap,
                 _DisclaimerBlock(),
               ],
@@ -169,11 +174,16 @@ class _AboutSection extends StatelessWidget {
 
 // ----------------------------------------------------------------- levels
 
-class _LevelsSection extends StatelessWidget {
+class _LevelsSection extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    // The server decides how high Free accounts see (default 2); Pro always
+    // sees level 3, guests get no chart signals at all.
+    final freeMax = ref.watch(
+      appConfigProvider.select((c) => c.plan.freeMaxSignalStrength),
+    );
     final levels = [
       (l10n.guideLevel1Name, l10n.guideLevel1Desc),
       (l10n.guideLevel2Name, l10n.guideLevel2Desc),
@@ -189,6 +199,12 @@ class _LevelsSection extends StatelessWidget {
           _LevelRow(level: i + 1, name: levels[i].$1, desc: levels[i].$2),
           const SizedBox(height: 12),
         ],
+        _AccessNote(
+          text: freeMax < 3
+              ? l10n.guideLevelsProOnly(freeMax)
+              : l10n.guideLevelsAllFree,
+        ),
+        const SizedBox(height: 12),
         Text(
           l10n.guideLevelsUpgrade,
           style: theme.textTheme.bodySmall?.copyWith(
@@ -201,6 +217,46 @@ class _LevelsSection extends StatelessWidget {
           children: [_Body(l10n.guideLevelsExample)],
         ),
       ],
+    );
+  }
+}
+
+/// Highlighted note on who sees which levels.
+class _AccessNote extends StatelessWidget {
+  final String text;
+  const _AccessNote({required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Container(
+      key: const ValueKey('guide-level-access-note'),
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: scheme.primaryContainer,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            Icons.workspace_premium_rounded,
+            size: 22,
+            color: scheme.onPrimaryContainer,
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              text,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: scheme.onPrimaryContainer,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

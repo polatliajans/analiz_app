@@ -2496,7 +2496,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get planCmpRowQuick => 'Análisis rápido con IA';
 
   @override
-  String get planCmpRowDeep => 'Análisis profundo';
+  String get planCmpRowDeep => 'Análisis profundo multimarco';
 
   @override
   String get planCmpRowWatchlist => 'Tamaño de la lista de seguimiento';
@@ -2511,7 +2511,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get planCmpRowRadar => 'Radar completo con notas de IA';
 
   @override
-  String get planCmpRowNoAds => 'Sin anuncios';
+  String get planCmpRowNoAds => 'App sin anuncios';
 
   @override
   String get planCmpFootnote =>

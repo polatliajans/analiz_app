@@ -2469,7 +2469,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get planCmpRowQuick => 'Quick AI analysis';
 
   @override
-  String get planCmpRowDeep => 'Deep analysis';
+  String get planCmpRowDeep => 'Multi-timeframe deep analysis';
 
   @override
   String get planCmpRowWatchlist => 'Watchlist size';
@@ -2484,7 +2484,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get planCmpRowRadar => 'Full radar with AI notes';
 
   @override
-  String get planCmpRowNoAds => 'No ads';
+  String get planCmpRowNoAds => 'Ad-free app';
 
   @override
   String get planCmpFootnote => 'Free means a signed-in free account.';

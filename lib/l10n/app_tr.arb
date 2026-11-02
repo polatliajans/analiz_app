@@ -722,12 +722,12 @@
   "planCmpRowSignalLevels": "Grafik sinyal kademeleri",
   "planCmpRowTimeframes": "En hızlı zaman dilimleri ({timeframes})",
   "planCmpRowQuick": "Hızlı yapay zekâ analizi",
-  "planCmpRowDeep": "Derin analiz",
+  "planCmpRowDeep": "Çoklu zaman dilimli derin analiz",
   "planCmpRowWatchlist": "Takip listesi boyutu",
   "planCmpRowAlerts": "Fiyat alarmları",
   "planCmpRowSignalPush": "Takip listesi sinyal bildirimleri",
   "planCmpRowRadar": "Yapay zekâ notlu tam radar",
-  "planCmpRowNoAds": "Reklamsız",
+  "planCmpRowNoAds": "Reklamsız kullanım",
   "planCmpFootnote": "Ücretsiz, giriş yapmış ücretsiz hesap demektir.",
   "planCmpRowSemantics": "{feature}: Ücretsiz {free}, Pro {pro}"
 }

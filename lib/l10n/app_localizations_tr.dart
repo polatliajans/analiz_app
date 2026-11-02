@@ -2410,7 +2410,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get planCmpRowQuick => 'Hızlı yapay zekâ analizi';
 
   @override
-  String get planCmpRowDeep => 'Derin analiz';
+  String get planCmpRowDeep => 'Çoklu zaman dilimli derin analiz';
 
   @override
   String get planCmpRowWatchlist => 'Takip listesi boyutu';
@@ -2425,7 +2425,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get planCmpRowRadar => 'Yapay zekâ notlu tam radar';
 
   @override
-  String get planCmpRowNoAds => 'Reklamsız';
+  String get planCmpRowNoAds => 'Reklamsız kullanım';
 
   @override
   String get planCmpFootnote =>

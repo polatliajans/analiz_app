@@ -59,7 +59,7 @@ void main() {
           await tester.pumpAndSettle();
           expect(tester.takeException(), isNull);
           expect(find.text('CryptoAnaliz Pro'), findsOneWidget);
-          await tester.drag(find.byType(ListView), const Offset(0, -3000));
+          await tester.drag(find.byType(ListView), const Offset(0, -8000));
           await tester.pumpAndSettle();
           expect(tester.takeException(), isNull);
           if (!pro) expect(find.text('TRY 349,99'), findsOneWidget);
