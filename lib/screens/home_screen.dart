@@ -15,6 +15,7 @@ import '../providers/price_alert_provider.dart';
 import '../services/chart_navigation.dart';
 import '../utils/home_logic.dart';
 import '../widgets/analysis_card.dart';
+import '../widgets/home/guide_card.dart';
 import '../widgets/home/home_sections.dart';
 import '../widgets/home/market_movers_card.dart';
 import '../widgets/home/home_top_cards.dart';
@@ -23,6 +24,7 @@ import 'auth_screen.dart';
 import 'guest_benefits_screen.dart';
 import 'credit_packages_screen.dart';
 import 'glossary_screen.dart';
+import 'guide_screen.dart';
 import '../utils/pro_purchase.dart';
 
 /// First tab: a calm overview of the market, the member's own state and
@@ -136,6 +138,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
   void _openBenefits() => openGuestBenefits(context);
 
+  /// Sits between the radar and the last-analysis cards; on the error states
+  /// (no data sections) it follows the error card instead.
+  Widget _guideCard() => GuideCard(
+    key: const ValueKey('home-guide-card'),
+    onTap: () => openGuide(context, ref, source: GuideSource.home),
+  );
+
   /// The data-driven sections, in the same order for members and guests.
   /// For guests the member-only ones (last analysis) are replaced
   /// by locked cards that lead to the benefits page.
@@ -176,6 +185,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           ),
         ),
       )
+      ..add(gap)
+      ..add(_guideCard())
       ..add(gap)
       ..add(
         guest
@@ -274,9 +285,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           .watch(guestHomeProvider)
           .when(
             loading: () => children.add(const HomeSkeleton()),
-            error: (_, _) => children.add(
-              HomeErrorCard(onRetry: () => ref.invalidate(guestHomeProvider)),
-            ),
+            error: (_, _) => children
+              ..add(
+                HomeErrorCard(onRetry: () => ref.invalidate(guestHomeProvider)),
+              )
+              ..add(const SizedBox(height: 12))
+              ..add(_guideCard()),
             data: (d) => _addDataSections(
               children,
               l10n,
@@ -293,6 +307,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           onRetry: () => ref.read(homeProvider.notifier).refresh(force: true),
         ),
       );
+      children
+        ..add(const SizedBox(height: 12))
+        ..add(_guideCard());
     } else if (data != null) {
       _addDataSections(children, l10n, data, now, guest: false);
     }

@@ -233,6 +233,7 @@ void main() {
         s.logAdShown('interstitial_analysis', 'interstitial');
         s.logRewardedAdCompleted('rewarded_analysis');
         s.logPushOpened('radar');
+        s.logGuideCardTapped('home');
 
         expect(
           rec.events.map((e) => e.name).toSet(),

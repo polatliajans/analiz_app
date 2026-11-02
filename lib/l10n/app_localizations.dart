@@ -3639,6 +3639,276 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please describe the problem with this analysis:\n\n'**
   String get reportAnalysisBody;
+
+  /// No description provided for @guideTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How it works'**
+  String get guideTitle;
+
+  /// No description provided for @guideHomeCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How to read the signals'**
+  String get guideHomeCardTitle;
+
+  /// No description provided for @guideHomeCardSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Signal levels, buy and sell signals and tips for using the app well'**
+  String get guideHomeCardSubtitle;
+
+  /// No description provided for @guideAboutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What is this app for?'**
+  String get guideAboutTitle;
+
+  /// No description provided for @guideAboutBody.
+  ///
+  /// In en, this message translates to:
+  /// **'It scans the crypto market with AI and technical indicators and gives you buy and sell signals on the chart, a radar and analyses. The aim is not to get rich quick: it is to help you try to grow your portfolio in small steps, with small percentage gains and controlled risk.'**
+  String get guideAboutBody;
+
+  /// No description provided for @guideLevelsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Signal levels'**
+  String get guideLevelsTitle;
+
+  /// No description provided for @guideLevelsIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Every arrow on the chart carries a 1, 2 or 3. That number is the level: it sums up how many signs on the same candle (RSI depth, a Bollinger band break, a reversal candle, a volume spike and so on) support the same direction, and whether a strong trend runs the other way. The higher the level, the bigger and bolder the arrow.'**
+  String get guideLevelsIntro;
+
+  /// No description provided for @guideLevel1Name.
+  ///
+  /// In en, this message translates to:
+  /// **'Level 1 · Early, weak'**
+  String get guideLevel1Name;
+
+  /// No description provided for @guideLevel1Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'The basic condition is met (oversold or overbought plus a band touch) but little supports it. Treat it as a heads-up: keep an eye on the coin and do not rush.'**
+  String get guideLevel1Desc;
+
+  /// No description provided for @guideLevel2Name.
+  ///
+  /// In en, this message translates to:
+  /// **'Level 2 · Medium'**
+  String get guideLevel2Name;
+
+  /// No description provided for @guideLevel2Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Several signs point the same way. Worth attention; confirm on the chart and with a deep analysis.'**
+  String get guideLevel2Desc;
+
+  /// No description provided for @guideLevel3Name.
+  ///
+  /// In en, this message translates to:
+  /// **'Level 3 · Strong'**
+  String get guideLevel3Name;
+
+  /// No description provided for @guideLevel3Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'The most signs agree at once. This is the strongest level, but it is still not a certainty.'**
+  String get guideLevel3Desc;
+
+  /// No description provided for @guideLevelsUpgrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Within the same drop or rally the level can rise later: a new arrow may appear first as 1, then as 2 or 3.'**
+  String get guideLevelsUpgrade;
+
+  /// No description provided for @guideExampleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Example (hypothetical)'**
+  String get guideExampleLabel;
+
+  /// No description provided for @guideLevelsExample.
+  ///
+  /// In en, this message translates to:
+  /// **'A made-up coin called XYZ is falling on the 4-hour chart and a buy arrow marked 1 appears: it is oversold but there is little confirmation, so for now you just watch. If the drop continues and a reversal candle and a volume spike follow, a new buy arrow marked 3 may appear: more signs agree. That does not mean price will turn; it only shows the signal has more support.'**
+  String get guideLevelsExample;
+
+  /// No description provided for @guideDirTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy and sell signals'**
+  String get guideDirTitle;
+
+  /// No description provided for @guideBuyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy signal (green, up arrow)'**
+  String get guideBuyTitle;
+
+  /// No description provided for @guideBuyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Marks places where price has dropped into oversold territory and may recover: a buy zone, or a zone to add gradually if you already hold a position.'**
+  String get guideBuyBody;
+
+  /// No description provided for @guideSellTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sell signal (red, down arrow)'**
+  String get guideSellTitle;
+
+  /// No description provided for @guideSellBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Marks places where price has risen into overbought territory: a sell or take-profit point.'**
+  String get guideSellBody;
+
+  /// No description provided for @guideFlowTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Example flow (hypothetical)'**
+  String get guideFlowTitle;
+
+  /// No description provided for @guideFlow1.
+  ///
+  /// In en, this message translates to:
+  /// **'A buy signal appears: start with a small amount.'**
+  String get guideFlow1;
+
+  /// No description provided for @guideFlow2.
+  ///
+  /// In en, this message translates to:
+  /// **'Price keeps falling and a new buy signal of a higher level appears: if it fits your plan, you can add a little.'**
+  String get guideFlow2;
+
+  /// No description provided for @guideFlow3.
+  ///
+  /// In en, this message translates to:
+  /// **'Price rises and a sell signal appears: you may consider taking part of the profit or reducing the position.'**
+  String get guideFlow3;
+
+  /// No description provided for @guideFlow4.
+  ///
+  /// In en, this message translates to:
+  /// **'Then wait for the next signal; do not chase every one.'**
+  String get guideFlow4;
+
+  /// No description provided for @guideTipsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tips for using it well'**
+  String get guideTipsTitle;
+
+  /// No description provided for @guideTip1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Start small'**
+  String get guideTip1Title;
+
+  /// No description provided for @guideTip1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Use small position sizes; never put all your capital into one trade.'**
+  String get guideTip1Body;
+
+  /// No description provided for @guideTip2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'A signal is an invitation'**
+  String get guideTip2Title;
+
+  /// No description provided for @guideTip2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'An arrow is a prompt to look at the chart. Check the trend, support and resistance yourself and back it up with a Deep Analysis.'**
+  String get guideTip2Body;
+
+  /// No description provided for @guideTip3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Check several timeframes'**
+  String get guideTip3Title;
+
+  /// No description provided for @guideTip3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'If periods such as 15m, 1h, 4h and 1d point the same way, the picture may be more consistent.'**
+  String get guideTip3Body;
+
+  /// No description provided for @guideTip4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Prefer higher levels, then confirm'**
+  String get guideTip4Title;
+
+  /// No description provided for @guideTip4Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Level 3 carries more support; still confirm it on the chart and with a deep analysis.'**
+  String get guideTip4Body;
+
+  /// No description provided for @guideTip5Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan your exit first'**
+  String get guideTip5Title;
+
+  /// No description provided for @guideTip5Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Decide where you would take profit and where you would give up (your stop) before you enter.'**
+  String get guideTip5Body;
+
+  /// No description provided for @guideTip6Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not chase'**
+  String get guideTip6Title;
+
+  /// No description provided for @guideTip6Body.
+  ///
+  /// In en, this message translates to:
+  /// **'If price has already run, do not jump in after it; wait for a new signal or a pullback.'**
+  String get guideTip6Body;
+
+  /// No description provided for @guideTip7Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Watchlist and alerts'**
+  String get guideTip7Title;
+
+  /// No description provided for @guideTip7Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the coins you follow to your watchlist and get notified about new signals. Use price alerts for your own levels.'**
+  String get guideTip7Body;
+
+  /// No description provided for @guideCreditsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Credits'**
+  String get guideCreditsTitle;
+
+  /// No description provided for @guideCreditsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'AI analyses use credits; the cost is shown on the button. If an analysis does not complete successfully, your credits are not spent. Monthly credits are topped up to your plan amount on the renewal day and do not roll over. Purchased credits never expire; monthly credits are spent first.'**
+  String get guideCreditsBody;
+
+  /// No description provided for @guideDisclaimerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Important notice'**
+  String get guideDisclaimerTitle;
+
+  /// No description provided for @guideDisclaimerBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Signals and analyses are produced by AI and technical indicators; no information is certain. Crypto markets are very risky and you can lose some or all of your money. This app does not give investment advice. All decisions and any losses are solely yours.'**
+  String get guideDisclaimerBody;
 }
 
 class _AppLocalizationsDelegate

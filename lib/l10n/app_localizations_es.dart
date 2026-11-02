@@ -2247,4 +2247,162 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get reportAnalysisBody =>
       'Describe el problema con este análisis:\n\n';
+
+  @override
+  String get guideTitle => 'Cómo funciona';
+
+  @override
+  String get guideHomeCardTitle => 'Cómo leer las señales';
+
+  @override
+  String get guideHomeCardSubtitle =>
+      'Niveles de señal, señales de compra y venta y consejos para usar bien la app';
+
+  @override
+  String get guideAboutTitle => '¿Para qué sirve la app?';
+
+  @override
+  String get guideAboutBody =>
+      'Analiza el mercado cripto con IA e indicadores técnicos y te ofrece señales de compra y venta en el gráfico, un radar y análisis. El objetivo no es hacerse rico rápido: es ayudarte a intentar hacer crecer tu cartera con pasos pequeños, pequeñas ganancias porcentuales y riesgo controlado.';
+
+  @override
+  String get guideLevelsTitle => 'Niveles de señal';
+
+  @override
+  String get guideLevelsIntro =>
+      'Cada flecha del gráfico lleva un 1, 2 o 3. Ese número es el nivel: resume cuántos indicios de la misma vela (profundidad del RSI, ruptura de la banda de Bollinger, vela de giro, pico de volumen, etc.) apoyan la misma dirección y si hay una tendencia fuerte en sentido contrario. A mayor nivel, la flecha es más grande y marcada.';
+
+  @override
+  String get guideLevel1Name => 'Nivel 1 · Temprano, débil';
+
+  @override
+  String get guideLevel1Desc =>
+      'Se cumple la condición básica (sobreventa o sobrecompra y contacto con la banda), pero hay poco apoyo. Tómalo como un aviso: sigue la moneda sin prisa.';
+
+  @override
+  String get guideLevel2Name => 'Nivel 2 · Medio';
+
+  @override
+  String get guideLevel2Desc =>
+      'Varios indicios apuntan en la misma dirección. Merece atención; confírmalo en el gráfico y con un análisis profundo.';
+
+  @override
+  String get guideLevel3Name => 'Nivel 3 · Fuerte';
+
+  @override
+  String get guideLevel3Desc =>
+      'La mayoría de indicios coincide a la vez. Es el nivel más fuerte, pero tampoco es una certeza.';
+
+  @override
+  String get guideLevelsUpgrade =>
+      'Dentro de la misma caída o subida el nivel puede subir después: una flecha nueva puede aparecer primero como 1 y luego como 2 o 3.';
+
+  @override
+  String get guideExampleLabel => 'Ejemplo (hipotético)';
+
+  @override
+  String get guideLevelsExample =>
+      'Una moneda inventada llamada XYZ cae en el gráfico de 4 horas y aparece una flecha de compra con un 1: hay sobreventa pero poca confirmación, así que por ahora solo observas. Si la caída continúa y llegan una vela de giro y un pico de volumen, puede aparecer una nueva flecha de compra con un 3: más indicios coinciden. Eso no significa que el precio vaya a girar; solo muestra que la señal tiene más apoyo.';
+
+  @override
+  String get guideDirTitle => 'Señales de compra y venta';
+
+  @override
+  String get guideBuyTitle => 'Señal de compra (verde, flecha arriba)';
+
+  @override
+  String get guideBuyBody =>
+      'Marca lugares donde el precio ha caído a sobreventa y podría recuperarse: una zona de compra o, si ya tienes posición, de ampliación gradual.';
+
+  @override
+  String get guideSellTitle => 'Señal de venta (roja, flecha abajo)';
+
+  @override
+  String get guideSellBody =>
+      'Marca lugares donde el precio ha subido a sobrecompra: un punto de venta o de toma de beneficios.';
+
+  @override
+  String get guideFlowTitle => 'Flujo de ejemplo (hipotético)';
+
+  @override
+  String get guideFlow1 =>
+      'Aparece una señal de compra: empieza con una cantidad pequeña.';
+
+  @override
+  String get guideFlow2 =>
+      'El precio sigue bajando y llega otra señal de compra de mayor nivel: si encaja con tu plan, puedes ampliar un poco.';
+
+  @override
+  String get guideFlow3 =>
+      'El precio sube y aparece una señal de venta: puedes plantearte tomar parte de los beneficios o reducir la posición.';
+
+  @override
+  String get guideFlow4 =>
+      'Después espera la siguiente señal; no persigas todas.';
+
+  @override
+  String get guideTipsTitle => 'Consejos de uso';
+
+  @override
+  String get guideTip1Title => 'Empieza pequeño';
+
+  @override
+  String get guideTip1Body =>
+      'Usa posiciones pequeñas; nunca pongas todo tu capital en una sola operación.';
+
+  @override
+  String get guideTip2Title => 'Una señal es una invitación';
+
+  @override
+  String get guideTip2Body =>
+      'Una flecha es un aviso para mirar el gráfico. Revisa tú mismo la tendencia, los soportes y las resistencias y apóyate en un Análisis profundo.';
+
+  @override
+  String get guideTip3Title => 'Mira varios marcos temporales';
+
+  @override
+  String get guideTip3Body =>
+      'Si periodos como 15m, 1h, 4h y 1d apuntan igual, el panorama puede ser más coherente.';
+
+  @override
+  String get guideTip4Title => 'Prefiere niveles altos y confirma';
+
+  @override
+  String get guideTip4Body =>
+      'El nivel 3 tiene más apoyo; aun así, confírmalo en el gráfico y con un análisis profundo.';
+
+  @override
+  String get guideTip5Title => 'Planifica la salida antes';
+
+  @override
+  String get guideTip5Body =>
+      'Decide dónde tomarías beneficios y dónde abandonarías (tu stop) antes de entrar.';
+
+  @override
+  String get guideTip6Title => 'No persigas el precio';
+
+  @override
+  String get guideTip6Body =>
+      'Si el precio ya se ha movido mucho, no entres detrás; espera una nueva señal o un retroceso.';
+
+  @override
+  String get guideTip7Title => 'Seguimiento y alertas';
+
+  @override
+  String get guideTip7Body =>
+      'Añade a tu lista de seguimiento las monedas que sigues y recibe avisos de nuevas señales. Usa las alertas de precio para tus propios niveles.';
+
+  @override
+  String get guideCreditsTitle => 'Créditos';
+
+  @override
+  String get guideCreditsBody =>
+      'Los análisis con IA consumen créditos; el coste aparece en el botón. Si un análisis no se completa con éxito, no se gastan tus créditos. Los créditos mensuales se completan hasta la cantidad de tu plan el día de renovación y no se acumulan. Los créditos comprados no caducan; primero se gastan los mensuales.';
+
+  @override
+  String get guideDisclaimerTitle => 'Aviso importante';
+
+  @override
+  String get guideDisclaimerBody =>
+      'Las señales y los análisis los generan la IA y los indicadores técnicos; ninguna información es segura. Los mercados cripto son muy arriesgados y puedes perder parte o todo tu dinero. Esta app no ofrece asesoramiento de inversión. Todas las decisiones y las posibles pérdidas son únicamente tuyas.';
 }

@@ -5,6 +5,7 @@ import '../screens/credit_packages_screen.dart';
 import '../screens/email_auth_screen.dart';
 import '../screens/glossary_screen.dart';
 import '../screens/guest_benefits_screen.dart';
+import '../screens/guide_screen.dart';
 import '../screens/onboarding_screen.dart';
 import '../screens/settings_screen.dart';
 import '../screens/subscription_screen.dart';
@@ -18,6 +19,7 @@ final Map<Type, String> analyticsScreenRegistry = {
   AuthScreen: 'auth',
   EmailAuthScreen: 'email_auth',
   GlossaryScreen: 'glossary',
+  GuideScreen: 'guide',
   GuestBenefitsScreen: 'guest_benefits',
   AlarmsScreen: 'alarms',
   OnboardingScreen: 'onboarding',

@@ -2222,4 +2222,161 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get reportAnalysisBody =>
       'Please describe the problem with this analysis:\n\n';
+
+  @override
+  String get guideTitle => 'How it works';
+
+  @override
+  String get guideHomeCardTitle => 'How to read the signals';
+
+  @override
+  String get guideHomeCardSubtitle =>
+      'Signal levels, buy and sell signals and tips for using the app well';
+
+  @override
+  String get guideAboutTitle => 'What is this app for?';
+
+  @override
+  String get guideAboutBody =>
+      'It scans the crypto market with AI and technical indicators and gives you buy and sell signals on the chart, a radar and analyses. The aim is not to get rich quick: it is to help you try to grow your portfolio in small steps, with small percentage gains and controlled risk.';
+
+  @override
+  String get guideLevelsTitle => 'Signal levels';
+
+  @override
+  String get guideLevelsIntro =>
+      'Every arrow on the chart carries a 1, 2 or 3. That number is the level: it sums up how many signs on the same candle (RSI depth, a Bollinger band break, a reversal candle, a volume spike and so on) support the same direction, and whether a strong trend runs the other way. The higher the level, the bigger and bolder the arrow.';
+
+  @override
+  String get guideLevel1Name => 'Level 1 · Early, weak';
+
+  @override
+  String get guideLevel1Desc =>
+      'The basic condition is met (oversold or overbought plus a band touch) but little supports it. Treat it as a heads-up: keep an eye on the coin and do not rush.';
+
+  @override
+  String get guideLevel2Name => 'Level 2 · Medium';
+
+  @override
+  String get guideLevel2Desc =>
+      'Several signs point the same way. Worth attention; confirm on the chart and with a deep analysis.';
+
+  @override
+  String get guideLevel3Name => 'Level 3 · Strong';
+
+  @override
+  String get guideLevel3Desc =>
+      'The most signs agree at once. This is the strongest level, but it is still not a certainty.';
+
+  @override
+  String get guideLevelsUpgrade =>
+      'Within the same drop or rally the level can rise later: a new arrow may appear first as 1, then as 2 or 3.';
+
+  @override
+  String get guideExampleLabel => 'Example (hypothetical)';
+
+  @override
+  String get guideLevelsExample =>
+      'A made-up coin called XYZ is falling on the 4-hour chart and a buy arrow marked 1 appears: it is oversold but there is little confirmation, so for now you just watch. If the drop continues and a reversal candle and a volume spike follow, a new buy arrow marked 3 may appear: more signs agree. That does not mean price will turn; it only shows the signal has more support.';
+
+  @override
+  String get guideDirTitle => 'Buy and sell signals';
+
+  @override
+  String get guideBuyTitle => 'Buy signal (green, up arrow)';
+
+  @override
+  String get guideBuyBody =>
+      'Marks places where price has dropped into oversold territory and may recover: a buy zone, or a zone to add gradually if you already hold a position.';
+
+  @override
+  String get guideSellTitle => 'Sell signal (red, down arrow)';
+
+  @override
+  String get guideSellBody =>
+      'Marks places where price has risen into overbought territory: a sell or take-profit point.';
+
+  @override
+  String get guideFlowTitle => 'Example flow (hypothetical)';
+
+  @override
+  String get guideFlow1 => 'A buy signal appears: start with a small amount.';
+
+  @override
+  String get guideFlow2 =>
+      'Price keeps falling and a new buy signal of a higher level appears: if it fits your plan, you can add a little.';
+
+  @override
+  String get guideFlow3 =>
+      'Price rises and a sell signal appears: you may consider taking part of the profit or reducing the position.';
+
+  @override
+  String get guideFlow4 =>
+      'Then wait for the next signal; do not chase every one.';
+
+  @override
+  String get guideTipsTitle => 'Tips for using it well';
+
+  @override
+  String get guideTip1Title => 'Start small';
+
+  @override
+  String get guideTip1Body =>
+      'Use small position sizes; never put all your capital into one trade.';
+
+  @override
+  String get guideTip2Title => 'A signal is an invitation';
+
+  @override
+  String get guideTip2Body =>
+      'An arrow is a prompt to look at the chart. Check the trend, support and resistance yourself and back it up with a Deep Analysis.';
+
+  @override
+  String get guideTip3Title => 'Check several timeframes';
+
+  @override
+  String get guideTip3Body =>
+      'If periods such as 15m, 1h, 4h and 1d point the same way, the picture may be more consistent.';
+
+  @override
+  String get guideTip4Title => 'Prefer higher levels, then confirm';
+
+  @override
+  String get guideTip4Body =>
+      'Level 3 carries more support; still confirm it on the chart and with a deep analysis.';
+
+  @override
+  String get guideTip5Title => 'Plan your exit first';
+
+  @override
+  String get guideTip5Body =>
+      'Decide where you would take profit and where you would give up (your stop) before you enter.';
+
+  @override
+  String get guideTip6Title => 'Do not chase';
+
+  @override
+  String get guideTip6Body =>
+      'If price has already run, do not jump in after it; wait for a new signal or a pullback.';
+
+  @override
+  String get guideTip7Title => 'Watchlist and alerts';
+
+  @override
+  String get guideTip7Body =>
+      'Add the coins you follow to your watchlist and get notified about new signals. Use price alerts for your own levels.';
+
+  @override
+  String get guideCreditsTitle => 'Credits';
+
+  @override
+  String get guideCreditsBody =>
+      'AI analyses use credits; the cost is shown on the button. If an analysis does not complete successfully, your credits are not spent. Monthly credits are topped up to your plan amount on the renewal day and do not roll over. Purchased credits never expire; monthly credits are spent first.';
+
+  @override
+  String get guideDisclaimerTitle => 'Important notice';
+
+  @override
+  String get guideDisclaimerBody =>
+      'Signals and analyses are produced by AI and technical indicators; no information is certain. Crypto markets are very risky and you can lose some or all of your money. This app does not give investment advice. All decisions and any losses are solely yours.';
 }

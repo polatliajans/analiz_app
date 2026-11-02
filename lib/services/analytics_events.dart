@@ -18,6 +18,7 @@ abstract final class AnalyticsEvents {
   static const adShown = 'ad_shown';
   static const rewardedAdCompleted = 'rewarded_ad_completed';
   static const pushOpened = 'push_opened';
+  static const guideCardTapped = 'guide_card_tapped';
 
   static const all = [
     signUp,
@@ -35,6 +36,7 @@ abstract final class AnalyticsEvents {
     adShown,
     rewardedAdCompleted,
     pushOpened,
+    guideCardTapped,
   ];
 }
 
@@ -146,4 +148,8 @@ extension AnalyticsEventLog on AnalyticsService {
 
   void logPushOpened(String screen) =>
       logEvent(AnalyticsEvents.pushOpened, {'screen': screen});
+
+  /// `source`: home | settings.
+  void logGuideCardTapped(String source) =>
+      logEvent(AnalyticsEvents.guideCardTapped, {'source': source});
 }

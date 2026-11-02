@@ -14,6 +14,7 @@ import '../providers/theme_provider.dart';
 import '../services/analytics_consent.dart';
 import '../widgets/notification_settings_section.dart';
 import 'glossary_screen.dart';
+import 'guide_screen.dart';
 import 'onboarding_screen.dart';
 
 final _packageInfoProvider = FutureProvider<PackageInfo>(
@@ -164,6 +165,12 @@ class SettingsScreen extends ConsumerWidget {
                 builder: (_) => const OnboardingScreen(replay: true),
               ),
             ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.lightbulb_outline_rounded),
+            title: Text(l10n.guideTitle),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => openGuide(context, ref, source: GuideSource.settings),
           ),
           ListTile(
             leading: const Icon(Icons.menu_book_outlined),

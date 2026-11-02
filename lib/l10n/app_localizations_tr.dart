@@ -2162,4 +2162,161 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get reportAnalysisBody => 'Lütfen bu analizdeki sorunu açıklayın:\n\n';
+
+  @override
+  String get guideTitle => 'Nasıl kullanılır?';
+
+  @override
+  String get guideHomeCardTitle => 'Sinyalleri nasıl okumalı?';
+
+  @override
+  String get guideHomeCardSubtitle =>
+      'Kademeler, alım-satım sinyalleri ve verimli kullanım ipuçları';
+
+  @override
+  String get guideAboutTitle => 'Uygulama ne işe yarar?';
+
+  @override
+  String get guideAboutBody =>
+      'Yapay zekâ ve teknik göstergelerle kripto piyasasını tarar; grafikte alım ve satım sinyalleri, radar ve analizler sunar. Amaç hızlı zengin olmak değil: portföyünü küçük adımlarla, küçük yüzdelik kazanımlarla ve kontrollü riskle büyütmeye çalışırken sana yardımcı olmak.';
+
+  @override
+  String get guideLevelsTitle => 'Sinyal kademeleri';
+
+  @override
+  String get guideLevelsIntro =>
+      'Grafikteki her okun yanında 1, 2 veya 3 yazar. Bu rakam kademedir: aynı mumda kaç işaretin (RSI derinliği, Bollinger bandı taşması, dönüş mumu, hacim artışı gibi) aynı yönü desteklediğini ve ters yönde güçlü bir trend olup olmadığını özetler. Kademe arttıkça ok da büyür ve belirginleşir.';
+
+  @override
+  String get guideLevel1Name => 'Kademe 1 · Erken, zayıf';
+
+  @override
+  String get guideLevel1Desc =>
+      'Temel koşul oluştu (aşırı satım veya aşırı alım ve bant teması) ama destekleyen işaret az. Bir izleme uyarısı gibi düşün: coini takip et, acele etme.';
+
+  @override
+  String get guideLevel2Name => 'Kademe 2 · Orta';
+
+  @override
+  String get guideLevel2Desc =>
+      'Birkaç işaret aynı yönü destekliyor. Dikkate değer; grafiğe ve derin analize bakarak teyit et.';
+
+  @override
+  String get guideLevel3Name => 'Kademe 3 · Güçlü';
+
+  @override
+  String get guideLevel3Desc =>
+      'En çok işaret aynı anda aynı yönü gösteriyor. En güçlü kademe budur, ama yine de kesinlik değildir.';
+
+  @override
+  String get guideLevelsUpgrade =>
+      'Aynı düşüş veya yükseliş dalgasında kademe sonradan yükselebilir: önce 1, sonra 2 veya 3 rakamlı yeni bir ok görünebilir.';
+
+  @override
+  String get guideExampleLabel => 'Örnek (varsayımsal)';
+
+  @override
+  String get guideLevelsExample =>
+      'XYZ adlı hayali bir coin 4 saatlik grafikte düşerken 1 rakamlı bir alım oku çıkar: aşırı satım var ama onay az, şimdilik sadece izlersin. Düşüş sürer, dönüş mumu ve hacim artışı da gelirse 3 rakamlı yeni bir alım oku görünebilir: daha çok işaret aynı fikirde. Bu, fiyatın döneceği anlamına gelmez; yalnızca sinyalin daha fazla destek aldığını gösterir.';
+
+  @override
+  String get guideDirTitle => 'Alım ve satım sinyalleri';
+
+  @override
+  String get guideBuyTitle => 'Alım sinyali (yeşil, yukarı ok)';
+
+  @override
+  String get guideBuyBody =>
+      'Fiyatın düşüp aşırı satım bölgesine indiği ve toparlanabileceği yerleri işaretler: alım bölgesi, ya da zaten pozisyonun varsa kademeli ekleme bölgesi.';
+
+  @override
+  String get guideSellTitle => 'Satım sinyali (kırmızı, aşağı ok)';
+
+  @override
+  String get guideSellBody =>
+      'Fiyatın yükselip aşırı alım bölgesine çıktığı yerleri işaretler: satış veya kâr alma noktası.';
+
+  @override
+  String get guideFlowTitle => 'Örnek akış (varsayımsal)';
+
+  @override
+  String get guideFlow1 => 'Alım sinyali çıkar: küçük bir miktarla başla.';
+
+  @override
+  String get guideFlow2 =>
+      'Fiyat düşmeye devam eder ve daha yüksek kademeli yeni bir alım sinyali gelir: planına uyuyorsa küçük bir ekleme yapabilirsin.';
+
+  @override
+  String get guideFlow3 =>
+      'Fiyat yükselir ve satım sinyali çıkar: kârın bir kısmını almayı ya da pozisyonu azaltmayı düşünebilirsin.';
+
+  @override
+  String get guideFlow4 =>
+      'Sonra yeni sinyali bekle; her sinyalin peşinden koşma.';
+
+  @override
+  String get guideTipsTitle => 'Verimli kullanım ipuçları';
+
+  @override
+  String get guideTip1Title => 'Küçük başla';
+
+  @override
+  String get guideTip1Body =>
+      'Küçük pozisyonlarla ilerle; tüm sermayeni tek işleme koyma.';
+
+  @override
+  String get guideTip2Title => 'Sinyal bir davettir';
+
+  @override
+  String get guideTip2Body =>
+      'Ok, grafiğe bakman için bir uyarıdır. Trendi, destek ve direnci kendin incele; Derin Analiz ile destekle.';
+
+  @override
+  String get guideTip3Title => 'Birden çok zaman dilimine bak';
+
+  @override
+  String get guideTip3Body =>
+      '15dk, 1sa, 4sa, 1g gibi farklı periyotlar aynı yönü gösteriyorsa görünüm daha tutarlı olabilir.';
+
+  @override
+  String get guideTip4Title => 'Yüksek kademeyi tercih et, teyit et';
+
+  @override
+  String get guideTip4Body =>
+      '3. kademe daha çok destek taşır; yine de grafikle ve derin analizle teyit et.';
+
+  @override
+  String get guideTip5Title => 'Çıkış planını önceden yap';
+
+  @override
+  String get guideTip5Body =>
+      'Nerede kâr alacağını ve nerede vazgeçeceğini (stop) girmeden önce belirle.';
+
+  @override
+  String get guideTip6Title => 'Kovalamaca yapma';
+
+  @override
+  String get guideTip6Body =>
+      'Fiyat hızla gittiyse peşinden girme; yeni bir sinyali ya da geri çekilmeyi bekle.';
+
+  @override
+  String get guideTip7Title => 'Takip listesi ve alarmlar';
+
+  @override
+  String get guideTip7Body =>
+      'İlgilendiğin coinleri takip listene ekle; yeni sinyal çıkınca bildirim al. Fiyat alarmlarını kendi seviyelerin için kullan.';
+
+  @override
+  String get guideCreditsTitle => 'Krediler';
+
+  @override
+  String get guideCreditsBody =>
+      'Yapay zekâ analizleri kredi harcar; maliyeti düğmenin üzerinde görürsün. Analiz başarıyla tamamlanmazsa kredin harcanmaz. Aylık krediler yenilenme gününde paketindeki sayıya tamamlanır, sonraki aya devretmez. Satın alınan krediler süresiz geçerlidir; önce aylık krediler harcanır.';
+
+  @override
+  String get guideDisclaimerTitle => 'Önemli uyarı';
+
+  @override
+  String get guideDisclaimerBody =>
+      'Sinyaller ve analizler yapay zekâ ve teknik göstergelerle üretilir; hiçbir bilgi kesin değildir. Kripto piyasaları çok risklidir ve paranın bir kısmını ya da tamamını kaybedebilirsin. Bu uygulama yatırım tavsiyesi vermez. Tüm kararlar ve olası kayıplar yalnızca sana aittir.';
 }
