@@ -3883,7 +3883,7 @@ abstract class AppLocalizations {
   /// No description provided for @guideTip7Body.
   ///
   /// In en, this message translates to:
-  /// **'Add the coins you follow to your watchlist and get notified about new signals. Use price alerts for your own levels.'**
+  /// **'Add the coins you follow to your watchlist. Pro members also get notified about new signals on their watchlist and can set price alerts for their own levels.'**
   String get guideTip7Body;
 
   /// No description provided for @guideCreditsTitle.

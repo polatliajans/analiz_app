@@ -2390,7 +2390,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get guideTip7Body =>
-      'Añade a tu lista de seguimiento las monedas que sigues y recibe avisos de nuevas señales. Usa las alertas de precio para tus propios niveles.';
+      'Añade a tu lista de seguimiento las monedas que sigues. Los miembros Pro además reciben avisos de nuevas señales de su lista y pueden crear alertas de precio para sus propios niveles.';
 
   @override
   String get guideCreditsTitle => 'Créditos';

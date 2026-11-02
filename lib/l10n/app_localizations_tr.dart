@@ -2304,7 +2304,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get guideTip7Body =>
-      'İlgilendiğin coinleri takip listene ekle; yeni sinyal çıkınca bildirim al. Fiyat alarmlarını kendi seviyelerin için kullan.';
+      'İlgilendiğin coinleri takip listene ekle. Pro üyeler ayrıca takip listesindeki yeni sinyaller için bildirim alır ve kendi seviyeleri için fiyat alarmı kurabilir.';
 
   @override
   String get guideCreditsTitle => 'Krediler';
