@@ -1,48 +1,17 @@
-# Flutter
--keep class io.flutter.app.** { *; }
--keep class io.flutter.plugin.** { *; }
--keep class io.flutter.util.** { *; }
--keep class io.flutter.view.** { *; }
--keep class io.flutter.** { *; }
--keep class io.flutter.plugins.** { *; }
--dontwarn io.flutter.embedding.**
-# Flutter deferred components (Play Core is not used)
+# R8 rules for release. Flutter embedding, Firebase, Play services, Play Billing,
+# UMP, Credential Manager and url_launcher ship their own consumer rules, so no
+# blanket keeps are needed here (broad keeps previously left ~87% of classes
+# unobfuscated).
+
+# Crash reports (Crashlytics de-obfuscates with the uploaded mapping)
+-keepattributes SourceFile, LineNumberTable, Signature, *Annotation*, InnerClasses, EnclosingMethod
+-renamesourcefileattribute SourceFile
+
+# flutter_local_notifications: scheduled notification models are persisted with
+# Gson (reflection on field names) and read back via TypeToken.
+-keep class com.dexterous.flutterlocalnotifications.models.** { *; }
+-keep class * extends com.google.gson.reflect.TypeToken
+-keep class com.google.gson.reflect.TypeToken { *; }
+
+# Flutter deferred components reference Play Core, which this app does not use.
 -dontwarn com.google.android.play.core.**
-
-# Firebase / Google Play services
--keep class com.google.firebase.** { *; }
--keep class com.google.android.gms.** { *; }
--dontwarn com.google.firebase.**
--dontwarn com.google.android.gms.**
-
-# Google Mobile Ads / UMP consent (play-services-ads is covered above)
--keep class com.google.android.ump.** { *; }
--dontwarn com.google.android.ump.**
--keep class io.flutter.plugins.googlemobileads.** { *; }
-
-# Google Sign-In (Credential Manager / Identity)
--keep class androidx.credentials.** { *; }
--keep class com.google.android.libraries.identity.googleid.** { *; }
--dontwarn androidx.credentials.**
-
-# in_app_purchase / Play Billing
--keep class com.android.vending.billing.** { *; }
--keep class com.android.billingclient.** { *; }
--dontwarn com.android.billingclient.**
-
-# flutter_local_notifications (Gson reflection on stored schedules)
--keep class com.dexterous.** { *; }
--keepattributes *Annotation*, Signature, InnerClasses, EnclosingMethod
--keep class com.google.gson.** { *; }
--dontwarn com.google.gson.**
-
-# web_socket_channel / http (OkHttp-free, but keep optional TLS providers quiet)
--dontwarn org.bouncycastle.**
--dontwarn org.conscrypt.**
--dontwarn org.openjsse.**
-
-# url_launcher
--keep class io.flutter.plugins.urllauncher.** { *; }
-
-# Keep line numbers for crash reports
--keepattributes SourceFile, LineNumberTable
