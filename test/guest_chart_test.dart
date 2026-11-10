@@ -9,12 +9,13 @@ import 'helpers/chart_harness.dart';
 Finder get _canvas => find.byKey(const Key('chart-area'));
 
 Future<void> _openTab(WidgetTester tester, String label) async {
-  await tester.tap(
-    find.descendant(
-      of: find.byKey(const Key('chart-tab-bar')),
-      matching: find.text(label),
-    ),
+  final f = find.descendant(
+    of: find.byKey(const Key('chart-tab-bar')),
+    matching: find.text(label),
   );
+  await tester.ensureVisible(f);
+  await tester.pump();
+  await tester.tap(f);
   await tester.pumpAndSettle();
 }
 
@@ -103,14 +104,23 @@ void main() {
       await disposeChartScreen(tester);
     });
 
-    for (final tab in [
-      'Summary',
-      'My analyses',
-      'Market',
-      'Signals',
-      'Alerts',
-    ]) {
-      testWidgets('$tab tab is a clean locked state without requests', (
+    for (final tab in ['Summary', 'Market']) {
+      testWidgets('$tab tab loads public overview for guests', (tester) async {
+        final h = await pumpChartScreen(tester, member: null);
+        await _openTab(tester, tab);
+        expect(find.byKey(const Key('guest-locked-tab')), findsNothing);
+        expect(find.byKey(const Key('tab-error')), findsNothing);
+        expect(find.byType(CircularProgressIndicator), findsNothing);
+        expect(h.overview.calls, 1, reason: 'overview is public for guests');
+        expect(h.history.calls, 0);
+        expect(h.alerts.calls, 0);
+        expect(h.signals.calls, 0);
+        await disposeChartScreen(tester);
+      });
+    }
+
+    for (final tab in ['My analyses', 'Signals', 'Alerts']) {
+      testWidgets('$tab tab is a clean locked state without auth requests', (
         tester,
       ) async {
         final h = await pumpChartScreen(tester, member: null);
@@ -118,7 +128,6 @@ void main() {
         expect(find.byKey(const Key('guest-locked-tab')), findsOneWidget);
         expect(find.byKey(const Key('tab-error')), findsNothing);
         expect(find.byType(CircularProgressIndicator), findsNothing);
-        expect(h.overview.calls, 0, reason: 'overview is auth-only');
         expect(h.history.calls, 0);
         expect(h.alerts.calls, 0);
         expect(h.signals.calls, 0);
