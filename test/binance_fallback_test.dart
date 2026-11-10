@@ -117,8 +117,25 @@ void main() {
       expect(f.calls, ['api.binance.com']);
     });
 
-    test('futures has no fallback host and fails with a clean error', () async {
-      final f = _Fake({'fapi.binance.com': 451});
+    test('futures falls back to backend klines proxy on 451', () async {
+      final f = _Fake({
+        'fapi.binance.com': 451,
+        'www.cryptoanaliz.net': 200,
+      });
+      final c = await BinanceKlinesApi(
+        client: f.client,
+        hostState: BinanceHostState(),
+      ).fetchKlines(
+        symbol: 'BTCUSDT',
+        marketType: 'futures',
+        timeframe: '1h',
+      );
+      expect(c, hasLength(1));
+      expect(f.calls, ['fapi.binance.com', 'www.cryptoanaliz.net']);
+    });
+
+    test('futures fails with a clean error when both primary and fallback fail', () async {
+      final f = _Fake({'fapi.binance.com': 451, 'www.cryptoanaliz.net': 502});
       await expectLater(
         BinanceKlinesApi(
           client: f.client,
@@ -130,7 +147,7 @@ void main() {
         ),
         throwsA(isA<ChartDataException>()),
       );
-      expect(f.calls, ['fapi.binance.com']);
+      expect(f.calls, ['fapi.binance.com', 'www.cryptoanaliz.net']);
     });
   });
 

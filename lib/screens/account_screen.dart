@@ -115,6 +115,24 @@ class AccountScreen extends ConsumerWidget {
                   clipBehavior: Clip.antiAlias,
                   child: Column(
                     children: [
+                      if (member == null) ...[
+                        if (ref.watch(proPurchaseAvailableProvider)) ...[
+                          ListTile(
+                            leading: const Icon(Icons.workspace_premium_outlined),
+                            title: Text(l10n.upgradeToPro),
+                            trailing: const Icon(Icons.chevron_right),
+                            onTap: () => _push(context, const SubscriptionScreen()),
+                          ),
+                          const Divider(height: 1),
+                        ],
+                        ListTile(
+                          leading: const Icon(Icons.bolt_outlined),
+                          title: Text(l10n.buyCredits),
+                          trailing: const Icon(Icons.chevron_right),
+                          onTap: () => _push(context, const CreditPackagesScreen()),
+                        ),
+                        const Divider(height: 1),
+                      ],
                       if (member != null) ...[
                         ListTile(
                           leading: const Icon(Icons.star_outline),

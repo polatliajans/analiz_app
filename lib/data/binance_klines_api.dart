@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import '../config/api_config.dart';
 import '../l10n/app_l10n.dart';
 import '../models/candle.dart';
 import 'binance_hosts.dart';
@@ -30,12 +31,29 @@ class BinanceKlinesApi {
     final http.Response response;
     try {
       if (marketType == 'futures') {
-        // Futures has no market-data-only host: no fallback.
         final c = client ?? http.Client();
         try {
-          response = await c
-              .get(Uri.https('fapi.binance.com', '/fapi/v1/klines', query))
-              .timeout(const Duration(seconds: 10));
+          http.Response? primaryResp;
+          try {
+            primaryResp = await c
+                .get(Uri.https('fapi.binance.com', '/fapi/v1/klines', query))
+                .timeout(const Duration(seconds: 10));
+          } catch (_) {
+            primaryResp = null;
+          }
+          if (primaryResp != null && !isHostBlockedStatus(primaryResp.statusCode)) {
+            response = primaryResp;
+          } else {
+            final fallbackUri = Uri.parse('${ApiConfig.baseUrl}/klines').replace(
+              queryParameters: {
+                'symbol': symbol,
+                'market_type': 'futures',
+                'interval': timeframe,
+                'limit': '$limit',
+              },
+            );
+            response = await c.get(fallbackUri).timeout(const Duration(seconds: 10));
+          }
         } finally {
           if (client == null) c.close();
         }
