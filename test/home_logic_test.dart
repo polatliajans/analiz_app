@@ -31,7 +31,12 @@ void main() {
   test('price and percent formatting', () {
     expect(formatUsdPrice(82000, 'en'), '\$82,000');
     expect(formatUsdPrice(0.1534, 'en'), '\$0.1534');
+    expect(formatUsdPrice(0.06905, 'tr'), '\$0,06905');
     expect(formatUsdPrice(0.00001234, 'en'), '\$0.00001234');
+    expect(formatCoinPrice(74455.8, 'tr'), '74.455,8');
+    expect(formatCoinPrice(0.06905, 'tr'), '0,06905');
+    expect(formatCoinPrice(0.0049186, 'tr'), '0,0049186');
+    expect(formatVolumeShort(8925246618.48, 'tr'), '8,9B');
     expect(formatSignedPct(1.024, 'en'), '+1.02%');
     expect(formatSignedPct(-4.5, 'en'), '-4.50%');
     expect(formatSignedPct(0, 'en'), '0.00%');

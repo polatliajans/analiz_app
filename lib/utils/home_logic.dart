@@ -95,12 +95,30 @@ String formatUsdPrice(double price, String locale) {
       : abs >= 1
       ? 3
       : abs >= 0.01
-      ? 4
+      ? 5
       : 8;
   final f = NumberFormat.decimalPattern(locale)
     ..minimumFractionDigits = abs >= 1000 ? 0 : 2
     ..maximumFractionDigits = digits;
   return '\$${f.format(price)}';
+}
+
+/// Formats a coin price using Binance-style adaptive precision (without
+/// currency symbol): e.g. in `tr`, `74455.8` -> `74.455,8`,
+/// `0.06905` -> `0,06905`, `0.0049186` -> `0,0049186`.
+String formatCoinPrice(double price, String locale) {
+  final abs = price.abs();
+  final digits = abs >= 1000
+      ? 2
+      : abs >= 1
+      ? 4
+      : abs >= 0.01
+      ? 5
+      : 8;
+  final f = NumberFormat.decimalPattern(locale)
+    ..minimumFractionDigits = 0
+    ..maximumFractionDigits = digits;
+  return f.format(price);
 }
 
 /// Signed percentage like +1.02% / -0.50%.

@@ -9,6 +9,7 @@ class FakeAdApi implements AdAnalysisApi {
   final List<Object> pollScript; // AdSessionState or Exception, consumed in order
   int creates = 0;
   int polls = 0;
+  int rewardNotifies = 0;
 
   FakeAdApi({this.createError, this.pollScript = const []});
 
@@ -32,6 +33,12 @@ class FakeAdApi implements AdAnalysisApi {
         : (pollScript.isEmpty ? const AdSessionState() : pollScript.last);
     if (step is AdSessionState) return step;
     throw step;
+  }
+
+  @override
+  Future<void> notifyRewardEarned(String token, String sessionId) async {
+    expect(sessionId, 'sess-1');
+    rewardNotifies++;
   }
 }
 

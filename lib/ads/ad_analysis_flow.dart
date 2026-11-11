@@ -113,6 +113,7 @@ class AdAnalysisFlow {
     }
 
     onPhase?.call(AdFlowPhase.verifying);
+    await _safe(() => api.notifyRewardEarned(token, session.id));
     final verified = await _awaitVerification(session.id);
     if (verified != null) return verified;
 

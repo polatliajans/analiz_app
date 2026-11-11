@@ -27,6 +27,7 @@ import '../providers/watchlist_provider.dart';
 import '../services/analytics_events.dart';
 import '../services/analytics_service.dart';
 import '../utils/feature_gate.dart';
+import '../utils/home_logic.dart';
 import '../utils/timeframes.dart';
 import '../widgets/analysis_card.dart';
 import '../widgets/analysis_progress_overlay.dart';
@@ -191,6 +192,12 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
     }
     if (gate.isTimeframeLocked(timeframe)) {
       showProUpsell(context, ProFeature.timeframe);
+      return;
+    }
+    final quickCost = ref.read(appConfigProvider).plan.quickAnalysisCost;
+    if (auth.member != null && auth.member!.creditBalance < quickCost) {
+      final watchAd = await showInsufficientCreditDialog(context);
+      if (watchAd && mounted) await _runAdAnalysis(coin);
       return;
     }
     final analytics = ref.read(analyticsProvider);
@@ -390,6 +397,11 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
     }
     if (gate.isTimeframeLocked(timeframe)) {
       showProUpsell(context, ProFeature.timeframe);
+      return;
+    }
+    final deepCost = ref.read(appConfigProvider).plan.deepAnalysisCost;
+    if (auth.member != null && auth.member!.creditBalance < deepCost) {
+      showInsufficientCreditDialog(context, kind: AnalysisKind.deep);
       return;
     }
     final analytics = ref.read(analyticsProvider);
@@ -881,7 +893,12 @@ class _LiveHeader extends ConsumerWidget {
       textBaseline: TextBaseline.alphabetic,
       children: [
         Text(
-          price != null ? price.toString() : '-',
+          price != null
+              ? formatCoinPrice(
+                  price,
+                  Localizations.localeOf(context).languageCode,
+                )
+              : '-',
           style: textTheme.titleLarge?.copyWith(color: priceColor),
         ),
         const SizedBox(width: 12),

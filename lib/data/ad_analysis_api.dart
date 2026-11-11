@@ -157,6 +157,8 @@ abstract class AdAnalysisApi {
   Future<AdAnalysisSession> createSession(String token);
 
   Future<AdSessionState> fetchSession(String token, String sessionId);
+
+  Future<void> notifyRewardEarned(String token, String sessionId) async {}
 }
 
 class HttpAdAnalysisApi implements AdAnalysisApi {
@@ -196,6 +198,17 @@ class HttpAdAnalysisApi implements AdAnalysisApi {
       throw AdAnalysisException.fromResponse(r);
     }
     return AdSessionState.fromJson(jsonDecode(r.body) as Map<String, dynamic>);
+  }
+
+  @override
+  Future<void> notifyRewardEarned(String token, String sessionId) async {
+    final r = await ApiHttp.post(
+      Uri.parse('${ApiConfig.baseUrl}/ad-analysis/sessions/$sessionId/verify'),
+      headers: _headers(token),
+    ).timeout(const Duration(seconds: 10));
+    if (r.statusCode != 200) {
+      throw AdAnalysisException.fromResponse(r);
+    }
   }
 
   static AdAnalysisSession parseSessionResponse(http.Response r) {

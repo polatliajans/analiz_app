@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../l10n/app_localizations.dart';
 import '../models/coin.dart';
+import '../utils/home_logic.dart';
 
 class CoinListItem extends StatelessWidget {
   final Coin coin;
@@ -13,6 +14,7 @@ class CoinListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final locale = Localizations.localeOf(context).languageCode;
     final change = coin.priceChangePercent24h;
     final changeColor = change == null
         ? null
@@ -23,7 +25,9 @@ class CoinListItem extends StatelessWidget {
       title: Text(coin.symbol),
       subtitle: Text(
         l10n.volumeLabel(
-          coin.volume24h != null ? coin.volume24h!.toStringAsFixed(2) : '-',
+          coin.volume24h != null
+              ? formatVolumeShort(coin.volume24h!, locale)
+              : '-',
         ),
       ),
       trailing: Column(
@@ -31,10 +35,12 @@ class CoinListItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Text(
-            coin.lastPrice != null ? coin.lastPrice!.toStringAsFixed(8) : '-',
+            coin.lastPrice != null
+                ? formatCoinPrice(coin.lastPrice!, locale)
+                : '-',
           ),
           Text(
-            change != null ? '${change.toStringAsFixed(2)}%' : '-',
+            change != null ? formatSignedPct(change, locale) : '-',
             style: TextStyle(color: changeColor),
           ),
         ],
